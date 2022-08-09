@@ -21,17 +21,18 @@
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #status="{row}">
-        <t-tag theme="success" class="com-status" v-if="row.status" variant="light">{{lang.enable}}</t-tag>
-        <t-tag theme="danger" class="com-status" v-else variant="light">{{lang.deactivate}}</t-tag>
+        <t-tag theme="success" class="com-status" v-if="row.status===1" variant="light">{{lang.enable}}</t-tag>
+        <t-tag theme="danger" class="com-status" v-if="row.status===0" variant="light">{{lang.deactivate}}</t-tag>
+        <t-tag theme="default" class="com-status" v-if="row.status===3" variant="light">{{lang.not_install}}</t-tag>
       </template>
       <template #op="{row}">
         <a class="common-look" @click="changeStatus(row)">
-          <img v-if="row.status === 0" src='img/icon/enable.png' alt="">
-          <img v-else-if="row.status === 1" src='img/icon/disable.png' alt="">
+          <img v-if="row.status === 0" src='template/default/img/icon/enable.png' alt="">
+          <img v-else-if="row.status === 1" src='template/default/img/icon/disable.png' alt="">
         </a>
         <a class="common-look" @click="installHandler(row)">
-          <img v-if="row.status === 3" src='img/icon/install.png' alt="">
-          <img v-else-if="row.status !== 3" src='img/icon/uninstall.png' alt="">
+          <img v-if="row.status === 3" src='template/default/img/icon/install.png' alt="">
+          <img v-else-if="row.status !== 3" src='template/default/img/icon/uninstall.png' alt="">
         </a>
       </template>
     </t-table>
