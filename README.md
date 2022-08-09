@@ -23,16 +23,28 @@ ZJMF-CBAP v10是开源的业务管理系统，基于PHP+MYSQL开发的一套小�
 ***
 
 ## 如何安装（开发者预览版）
-注意：
+### 注意：
 当前版本为开发者预览版，不支持普通用户安装，目前没有会员中心界面，普通用户安装后无法使用！！！<br>
 开发者可使用当前版本，进行主题，插件开发。<br>
+### 安装步骤
 运行环境要求：PHP7.2或以上  Mysql5.6或5.7<br>
 所有代码传到网站根目录<br>
 导入根目录的rc.sql文件<br>
+### 伪静态设置
+apache无需设置，public下已经存在.htaccess伪静态文件<br>
+nginx用户，请将public/nginx.conf设置到您的nginx配置中<br>
+### 配置数据库
 修改数据库配置文件config.php<br>
 访问后台 http://ip/admin<br>
 用户名admin<br>
 密码123456<br>
+
+
+### 安装后API文档访问路径
+http://ip/doc
+
+
+
 
 ***
 
