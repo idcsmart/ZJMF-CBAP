@@ -49,8 +49,16 @@ http://ip/doc
 ***
 
 ## 如何开发
+### 支付接口开发文档
+https://www.idcsmart.com/wiki_list/882.html
 ### 插件开发文档
+https://www.idcsmart.com/wiki_list/883.html
 ### 主题开发文档
+https://www.idcsmart.com/wiki_list/884.html
+### 短信接口开发文档
+https://www.idcsmart.com/wiki_list/885.html
+### 邮件接口开发文档
+https://www.idcsmart.com/wiki_list/886.html
 ### HOOK
 
 ***
