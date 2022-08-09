@@ -234,11 +234,12 @@
               module: this.module,
               name: this.name
             }
-            const res = await deleteMoudle(params)
+            const res = await deleteMoudle(this.type,params)
             this.$message.success(res.data.msg)
             this.delVisible = false
             this.getEmailList()
           } catch (error) {
+              console.log(error)
             this.$message.error(error.data.msg)
           }
         },
