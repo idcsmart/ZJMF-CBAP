@@ -1,0 +1,15 @@
+<xml>
+    <appid><![CDATA[wx30f5fa4bdfaa3524]]></appid>
+    <body><![CDATA[]]></body>
+    <mch_id>1462906502</mch_id>
+    <nonce_str><![CDATA[2wx64u8hl1x6oqx56f3q3gr1t3zobvig]]></nonce_str>
+    <notify_url><![CDATA[http://f.test.idcsmart.com/]]></notify_url>
+    <openid><![CDATA[wx30f5fa4bdfaa3524]]></openid>
+    <out_trade_no><![CDATA[test_20191125145113]]></out_trade_no>
+    <product_id><![CDATA[test_product_2019111225]]></product_id>
+    <sign_type><![CDATA[HMAC-SHA256]]></sign_type>
+    <spbill_create_ip><![CDATA[127.0.0.1]]></spbill_create_ip>
+    <total_fee>1</total_fee>
+    <trade_type><![CDATA[NATIVE]]></trade_type>
+    <sign><![CDATA[CC0D9D38CE9F7C1FD1CE2229C89350C724EF76AEE30E618015F131DFB5BB2763]]></sign>
+</xml>

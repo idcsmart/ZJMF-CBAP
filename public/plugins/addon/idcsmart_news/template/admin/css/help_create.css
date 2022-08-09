@@ -1,0 +1,61 @@
+.addtitle {
+  margin-top: 20px;
+  border-bottom: 1px solid #999;
+  padding-bottom: 10px;
+}
+.add_form {
+  margin-top: 20px;
+}
+.add_form .t-form__item {
+  margin-right: 20px;
+}
+.add_tform {
+  /* display: flex;
+  flex-wrap: wrap; */
+}
+#tiny {
+  width: 100%;
+  height: 100%;
+}
+.rich_btns {
+  display: flex;
+  justify-content: end;
+  margin-top: 10px;
+}
+.rich_btns {
+  margin-left: 15px;
+}
+.rich_btns_save {
+  background: rgba(0, 82, 217, 0.2) !important;
+  color: #0052d9 !important;
+  border: none;
+}
+.add_richtext {
+  margin-top: 20px;
+}
+.upload {
+  color: #999;
+  background: #f2f2f7 !important;
+}
+.t-button--variant-base:hover {
+  color: #999;
+}
+.delfile {
+  font-size: 16px;
+  cursor: pointer;
+}
+.upload .t-icon {
+  font-size: 18px;
+  color: #ccc;
+}
+
+.list-custom ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+.list-custom li {
+  margin-right: 10px;
+}
+.inlineflex {
+  display: inline-flex;
+}

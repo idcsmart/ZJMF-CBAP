@@ -1,0 +1,16 @@
+<div>
+	CPU:
+	<div>
+		{if $now}
+		<span>当前: {$now}核</span>
+		{/if}
+
+		<select name="cpu">
+		{foreach $list as $key=>$vo}
+			{if $vo.value != $now}
+		    <option>{$vo.name}, 价格: {$vo.price}元</option>
+			{/if}
+		{/foreach}
+		</select>
+	</div>
+</div>

@@ -1,0 +1,190 @@
+/* client */
+.client {
+  .status {
+    padding: 0 18px !important;
+  }
+}
+/* client-detail */
+.client-detail {
+  .list-card-container.stop {
+    background-color: rgba(0, 0, 0, 0.01);
+
+    .t-input,
+    .t-textarea__inner,
+    .t-table,
+    .t-table tr,
+    .t-select {
+      background-color: transparent;
+    }
+  }
+
+  .box {
+    padding: 13px 20px 20px;
+  }
+
+  .t-form.stop {
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 100;
+      background: url(../img/stop.png) center center;
+      background-repeat: no-repeat;
+    }
+
+  }
+
+  .list-card-container {
+    .t-form__item {
+      flex-direction: column;
+      flex-wrap: wrap;
+      width: 48%;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .t-form__label,
+    .t-form__controls {
+      width: 100% !important;
+      flex: 1;
+      margin-left: 0 !important;
+      text-align: left;
+    }
+
+    .textarea,
+    textarea {
+      width: 100%;
+    }
+  }
+
+  .footer-btn {
+    margin-top: 26px;
+
+    .t-button,
+    .com-transparent {
+      margin-left: 20px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .dis-box {
+    margin-bottom: 40px;
+
+    p {
+      margin: 0;
+      line-height: 32px;
+
+      &.com-tit {
+        margin-bottom: 25px;
+      }
+    }
+  }
+
+  .header-btn {
+    margin-bottom: 32px;
+
+    .t-button,
+    .com-transparent {
+      margin-left: 20px;
+
+      &:first-child {
+        margin-left: 0;
+      }
+    }
+  }
+
+  .login-log {}
+}
+
+/* transaction */
+.transaction {
+  .t-table__tree-op-icon{
+    display: none;
+  }
+  .user {
+    label:before {
+      color: var(--td-error-color);
+      content: "*";
+      display: inline-block;
+      line-height: 22px;
+      margin-right: 4px;
+    }
+  }
+  .common-look{
+    position: relative;
+    z-index: 100;
+  }
+}
+
+/* client-order */
+.client-order{
+  .t-dialog__footer{
+    margin-top: 30px;
+  }
+}
+.delDialog{
+  .t-dialog__body{
+    color: #333;
+  }
+  .check{
+    display: flex;
+    align-items: baseline;
+    .t-checkbox{
+      position: relative;
+      top: 3px;
+      .t-checkbox__label{
+        margin-left: 3px;
+      }
+    }
+    .tips{
+      margin-bottom: 30px;
+      p{
+        margin: 0;
+      }
+      .tip{
+        color: var(--td-text-color-placeholder);
+      }
+    }
+  }
+}
+.sign_pay{
+  .t-input.t-input--prefix>.t-input__prefix{
+    margin-right: 3px;
+  }
+}
+
+/* create-order */
+.create-order{
+  .t-col {
+    display: flex;
+    justify-content: space-between;
+  }
+  .item{
+    width: 45%;
+  }
+  .p-tit{
+    width: 100%;
+    display: flex;
+    line-height: 44px;
+    font-size: 16px;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--td-bg-color-page);
+    padding: 0 10px;
+    .t-icon{
+      color: #999;
+      cursor: pointer;
+    }
+  }
+}

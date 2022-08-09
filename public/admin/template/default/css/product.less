@@ -1,0 +1,87 @@
+/* 商品管理 */
+.product{
+  td.t-table__handle-draggable{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  .first-name,.product-name{
+    color: var(--td-brand-color);
+  }
+  .second-name{
+    margin-left: 20px;
+  }
+  .product-table{
+    p{
+      margin: 0;
+      display: flex;
+      align-items: center;
+      .t-icon{
+        margin-left: 5px;
+        color: var(--td-text-color-placeholder);
+        cursor: pointer;
+      }
+    }
+  }
+}
+/* product-detail */
+.product-detail{
+  .t-form{
+    display: flex;
+  }
+  .box{
+    padding: 13px 20px 20px;
+  }
+  .product-container{
+    .item{
+      display: flex;
+      justify-content: space-between;
+    }
+    .t-form__item{
+      flex-direction: column;
+      flex-wrap: wrap;
+      width: 48%;
+      .t-form__label,.t-form__controls{
+        width: 100% !important;
+        text-align: left;
+        flex: 1;
+        margin-left: 0 !important;
+      }
+    }
+  }
+  .dis-box{
+    .half{
+      display: flex;
+      justify-content: space-between;
+      .r-item{
+        width: 45%;
+      }
+    }
+    p{
+      line-height: 32px;
+      margin: 0;
+    }
+  }
+  .textarea,textarea{
+    width: 100% !important;
+  }
+}
+/* product-api */
+.product-api{
+  .box{
+    padding: 13px 20px 20px;
+  }
+  .t-form__label,.t-form__controls{
+    width: 100% !important;
+    text-align: left;
+    margin-left: 0 !important;
+  }
+  .dis-box{
+    margin: 0 !important;
+  }
+  .t-form{
+    width: 155px;
+  }
+  .t-button{
+    margin-right: 20px;
+  }
+}

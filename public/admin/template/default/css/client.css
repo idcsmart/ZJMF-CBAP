@@ -1,0 +1,345 @@
+/* client */
+.client .status {
+  padding: 0 18px !important;
+}
+.t-input__prefix {
+  margin-right: 5px;
+}
+/* client-detail */
+.client-detail .list-card-container.stop {
+  background-color: rgba(0, 0, 0, 0.01);
+}
+.client-detail .list-card-container.stop .t-input,
+.client-detail .list-card-container.stop .t-textarea__inner,
+.client-detail .list-card-container.stop .t-table,
+.client-detail .list-card-container.stop .t-table tr,
+.client-detail .list-card-container.stop .t-select {
+  background-color: transparent;
+}
+.client-detail .box {
+  padding: 13px 38px 0 20px;
+  height: calc(100% - 140px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.client-detail .t-card__body {
+  height: 100%;
+}
+.client-detail .t-form.stop {
+  position: relative;
+  background: url(../img/stop.png) center center;
+  background-repeat: no-repeat;
+}
+.client-detail .list-card-container .t-form__item {
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 48%;
+}
+.client-detail .list-card-container .item {
+  display: flex;
+  justify-content: space-between;
+}
+.client-detail .list-card-container .t-form__label,
+.client-detail .list-card-container .t-form__controls {
+  width: 100% !important;
+  flex: 1;
+  margin-left: 0 !important;
+  text-align: left;
+}
+.client-detail .textarea {
+  margin-top: 25px !important;
+  width: 100% !important;
+}
+.client-detail .footer-btn {
+  width: 100%;
+  margin-top: 26px;
+}
+.client-detail .footer-btn .t-button,
+.client-detail .footer-btn .com-transparent {
+  margin-left: 20px;
+}
+.client-detail .footer-btn .t-button:first-child,
+.client-detail .footer-btn .com-transparent:first-child {
+  margin-left: 0;
+}
+.client-detail .dis-box {
+  margin-bottom: 48px;
+}
+.client-detail .dis-box p {
+  margin: 0;
+  line-height: 32px;
+}
+.client-detail .dis-box p.com-tit {
+  margin-bottom: 25px;
+}
+.client-detail .header-btn {
+  margin-bottom: 32px;
+}
+.client-detail .header-btn .t-button,
+.client-detail .header-btn .com-transparent {
+  margin-left: 20px;
+}
+.client-detail .header-btn .t-button:first-child,
+.client-detail .header-btn .com-transparent:first-child {
+  margin-left: 0;
+}
+.client-detail .h-box {
+  position: relative;
+}
+.client-detail .h-box .user {
+  position: absolute;
+  width: 200px;
+  right: 0;
+  top: 0;
+  height: 50px;
+  line-height: 50px;
+}
+.client-detail .h-box .user .t-select {
+  width: 100%;
+}
+/* transaction */
+.transaction .t-table__tree-op-icon {
+  display: none;
+}
+.transaction .user label:before {
+  color: var(--td-error-color);
+  content: "*";
+  display: inline-block;
+  line-height: 22px;
+  margin-right: 4px;
+}
+.transaction .common-look {
+  position: relative;
+}
+/* client-order */
+.client-order .common-dialog {
+  margin-top: 30px;
+}
+.client-order .t-table__tree-col {
+  position: relative;
+}
+.client-order .t-table__tree-op-icon {
+  display: none;
+}
+.client-order .order-id {
+  display: flex;
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: -6px;
+}
+.client-order .order-id .t-icon {
+  margin-left: -5px;
+}
+.client-order .checkDelete {
+  margin: 10px 0 0 100px;
+}
+.client-order .checkDelete .t-checkbox__label {
+  color: var(--td-text-color-placeholder);
+}
+.client-order .child {
+  margin-left: -28px;
+}
+.client-order .host-name {
+  color: #b1b1bc;
+}
+.client-order .child-name {
+  padding-left: 20px;
+}
+.delDialog .t-dialog__body {
+  color: #333;
+}
+.delDialog .check {
+  display: flex;
+  align-items: baseline;
+}
+.delDialog .check .t-checkbox {
+  position: relative;
+  top: 3px;
+}
+.delDialog .check .t-checkbox .t-checkbox__label {
+  margin-left: 3px;
+}
+.delDialog .check .tips {
+  margin-bottom: 30px;
+}
+.delDialog .check .tips p {
+  margin: 0;
+}
+.delDialog .check .tips .tip {
+  color: var(--td-text-color-placeholder);
+}
+.sign_pay .t-input.t-input--prefix > .t-input__prefix {
+  margin-right: 3px;
+}
+/* create-order */
+.create-order .t-col {
+  display: flex;
+  justify-content: space-between;
+}
+.create-order .item {
+  width: 45%;
+}
+.create-order .p-tit {
+  width: 100%;
+  display: flex;
+  line-height: 44px;
+  font-size: 16px;
+  font-weight: bold;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--td-bg-color-page);
+  padding: 0 10px;
+  margin-bottom: 26px;
+}
+.create-order .p-tit .t-icon {
+  color: #999;
+  cursor: pointer;
+}
+.create-order .artificial .t-card__body {
+  padding: 9px 30px 26px 30px;
+}
+.create-order .artificial textarea {
+  height: 70px;
+}
+.create-order .artificial .t-button {
+  margin-top: 30px;
+}
+.create-order .artificial .bot {
+  margin-top: 100px;
+}
+.create-order .new-order .t-col {
+  flex-wrap: wrap;
+}
+.create-order .new-order .pro-item {
+  width: 100%;
+  margin-bottom: 30px;
+}
+.create-order .new-order .pro-item .price .t-select__wrap {
+  width: 70%;
+  margin-right: 40px;
+}
+.create-order .new-order .pro-item .com-tit {
+  font-size: 16px;
+  font-weight: bold;
+}
+.create-order .config-show {
+  position: sticky;
+  top: 0;
+}
+.create-order .config-show .t-card {
+  padding: 30px;
+}
+.create-order .config-show .t-card__body {
+  padding: 0;
+}
+.create-order .config-show .com-tit {
+  font-size: 16px;
+  font-weight: bold;
+}
+.create-order .config-show .total {
+  display: flex;
+  justify-content: space-between;
+}
+.create-order .config-show .total p {
+  margin: 0;
+  line-height: 32px;
+}
+.create-order .config-show .total .total-price {
+  font-weight: bold;
+}
+.create-order .config-show .submit-new {
+  margin-top: 30px;
+}
+.create-order .price .t-form__controls-content > span {
+  width: 100%;
+}
+.create-order .price .t-form__controls-content .t-popup {
+  width: 100%;
+}
+.create-order .price .t-form__controls-content .t-popup__content {
+  height: 300px;
+  overflow-y: auto;
+}
+.create-order .t-input__suffix .t-icon {
+  transition: all 0.2s cubic-bezier(0.38, 0, 0.24, 1);
+}
+.create-order .t-input__suffix .t-icon.active {
+  color: var(--td-brand-color);
+  transform: rotateX(180deg);
+}
+.no-empty + ul + .t-select__empty {
+  display: none;
+}
+/* order */
+.order .common-dialog {
+  margin-top: 30px;
+}
+.order .t-table__tree-col {
+  position: relative;
+}
+.order .t-table__tree-op-icon {
+  display: none;
+}
+.order .order-id {
+  display: flex;
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: -6px;
+}
+.order .order-id .t-icon {
+  margin-left: -5px;
+}
+.order .checkDelete {
+  margin: 10px 0 0 100px;
+}
+.order .checkDelete .t-checkbox__label {
+  color: var(--td-text-color-placeholder);
+}
+.order .child {
+  margin-left: -28px;
+}
+.order .host-name {
+  color: #b1b1bc;
+}
+.order .child-name {
+  padding-left: 20px;
+}
+/* host-detail */
+.host-detail .item {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.host-detail .item .t-form__item {
+  width: 45%;
+}
+.host-detail .box {
+  height: calc(100% - 140px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.host-detail .t-card__body {
+  height: 100%;
+}
+.host-detail .t-select {
+  height: 30px;
+}
+.host-detail .footer-btn {
+  margin-top: 30px;
+}
+.host-detail .footer-btn .t-button {
+  margin-right: 20px;
+}
+.host-detail .t-form:not(.t-form-inline) .t-form__item:last-of-type {
+  margin-bottom: 24px;
+}
+.host-detail .t-date-picker {
+  width: 100%;
+}
+.host-detail textarea {
+  height: 70px;
+}

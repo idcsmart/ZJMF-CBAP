@@ -1,0 +1,225 @@
+.order-search-wrapper {
+  padding: 5px 0;
+  display: flex;
+  justify-content: end;
+}
+
+.order-search-wrapper.internal {
+  justify-content: space-between;
+}
+
+.order-search-wrapper .t-input__wrap {
+  width: 360px;
+}
+
+.order-search-wrapper .t-input__wrap .t-input {
+  padding-right: 32px
+}
+
+.order-search-wrapper .t-input__wrap .t-input__prefix.t-input__prefix-icon {
+  position: absolute;
+  right: 0;
+}
+
+.t-table .t-table__header--fixed:not(.t-table__header--multiple)>tr>th {
+  background-color: #ffffff;
+}
+
+.table-status-span {
+  color: #0052D9;
+}
+
+.turn-inside-dialog-footer {
+  display: flex;
+  justify-content: end;
+}
+
+.turn-inside-dialog-footer button {
+  margin-left: 10px
+}
+
+.order-type-add-btn {
+  width: 100%;
+  height: 42px;
+  border-top: 0;
+  border-radius: 0px;
+  border-color: #e7e7e7 !important;
+}
+
+.order-type-close-btn {
+  margin-left: calc(50% - 30px);
+  margin-top: 30px
+}
+
+.upload-btn .t-button__text {
+  display: flex;
+  color: #999999
+}
+
+.order-upload-wrapper .t-form__controls-content {
+  align-items: baseline;
+}
+
+/* 回复页 */
+.no-wrap {
+  white-space: nowrap;
+}
+
+.reply-divider .t-divider__inner-text {
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: bold;
+  color: #333333;
+}
+
+.reply-divider.t-divider--with-text-left:before {
+  width: 0;
+}
+
+.reply-divider.t-divider--with-text-left:after {
+  margin-top: 10px;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.detail-value {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.detail-item {
+  margin-left: 16px;
+  margin-right: 40px;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.detail-value {
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 500;
+  line-height: 36px;
+  color: #333333;
+}
+
+.detail-label {
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 500;
+  line-height: 36px;
+  color: #999999;
+  margin-right: 6px;
+}
+
+.reply-list {
+  margin: 0px 16px 16px 0;
+}
+
+.reply-list .t-list-item__content {
+  width: 100%;
+}
+
+.reply-list .t-comment__avatar-image {
+  height: 40px;
+  width: 40px;
+}
+
+.reply-list .t-comment__detail {
+  background: #F0F0FD;
+  border-radius: 0px 12px 12px 12px;
+  padding: 12px 20px 16px 20px;
+  font-size: 14px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 24px;
+  color: #333333;
+}
+
+.reply-list .t-comment__actions {
+  justify-content: space-between;
+  margin-left: -30px;
+}
+
+.reply-list .t-list-item {
+  padding: 12px 16px
+}
+
+.reply-list-attachment {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.reply-list-attachment-item {
+  color: rgba(0, 0, 0, 0.4);
+  margin-right: 10px;
+  max-width: 130px;
+  overflow: hidden;
+  word-break: break-all;
+  overflow-wrap: break-word;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.reply-list-attachment-item:hover {
+  color: #0052d9
+}
+
+.reply-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 0 16px;
+}
+
+.reply-form-btn {
+  width: 100%;
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.reply-form-btn .t-upload__trigger {
+  margin-right: 10px
+}
+
+.reply-form-btn .t-upload__single {
+  display: flex
+}
+
+.reply-form-btn .upload-list {
+  display: flex;
+  align-items: baseline
+}
+
+.t-comment__actions>li:hover {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+
+/* 图标 */
+.icon-reply {
+  background: url(../img/icon/icon-reply.png) 7px no-repeat;
+  background-size: cover;
+  background-size: 17px 17px;
+}
+
+.icon-forward {
+  background: url(../img/icon/icon-forward.png) 7px no-repeat;
+  background-size: cover;
+  background-size: 17px 17px;
+}
+
+.icon-save {
+  background: url(../img/icon/icon-save.png) 8px no-repeat;
+  background-size: cover;
+  background-size: 15px 15px;
+}
+
+.t-table th, .t-table thead td{
+  color: #000000 !important;
+}
