@@ -178,7 +178,7 @@
             this.getAddonList()
           } catch (error) {
               console.log(error)
-            this.$message.error(error.data)
+            this.$message.error(error.data.msg)
           }
         },
         cancelDel () {
