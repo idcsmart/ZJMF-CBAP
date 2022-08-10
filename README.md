@@ -64,4 +64,4 @@ https://www.idcsmart.com/wiki_list/886.html
 ***
 
 ## License
-This project is licensed under the AGPL license - see the [LICENSE](https://github.com/idcsmart/ZJMF-CBAP/main/LICENSE) file for details.
+This project is licensed under the AGPL license - see the [LICENSE](https://github.com/idcsmart/ZJMF-CBAP/blob/main/LICENSE) file for details.
