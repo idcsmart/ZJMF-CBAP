@@ -64,6 +64,4 @@ https://www.idcsmart.com/wiki_list/886.html
 ***
 
 ## License
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at<br>
-http://www.apache.org/licenses/LICENSE-2.0<br>
-除非适用法律要求或书面同意，否则根据许可分发的软件将按“原样”分发，没有任何明示或暗示的保证或条件。有关许可下的特定语言管理权限和限制，请参阅许可。
+This project is licensed under the AGPL license - see the [LICENSE](https://github.com/idcsmart/ZJMF-CBAP/main/LICENSE) file for details.
