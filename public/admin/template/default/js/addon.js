@@ -172,11 +172,12 @@
         },
         async sureDel () {
           try {
-            const res = await deleteMoudle(type, this.name)
+            const res = await deleteMoudle(this.type, this.name)
             this.$message.success(res.data.msg)
             this.delVisible = false
-            this.getSmsList()
+            this.getAddonList()
           } catch (error) {
+              console.log(error)
             this.$message.error(error.data.msg)
           }
         },
