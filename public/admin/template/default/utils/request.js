@@ -25,6 +25,9 @@ Axios.interceptors.response.use(
     if (response.data.rule) { // 返回有rule的时候, 才执行缓存操作
       localStorage.setItem('menuList', JSON.stringify(response.data.rule)) // 权限菜单
     }
+    const host = location.host
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}/`
     if (code) {
       switch (code) {
         case 200:
@@ -37,14 +40,14 @@ Axios.interceptors.response.use(
         case 400:
           return Promise.reject(response)
         case 401: // 未授权:2个小时未操作自动退出登录
-          if (location.href.indexOf('login.html')===-1) {
-           location.href = 'login.html'
+          if (location.href.indexOf('login.html') === -1) {
+            location.href = 'http://' + str + 'login.html'
           }
           break
         case 403:
           break
         case 404:
-          location.href = '404.html'
+          location.href = 'http://' + str + '404.html'
           break
         case 405:
           location.href = 'login.html'

@@ -1,4 +1,4 @@
-const baseURL = "http://101.35.248.14/admin/v1";
+const baseURL = "http://kfc.idcsmart.com/admin/v1";
 
 const Axios = axios.create({
   baseURL,

@@ -49,6 +49,7 @@
             {
               colKey: 'host_num',
               title: lang.active_num,
+              align: 'center',
               width: 110
             },
             {
@@ -59,7 +60,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 110
+              width: 100
             },
           ],
           hideSortTips: true,
@@ -120,6 +121,14 @@
           type: '' // create update
         }
       },
+      computed: {
+        calcName () {
+          return (module) => {
+            const temp = this.typeList.filter(item => item.name === module)
+            return temp[0].display_name
+          }
+        }
+      },
       mounted () {
         this.maxHeight = document.getElementById('content').clientHeight - 170
         let timer = null
@@ -146,9 +155,16 @@
             this.data.forEach((item, index) => {
               if (item.id === id) {
                 item.linkStatus = res.data.status
+                item.fail_reason = res
               }
             })
           } catch (error) {
+            this.data.forEach((item, index) => {
+              if (item.id === id) {
+                item.linkStatus = error.data.status
+                item.fail_reason = error.data.msg
+              }
+            })
           }
         },
         async getTypeList () {
@@ -167,6 +183,7 @@
             const temp = res.data.data
             temp.list.forEach(item => {
               item.linkStatus = ''
+              item.fail_reason = ''
               this.getSingleStatus(item.id)
             })
             this.data = temp.list

@@ -2,7 +2,7 @@
 namespace app\common\model;
 
 use think\Model;
-use think\Db;
+use think\facade\Db;
 
 /**
  * @title 任务模型
@@ -109,24 +109,28 @@ class TaskModel extends Model
         }
         $this->startTrans();
 		try {
+			$time = time();
             // 标记任务为已重试
 			$this->update([
 				'retry' => 1,
-                'update_time' => time()
+                'update_time' => $time
             ], ['id' => $id]);
             // 创建重试任务
-	    	$task = $this->create([
+			$wait=[
 	    		'type' => $task['type'],
 	    		'rel_id' => $task['rel_id'],
 	    		'status' => 'Wait',
 	    		'retry' => 0,
 	    		'description' => $task['description'],
 	    		'task_data' => $task['task_data'],
-	    		'start_time' => 0,
+	    		'start_time' => $time,
 	    		'finish_time' => 0,
-                'create_time' => time()
-	    	]);
-
+                'create_time' => $time,
+                'update_time' => $time
+	    	];
+	    	$task = $this->create($wait);
+			$wait['task_id']=$task->id;
+			Db::name('task_wait')->insert($wait);
             # 记录日志
             active_log(lang('admin_retry_task', ['{admin}'=>request()->admin_name, '{task}'=>'#'.$task->id, '{description}'=>$task->description]), 'task', $task->id);
 

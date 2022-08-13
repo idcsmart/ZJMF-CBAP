@@ -298,7 +298,30 @@ class IdcsmartTicketModel extends Model
 
             # 记录日志
             active_log(lang_plugins('ticket_log_client_create_ticket', ['{client}'=>'client#'.get_client_id() .'#' .request()->client_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#']), 'addon_idcsmart_ticket', $ticket->id);
-
+			//客户新增工单短信添加到任务队列
+			add_task([
+				'type' => 'sms',
+				'description' => '客户新增工单,发送短信',
+				'task_data' => [
+					'name'=>'client_create_ticket',//发送动作名称
+					'client_id'=>get_client_id(),//客户ID
+					'template_param'=>[
+						'subject' => $param['title'],//工单名称
+					],
+				],		
+			]);
+			//客户新增工单邮件添加到任务队列
+			add_task([
+				'type' => 'email',
+				'description' => '客户新增工单,发送邮件',
+				'task_data' => [
+					'name'=>'client_create_ticket',//发送动作名称
+					'client_id'=>get_client_id(),//客户ID
+					'template_param'=>[
+						'subject' => $param['title'],//工单名称
+					],
+				],		
+			]);
             $this->commit();
 
         }catch (\Exception $e){
@@ -375,10 +398,34 @@ class IdcsmartTicketModel extends Model
             # 记录日志
             if ($this->isAdmin){
                 active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','content'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
-
+				//管理员回复工单短信添加到任务队列
+				add_task([
+					'type' => 'sms',
+					'description' => '管理员回复工单,发送短信',
+					'task_data' => [
+						'name'=>'admin_reply_ticket',//发送动作名称
+						'client_id'=>$clientId,//客户ID
+						'template_param'=>[
+							'subject' => $ticket['title'],//工单名称
+						],
+					],		
+				]);
+				//管理员回复工单邮件添加到任务队列
+				add_task([
+					'type' => 'email',
+					'description' => '管理员回复工单,发送邮件',
+					'task_data' => [
+						'name'=>'admin_reply_ticket',//发送动作名称
+						'client_id'=>$clientId,//客户ID
+						'template_param'=>[
+							'subject' => $ticket['title'],//工单名称
+						],
+					],		
+				]);
             }else{
                 active_log(lang_plugins('ticket_log_client_reply_ticket', ['{client}'=>'client#'.get_client_id() .'#' .request()->client_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','content'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
             }
+			
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -461,7 +508,30 @@ class IdcsmartTicketModel extends Model
             ]);
 
             active_log(lang_plugins('ticket_log_client_close_ticket', ['{client}'=>'client#'.get_client_id() .'#' .request()->client_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#']), 'addon_idcsmart_ticket', $ticket->id);
-
+			//客户关闭工单短信添加到任务队列
+				add_task([
+					'type' => 'sms',
+					'description' => '客户关闭工单,发送短信',
+					'task_data' => [
+						'name'=>'client_close_ticket',//发送动作名称
+						'client_id'=>$clientId,//客户ID
+						'template_param'=>[
+							'subject' => $ticket['title'],//工单名称
+						],
+					],		
+				]);
+				//客户关闭工单邮件添加到任务队列
+				add_task([
+					'type' => 'email',
+					'description' => '客户关闭工单,发送邮件',
+					'task_data' => [
+						'name'=>'client_close_ticket',//发送动作名称
+						'client_id'=>$clientId,//客户ID
+						'template_param'=>[
+							'subject' => $ticket['title'],//工单名称
+						],
+					],		
+				]);
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();

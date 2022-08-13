@@ -16,6 +16,9 @@
 .client-detail .list-card-container.stop .t-select {
   background-color: transparent;
 }
+.client-detail .t-row {
+  width: auto;
+}
 .client-detail .box {
   padding: 13px 38px 0 20px;
   height: calc(100% - 140px);
@@ -89,7 +92,7 @@
 }
 .client-detail .h-box .user {
   position: absolute;
-  width: 200px;
+  width: 300px;
   right: 0;
   top: 0;
   height: 50px;

@@ -49,7 +49,7 @@ class IdcsmartRenewModel extends Model
                     $max = $item2['duration'];
                 }
                 # 产品当前周期的价格以 表里数据为准
-                $cycles[$k2]['price'] = (float)$host->renew_amount;
+                $cycles[$k2]['price'] = bcsub((float)$host->renew_amount,0,2);
             }
         }
 
@@ -211,11 +211,11 @@ class IdcsmartRenewModel extends Model
         # 记录日志
         $ProductModel = new ProductModel();
         $product = $ProductModel->find($host['product_id']);
-        /*if ($this->isAdmin){
+        if ($this->isAdmin){
             active_log(lang_plugins('renew_admin_renew', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name . '#', '{host}'=>'host#'.$id.'#'.$product['name'].'#', '{currency_prefix}'=>configuration('currency_prefix'),'{amount}'=>$amount, '{currency_suffix}'=>configuration('currency_suffix')]), 'addon_idcsmart_renew', $renew->id);
         }else{
             active_log(lang_plugins('renew_client_renew', ['{client}'=>'user#'.get_client_id().'#'.request()->client_name . '#' , '{host}'=>'host#'.$id.'#'.$product['name'].'#', '{currency_prefix}'=>configuration('currency_prefix'),'{amount}'=>$amount, '{currency_suffix}'=>configuration('currency_suffix')]), 'addon_idcsmart_renew', $renew->id);
-        }*/
+        }
 
         if ($amount>0){
             # 后台直接标记支付
@@ -496,14 +496,20 @@ class IdcsmartRenewModel extends Model
         $this->startTrans();
 
         try{
-            # 更改到期时间
-            $host->save([
+
+            $upData = [
                 'renew_amount' => $amount,
                 'billing_cycle_name' => $billingCycle,
                 'billing_cycle_time' => $dueTime,
-                'due_time' => $host->due_time+$dueTime,
                 'update_time' =>time()
-            ]);
+            ];
+            # 更改到期时间
+            if ($host->status == 'Suspended'){
+                $upData['due_time'] = time()+$dueTime;
+            }else{
+                $upData['due_time'] = $host->due_time+$dueTime;
+            }
+            $host->save($upData);
 
             $renew->save([
                 'status' => 'Completed'
@@ -582,7 +588,7 @@ class IdcsmartRenewModel extends Model
             ->group('o.id')
             ->column('o.id');
         if (!empty($orderIds)){
-            $OrderModel->where('id',$orderIds)->delete();
+            $OrderModel->whereIn('id',$orderIds)->delete();
             # 删除升降级数据
             $UpgradeModel = new UpgradeModel();
             foreach ($orderIds as $orderId){

@@ -1,7 +1,7 @@
 <?php
 namespace addon\idcsmart_help\controller;
 
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 use addon\idcsmart_help\model\IdcsmartHelpModel;
 use addon\idcsmart_help\model\IdcsmartHelpTypeModel;
 use addon\idcsmart_help\validate\IdcsmartHelpValidate;
@@ -11,7 +11,7 @@ use addon\idcsmart_help\validate\IdcsmartHelpValidate;
  * @desc 帮助中心(后台)
  * @use addon\idcsmart_help\controller\AdminIndexController
  */
-class AdminIndexController extends PluginBaseController
+class AdminIndexController extends PluginAdminBaseController
 {
 	public function initialize()
     {

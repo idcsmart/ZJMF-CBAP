@@ -42,25 +42,29 @@
               // align: "center",
             },
             {
+              width: "150",
               colKey: "admin",
               title: "上传人",
             },
             {
-              width: "160",
+              width: "250",
               colKey: "create_time",
               title: "上传日期",
               cell: "createtime",
             },
             {
+              width: "150",
               colKey: "filetype",
               title: "文件类型",
             },
             {
+              width: "150",
               colKey: "filesize",
               title: "大小",
               cell: "filesize",
             },
             {
+              width: "100",
               colKey: "hidden",
               title: "显/隐",
               cell: "pushorback",
@@ -342,8 +346,24 @@
           this.appendfolder = true;
           //   this.getfolderlist();
         },
+        //取消编辑
+        canceledit() {
+          this.getfolderlist();
+        },
         changetabs(data) {
           this.activetabs = data;
+          if (this.activetabs === 3) {
+            if (this.selectedRowKeys.length > 0) {
+              this.visible3 = true;
+            } else {
+              this.$message.warning("请选择要删除的文件！");
+              return;
+            }
+          }
+          if (this.menudata.length <= 0) {
+            this.$message.warning("请先添加文件夹！");
+            return;
+          }
           if (this.activetabs === 1) {
             this.visible = true;
           }
@@ -353,13 +373,6 @@
               this.visible4 = true;
             } else {
               this.$message.warning("请选择要移动的文件！");
-            }
-          }
-          if (this.activetabs === 3) {
-            if (this.selectedRowKeys.length > 0) {
-              this.visible3 = true;
-            } else {
-              this.$message.warning("请选择要删除的文件！");
             }
           }
         },
@@ -385,9 +398,9 @@
           console.log(res, "res");
         },
         changeupload(res) {
-          // this.uploadfilelist = [];
+          this.uploadfilelist = [];
           console.log(this.uploadfilelist, res, "this.uploadfilelis");
-          res.map((item, index) => {
+          this.files.forEach((item, index) => {
             console.log(item.response.save_name, "item.response.save_name");
             let abj = {
               id: new Date().getTime(),
@@ -411,16 +424,24 @@
         },
 
         //删除上传文件
-        deleteupfile(id) {
+        deleteupfile(filename) {
           let arr = [];
-          this.uploadfilelist.map((item) => {
-            console.log(id, item.id);
-            if (item.id !== id) {
+          this.uploadfilelist.forEach((item) => {
+            // console.log(id, item.id);
+            if (item.filename !== filename) {
               arr.push(item);
             }
           });
+          let arr1 = [];
+          this.files.forEach((item) => {
+            // console.log(id, item.id);
+            if (item.response.save_name !== filename) {
+              arr1.push(item);
+            }
+          });
           this.uploadfilelist = arr;
-          console.log(this.uploadfilelist, arr, "this.uploadfilelist");
+          this.files = arr1;
+          console.log(this.uploadfilelist, this.files, "this.uploadfilelist");
         },
         edithelptypeform(e, id) {
           edithelptype({ id, name: e })
@@ -540,6 +561,7 @@
             if (res.data.status === 200) {
               this.$message.success("上传成功！");
               this.uploadfilelist = [];
+              this.files = [];
               this.getfilelist();
               this.getfolderlist();
               this.visible = false;
@@ -567,6 +589,7 @@
         },
         close(context) {
           this.uploadfilelist = [];
+          this.files = [];
           console.log(
             "关闭弹窗，点击关闭按钮、按下ESC、点击蒙层等触发",
             context
@@ -574,17 +597,21 @@
         },
         onCancel(context) {
           this.uploadfilelist = [];
+          this.files = [];
           console.log("点击了取消按钮", context);
         },
         onKeydownEsc(context) {
           this.uploadfilelist = [];
+          this.files = [];
           console.log("按下了ESC", context);
         },
         onClickCloseBtn(context) {
           this.uploadfilelist = [];
+          this.files = [];
           console.log("点击了关闭按钮", context);
         },
         onClickOverlay(context) {
+          this.files = [];
           this.uploadfilelist = [];
           console.log("点击了蒙层", context);
         },

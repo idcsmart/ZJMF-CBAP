@@ -13,7 +13,7 @@ require_once __DIR__ . '/common.php';
  */
 class IdcsmartSshKey extends Plugin
 {
-    #public function idcsmartNewsidcsmartauthorize(){}
+    #public function idcsmartSshKeyidcsmartauthorize(){}
 
     # 插件基本信息
     public $info = array(

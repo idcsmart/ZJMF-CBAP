@@ -94,9 +94,10 @@
 }
 .iconsolt2 {
   position: absolute;
-  right: 10%;
+  right: 20px;
   top: 0;
   color: #666;
+  line-height: 30px;
 }
 .deletefiles {
   color: #666;
@@ -125,4 +126,8 @@
 }
 .download .t-dialog__footer {
   margin-top: 10px;
+}
+.download .t-select {
+  max-height: 100px;
+  overflow: hidden auto;
 }

@@ -16,6 +16,7 @@ class EmailTemplateModel extends Model
     // 设置字段信息
     protected $schema = [
         'id'            => 'int',
+        'name'       => 'string',
         'subject'       => 'string',
         'message'       => 'string',
         'attachment'    => 'string',
@@ -31,6 +32,7 @@ class EmailTemplateModel extends Model
      * @version v1
      * @return array list - 邮件模板
      * @return int list[].id - 邮件模板ID
+     * @return string list[].name - 名称
      * @return string list[].subject - 标题
      * @return int count - 邮件模板总数
      */
@@ -39,7 +41,7 @@ class EmailTemplateModel extends Model
 
     	$count = $this->field('id')
 		    ->count();
-    	$emailTemplates = $this->field('id,subject')
+    	$emailTemplates = $this->field('id,name,subject')
     		->select()
             ->toArray(); 
 
@@ -54,12 +56,13 @@ class EmailTemplateModel extends Model
      * @version v1
      * @param int id - 邮件模板ID required
      * @return int id - 邮件模板ID
+     * @return string name - 名称
      * @return string subject - 标题
      * @return string message - 内容
      */
     public function indexEmailTemplate($id)
     {
-        $emailTemplate = $this->field('id,subject,message,attachment')->find($id);
+        $emailTemplate = $this->field('id,name,subject,message,attachment')->find($id);
         if (empty($emailTemplate)){
             return (object)[]; // 转换为对象
         }
@@ -73,6 +76,7 @@ class EmailTemplateModel extends Model
      * @desc 创建邮件模板
      * @author theworld
      * @version v1
+     * @param string param.name - 名称 required
      * @param string param.subject - 标题 required
      * @param string param.message - 内容 required
      * @return int status - 状态码,200成功,400失败
@@ -83,6 +87,7 @@ class EmailTemplateModel extends Model
 	    $this->startTrans();
 		try {
 	    	$email_id = $emailTemplate = $this->create([
+	    		'name' => $param['name'],
 	    		'subject' => $param['subject'],
 	    		'message' => $param['message'],
 	    		'attachment' => '',
@@ -108,6 +113,7 @@ class EmailTemplateModel extends Model
      * @author theworld
      * @version v1
      * @param int id - 邮件模板ID required
+     * @param string param.name - 名称 required
      * @param string param.subject - 标题 required
      * @param string param.message - 内容 required
      * @return int status - 状态码,200成功,400失败
@@ -122,6 +128,7 @@ class EmailTemplateModel extends Model
     	$this->startTrans();
 		try {
             $this->update([
+                'name' => $param['name'],
                 'subject' => $param['subject'],
                 'message' => $param['message'],
 				'attachment' => '',

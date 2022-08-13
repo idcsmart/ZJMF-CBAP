@@ -9,6 +9,7 @@ use app\common\logic\VerificationCodeLogic;
 use app\home\validate\CommonValidate;
 use think\facade\Cache;
 use app\common\model\HostModel;
+use app\common\model\MenuModel;
 
 /**
  * @title 公共接口(前台,无需登录)
@@ -211,6 +212,7 @@ class CommonController extends HomeBaseController
      * @return string recharge_min 1 单笔最小金额
      * @return string currency_code CNY 货币代码
      * @return string currency_prefix ￥ 货币符号
+     * @return string code_client_email_register ￥ 邮箱注册数字验证码开关:1开启0关闭
      */
     public function common()
     {
@@ -235,6 +237,7 @@ class CommonController extends HomeBaseController
             'recharge_min',
             'currency_code',
             'currency_prefix',
+            'code_client_email_register',
         ];
 
         $data = configuration($setting);
@@ -328,6 +331,36 @@ class CommonController extends HomeBaseController
             'status' => 200,
             'msg' => lang('success_message'),
             'data' => $data
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-08-10
+     * @title 获取前台导航
+     * @desc 获取前台导航
+     * @author theworld
+     * @version v1
+     * @url /console/v1/menu
+     * @method  GET
+     * @return array menu - 菜单
+     * @return int menu[].id - 菜单ID
+     * @return string menu[].name - 名称
+     * @return string menu[].url - 网址
+     * @return string menu[].icon - 图标
+     * @return int menu[].parent_id - 父ID
+     * @return array menu[].child - 子菜单
+     * @return int menu[].child[].id - 菜单ID
+     * @return string menu[].child[].name - 名称
+     * @return string menu[].child[].url - 网址
+     * @return string menu[].child[].icon - 图标
+     * @return int menu[].child[].parent_id - 父ID
+     */
+    public function homeMenu(){
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => (new MenuModel())->homeMenu()
         ];
         return json($result);
     }

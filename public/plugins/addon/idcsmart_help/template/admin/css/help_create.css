@@ -57,5 +57,5 @@
   margin-right: 10px;
 }
 .inlineflex {
-  display: inline-flex;
+  float: left;
 }

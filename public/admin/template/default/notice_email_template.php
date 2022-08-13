@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
-<div id="content" class="notice-email-template hasCrumb" v-cloak>
+<div id="content" class="notice-email-template hasCrumb table" v-cloak>
    <!-- crumb -->
    <div class="com-crumb">
     <span>{{lang.notice_interface}}</span>
@@ -40,7 +40,7 @@
         </t-input>
       </div> -->
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :max-height="maxHeight"
       :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template #type="{row}">
         <span>{{ row.type === 1 ? lang.international : lang.domestic }}</span>

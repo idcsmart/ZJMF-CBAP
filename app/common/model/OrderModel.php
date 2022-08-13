@@ -62,9 +62,11 @@ class OrderModel extends Model
      * @return string list[].email - 邮箱,前台接口调用时不返回
      * @return string list[].phone_code - 国际电话区号,前台接口调用时不返回 
      * @return string list[].phone - 手机号,前台接口调用时不返回 
+     * @return string list[].company - 公司,前台接口调用时不返回 
      * @return string list[].host_name - 产品标识
      * @return string list[].billing_cycle - 计费周期
      * @return array list[].product_names - 订单下所有产品的商品名称
+     * @return int list[].host_id 产品ID
      * @return int list[].order_item_count - 订单子项数量
      * @return int count - 订单总数
      */
@@ -106,7 +108,7 @@ class OrderModel extends Model
             })
             ->count();
         $orders = $this->alias('o')
-            ->field('o.id,o.type,o.create_time,o.amount,o.status,o.gateway_name gateway,o.credit,o.client_id,c.username client_name,c.credit client_credit,c.email,c.phone_code,c.phone')
+            ->field('o.id,o.type,o.create_time,o.amount,o.status,o.gateway_name gateway,o.credit,o.client_id,c.username client_name,c.credit client_credit,c.email,c.phone_code,c.phone,c.company')
             ->leftjoin('client c', 'c.id=o.client_id')
             ->where(function ($query) use($param) {
                 $query->where('o.type', '<>', 'recharge');
@@ -131,7 +133,7 @@ class OrderModel extends Model
         $orderId = array_column($orders, 'id');
 
         $orderItems = OrderItemModel::alias('oi')
-        	->field('oi.order_id,h.id,h.name,h.billing_cycle,h.billing_cycle_name,p.name product_name,oi.description')
+        	->field('oi.order_id,oi.type,h.id,h.name,h.billing_cycle,h.billing_cycle_name,p.name product_name,oi.description')
         	->leftjoin('host h',"h.id=oi.host_id")
         	->leftjoin('product p',"p.id=oi.product_id")
         	->whereIn('oi.order_id', $orderId)
@@ -142,16 +144,25 @@ class OrderModel extends Model
         $billingCycles = [];
         $productNames = [];
         $descriptions = [];
+        $hostIds = [];
         foreach ($orderItems as $key => $orderItem) {
             $orderItemCount[$orderItem['order_id']] = $orderItemCount[$orderItem['order_id']] ?? 0;
             $orderItemCount[$orderItem['order_id']]++;
+            // 获取产品ID
+            if(!empty($orderItem['id'])){
+                $hostIds[$orderItem['order_id']][] = $orderItem['id'];
+            }
             // 获取产品名称
             $names[$orderItem['order_id']][] = $orderItem['name'];
             // 获取产品计费周期
             $billingCycles[$orderItem['order_id']][] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : '';
             // 获取商品名称
-            if(!empty($orderItem['product_name'])){
+            if(in_array($orderItem['type'], ['addon_idcsmart_promo_code'])){
+                $productNames[$orderItem['order_id']][] = $orderItem['description'];
+            }else if(!empty($orderItem['product_name'])){
                 $productNames[$orderItem['order_id']][] = $orderItem['product_name'];
+            }else{
+                $productNames[$orderItem['order_id']][] = $orderItem['description'];
             }
             // 获取商品名称
             if(!empty($orderItem['description'])){
@@ -187,11 +198,17 @@ class OrderModel extends Model
             // 获取商品名称
             $orders[$key]['product_names'] = $productNames[$order['id']] ?? [];
 
+            if(count($orders[$key]['product_names'])==1){
+                $orders[$key]['host_id'] = $hostIds[$order['id']][0] ?? 0;
+            }else{
+                $orders[$key]['host_id'] = 0;
+            }
+
             $orders[$key]['order_item_count'] = $orderItemCount[$order['id']] ?? 0;
 
             // 前台接口去除字段
             if($app=='home'){
-                unset($orders[$key]['client_id'], $orders[$key]['client_name'], $orders[$key]['client_credit'], $orders[$key]['email'], $orders[$key]['phone_code'], $orders[$key]['phone']);
+                unset($orders[$key]['client_id'], $orders[$key]['client_name'], $orders[$key]['client_credit'], $orders[$key]['email'], $orders[$key]['phone_code'], $orders[$key]['phone'], $orders[$key]['company']);
             }
         }
 
@@ -245,7 +262,7 @@ class OrderModel extends Model
         unset($order['client_id']);
 
         $orderItems = OrderItemModel::alias('oi')
-            ->field('oi.id,oi.description,oi.amount,h.id host_id,p.name product_name,h.name host_name,h.billing_cycle,h.billing_cycle_name,h.status host_status')
+            ->field('oi.id,oi.type,oi.description,oi.amount,h.id host_id,p.name product_name,h.name host_name,h.billing_cycle,h.billing_cycle_name,h.status host_status')
             ->leftjoin('host h',"h.id=oi.host_id")
             ->leftjoin('product p',"p.id=oi.product_id")
             ->where('oi.order_id', $id)
@@ -255,10 +272,16 @@ class OrderModel extends Model
             $orderItems[$key]['amount'] = amount_format($orderItem['amount']); // 处理金额格式
             $orderItems[$key]['host_id'] = $orderItem['host_id'] ?? 0; // 处理空数据
             $orderItems[$key]['product_name'] = $orderItem['product_name'] ?? ''; // 处理空数据
+            $orderItems[$key]['product_name'] = !empty($orderItems[$key]['product_name']) ? $orderItems[$key]['product_name'] : $orderItem['description'];
             $orderItems[$key]['host_name'] = $orderItem['host_name'] ?? ''; // 处理空数据
             $orderItems[$key]['billing_cycle'] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : ''; // 处理空数据
             $orderItems[$key]['host_status'] = $orderItem['host_status'] ?? ''; // 处理空数据
-            unset($orderItems[$key]['billing_cycle_name']);
+
+            if($orderItem['type']=='addon_idcsmart_promo_code'){
+                $orderItems[$key]['product_name'] = $orderItem['description'];
+                $orderItems[$key]['host_name'] = '';
+            }
+            unset($orderItems[$key]['billing_cycle_name'], $orderItems[$key]['type']);
         }
 
         $order['items'] = $orderItems;
@@ -316,7 +339,7 @@ class OrderModel extends Model
                 $id = $this->createOrderBase($param);
 
                 # 记录日志
-                active_log(lang('admin_create_artificial_order', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$client->username, '{order}'=>'#'.$id]), 'order', $id);
+                active_log(lang('admin_create_artificial_order', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{order}'=>'#'.$id]), 'order', $id);
                 $this->commit();
             } catch (\Exception $e) {
                 // 回滚事务
@@ -409,6 +432,8 @@ class OrderModel extends Model
                         'billing_cycle' => $product['pay_type'],
                         'billing_cycle_name' => $value['billing_cycle'],
                         'billing_cycle_time' => $value['duration'],
+                        'active_time' => $time,
+                        'due_time' => $product['pay_type']!='onetime' ? $time : 0,
                         'create_time' => $time
                     ]);
                     $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
@@ -436,8 +461,23 @@ class OrderModel extends Model
 
             $client = ClientModel::find($clientId);
             # 记录日志
-            active_log(lang('admin_create_new_purchase_order', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$client->username, '{order}'=>'#'.$order->id]), 'order', $order->id);
-
+            active_log(lang('admin_create_new_purchase_order', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{order}'=>'#'.$order->id]), 'order', $order->id);
+			add_task([
+				'type' => 'email',
+				'description' => '订单创建,发送邮件',
+				'task_data' => [
+					'name'=>'order_create',//发送动作名称
+					'order_id'=>$order->id,//订单ID
+				],		
+			]);
+			add_task([
+				'type' => 'sms',
+				'description' => '订单创建,发送短信',
+				'task_data' => [
+					'name'=>'order_create',//发送动作名称
+					'order_id'=>$order->id,//订单ID
+				],		
+			]);
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -724,7 +764,7 @@ class OrderModel extends Model
 
             $client = ClientModel::find($host['client_id']);
             # 记录日志
-            active_log(lang('admin_create_upgrade_order', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$client->username, '{order}'=>'#'.$order->id]), 'order', $order->id);
+            active_log(lang('admin_create_upgrade_order', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{order}'=>'#'.$order->id]), 'order', $order->id);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -732,6 +772,7 @@ class OrderModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
+        hook('after_order_create',['id'=>$order->id]);
         return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['id' => $order->id]];
 
 
@@ -831,7 +872,7 @@ class OrderModel extends Model
 
             $client = ClientModel::find($host['client_id']);
             # 记录日志
-            active_log(lang('admin_create_upgrade_order', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$client->username, '{order}'=>'#'.$order->id]), 'order', $order->id);
+            active_log(lang('admin_create_upgrade_order', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{order}'=>'#'.$order->id]), 'order', $order->id);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -839,6 +880,7 @@ class OrderModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
+        hook('after_order_create',['id'=>$order->id]);
         return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['id' => $order->id]];
 
 
@@ -971,7 +1013,7 @@ class OrderModel extends Model
             if(empty($client)){
                 $clientName = '#'.$order->client_id;
             }else{
-                $clientName = '#'.$client->id.$client->username;
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
             }
             # 记录日志
             active_log(lang('admin_adjust_user_order_price', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{old}'=>$order->amount, '{new}'=>($order['amount_unpaid'] + $order['credit'])]), 'order', $order->id);
@@ -1076,7 +1118,7 @@ class OrderModel extends Model
             if(empty($client)){
                 $clientName = '#'.$order->client_id;
             }else{
-                $clientName = '#'.$client->id.$client->username;
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
             }
             # 记录日志
             active_log(lang('admin_mark_user_order_payment_status', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id]), 'order', $order->id);
@@ -1120,7 +1162,7 @@ class OrderModel extends Model
             if(empty($client)){
                 $clientName = '#'.$order->client_id;
             }else{
-                $clientName = '#'.$client->id.$client->username;
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
             }
             # 记录日志
             active_log(lang('admin_delete_user_order', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id]), 'order', $order->id);
@@ -1246,32 +1288,55 @@ class OrderModel extends Model
         if (empty($host)){
             return false;
         }
-        if (!in_array($host->billing_cycle,['onetime'])){
-            # 修改到期时间
-            $HostModel->update([
-                'due_time' => time() + intval($host->billing_cycle_time)
-            ],['id'=>$id]);
-        }
+        # 修改产品
+        $HostModel->update([
+            'status' => 'Pending',
+            'due_time' => !in_array($host->billing_cycle,['onetime']) ? (time() + intval($host->billing_cycle_time)) : 0,
+        ],['id'=>$id]);
+
         # 暂停时,付款后解除
         if ($host->status == 'Suspended'){
-            $unsuspend = $HostModel->unsuspendAccount($id);
+			add_task([
+				'type' => 'host_unsuspend',
+				'description' => '解除暂停',
+				'task_data' => [
+					'host_id'=>$id,//主机ID
+				],		
+			]);
+            /*$unsuspend = $HostModel->unsuspendAccount($id);
             if ($unsuspend['status'] == 200){
                 # 记录日志
-
+				
                 # 加任务队列
+
             }else{
 
-            }
+            }*/
         }
 
         # 开通
         if($host->auto_setup==1){
-            $create = $HostModel->createAccount($id);
+			add_task([
+				'type' => 'email',
+				'description' => '产品开通中,发送邮件',
+				'task_data' => [
+					'name'=>'host_pending',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
+			add_task([
+				'type' => 'host_create',
+				'description' => '主机创建',
+				'task_data' => [
+					'host_id'=>$id,//主机ID
+				],		
+			]);
+            /*$create = $HostModel->createAccount($id);
             if ($create['status'] == 200){
-
+				
             }else{
 
-            }
+            }*/
         }
         
         # 发送邮件短信
@@ -1282,6 +1347,7 @@ class OrderModel extends Model
     # 升降级订单处理
     private function upgradeOrderHandle($id)
     {
+		
         $upgrade = UpgradeModel::find($id);
         if (empty($upgrade)){
             return false;
@@ -1292,35 +1358,16 @@ class OrderModel extends Model
             'update_time' => time()
         ], ['id' => $id]);
 
-        # 升降级
-        if($upgrade['type']=='product'){
-            // 获取接口
-            $product = ProductModel::find($upgrade['rel_id']);
-            if($product['type']=='server_group'){
-                $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
-                $serverId = $server['id'] ?? 0;
-            }else{
-                $serverId = $product['rel_id'];
-            }
-            HostModel::update([
-                'product_id' => $upgrade['rel_id'],
-                'server_id' => $serverId,
-                'first_payment_amount' => $upgrade['price'],
-                'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $upgrade['price'] : 0,
-                'billing_cycle' => $product['pay_type'],
-                'billing_cycle_name' => $upgrade['billing_cycle_name'],
-                'billing_cycle_time' => $upgrade['billing_cycle_time'],
-            ],['id' => $upgrade['host_id']]);
-            $ModuleLogic = new ModuleLogic();
-            $host = HostModel::find($upgrade['host_id']);
-            $ModuleLogic->changeProduct($host, json_decode($upgrade['data'], true));
-        }else if($upgrade['type']=='config_option'){
-            $ModuleLogic = new ModuleLogic();
-            $host = HostModel::find($upgrade['host_id']);
-            $ModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
-        }
-
-        # 发送邮件短信
+        
+		# 添加到定时任务
+		add_task([
+			'type' => 'host_upgrade',
+			'description' => '升降级',
+			'task_data' => [
+				'upgrade_id'=>$id,//upgrade ID
+			],		
+		]);
+        
 
         return true;
     }

@@ -14,13 +14,13 @@
                     <t-option v-for="(item,index) in typelist" :key="item.id" :label="item.name" :value="item.id" />
                   </t-select>
                 </t-form-item>
-                <t-form-item label="关键字" name="keywords" class="inlineflex">
+                <t-form-item label="关键字" name="keywords">
                   <t-input placeholder="请输入" style="width: 250px;" v-model="detialform.keywords" />
                 </t-form-item>
                 <t-form-item label="上传附件" name="attachment">
                   <t-upload theme="custom" multiple v-model="files" :before-upload="beforeUploadfile"
-                    action="http://101.35.248.14/console/v1/upload" :format-response="formatResponse" @fail="handleFail"
-                    @progress="uploadProgress">
+                    action="http://kfc.idcsmart.com/console/v1/upload" :format-response="formatResponse"
+                    @fail="handleFail" @progress="uploadProgress">
                     <t-button theme="default" class="upload">
                       <t-icon name="attach" color="#ccc"></t-icon> 附件
                     </t-button>

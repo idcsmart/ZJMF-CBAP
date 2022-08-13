@@ -953,8 +953,12 @@
                     ImagePng($image, $filename);
                 }
             }
-            
+
+            $content = ob_get_clean();
+
             ImageDestroy($image);
+
+            return response($content, 200, ['Content-Length' => strlen($content)])->contentType('image/png');
         }
     
         //----------------------------------------------------------------------
@@ -3292,13 +3296,13 @@
                 $tab = $this->encode($intext);
                 $err = ob_get_contents();
                 ob_end_clean();
-                
+
                 if ($err != '')
                     QRtools::log($outfile, $err);
                 
                 $maxSize = (int)(QR_PNG_MAXIMUM_SIZE / (count($tab)+2*$this->margin));
                 
-                QRimage::png($tab, $outfile, min(max(1, $this->size), $maxSize), $this->margin,$saveandprint);
+                return QRimage::png($tab, $outfile, min(max(1, $this->size), $maxSize), $this->margin,$saveandprint);
             
             } catch (Exception $e) {
             

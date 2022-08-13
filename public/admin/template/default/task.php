@@ -1,4 +1,3 @@
-
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/manage.css">
@@ -13,9 +12,7 @@
           </t-select>
         </t-form-item>
         <t-form-item name="keywords" class="search">
-          <t-input v-model="formData.keywords" 
-          :placeholder="`${lang.please_search}ID、${lang.description}`" 
-          ></t-input>
+          <t-input v-model="formData.keywords" :placeholder="`${lang.please_search}ID、${lang.description}`"></t-input>
         </t-form-item>
         <t-form-item class="f-btn">
           <t-button theme="primary" type="submit">{{lang.query}}</t-button>
@@ -23,11 +20,18 @@
         </t-form-item>
       </t-form>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover"
-      :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange"
-      :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
+      </template>
+      <template #description="{row}">
+        <t-icon v-if="row.status === 'Finish'" name="check-circle-filled" style="color:#00a870;"></t-icon>
+        <template v-else>
+          <t-tooltip :content="row.fail_reason" theme="light" :show-arrow="false">
+            <t-icon name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
+          </t-tooltip>
+        </template>
+        {{row.description}}
       </template>
       <template #status="{row}">
         <t-tag theme="warning" variant="light" v-if="row.status==='Wait'" class="com-status">{{lang.Wait}}</t-tag>
@@ -42,11 +46,10 @@
         {{row.finish_time === 0 ? '-' : moment(row.finish_time * 1000).format('YYYY-MM-DD HH:mm')}}
       </template>
       <template #retry="{row}">
-        <a class="common-look" v-if="row.retry" @click="retryFun(row.id)">{{lang.retry}}</a>
+        <a class="common-look" v-if="!row.retry && row.status === 'Failed'" @click="retryFun(row.id)">{{lang.retry}}</a>
       </template>
     </t-table>
-    <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions"
-      :on-change="changePage" :current="params.page"/>
+    <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions" :on-change="changePage" :current="params.page" />
   </t-card>
 </div>
 <!-- =======页面独有======= -->

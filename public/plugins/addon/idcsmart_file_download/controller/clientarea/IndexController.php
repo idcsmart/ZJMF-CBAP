@@ -101,7 +101,7 @@ class IndexController extends PluginBaseController
             if(file_exists($data['filename'])){
                 # 记录日志
                 $clientId = get_client_id();
-                active_log(lang_plugins('log_client_download_file', ['{client}'=>'#'.$clientId.request()->client_name,'{name}'=>$data['name']]), 'addon_idcsmart_file', $param['id']);
+                active_log(lang_plugins('log_client_download_file', ['{client}'=>'client#'.$clientId.'#'.request()->client_name.'#','{name}'=>$data['name']]), 'addon_idcsmart_file', $param['id']);
 
                 \ob_clean();
                 return download($data['filename'], $data['name'].'.'.$data['filetype']);

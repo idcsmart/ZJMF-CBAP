@@ -7,7 +7,10 @@ function getTask (params) {
 function reloadTask (id) {
   return Axios.put(`/task/${id}/retry`)
 }
-
+// 用户管理-用户列表
+function getClientList (params) {
+  return Axios.get(`/client`, { params })
+}
 // 日志
 function getSystemLog (params) {
   return Axios.get('/log/system', { params })

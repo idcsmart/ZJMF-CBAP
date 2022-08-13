@@ -32,4 +32,7 @@ return [
     'log_admin_edit_help_type' => '{admin}编辑帮助中心分类：{name}',
     'log_admin_delete_help_type' => '{admin}删除帮助中心分类：{name}',
     'log_admin_edit_help_index' => '{admin}修改帮助中心首页',
+
+    # 导航
+    'nav_plugin_addon_idcsmart_help' => '帮助中心',
 ];

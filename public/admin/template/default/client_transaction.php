@@ -10,26 +10,34 @@
     <span class="cur">{{lang.flow}}</span>
   </div>
   <t-card class="list-card-container">
-    <ul class="common-tab">
-      <li>
-        <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
-      </li>
-      <li>
-        <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>
-      </li>
-      <li>
-        <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
-      </li>
-      <li class="active">
-        <a href="javascript:;">{{lang.flow}}</a>
-      </li>
-      <li>
-        <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
-      </li>
-      <li>
-        <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
-      </li>
-    </ul>
+    <div class="com-h-box">
+      <ul class="common-tab">
+        <li>
+          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
+        </li>
+        <li>
+          <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>
+        </li>
+        <li>
+          <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
+        </li>
+        <li class="active">
+          <a href="javascript:;">{{lang.flow}}</a>
+        </li>
+        <li>
+          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+        </li>
+        <li>
+          <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+        </li>
+      </ul>
+      <t-select class="user" v-if="this.clientList.length>0" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
+        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+          #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
+          <span v-if="item.company">({{item.company}})</span>
+        </t-option>
+      </t-select>
+    </div>
     <div class="common-header">
       <t-button @click="addFlow" class="add">{{lang.new_flow}}</t-button>
     </div>
@@ -50,7 +58,9 @@
         {{moment(row.create_time * 1000).format('YYYY/MM/DD HH:mm')}}
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="delteFlow(row)">{{lang.delete}}</a>
+        <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+          <t-icon name="delete" class="common-look" @click="delteFlow(row)"></t-icon>
+        </t-tooltip>
       </template>
     </t-table>
     <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions" :on-change="changePage" />

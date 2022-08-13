@@ -20,6 +20,12 @@ Route::group('console/v1',function (){
     # 取消
     Route::put('refund/:id/cancel', "\\addon\\idcsmart_refund\\controller\\clientarea\\RefundController@cancel")
         ->append(['_plugin'=>'idcsmart_refund','_controller'=>'refund','_action'=>'cancel']);
+    # 获取待审核金额
+    Route::get('refund/pending/amount', "\\addon\\idcsmart_refund\\controller\\clientarea\\RefundController@pendingAmount")
+        ->append(['_plugin'=>'idcsmart_refund','_controller'=>'refund','_action'=>'pending_amount']);
+    # 获取待审核金额
+    Route::get('refund/host/:id/refund', "\\addon\\idcsmart_refund\\controller\\clientarea\\RefundController@hostRefundInfo")
+        ->append(['_plugin'=>'idcsmart_refund','_controller'=>'refund','_action'=>'host_refund_info']);
 })
     ->middleware(\app\http\middleware\ParamFilter::class)
     ->middleware(\app\http\middleware\CheckHome::class);

@@ -9,6 +9,7 @@
           formData: {
             currency_code: '',
             currency_prefix: '',
+            currency_suffix: '',
             recharge_open: 0,
             recharge_min: ''
           },

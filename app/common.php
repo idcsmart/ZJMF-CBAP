@@ -1125,7 +1125,8 @@ function add_task($param)
  * @param string param.sms_global_name  - 国际短信接口标识名（可以为空，默认智简魔方短信接口）
  * @param string param.sms_global_template[].title  - 国际短信模板标题 required
  * @param string param.sms_global_template[].content  - 国际短信模板内容 required
- * @param string param.email_name  - 邮件接口名称（可以为空，默认SMTP接口）  
+ * @param string param.email_name  - 邮件接口名称（可以为空，默认SMTP接口）
+ * @param string param.email_template[].name  - 邮件模板名称 required 
  * @param string param.email_template[].title  - 邮件模板标题 required
  * @param string param.email_template[].content  - 邮件模板内容 required
  * @return mixed
@@ -1185,4 +1186,25 @@ function password_decrypt($password)
     $plainText = openssl_decrypt($encrypted,'AES-128-CBC',$key,OPENSSL_RAW_DATA,$iv);
 
     return $plainText;
+}
+
+/**
+ * @title 获取目录下文件夹
+ * @desc 获取目录下文件夹
+ * @author theworld
+ * @version v1
+ * @param string path - 目录路径 required
+ */
+function get_files($path)
+{
+    $arr = [];//存放文件名
+    $handler = opendir($path);//当前目录中的文件夹下的文件夹
+    while (($filename = readdir($handler)) !== false) {
+        if ($filename != "." && $filename != ".." &&  strpos($filename,'.') ===false) {
+            //$arr[]=$filename;
+            array_push($arr, $filename);
+        }
+    }
+    closedir($handler);
+    return $arr;
 }

@@ -50,8 +50,9 @@
   width: 50%;
   border-right: 1px solid #ccc;
   padding: 0 10px;
-  margin-right: 4%;
+  margin-right: 40px;
   position: relative;
+  overflow: hidden;
 }
 .content_right {
   width: 50%;
@@ -65,8 +66,9 @@
 }
 .con_chexkbox {
   padding: 10px;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  /* display: flex;
+  flex-direction: column; */
 }
 .con_page {
   margin-top: 15px;
@@ -80,19 +82,23 @@
   /* height: 100%; */
   display: flex;
   align-items: center;
-  padding: 0 10px;
-  position: absolute;
+  position: fixed;
   top: 50%;
-  right: -10%;
+  left: 50%;
+  margin-left: -15px;
 }
 .connect {
   width: 30px;
   height: 30px;
-  line-height: 29px;
+  /* line-height: 29px; */
   background-color: #eee;
   border-radius: 3px;
-  text-align: center;
+  /* text-align: center; */
   font-size: 18px;
+  /* line-height: 30px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .chosepro {
   display: flex;
@@ -111,9 +117,10 @@
 }
 .checkboxitem {
   width: 100%;
-  display: block;
+  /* display: inline-block; */
   padding: 10px 0;
   padding-left: 5px;
+  margin-bottom: -10px;
 }
 .checkboxitem_acitve {
   background-color: #ecf2fe;
@@ -129,7 +136,7 @@
 }
 .checkboxitem .t-checkbox__label {
   text-overflow: ellipsis;
-  width: 90%;
+  width: 80%;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -139,4 +146,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
+}
+.helpIndex .t-dialog {
+  max-height: 80% !important;
+}
+.helpIndex .t-pagination__total {
+  display: none;
+}
+.helpIndex .t-pagination__total + .t-select__wrap {
+  display: none;
 }

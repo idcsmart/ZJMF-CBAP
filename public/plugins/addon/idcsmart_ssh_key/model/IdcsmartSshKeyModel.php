@@ -8,8 +8,8 @@ use app\common\model\ClientModel;
 use addon\idcsmart_ssh_key\IdcsmartSshKey;
 
 /**
- * @title 新闻模型
- * @desc 新闻模型
+ * @title SSH秘钥模型
+ * @desc SSH秘钥模型
  * @use addon\idcsmart_ssh_key\model\IdcsmartSshKeyModel
  */
 class IdcsmartSshKeyModel extends Model
@@ -80,13 +80,16 @@ class IdcsmartSshKeyModel extends Model
 
         $this->startTrans();
         try {
-            $this->create([
+            $idcsmartSshKey = $this->create([
                 'client_id' => $clientId,
                 'name' => $param['name'] ?? '',
                 'public_key' => $param['public_key'] ?? '',
                 'finger_print' => getPublicKeyFingerprint($param['public_key']),
                 'create_time' => time()
             ]);
+
+            # 记录日志
+            active_log(lang_plugins('log_client_add_ssh_key', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$param['name']]), 'addon_idcsmart_ssh_key', $idcsmartSshKey->id);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -128,6 +131,9 @@ class IdcsmartSshKeyModel extends Model
                 'update_time' => time()
             ], ['id' => $param['id']]);
 
+            # 记录日志
+            active_log(lang_plugins('log_client_edit_ssh_key', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$param['name']]), 'addon_idcsmart_ssh_key', $idcsmartSshKey->id);
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -160,6 +166,9 @@ class IdcsmartSshKeyModel extends Model
 
         $this->startTrans();
         try {
+            # 记录日志
+            active_log(lang_plugins('log_client_delete_ssh_key', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$idcsmartSshKey['name']]), 'addon_idcsmart_ssh_key', $idcsmartSshKey->id);
+            
             $this->destroy($id);
             $this->commit();
         } catch (\Exception $e) {

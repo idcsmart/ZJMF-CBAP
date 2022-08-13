@@ -1,7 +1,7 @@
 <?php
 namespace addon\idcsmart_news\controller;
 
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 use addon\idcsmart_news\model\IdcsmartNewsModel;
 use addon\idcsmart_news\model\IdcsmartNewsTypeModel;
 use addon\idcsmart_news\validate\IdcsmartNewsValidate;
@@ -11,7 +11,7 @@ use addon\idcsmart_news\validate\IdcsmartNewsValidate;
  * @desc 新闻中心(后台)
  * @use addon\idcsmart_news\controller\AdminIndexController
  */
-class AdminIndexController extends PluginBaseController
+class AdminIndexController extends PluginAdminBaseController
 {
 	public function initialize()
     {

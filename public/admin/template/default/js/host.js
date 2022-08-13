@@ -24,7 +24,7 @@
             },
             {
               colKey: 'client_id',
-              title: lang.user + '(' + lang.acount + ')',
+              title: lang.user + '(' + lang.company + ')',
               width: 250
             },
             {

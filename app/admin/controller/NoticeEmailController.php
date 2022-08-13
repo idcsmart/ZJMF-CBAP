@@ -27,6 +27,7 @@ class NoticeEmailController extends AdminBaseController
      * @method  GET
      * @return array list - 邮件模板
      * @return int list[].id - 邮件模板ID
+     * @return string list[].name - 名称
      * @return string list[].subject - 标题
      * @return int count - 邮件模板总数
      */
@@ -60,6 +61,7 @@ class NoticeEmailController extends AdminBaseController
      * @param int id - 邮件模板ID required
      * @return object email_template - 邮件模板
      * @return int email_template.id - 邮件模板ID
+     * @return string email_template.name - 名称
      * @return string email_template.subject - 标题
      * @return string email_template.message - 内容
      */
@@ -92,6 +94,7 @@ class NoticeEmailController extends AdminBaseController
      * @version v1
      * @url /admin/v1/notice/email/template
      * @method  POST
+     * @param string name - 名称 required
      * @param string subject - 标题 required
      * @param string message - 内容 required
      */
@@ -123,6 +126,7 @@ class NoticeEmailController extends AdminBaseController
      * @url /admin/v1/notice/email/template/:id
      * @method  PUT
      * @param int id - 邮件模板ID required
+     * @param string name - 名称 required
      * @param string subject - 标题 required
      * @param string message - 内容 required
      */

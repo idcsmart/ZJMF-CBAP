@@ -19,11 +19,10 @@
         <t-button theme="default" @click="getMore" class="add">{{lang.get_more_interface}}</t-button>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
-      :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template #sms_type="{row}">
-        <span v-if="row.sms_type.indexOf(1)!==-1">{{lang.international}}</span>
-        <span v-if="row.sms_type.indexOf(0)!==-1">/&nbsp;{{lang.domestic}}</span>
+        <span v-if="row.sms_type.indexOf(1)!==-1">{{lang.international}}&nbsp;/</span>
+        <span v-if="row.sms_type.indexOf(0)!==-1">{{lang.domestic}}</span>
       </template>
       <template #status="{row}">
         <t-tag theme="success" class="status" v-if="row.status===1" variant="light">{{lang.enable}}</t-tag>
@@ -31,14 +30,33 @@
         <t-tag theme="default" class="status" v-if="row.status===3" variant="light">{{lang.not_install}}</t-tag>
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3">{{row.status ? lang.disable :
-          lang.enable}}</a>
-        <a class="common-look" @click="jump(row)">{{lang.template_manage}}</a>
-        <a class="common-look" v-if="row.help_url" :href="row.help_url"
-          target="_blank">{{lang.apply_interface}}</a>
-        <a class="common-look" @click="handleConfig(row)">{{lang.config}}</a>
-        <a class="common-look" @click="installHandler(row)">{{ row.status !== 3 ?
-          lang.uninstall : lang.install }}</a>
+        <t-tooltip :content="enableTitle(row.status)" :show-arrow="false" theme="light">
+          <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3">
+            <img v-if="row.status === 0" :src='`${urlPath}/img/icon/enable.png`' alt="">
+            <img v-else-if="row.status === 1" :src='`${urlPath}/img/icon/disable.png`' alt="">
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.template_manage" :show-arrow="false" theme="light">
+          <a class="common-look" @click="jump(row)" v-if="row.status!==3">
+            <t-icon name="control-platform"></t-icon>
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.apply_interface" :show-arrow="false" theme="light">
+          <a class="common-look" v-if="row.help_url && row.status !== 3" :href="row.help_url" target="_blank">
+            <t-icon name="link" size="20px"></t-icon>
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.config" :show-arrow="false" theme="light">
+          <a class="common-look" @click="handleConfig(row)" v-if="row.status!==3">
+            <t-icon name="tools"></t-icon>
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="installTitle(row.status)" :show-arrow="false" theme="light">
+          <a class="common-look" @click="installHandler(row)">
+            <img v-if="row.status === 3" :src='`${urlPath}/img/icon/install.png`' alt="">
+            <img v-else-if="row.status !== 3" :src='`${urlPath}/img/icon/uninstall.png`' alt="">
+          </a>
+        </t-tooltip>
       </template>
     </t-table>
   </t-card>

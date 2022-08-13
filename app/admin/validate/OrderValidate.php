@@ -91,7 +91,7 @@ class OrderValidate extends Validate
                 if(!isset($value['qty']) || !is_integer($value['qty']) || $value['qty']<=0){
                     return false;
                 }
-                if(isset($value['price']) && (!is_float($value['price']) || $value['price']<0)){
+                if(isset($value['price']) && (!is_numeric($value['price']) || $value['price']<0)){
                     return false;
                 }
             }
@@ -110,7 +110,7 @@ class OrderValidate extends Validate
             if(isset($product['config_options']) && !is_array($product['config_options'])){
                 return false;
             }
-            if(isset($product['price']) && (!is_float($product['price']) || $product['price']<0)){
+            if(isset($product['price']) && (!is_numeric($product['price']) || $product['price']<0)){
                 return false;
             }
         }else{

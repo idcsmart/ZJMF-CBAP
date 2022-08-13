@@ -10,7 +10,7 @@ window.onload = function () {
     methods: {
       getData () {
         axios
-          .get('http://101.35.248.14/v1/doc')
+          .get('/v1/doc')
           .then(res => {
             this.list = res.data.data.list.filter(data=>data.section === 'function').map(item => {
               var temp = item

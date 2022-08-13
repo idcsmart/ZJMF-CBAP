@@ -9,6 +9,7 @@ use app\common\logic\UploadLogic;
 use app\common\model\ClientModel;
 use app\common\model\HostModel;
 use app\common\model\ProductModel;
+use app\common\model\MenuModel;
 
 /**
  * @title 公共接口
@@ -224,6 +225,7 @@ class CommonController extends AdminBaseController
      * @return string list[].child[].child[].url - 地址
      * @return int list[].child[].child[].order - 排序
      * @return int list[].child[].child[].parent_id - 父级ID
+     * @return array rules - 权限规则
      */
     public function adminAuthList()
     {
@@ -231,6 +233,36 @@ class CommonController extends AdminBaseController
             'status' => 200,
             'msg' => lang('success_message'),
             'data' => (new AuthModel())->adminAuthList()
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-08-10
+     * @title 获取后台导航
+     * @desc 获取后台导航
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/menu
+     * @method  GET
+     * @return array menu - 菜单
+     * @return int menu[].id - 菜单ID
+     * @return string menu[].name - 名称
+     * @return string menu[].url - 网址
+     * @return string menu[].icon - 图标
+     * @return int menu[].parent_id - 父ID
+     * @return array menu[].child - 子菜单
+     * @return int menu[].child[].id - 菜单ID
+     * @return string menu[].child[].name - 名称
+     * @return string menu[].child[].url - 网址
+     * @return string menu[].child[].icon - 图标
+     * @return int menu[].child[].parent_id - 父ID
+     */
+    public function adminMenu(){
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => (new MenuModel())->adminMenu()
         ];
         return json($result);
     }
@@ -244,7 +276,6 @@ class CommonController extends AdminBaseController
      * @author wyh
      * @version v1
      * @param resource file - 文件资源 required
-     * @return string lang_home_open 1 前台多语言开关:1开启，0关闭
      */
     public function upload()
     {

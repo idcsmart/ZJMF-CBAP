@@ -12,7 +12,7 @@ class ViewController extends AdminBaseController
 			'title'=>'首页-智简魔方',		
 		];
 		$data['template_catalog'] = DIR_ADMIN;
-		$data['themes'] = 'default';
+		$data['themes'] = configuration('admin_theme');
 		$tplName = $param['view_html'];
 		View::config(['view_path' => '../public/'.DIR_ADMIN.'/template/default/']);
 		return View::fetch('/'.$tplName,$data);
@@ -22,7 +22,7 @@ class ViewController extends AdminBaseController
     {
     	$param = $this->request->param();
 		$data['template_catalog'] = DIR_ADMIN;
-		$data['themes'] = 'default';
+		$data['themes'] = configuration('admin_theme');
 		$name = $param['name'];
 		$tplName = $param['view_html'];
 		

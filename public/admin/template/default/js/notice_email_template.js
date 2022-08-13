@@ -23,15 +23,20 @@
             {
               colKey: 'id',
               title: 'ID',
-              width: 150
+              width: 100
+            },
+            {
+              colKey: 'name',
+              title: lang.email_name,
+              width: 200
             },
             {
               colKey: 'subject',
-              title: '模板标题'
+              title: lang.template_title
             },
             {
               colKey: 'op',
-              title: '管理',
+              title: lang.manage,
               width: 200
             },
           ],
@@ -72,10 +77,25 @@
           statusTip: '',
           addTip: '',
           installTip: '',
+          maxHeight: '',
           optType: '',
           name: '', // 插件标识
           type: '', // 安装/卸载
           module: 'sms' // 当前模块
+        }
+      },
+      mounted () {
+        this.maxHeight = document.getElementById('content').clientHeight - 180
+        let timer = null
+        window.onresize = () => {
+          if (timer) {
+            return
+          }
+          timer = setTimeout(() => {
+            this.maxHeight = document.getElementById('content').clientHeight - 180
+            clearTimeout(timer)
+            timer = null
+          }, 300)
         }
       },
       created () {

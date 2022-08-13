@@ -59,7 +59,7 @@
             {
               colKey: 'op',
               title: lang.manage,
-              width: 260
+              width: 140
             },
           ],
           hideSortTips: true,
@@ -92,9 +92,30 @@
           installTip: '',
           configTip: '',
           configData: [],
+          urlPath: url,
           name: '', // 插件标识
           type: '', // 安装/卸载
           module: 'sms' // 当前模块
+        }
+      },
+      computed: {
+        enableTitle () {
+          return (status) => {
+            if (status === 1) {
+              return lang.disable
+            } else if (status === 0) {
+              return lang.enable
+            }
+          }
+        },
+        installTitle () {
+          return (status) => {
+            if (status === 3) {
+              return lang.install
+            } else {
+              return lang.uninstall
+            }
+          }
         }
       },
       methods: {

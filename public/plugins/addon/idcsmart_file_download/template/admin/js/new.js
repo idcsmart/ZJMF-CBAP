@@ -36,12 +36,12 @@
               ellipsis: true,
             },
             {
-              width: 120,
+              width: 150,
               colKey: "type",
               title: "所属分类",
             },
             {
-              width: 100,
+              width: 150,
               colKey: "admin",
               title: "发布人",
             },
@@ -59,7 +59,7 @@
             },
             {
               colKey: "op",
-              width: 120,
+              width: 100,
               title: "操作",
               cell: "op",
             },
@@ -212,6 +212,10 @@
             .catch((err) => {
               this.$message.error(err.data.msg);
             });
+        },
+        //取消修改
+        canceledit() {
+          this.gettypelist();
         },
         //新增
         addtype() {

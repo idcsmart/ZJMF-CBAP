@@ -29,16 +29,18 @@
               },
             },
             {
-              width: "300",
+              width: "400",
               colKey: "title",
               title: "文档名称",
               ellipsis: true,
             },
             {
+              width: "150",
               colKey: "type",
               title: "所属分类",
             },
             {
+              width: "150",
               colKey: "admin",
               title: "发布人",
             },
@@ -49,13 +51,14 @@
               cell: "createtime",
             },
             {
+              width: 110,
               colKey: "hidden",
               title: "发布/撤回",
               cell: "pushorback",
             },
             {
               colKey: "op",
-              width: 200,
+              width: 100,
               title: "操作",
               cell: "op",
             },
@@ -113,6 +116,9 @@
         this.getlist();
       },
       methods: {
+        canceledit() {
+          this.gettypelist();
+        },
         //分页改变
         changepages(res) {
           console.log(res, "pagesize");
@@ -132,11 +138,7 @@
         },
         //删除
         deletes(id) {
-          console.log(id, "help");
-          helpdelete({ id }).then((res) => {
-            this.$message.success(res.data.msg);
-            this.getlist();
-          });
+          this.gettypelist();
         },
         //获取文档列表
         async getlist(page) {

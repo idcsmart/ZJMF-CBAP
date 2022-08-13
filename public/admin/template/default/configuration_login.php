@@ -9,6 +9,9 @@
     <li class="active">
       <a href="javascript:;">{{lang.login_setting}}</a>
     </li>
+    <li>
+      <a href="configuration_theme.html">{{lang.login_setting}}</a>
+    </li>
   </ul>
   <div class="box">
     <t-form :data="formData" :label-width="80" label-align="top"

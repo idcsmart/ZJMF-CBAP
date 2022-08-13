@@ -100,24 +100,51 @@
             ],
           },
           payList: [],
-          maxHeight: ''
+          maxHeight: '',
+          clinetParams: {
+            page: 1,
+            limit: 1000,
+            orderby: 'id',
+            sort: 'desc'
+          },
+          clientList: [], // 用户列表
+          popupProps: {
+            overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
+          },
         }
       },
       mounted () {
-        this.maxHeight = document.getElementById('content').clientHeight - 220
+        this.maxHeight = document.getElementById('content').clientHeight - 240
         let timer = null
         window.onresize = () => {
           if (timer) {
             return
           }
           timer = setTimeout(() => {
-            this.maxHeight = document.getElementById('content').clientHeight - 220
+            this.maxHeight = document.getElementById('content').clientHeight - 240
             clearTimeout(timer)
             timer = null
           }, 300)
         }
       },
       methods: {
+        changeUser (id) {
+          this.id = id
+          location.href = `client_transaction.html?client_id=${this.id}`
+        },
+        async getClintList () {
+          try {
+            const res = await getClientList(this.clinetParams)
+            this.clientList = res.data.data.list
+            this.clientTotal = res.data.data.count
+            if (this.clientList.length < this.clientTotal) {
+              this.clinetParams.limit = this.clientTotal
+              this.getClintList()
+            }
+          } catch (error) {
+            console.log(error.data.msg)
+          }
+        },
         changePage (e) {
           this.params.page = e.current
           this.params.limit = e.pageSize
@@ -203,9 +230,10 @@
         },
       },
       created () {
-        this.id = this.params.client_id = location.href.split('?')[1].split('=')[1]
+        this.id = this.params.client_id = location.href.split('?')[1].split('=')[1] * 1
         this.getClientList()
         this.getPayway()
+        this.getClintList()
         this.currency_prefix = JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥'
       },
     }).$mount(template)

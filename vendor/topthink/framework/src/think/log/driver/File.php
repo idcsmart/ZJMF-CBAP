@@ -123,6 +123,8 @@ class File implements LogHandlerInterface
 
         $message = implode(PHP_EOL, $info) . PHP_EOL;
 
+        return true;
+
         return error_log($message, 3, $destination);
     }
 

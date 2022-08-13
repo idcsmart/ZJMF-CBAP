@@ -31,4 +31,7 @@ return [
     'log_admin_add_news_type' => '{admin}新增新闻中心分类：{name}',
     'log_admin_edit_news_type' => '{admin}编辑新闻中心分类：{name}',
     'log_admin_delete_news_type' => '{admin}删除新闻中心分类：{name}',
+
+    # 导航
+    'nav_plugin_addon_idcsmart_news' => '新闻中心',
 ];

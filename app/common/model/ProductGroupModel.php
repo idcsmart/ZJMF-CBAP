@@ -364,20 +364,20 @@ class ProductGroupModel extends Model
                 $preFirstProductGroup = $this->where('id',$param['pre_first_product_group_id'])
                     ->where('parent_id',0)
                     ->find();
+
                 if (empty($preFirstProductGroup)){
                     throw new \Exception(lang('first_product_group_is_not_exist'));
                 }
+                $order = $preFirstProductGroup['order'];
 
                 if (isset($param['backward']) && $param['backward']){ # 向后移动
-                    $preFirstProductGroup->save([
-                        'order' => $firstProductGroup['order']
-                    ]);
                     $firstProductGroup->save([
-                        'order' => $preFirstProductGroup['order']
+                        'order' => $order
                     ]);
 
                     $tmps = $this->where('parent_id',0)
-                        ->where('order','>=',$preFirstProductGroup['order'])
+                        ->where('order','>=',$order)
+                        ->where('id','<>',$param['id'])
                         ->select()
                         ->toArray();
                     foreach ($tmps as $tmp){
@@ -386,13 +386,10 @@ class ProductGroupModel extends Model
                             'update_time' => time()
                         ],['id'=>$tmp['id']]);
                     }
-                    $firstProductGroup->save([
-                        'order' => $preFirstProductGroup['order']
-                    ]);
 
                 }else{
                     $tmps = $this->where('parent_id',0)
-                        ->where('order','<=',$preFirstProductGroup['order'])
+                        ->where('order','<=',$order)
                         ->select()
                         ->toArray();
                     foreach ($tmps as $tmp){
@@ -402,7 +399,7 @@ class ProductGroupModel extends Model
                         ],['id'=>$tmp['id']]);
                     }
                     $firstProductGroup->save([
-                        'order' => $preFirstProductGroup['order']+1
+                        'order' => $order+1
                     ]);
                 }
 

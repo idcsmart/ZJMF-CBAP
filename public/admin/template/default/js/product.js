@@ -57,7 +57,7 @@
           params: {
             keywords: '',
             page: 1,
-            limit: 1000,
+            limit: 100,
             orderby: 'id',
             sort: 'desc'
           },
@@ -122,7 +122,19 @@
             pre_first_product_group_id: 0, // 目标一级分组id
             backward: 1
           },
-          maxHeight: ''
+          dragForm: { // 拖动商品至其他商品租
+            id: '', // 当前id
+            pre_product_id: 0,
+            product_group_id: ''
+          },
+          secondGroupForm: { // 拖动整个二级分组
+            id: 0,
+            first_product_group_id: '',
+            pre_product_group_id: '',
+            pre_first_product_group_id: ''
+          },
+          maxHeight: '',
+          isFilter: false // 是否过滤其他分组
         }
       },
       mounted () {
@@ -245,7 +257,7 @@
             this.delteProduct(row.id)
           }
         },
-        // 移动分组
+        // 弹窗移动分组
         async moveProduct ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
@@ -259,6 +271,17 @@
           } else {
             console.log('Errors: ', validateResult);
             this.$message.warning(firstError);
+          }
+        },
+        // 拖动移动
+        async movePorductHandel () {
+          try {
+            const res = await dragProductGroup(this.dragForm)
+            this.$message.success(res.data.msg)
+            this.delHasPro = false
+            this.getProductList()
+          } catch (error) {
+            this.$message.error(error.data.msg)
           }
         },
         // 删除商品
@@ -300,10 +323,27 @@
           try {
             this.firstMove.backward = targetIndex - currentIndex > 0 ? 1 : 0
             // 一级分组移动
-            if((current.key.indexOf('f') !== -1) && (target.key.indexOf('f')!==-1)){
+            if ((current.key.indexOf('f') !== -1) && (target.key.indexOf('f') !== -1)) {
               this.firstMove.id = current.id
               this.firstMove.pre_first_product_group_id = target.id
               this.moveFirst()
+            }
+            // 移动整个二级分组
+            if ((current.key.indexOf('s') !== -1) && (target.key.indexOf('s') !== -1)) {
+              console.log("current:", current, "target:", target)
+              this.secondGroupForm.id = current.id
+              this.secondGroupForm.first_product_group_id = current.id
+              this.secondGroupForm.pre_product_group_id = target.id
+              this.secondGroupForm.pre_first_product_group_id = target.parent_id
+              this.movePorductHandel()
+            }
+            // 移动商品到其他二级分组
+            if ((current.key.indexOf('t') !== -1) && (target.key.indexOf('t') !== -1)) {
+              console.log("current:", current.id, "target:", target.product_group_id_second)
+              this.dragForm.id = current.id
+              this.dragForm.pre_product_id = target.id
+              this.dragForm.product_group_id = target.product_group_id_second
+              this.movePorductHandel()
             }
             // this.moveData.id = current.id
             // // this.moveData.pre_product_id = target.id
@@ -403,9 +443,11 @@
         // 搜索
         clearKey () {
           this.params.keywords = ''
-          this.seacrh()
+          this.isFilter = false
+          this.getProductList()
         },
         seacrh () {
+          this.isFilter = true
           this.getProductList()
         },
         // 切换分页
@@ -432,13 +474,34 @@
             const shopList = await getProduct(this.params)
             const firstGroup = await getFirstGroup()
             const secondGroup = await getSecondGroup()
-            this.firstGroup = firstGroup.data.data.list
-            this.tempSecondGroup = secondGroup.data.data.list
+            // 如果是搜索的时候需要过滤掉该商品之外的一二级分组
+            if (this.isFilter) {
+              const temp = shopList.data.data.list
+              const filerFist = temp.reduce((all, cur) => {
+                all.push(cur.product_group_id_first)
+                return all
+              }, [])
+              const filerSecond = temp.reduce((all, cur) => {
+                all.push(cur.product_group_id_second)
+                return all
+              }, [])
+              this.firstGroup = firstGroup.data.data.list.filter(item => {
+                return Array.from(new Set(filerFist)).includes(item.id)
+              })
+              this.tempSecondGroup = secondGroup.data.data.list.filter(item => {
+                return Array.from(new Set(filerSecond)).includes(item.id)
+              })
+            } else {
+              this.firstGroup = firstGroup.data.data.list
+              this.tempSecondGroup = secondGroup.data.data.list
+            }
+            // this.firstGroup = firstGroup.data.data.list
+            // this.tempSecondGroup = secondGroup.data.data.list
             // 组装数据，一级分组装二级分组，二级分组填入符合需求的数据
-            firstGroup.data.data.list.forEach(item => {
+            this.firstGroup.forEach(item => {
               item.key = 'f-' + item.id  // 多级Id会重复，故需要设置独一的key
               let secondArr = []
-              secondGroup.data.data.list.forEach(sItem => {
+              this.tempSecondGroup.forEach(sItem => {
                 if (sItem.parent_id === item.id) {
                   sItem.key = 's-' + sItem.id
                   secondArr.push(sItem)
@@ -446,7 +509,7 @@
               })
               item.children = secondArr
             })
-            firstGroup.data.data.list.forEach(item => {
+            this.firstGroup.forEach(item => {
               item.children.forEach(ele => {
                 let temp = []
                 shopList.data.data.list.forEach(e => {
@@ -458,12 +521,12 @@
                 ele.children = temp
               })
             })
-            this.data = firstGroup.data.data.list
+            this.data = this.firstGroup
             this.total = firstGroup.data.data.count
             // 展开全部
-            // this.$nextTick(() => {
-            //   this.$refs.table.expandAll()
-            // })
+            this.$nextTick(() => {
+              this.$refs.table.expandAll()
+            })
             this.loading = false
           } catch (error) {
             this.loading = false

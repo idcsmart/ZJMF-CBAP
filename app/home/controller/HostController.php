@@ -2,6 +2,7 @@
 namespace app\home\controller;
 
 use app\common\model\HostModel;
+use app\home\validate\HostValidate;
 
 /**
  * @title 产品管理
@@ -10,6 +11,12 @@ use app\common\model\HostModel;
  */
 class HostController extends HomeBaseController
 {
+    public function initialize()
+    {
+        parent::initialize();
+        $this->validate = new HostValidate();
+    }
+    
     /**
      * 时间 2022-05-19
      * @title 产品列表
@@ -68,6 +75,7 @@ class HostController extends HomeBaseController
      * @return int host.id - 产品ID 
      * @return int host.product_id - 商品ID 
      * @return string host.name - 标识 
+     * @return string notes - 备注 
      * @return string host.first_payment_amount - 订购金额
      * @return string host.renew_amount - 续费金额
      * @return string host.billing_cycle - 计费周期
@@ -76,6 +84,7 @@ class HostController extends HomeBaseController
      * @return string host.status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
      * @return string host.suspend_type - 暂停类型,overdue到期暂停,overtraffic超流暂停,certification_not_complete实名未完成,other其他
      * @return string host.suspend_reason - 暂停原因
+     * @return string host.product_name - 商品名称
      */
 	public function index()
     {
@@ -163,7 +172,34 @@ class HostController extends HomeBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2022-08-11
+     * @title 修改产品备注
+     * @desc 修改产品备注
+     * @author theworld
+     * @version v1
+     * @url /console/v1/host/:id/notes
+     * @method  put
+     * @param int id - 产品ID required
+     * @param string notes - 备注
+     */
+    public function updateHostNotes()
+    {
+        // 接收参数
+        $param = $this->request->param();
 
+        // 参数验证
+        if (!$this->validate->scene('update_notes')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
 
+        // 实例化模型类
+        $HostModel = new HostModel();
+        
+        // 修改产品备注
+        $result = $HostModel->updateHostNotes($param);
+
+        return json($result);
+    }
 
 }

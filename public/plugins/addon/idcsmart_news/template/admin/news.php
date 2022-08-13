@@ -61,11 +61,12 @@
                 <div v-if="slotProps.row.id">
                   <t-icon v-if="slotProps.row.isedit" name="save" color="#0052D9" style="margin-right: 10px;"
                     @click="edithelptypeform(slotProps.row.name,slotProps.row.id)"></t-icon>
-                  <!-- <t-icon v-if="!slotProps.row.isedit" name="close-rectangle" color="#0052D9"
-                    @click="deleteClickadd(slotProps.row.name)"></t-icon> -->
+                  <t-icon v-if="slotProps.row.isedit" name="close-rectangle" color="#0052D9" @click="canceledit()">
+                  </t-icon>
                   <t-icon v-if="!slotProps.row.isedit" name="edit-1" color="#0052D9" style="margin-right: 10px;"
                     @click="edithandleClickOp(slotProps.row.id)"></t-icon>
-                  <t-icon name="delete" color="#0052D9" @click="deleteClickOp(slotProps.row.id)"></t-icon>
+                  <t-icon v-if="!slotProps.row.isedit" name="delete" color="#0052D9"
+                    @click="deleteClickOp(slotProps.row.id)"></t-icon>
                 </div>
                 <div v-else>
                   <t-icon name="save" color="#0052D9" style="margin-right: 10px;"

@@ -45,4 +45,7 @@ return [
     'this_day_withdrawals_have_been_exhausted' => '本日提现次数已用尽',
     'this_week_withdrawals_have_been_exhausted' => '本周提现次数已用尽',
     'this_month_withdrawals_have_been_exhausted' => '本月提现次数已用尽',
+
+    # 导航
+    'nav_plugin_addon_idcsmart_withdraw' => '提现',
 ];

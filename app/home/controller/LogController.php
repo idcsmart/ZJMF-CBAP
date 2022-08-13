@@ -18,6 +18,7 @@ class LogController extends HomeBaseController
      * @version v1
      * @url /console/v1/log
      * @method  GET
+     * @param string type - 类型system:系统日志api:API日志
      * @param string keywords - 关键字
      * @param int page - 页数
      * @param int limit - 每页条数

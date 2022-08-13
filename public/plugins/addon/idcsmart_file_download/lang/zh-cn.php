@@ -33,4 +33,7 @@ return [
     'log_admin_add_file_folder' => '{admin}新增文件夹：{name}',
     'log_admin_edit_file_folder' => '{admin}编辑文件夹：{name}',
     'log_admin_delete_file_folder' => '{admin}删除文件夹：{name}',
+
+    # 导航
+    'nav_plugin_addon_idcsmart_file_download' => '文件下载',
 ];

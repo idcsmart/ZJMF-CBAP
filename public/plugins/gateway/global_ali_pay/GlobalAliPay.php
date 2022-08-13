@@ -73,7 +73,8 @@ class GlobalAliPay extends Plugin
         $alipaySubmit = new AlipaySubmit($alipay_config);
         $url = $alipaySubmit->buildRequestParaToString($data);
 
-        return $url;
+        $html = "<a href='$url' target='_blank'>去支付</a>";
+        return $html;
     }
 
     // 获取配置

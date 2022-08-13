@@ -72,7 +72,10 @@
                 <t-input v-model="formData.email" :placeholder="lang.input+lang.email"></t-input>
               </t-form-item>
               <t-form-item :label="lang.country" name="country">
-                <t-input v-model="formData.country" :placeholder="lang.input+lang.country"></t-input>
+                <t-select v-model="formData.country" filterable style="width: 100%" :placeholder="lang.country">
+                  <t-option v-for="item in country" :value="item.name_zh" :label="item.name_zh" :key="item.name">
+                  </t-option>
+                </t-select>
               </t-form-item>
             </div>
             <div class="item">
@@ -85,10 +88,13 @@
             </div>
             <div class="item">
               <t-form-item :label="lang.language" name="language">
-                <t-select v-model="formData.language" :placeholder="lang.select+lang.language">
+                <t-select v-model="formData.language || 'CN'" :placeholder="lang.select+lang.language">
                   <t-option v-for="item in langList" :value="item.display_flag" :label="item.display_name" :key="item.display_flag">
                   </t-option>
                 </t-select>
+              </t-form-item>
+              <t-form-item :label="lang.password" name="password">
+                <t-input type="password" v-model="formData.password" :placeholder="lang.input+lang.password"></t-input>
               </t-form-item>
             </div>
             <t-form-item :label="lang.notes" name="notes" class="textarea">
@@ -100,8 +106,8 @@
         <t-col :xs="12" :xl="6">
           <p class="com-tit"><span>{{lang.financial_info}}</span></p>
           <div class="header-btn">
-            <t-button theme="primary" @click="changeMoney('recharge')">{{lang.Recharge}}</t-button>
-            <t-button theme="default" @click="changeMoney('deduction')">{{lang.deduction}}</t-button>
+            <t-button theme="primary" @click="changeMoney('recharge')">{{lang.add_money}}</t-button>
+            <t-button theme="default" @click="changeMoney('deduction')">{{lang.sub_money}}</t-button>
             <div class="com-transparent change_log" @click="changeLog">
               <t-button theme="primary">{{lang.change_log}}</t-button>
               <span class="txt">{{lang.change_log}}</span>
@@ -157,6 +163,9 @@
       <div class="login-log">
         <p class="com-tit"><span>{{lang.login_record}}</span></p>
         <t-table row-key="1" :data="data.login_logs" size="medium" :bordered="true" :columns="logColumns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'">
+          <template #login_time="{row}">
+            {{ moment(data.register_time * 1000).format('YYYY-MM-DD HH:mm:ss') }}
+          </template>
         </t-table>
         <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="logSizeOptions" :on-change="changePage" />
       </div>
@@ -171,14 +180,14 @@
         <span class="txt">{{data.status===0 ? lang.enable : lang.deactivate}}</span>
       </div>
       <t-button theme="default" variant="base" @click="deleteUser">{{lang.delete}}</t-button>
-      <t-button theme="primary" type="submit">{{lang.login_as_user}}</t-button>
+      <t-button theme="primary" type="submit" @click="loginByUser" :disabled="!data.status">{{lang.login_as_user}}</t-button>
     </div>
   </t-card>
   <!-- 充值/扣费弹窗 -->
   <t-dialog :header="diaTitle" :visible.sync="visibleMoney" :footer="false" @close="closeMoney">
     <t-form :data="moneyData" :rules="moneyRules" ref="moneyRef" :label-width="80" @submit="confirmMoney" v-if="visibleMoney">
-      <t-form-item :label="diaTitle+lang.money" name="amount">
-        <t-input v-model="moneyData.amount" :placeholder="lang.input+lang.money" :label="currency_prefix">
+      <t-form-item :label="lang.money" name="amount">
+        <t-input v-model="moneyData.amount" :placeholder="lang.input+lang.money" :label="inputLabel">
         </t-input>
       </t-form-item>
       <t-form-item :label="lang.notes" name="notes">
@@ -196,6 +205,11 @@
       <t-table row-key="change_log" :data="logData" size="medium" :columns="columns" :hover="hover" :loading="moneyLoading" table-layout="fixed" max-height="350">
         <template #type="{row}">
           {{lang[row.type]}}
+        </template>
+        <template #amount="{row}">
+          <span>
+            <span v-if="row.amount * 1 > 0">+</span>{{row.amount}}
+          </span>
         </template>
         <template #create_time="{row}">
           {{moment(row.create_time * 1000).format('YYYY/MM/DD HH:mm')}}

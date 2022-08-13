@@ -210,7 +210,12 @@ class SmsTemplateModel extends Model
                 'status' => $param['status'] ? trim($param['status']) : '',
                 'create_time' => time()
             ]);
-            
+			//日志
+			$module_sms = (new PluginModel)->pluginList(['module'=>'sms']);				
+			$sms_list = array_column($module_sms['list'],"title","name");	
+			$sms_name=$sms_list[$param['name']];
+			$sms_title=$param['title'];
+            active_log(lang('admin_sms_template_log_create', ['{admin}'=>request()->admin_name, '{sms_name}'=>$sms_name, '{sms_title}'=>$sms_title]), 'admin', request()->admin_id);
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -281,6 +286,27 @@ class SmsTemplateModel extends Model
 				
 			}
 		}
+		# 日志
+		$description = [];
+		$sms=$sms->toArray();
+		$new_param=['template_id'=>$param['template_id'],'type'=>$param['type'],'title'=>$param['title'],'content'=>$param['content'],'notes'=>$param['notes'],'status'=>$param['status']];
+		$desc = array_diff_assoc($new_param,$sms);
+		foreach($desc as $k=>$v){
+			$lang = '"'.lang("sms_template_log_{$k}").'"';
+			if($k=='type'){
+				$lang_old = lang("sms_template_log_type_{$sms[$k]}");
+				$lang_new = lang("sms_template_log_type_{$v}");
+			}else if($k=='status'){
+				$lang_old = lang("sms_template_log_status_{$sms[$k]}");
+				$lang_new = lang("sms_template_log_status_{$v}");
+			}else{				
+				$lang_old = $sms[$k];
+				$lang_new = $v;		
+			}
+			
+			$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+		}
+		$description = implode(',', $description);
         $this->startTrans();
         try {
             $this->update([
@@ -293,7 +319,11 @@ class SmsTemplateModel extends Model
                 'status' => $param['status'] ? trim($param['status']) : '',
                 'update_time' => time()
             ], ['id' => $param['id']]);
-            
+            //日志
+			$module_sms = (new PluginModel)->pluginList(['module'=>'sms']);				
+			$sms_list = array_column($module_sms['list'],"title","name");	
+			$sms_name=$sms_list[$param['name']];
+            active_log(lang('admin_sms_template_log_update', ['{admin}'=>request()->admin_name, '{sms_name}'=>$sms_name, '{description}'=>$description]), 'admin', request()->admin_id);
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -342,6 +372,12 @@ class SmsTemplateModel extends Model
         $this->startTrans();
         try {
             $this->destroy($id);
+			//日志
+			$module_sms = (new PluginModel)->pluginList(['module'=>'sms']);				
+			$sms_list = array_column($module_sms['list'],"title","name");	
+			$sms_name=$sms_list[$sms['sms_name']];
+			$sms_title=$sms['title'];
+            active_log(lang('admin_sms_template_log_delete', ['{admin}'=>request()->admin_name, '{sms_name}'=>$sms_name, '{sms_title}'=>$sms_title]), 'admin', request()->admin_id);
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务

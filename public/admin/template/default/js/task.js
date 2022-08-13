@@ -24,24 +24,25 @@
             {
               colKey: 'description',
               title: lang.task_description,
-              ellipsis: true
+              ellipsis: true,
+              className: 'name-status'
             },
             {
               colKey: 'start_time',
               title: lang.start_time,
-              width: 180
+              width: 170
             },
             {
               colKey: 'finish_time',
               title: lang.end_time,
-              width: 180
+              width: 170
             },
-            {
-              colKey: 'status',
-              title: lang.task_status,
-              width: 120,
-              ellipsis: true
-            },
+            // {
+            //   colKey: 'status',
+            //   title: lang.task_status,
+            //   width: 120,
+            //   ellipsis: true
+            // },
             {
               colKey: 'retry',
               title: lang.operation,

@@ -6,6 +6,7 @@ use app\common\model\NoticeSettingModel;
 use app\common\model\SmsTemplateModel;
 use app\common\model\CountryModel;
 use app\admin\model\SmsLogModel;
+use app\common\model\ConfigurationModel;
 /**
  * @title 短信发送逻辑类
  * @desc 短信发送逻辑类
@@ -93,40 +94,50 @@ class SmsLogic
 				'order_id' => $index_order['id'],
 				'order_create_time' => $index_order['create_time'],
 				'order_amount' => $index_order['amount'],
-				//'order_pay_time' => $index_order['pay_time'],
 			];	
 			$client_id = $param['client_id'] = $index_order['client_id'];	
 			
 		}
 		//产品
         if(!empty($param['host_id'])){	
-			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id')->find($param['host_id']);
-			$index_product = Db::name('host')->field('id,name')->find($index_host['product_id']);
+			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			$index_product = Db::name('product')->field('id,name')->find($index_host['product_id']);
+			//获取自动化设置
+			$config=(new ConfigurationModel())->cronList();
 			$host = [
-				'product_name' => $index_product['name'],
+				'product_name' => $index_product['name'] .'-'.$index_host['name'],
 				'product_marker_name' => $index_host['name'],
 				'product_first_payment_amount' => $index_host['first_payment_amount'],
 				'product_renew_amount' => $index_host['renew_amount'],
 				'product_binlly_cycle' => $index_host['billing_cycle'],
 				'product_active_time' => $index_host['active_time'],
 				'product_due_time' => $index_host['due_time'],
-				//'product_termination_time' => $index_host['last_login_ip'],
-				//'product_suspend_time' => $index_host['last_login_ip'],
-				//'product_suspend_reason' => $index_host['last_login_ip'],
+				'product_suspend_reason' => $index_host['suspend_reason'],
+				'renewal_first' => $config['cron_due_renewal_first_day'],
+				'renewal_second' => $config['cron_due_renewal_second_day'],
 			];	
 			$client_id = $param['client_id'] = $index_host['client_id'];		
 		}
 		//客户
         if(!empty($param['client_id'])){
 			$index_client = Db::name('client')->field('id,username,email,phone_code,phone,company,country,address,language,notes,status,create_time register_time,last_login_time,last_login_ip,credit')->find($param['client_id']);
+			if($index_client['username']){
+				$account = $index_client['username'];
+			}else if($index_client['phone']){
+				$account = $index_client['phone_code'].$index_client['phone'];
+			}else if($index_client['email']){
+				$account = $index_client['email'];
+			}	
+			
 			$client = [
 				'client_register_time' => $index_client['register_time'],
 				'client_username' => $index_client['username'],
 				'client_email' => $index_client['email'],
-				'client_phone' => $index_client['phone'],
+				'client_phone' => $index_client['phone_code'].$index_client['phone'],
 				'client_company' => $index_client['company'],
 				'client_last_login_time' => $index_client['last_login_time'],
 				'client_last_login_ip' => $index_client['last_login_ip'],
+				'account' => $account,
 			];
 			$client_id = $param['client_id'];	
 			$param['phone_code'] = $index_client['phone_code'];
@@ -195,7 +206,7 @@ class SmsLogic
             'template_code' => $index_sms_template['template_id'],
             'content' => $send_result['data']['content'],
             'status' => ($send_result['status'] == 200)?1:0,
-			'fail_reason' => $send_result['msg'],			
+			'fail_reason' => ($send_result['status'] == 200)?'':$send_result['msg'],			
             'rel_id' => $client_id,
             'type' => 'client',
 			'ip' =>  empty($param['ip'])?'':$param['ip'],

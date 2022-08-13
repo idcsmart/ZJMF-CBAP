@@ -1,7 +1,7 @@
 <?php
 namespace addon\idcsmart_withdraw\controller;
 
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 use addon\idcsmart_withdraw\model\IdcsmartWithdrawModel;
 use addon\idcsmart_withdraw\model\IdcsmartWithdrawRuleModel;
 use addon\idcsmart_withdraw\model\IdcsmartWithdrawSourceModel;
@@ -12,7 +12,7 @@ use addon\idcsmart_withdraw\validate\IdcsmartWithdrawValidate;
  * @desc 提现插件
  * @use addon\idcsmart_withdraw\controller\AdminIndexController
  */
-class AdminIndexController extends PluginBaseController
+class AdminIndexController extends PluginAdminBaseController
 {
 	public function initialize()
     {

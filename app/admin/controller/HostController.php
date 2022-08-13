@@ -39,6 +39,7 @@ class HostController extends AdminBaseController
      * @return string list[].email - 邮箱 
      * @return string list[].phone_code - 国际电话区号 
      * @return string list[].phone - 手机号 
+     * @return string list[].company - 公司 
      * @return int list[].product_id - 商品ID 
      * @return string list[].product_name - 商品名称 
      * @return string list[].name - 标识 
@@ -94,6 +95,7 @@ class HostController extends AdminBaseController
      * @return string host.suspend_type - 暂停类型,overdue到期暂停,overtraffic超流暂停,certification_not_complete实名未完成,other其他
      * @return string host.suspend_reason - 暂停原因
      * @return array status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
+     * @return string host.product_name - 商品名称
      */
 	public function index()
     {

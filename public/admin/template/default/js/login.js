@@ -76,11 +76,14 @@
               localStorage.setItem('userName', this.formData.name)
               await this.getCommonSetting()
               // 获取权限
-               const auth = await getAuthRole()
-               localStorage.setItem('auth', JSON.stringify(auth.data.data.list))
-               this.$message.success(res.data.msg)
-               localStorage.setItem('curValue', 2)
-               location.href = 'client.html'
+              const auth = await getAuthRole()
+              localStorage.setItem('auth', JSON.stringify(auth.data.data.list))
+              this.$message.success(res.data.msg)
+              localStorage.setItem('curValue', 2)
+              // 获取导航
+              const menus = await getMenus()
+              localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
+              location.href = 'client.html'
             } catch (error) {
               (this.captcha_admin_login == 1) && this.getCaptcha()
               this.$message.error(error.data.msg)

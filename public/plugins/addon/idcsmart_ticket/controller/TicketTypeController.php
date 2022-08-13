@@ -3,14 +3,14 @@ namespace addon\idcsmart_ticket\controller;
 
 use addon\idcsmart_ticket\model\IdcsmartTicketTypeModel;
 use addon\idcsmart_ticket\validate\TicketTypeValidate;
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 
 /**
  * @title 工单类型(后台)
  * @desc 工单类型(后台)
  * @use addon\idcsmart_ticket\controller\TicketTypeController
  */
-class TicketTypeController extends PluginBaseController
+class TicketTypeController extends PluginAdminBaseController
 {
     private $validate=null;
 

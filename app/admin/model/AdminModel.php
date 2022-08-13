@@ -159,7 +159,7 @@ class AdminModel extends Model
 					'name'=>'admin_create_account',//发送动作名称
 					'email'=>$param['email'],
 					'template_param'=>[
-						'admin_account'=>$param['name'],
+						'admin_name'=>$param['name'],
 						'admin_password'=>$param['password'],
 					]
 				],		

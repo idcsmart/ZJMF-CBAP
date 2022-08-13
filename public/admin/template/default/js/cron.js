@@ -9,20 +9,30 @@
           formData: {
             cron_shell: '',
             cron_status: '',
-            cron_due_day_distance_1: '',
-            cron_due_day_distance_1_switch: 0,
-            cron_due_day_distance_2: '',
-            cron_due_day_distance_2_switch: 0,
-            cron_due_day_distance_3: '',
-            cron_due_day_distance_3_switch: 0,
-            cron_due_day_already_suspend: '',
-            cron_due_day_already_suspend_switch: 0,
-            cron_due_day_already_terminate: '',
-            cron_due_day_already_terminate_switch: 0
+            // 开关配置
+            cron_due_suspend_swhitch: 0,
+            cron_due_suspend_day: 0,
+            cron_due_unsuspend_swhitch: 0,
+            cron_due_terminate_swhitch: 0,
+            cron_due_terminate_day: 0,
+            cron_due_renewal_first_swhitch: 0,
+            cron_due_renewal_first_day: 0,
+            cron_due_renewal_second_swhitch: 0,
+            cron_due_renewal_second_day: 0,
+            cron_overdue_first_swhitch: 0,
+            cron_overdue_first_day: 0,
+            cron_overdue_second_swhitch: 0,
+            cron_overdue_second_day: 0,
+            cron_overdue_third_swhitch: 0,
+            cron_overdue_third_day: 0,
+            cron_ticket_close_swhitch: 0,
+            cron_ticket_close_day: 0,
+            cron_aff_swhitch: 0,
+            cron_order_overdue_swhitch: 0,
+            cron_order_overdue_day: 0
           },
           rules: {
-            cron_due_day_distance_1: [
-              { required: true, message: lang.input + lang.host_renewal_one, type: 'error' },
+            cron_due_renewal_first_day: [
               {
                 pattern: /^[0-9]\d*$/, message: lang.verify7, type: 'warning'
               }
@@ -65,6 +75,7 @@
               this.$message.success(res.data.msg)
               this.getSetting()
             } catch (error) {
+              console.log(error)
               this.$message.error(error.data.msg)
             }
           } else {
@@ -72,7 +83,7 @@
             this.$message.warning(firstError);
           }
         },
-        async getTaskConfig () {
+        async getSetting () {
           try {
             const res = await getTaskConfig()
             const temp = res.data.data
@@ -83,7 +94,7 @@
         }
       },
       created () {
-        this.getTaskConfig()
+        this.getSetting()
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

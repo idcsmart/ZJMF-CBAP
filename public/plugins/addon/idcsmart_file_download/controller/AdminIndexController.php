@@ -1,7 +1,7 @@
 <?php
 namespace addon\idcsmart_file_download\controller;
 
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 use addon\idcsmart_file_download\model\IdcsmartFileModel;
 use addon\idcsmart_file_download\model\IdcsmartFileFolderModel;
 use addon\idcsmart_file_download\validate\IdcsmartFileDownloadValidate;
@@ -11,7 +11,7 @@ use addon\idcsmart_file_download\validate\IdcsmartFileDownloadValidate;
  * @desc 文件下载(后台)
  * @use addon\idcsmart_file_download\controller\AdminIndexController
  */
-class AdminIndexController extends PluginBaseController
+class AdminIndexController extends PluginAdminBaseController
 {
 	public function initialize()
     {

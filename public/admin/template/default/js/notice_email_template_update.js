@@ -8,13 +8,18 @@
         return {
           formData: {
             id: '',
+            name: '',
             subject: '',
             message: ''
           },
           rules: {
+            name: [
+              { required: true, message: lang.input + lang.nickname, type: 'error' },
+              { validator: val => val.length <= 100, message: lang.verify3 + 100, type: 'warning' }
+            ],
             subject: [
               { required: true, message: lang.input + lang.title, type: 'error' },
-              { validator: val => val.length <= 100, message: lang.verify3 + 100, type: 'warning'}
+              { validator: val => val.length <= 100, message: lang.verify3 + 100, type: 'warning' }
             ],
             message: [{ required: true, message: lang.input + lang.content, type: 'error' }],
           },
@@ -47,9 +52,9 @@
             try {
               const res = await createEmailTemplate('update', this.formData)
               this.$message.success(res.data.msg)
-              setTimeout(()=>{
-                location.href = '/notice_email_template.html'
-              },500)
+              setTimeout(() => {
+                location.href = 'notice_email_template.html'
+              }, 500)
             } catch (error) {
               this.$message.error(error.data.msg)
             }
@@ -66,7 +71,7 @@
             width: '100%'
           });
         },
-        close () { 
+        close () {
           location.href = 'notice_email_template.html'
         },
       },

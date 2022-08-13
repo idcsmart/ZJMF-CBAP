@@ -72,7 +72,8 @@ class AliPayH5 extends Plugin
          */
         $response = $aop->pagePay($payRequestBuilder,$config['return_url'],$config['notify_url']);
 
-        return $response; # redirect($response); # 直接跳转至支付界面
+        $html = "<a href='$response' target='_blank'>去支付</a>";
+        return $html;
     }
 
     // 获取配置

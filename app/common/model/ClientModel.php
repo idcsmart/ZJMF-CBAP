@@ -180,7 +180,7 @@ class ClientModel extends Model
 	    $this->startTrans();
 		try {
 	    	$client = $this->create([
-	    		'username' => $param['username'] ?? '',
+	    		'username' => (isset($param['username']) && !empty($param['username']))?$param['username']:((isset($param['email']) && !empty($param['email']))?explode('@',$param['email'])[0]:((isset($param['phone']) && !empty($param['phone']))?$param['phone']:'')),
 	    		'email' => $param['email']  ?? '',
 	    		'phone_code' => $param['phone_code'] ?? 44,
 	    		'phone' => $param['phone'] ?? '',
@@ -189,7 +189,7 @@ class ClientModel extends Model
 	    	]);
 
             # 记录日志
-            active_log(lang('admin_create_new_user', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$param['username']]), 'client', $client->id);
+            active_log(lang('admin_create_new_user', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$param['username'].'#']), 'client', $client->id);
 
 	        $this->commit();
 		} catch (\Exception $e) {
@@ -216,6 +216,7 @@ class ClientModel extends Model
      * @param string param.address - 地址
      * @param string param.language - 语言
      * @param string param.notes - 备注
+     * @param string password - 密码 为空代表不修改
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -254,6 +255,7 @@ class ClientModel extends Model
             $param['notes'] = $param['notes'] ?? '';
             $param['client_notes'] = $client['client_notes'];
         }
+        $param['password'] = $param['password'] ?? '';
 
         if($app=='admin'){
             # 日志详情
@@ -284,6 +286,9 @@ class ClientModel extends Model
             }
             if ($client['notes'] != $param['notes']){
                 $description[] = lang('old_to_new',['{field}'=>lang('client_notes'), '{old}'=>$client['notes'], '{new}'=>$param['notes']]);
+            }
+            if(!empty($param['password'])){
+                $description[] = lang('log_change_password');
             }
             $description = implode(',', $description);
         }else if($app=='home'){
@@ -318,6 +323,7 @@ class ClientModel extends Model
                 'email' => $param['email'] ?? '',
                 'phone_code' => $param['phone_code'] ?? 44,
                 'phone' => $param['phone'] ?? '',
+                'password' => !empty($param['password']) ? idcsmart_password($param['password']) : $client['password'], // 密码加密
                 'company' => $param['company'] ?? '',
                 'country' => $param['country'] ?? '',
                 'address' => $param['address'] ?? '',
@@ -329,10 +335,10 @@ class ClientModel extends Model
 
             if($app=='admin' && !empty($description)){
                 # 记录日志
-                active_log(lang('admin_modify_user_profile', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$param['username'], '{description}'=>$description]), 'client', $client->id);
+                active_log(lang('admin_modify_user_profile', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$param['username'].'#', '{description}'=>$description]), 'client', $client->id);
             }else if($app=='home' && !empty($description)){
                 # 记录日志
-                active_log(lang('modify_profile', ['{client}'=>'#'.$client->id.request()->client_name, '{description}'=>$description]), 'client', $client->id);
+                active_log(lang('modify_profile', ['{client}'=>'client#'.$client->id.'#'.request()->client_name.'#', '{description}'=>$description]), 'client', $client->id);
             }
 
 		    $this->commit();
@@ -586,9 +592,9 @@ class ClientModel extends Model
 
             # 记录日志
             if(!empty($client['phone'])){
-                active_log(lang('change_bound_mobile', ['{client}'=>'#'.$id.request()->client_name, '{phone}'=>$param['phone'], '{old_phone}'=>$client['phone']]), 'client', $id);
+                active_log(lang('change_bound_mobile', ['{client}'=>'client#'.$id.'#'.request()->client_name.'#', '{phone}'=>$param['phone'], '{old_phone}'=>$client['phone']]), 'client', $id);
             }else{
-                active_log(lang('bound_mobile', ['{client}'=>'#'.$id.request()->client_name, '{phone}'=>$param['phone']]), 'client', $id);
+                active_log(lang('bound_mobile', ['{client}'=>'client#'.$id.'#'.request()->client_name.'#', '{phone}'=>$param['phone']]), 'client', $id);
             }
             
 
@@ -700,9 +706,9 @@ class ClientModel extends Model
 
             # 记录日志
             if(!empty($client['phone'])){
-                active_log(lang('change_bound_email', ['{client}'=>'#'.$id.request()->client_name, '{email}'=>$param['email'], '{old_email}'=>$client['email']]), 'client', $id);
+                active_log(lang('change_bound_email', ['{client}'=>'client#'.$id.'#'.request()->client_name.'#', '{email}'=>$param['email'], '{old_email}'=>$client['email']]), 'client', $id);
             }else{
-                active_log(lang('bound_email', ['{client}'=>'#'.$id.request()->client_name, '{email}'=>$param['email']]), 'client', $id);
+                active_log(lang('bound_email', ['{client}'=>'client#'.$id.'#'.request()->client_name.'#', '{email}'=>$param['email']]), 'client', $id);
             }
             
 
@@ -759,6 +765,9 @@ class ClientModel extends Model
 						'name'=>'client_change_password',//发送动作名称
 						'email' => $client['email'],
 						'client_id'=>$client['id'],//客户ID
+						'template_param'=>[
+							'client_password' => $param['new_password'],//新密码
+						],
 					],		
 				]);
 			}
@@ -772,12 +781,15 @@ class ClientModel extends Model
 						'phone_code' => $client['phone_code'],
 						'phone' => $client['phone'],
 						'client_id'=>$client['id'],//客户ID
+						'template_param'=>[
+							'client_password' => $param['new_password'],//新密码
+						],
 					],		
 				]);
 			}
 
             # 记录日志
-            active_log(lang('change_password', ['{client}'=>'#'.$id.request()->client_name]), 'client', $id);
+            active_log(lang('change_password', ['{client}'=>'client#'.$id.'#'.request()->client_name.'#']), 'client', $id);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -1001,7 +1013,14 @@ class ClientModel extends Model
             $request->client_id = $client->id;
             $request->client_name = $client['username'];
             active_log(lang('log_client_login',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id); # 特殊类型
-
+			add_task([
+				'type' => 'sms',
+				'description' => '手机+验证码登录成功,发送短信',
+				'task_data' => [
+					'name'=>'client_login_success',//发送动作名称
+					'client_id'=>$client->id,//客户ID
+				],		
+			]);		
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -1113,7 +1132,14 @@ class ClientModel extends Model
             $request->client_id = $client->id;
             $request->client_name = $client['username'];
             active_log(lang('log_client_login',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
-
+			add_task([
+				'type' => 'email',
+				'description' => '邮箱+密码登录成功,发送邮件',
+				'task_data' => [
+					'name'=>'client_login_success',//发送动作名称
+					'client_id'=>$client->id,//客户ID
+				],		
+			]);
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -1195,7 +1221,14 @@ class ClientModel extends Model
             $request->client_id = $client->id;
             $request->client_name = $client['username'];
             active_log(lang('log_client_login',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
-
+			add_task([
+				'type' => 'sms',
+				'description' => '手机+密码登录成功,发送短信',
+				'task_data' => [
+					'name'=>'client_login_success',//发送动作名称
+					'client_id'=>$client->id,//客户ID
+				],		
+			]);	
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -1312,7 +1345,7 @@ class ClientModel extends Model
         try{
             $time = time();
             $client = $this->create([
-                'username' => $param['username']?:'',
+                'username' => $param['username']?:$param['account'],
                 'phone_code' => $param['phone_code'],
                 'phone' => $param['account'],
                 'password' => idcsmart_password($param['password']),
@@ -1340,7 +1373,7 @@ class ClientModel extends Model
 				'type' => 'sms',
 				'description' => '短信注册成功,发送短信',
 				'task_data' => [
-					'name'=>'client_register',//发送动作名称
+					'name'=>'client_register_success',//发送动作名称
 					'phone_code' => $param['phone_code'],
 					'phone' => $param['account'],
 					'client_id'=>$client->id,//客户ID
@@ -1387,15 +1420,17 @@ class ClientModel extends Model
             return ['status'=>400,'msg'=>lang('client_name_cannot_exceed_20_chars')];
         }
         # 验证码
-        if (empty($param['code'])){
-            return ['status'=>400,'msg'=>lang('verification_code_error')];
-        }
-        $code = $this->getEmailVerificationCode($param['account']);
-        if (empty($code)){
-            return ['status'=>400,'msg'=>lang('verification_code_error')];
-        }
-        if ($param['code'] != $code){
-            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        if (configuration('code_client_email_register')){
+            if (empty($param['code'])){
+                return ['status'=>400,'msg'=>lang('verification_code_error')];
+            }
+            $code = $this->getEmailVerificationCode($param['account']);
+            if (empty($code)){
+                return ['status'=>400,'msg'=>lang('verification_code_error')];
+            }
+            if ($param['code'] != $code){
+                return ['status'=>400,'msg'=>lang('verification_code_error')];
+            }
         }
         # 验证密码
         if (empty($param['password']) || empty($param['re_password'])){
@@ -1417,7 +1452,7 @@ class ClientModel extends Model
         try{
             $time = time();
             $client = $this->create([
-                'username' => $param['username']?:'',
+                'username' => $param['username']?:(explode('@',$param['account'])[0]?:$param['account']),
                 'email' => $param['account'],
                 'password' => idcsmart_password($param['password']),
                 'last_login_time' => $time,
@@ -1444,7 +1479,7 @@ class ClientModel extends Model
 				'type' => 'email',
 				'description' => '邮件注册成功,发送邮件',
 				'task_data' => [
-					'name'=>'client_register',//发送动作名称
+					'name'=>'client_register_success',//发送动作名称
 					'email' => $param['account'],
 					'client_id'=>$client->id,//客户ID
 				],		

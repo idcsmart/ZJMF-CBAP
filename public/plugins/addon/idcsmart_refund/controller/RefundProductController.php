@@ -3,14 +3,14 @@ namespace addon\idcsmart_refund\controller;
 
 use addon\idcsmart_refund\model\IdcsmartRefundProductModel;
 use addon\idcsmart_refund\validate\IdcsmartRefundProductValidate;
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 
 /**
  * @title 退款商品管理(后台)
  * @desc 退款商品管理(后台)
  * @use addon\idcsmart_refund\controller\RefundProductController
  */
-class RefundProductController extends PluginBaseController
+class RefundProductController extends PluginAdminBaseController
 {
     private $validate=null;
 

@@ -10,26 +10,34 @@
     <span class="cur">{{lang.product_info}}</span>
   </div>
   <t-card class="list-card-container">
-    <ul class="common-tab">
-      <li>
-        <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
-      </li>
-      <li class="active">
-        <a href="javascript:;">{{lang.product_info}}</a>
-      </li>
-      <li>
-        <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
-      </li>
-      <li>
-        <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
-      </li>
-      <li>
-        <a :href="`client_log.html?$id={id}`">{{lang.log}}</a>
-      </li>
-      <li>
-        <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
-      </li>
-    </ul>
+    <div class="com-h-box">
+      <ul class="common-tab">
+        <li>
+          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
+        </li>
+        <li class="active">
+          <a href="javascript:;">{{lang.product_info}}</a>
+        </li>
+        <li>
+          <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
+        </li>
+        <li>
+          <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
+        </li>
+        <li>
+          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+        </li>
+        <li>
+          <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+        </li>
+      </ul>
+      <t-select class="user" v-if="this.clientList.length>0" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
+        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+          #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
+          <span v-if="item.company">({{item.company}})</span>
+        </t-option>
+      </t-select>
+    </div>
     <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight" :hide-sort-tips="true" @sort-change="sortChange">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>

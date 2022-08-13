@@ -48,4 +48,36 @@ return [
     'ticket_log_admin_resolved_ticket' => '{admin}标记工单:{ticket_id}已解决',
     'ticket_log_create_ticket_internal' => '{admin}新增内部工单:{ticket_id}',
 
+    # 导航
+    'nav_plugin_addon_idcsmart_ticket' => '工单',
+    'nav_plugin_addon_ticket' => '工单',
+    'nav_plugin_addon_ticket_list' => '用户工单',
+    'nav_plugin_addon_ticket_internal_list' => '内部工单',
+
+    # 权限
+    'auth_plugin_addon_ticket_list' => '用户工单',
+    'auth_plugin_addon_ticket_view' => '查看',
+    'auth_plugin_addon_ticket_receive' => '接受',
+    'auth_plugin_addon_ticket_resolved' => '解决',
+    'auth_plugin_addon_ticket_detail' => '工单详情',
+    'auth_plugin_addon_ticket_reply' => '回复',
+    'auth_plugin_addon_ticket_download' => '下载附件',
+    'auth_plugin_addon_ticket_internal_list' => '内部工单',
+    'auth_plugin_addon_ticket_add' => '新建工单',
+    'auth_plugin_addon_ticket_forward' => '转发',
+
+    # 权限规则
+    'auth_rule_plugin_addon_ticket_list' => '用户工单',
+    'auth_rule_plugin_addon_ticket_receive' => '接受工单',
+    'auth_rule_plugin_addon_ticket_resolved' => '解决工单',
+    'auth_rule_plugin_addon_ticket_index' => '工单详情',
+    'auth_rule_plugin_addon_ticket_reply' => '回复工单',
+    'auth_rule_plugin_addon_ticket_download' => '下载附件',
+    'auth_rule_plugin_addon_ticket_internal_list' => '内部工单',
+    'auth_rule_plugin_addon_ticket_internal_index' => '内部工单详情',
+    'auth_rule_plugin_addon_ticket_internal_create' => '创建内部工单',
+    'auth_rule_plugin_addon_ticket_internal_receive' => '接受内部工单',
+    'auth_rule_plugin_addon_ticket_internal_resolved' => '解决内部工单',
+    'auth_rule_plugin_addon_ticket_internal_reply' => '回复内部工单',
+    'auth_rule_plugin_addon_ticket_internal_forward' => '转发内部工单',
 ];

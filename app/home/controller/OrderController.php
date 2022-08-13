@@ -36,6 +36,7 @@ class OrderController extends HomeBaseController
      * @return string list[].host_name - 产品标识
      * @return string list[].billing_cycle - 计费周期
      * @return array list[].product_names - 订单下所有产品的商品名称
+     * @return int list[].host_id 产品ID
      * @return int list[].order_item_count - 订单子项数量
      * @return int count - 订单总数
      */

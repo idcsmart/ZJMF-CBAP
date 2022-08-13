@@ -16,11 +16,29 @@
     </ul> -->
     <div class="common-header">
       <div class="header-left">
-        <t-button @click="save" class="add">{{lang.hold}}</t-button>
+        <span class="tit">{{lang.system_default_setting}}</span>
+        <t-form layout="inline" label-align="left" :data="formData" :rules="rules">
+          <t-form-item :label="lang.sms_global_name" name="send_sms_global">
+            <t-select v-model="formData.configuration.send_sms_global" class="demo-select-base" clearable>
+              <t-option v-for="item in smsInterList" :value="item.name" :label="item.title" :key="item.id">
+              </t-option>
+            </t-select>
+          </t-form-item>
+          <t-form-item :label="lang.home_sms_interface" name="send_sms">
+            <t-select v-model="formData.configuration.send_sms" class="demo-select-base" clearable>
+              <t-option v-for="item in smsList" :value="item.name" :label="item.title" :key="item.id"></t-option>
+            </t-select>
+          </t-form-item>
+          <t-form-item :label="lang.email_interface" name="send_email">
+            <t-select v-model="formData.configuration.send_email" class="demo-select-base" clearable>
+              <t-option v-for="item in emailList" :value="item.name" :label="item.title" :key="item.id">
+              </t-option>
+            </t-select>
+          </t-form-item>
+        </t-form>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
-      :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight">
       <template #name="{row}">
         {{row.name_lang}}
       </template>
@@ -52,21 +70,22 @@
         <t-switch size="large" v-model="formData[row.name].email_enable" :custom-value="[1,0]"></t-switch>
       </template>
       <template #sms_name="{row}">
-        <t-select v-model="formData[row.name].sms_name" >
+        <t-select v-model="formData[row.name].sms_name">
           <t-option v-for="item in smsList" :value="item.name" :label="item.title" :key="item.id"></t-option>
         </t-select>
       </template>
       <template #email_name="{row}">
-        <t-select v-model="formData[row.name].email_name" >
+        <t-select v-model="formData[row.name].email_name">
           <t-option v-for="item in emailList" :value="item.name" :label="item.title" :key="item.id"></t-option>
         </t-select>
       </template>
       <template #email_template="{row}">
         <t-select v-model="formData[row.name].email_template" :disabled="!row.email_name">
-          <t-option v-for="item in emailTemplateList" :value="item.id" :label="item.subject" :key="item.id"></t-option>
+          <t-option v-for="item in emailTemplateList" :value="item.id" :label="item.name" :key="item.id"></t-option>
         </t-select>
       </template>
     </t-table>
+    <t-button @click="save" class="add">{{lang.hold}}</t-button>
   </t-card>
 </div>
 <!-- =======页面独有======= -->

@@ -19,6 +19,8 @@ class AuthRuleModel extends Model
         'id'            => 'int',
         'name'          => 'string',
         'title'         => 'string',
+        'module'        => 'string',
+        'plugin'        => 'string',
     ];
 
     /**

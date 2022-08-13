@@ -34,6 +34,7 @@ class HostModel extends Model
         'billing_cycle_name'    => 'string',
         'billing_cycle_time'    => 'int',
         'notes'                 => 'string',
+        'client_notes'          => 'string',
         'active_time'           => 'int',
         'due_time'              => 'int',
         'termination_time'      => 'int',
@@ -62,6 +63,7 @@ class HostModel extends Model
      * @return string list[].email - 邮箱 
      * @return string list[].phone_code - 国际电话区号 
      * @return string list[].phone - 手机号 
+     * @return string list[].company - 公司 
      * @return int list[].product_id - 商品ID 
      * @return string list[].product_name - 商品名称 
      * @return string list[].name - 标识 
@@ -111,9 +113,10 @@ class HostModel extends Model
             })
             ->count();
         $hosts = $this->alias('h')
-            ->field('h.id,h.client_id,c.username client_name,c.email,c.phone_code,c.phone,h.product_id,p.name product_name,h.name,h.active_time,h.due_time,h.first_payment_amount,h.billing_cycle,h.billing_cycle_name,h.status')
+            ->field('h.id,h.client_id,c.username client_name,c.email,c.phone_code,c.phone,c.company,h.product_id,p.name product_name,h.name,h.create_time,h.active_time,h.due_time,h.first_payment_amount,h.billing_cycle,h.billing_cycle_name,h.status,o.pay_time')
             ->leftjoin('product p', 'p.id=h.product_id')
             ->leftjoin('client c', 'c.id=h.client_id')
+            ->leftjoin('order o', 'o.id=h.order_id')
             ->where(function ($query) use($param) {
                 if(!empty($param['client_id'])){
                     $query->where('h.client_id', (int)$param['client_id']);
@@ -136,9 +139,10 @@ class HostModel extends Model
 
             // 前台接口去除字段
             if($app=='home'){
-                unset($hosts[$key]['client_id'], $hosts[$key]['client_name'], $hosts[$key]['email'], $hosts[$key]['phone_code'], $hosts[$key]['phone']);
+                unset($hosts[$key]['client_id'], $hosts[$key]['client_name'], $hosts[$key]['email'], $hosts[$key]['phone_code'], $hosts[$key]['phone'], $hosts[$key]['company']);
             }
-            unset($hosts[$key]['billing_cycle_name']);
+
+            unset($hosts[$key]['billing_cycle_name'], $hosts[$key]['create_time'], $hosts[$key]['pay_time']);
         }
 
         return ['list' => $hosts, 'count' => $count];
@@ -166,16 +170,19 @@ class HostModel extends Model
      * @return string status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
      * @return string suspend_type - 暂停类型,overdue到期暂停,overtraffic超流暂停,certification_not_complete实名未完成,other其他
      * @return string suspend_reason - 暂停原因
+     * @return string product_name - 商品名称
      */
     public function indexHost($id)
     {
         // 获取当前应用
         $app = app('http')->getName();
 
-        $host = $this->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_type,suspend_reason')->find($id);
+        $host = $this->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_type,suspend_reason,client_notes')->find($id);
         if (empty($host)){
             return (object)[]; // 转换为对象
         }
+
+        $product = ProductModel::find($host['product_id']);
 
         // 产品的用户ID和前台用户不一致时返回空对象
         if($app=='home'){
@@ -183,11 +190,13 @@ class HostModel extends Model
             if($host['client_id']!=$client_id){
                 return (object)[]; // 转换为对象
             }
-            unset($host['server_id'], $host['notes']);
+            $host['notes'] = $host['client_notes'];
+            unset($host['server_id'], $host['client_notes']);
         }
 
         $host['first_payment_amount'] = amount_format($host['first_payment_amount']); 
         $host['renew_amount'] = amount_format($host['renew_amount']);
+        $host['product_name'] = $product['name'] ?? '';
         unset($host['client_id']);
         
         return $host;
@@ -374,7 +383,7 @@ class HostModel extends Model
             if(empty($client)){
                 $clientName = '#'.$host->client_id;
             }else{
-                $clientName = '#'.$client->id.$client->username;
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
             }
             # 记录日志
             active_log(lang('admin_delete_user_host', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{host}'=>'#'.$host->id.$host->name]), 'host', $host->id);
@@ -481,6 +490,22 @@ class HostModel extends Model
                 'due_time' => $due_time,
                 'update_time' => time(),
             ], ['id'=>$id]);
+			add_task([
+				'type' => 'email',
+				'description' => '产品开通成功,发送邮件',
+				'task_data' => [
+					'name'=>'host_active',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
+			add_task([
+				'type' => 'sms',
+				'description' => '产品开通成功,发送短信',
+				'task_data' => [
+					'name'=>'host_active',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
         }else{
             $this->update([
                 'status'      => 'Failed',
@@ -528,6 +553,22 @@ class HostModel extends Model
                 'suspend_time'   => time(),
                 'update_time'    => time(),
             ], ['id'=>$id]);
+			add_task([
+				'type' => 'email',
+				'description' => '产品暂停通知,发送邮件',
+				'task_data' => [
+					'name'=>'host_suspend',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
+			add_task([
+				'type' => 'sms',
+				'description' => '产品暂停通知,发送短信',
+				'task_data' => [
+					'name'=>'host_suspend',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
         }else{
 
         }
@@ -566,6 +607,24 @@ class HostModel extends Model
                 'suspend_time'   => 0,
                 'update_time'    => time(),
             ], ['id'=>$id]);
+			if(configuration('cron_due_unsuspend_swhitch')==1){
+				add_task([
+					'type' => 'email',
+					'description' => '产品解除暂停通知,发送邮件',
+					'task_data' => [
+						'name'=>'host_unsuspend',//发送动作名称
+						'host_id'=>$id,//主机ID
+					],		
+				]);
+				add_task([
+					'type' => 'sms',
+					'description' => '产品解除暂停通知,发送短信',
+					'task_data' => [
+						'name'=>'host_unsuspend',//发送动作名称
+						'host_id'=>$id,//主机ID
+					],		
+				]);
+			}
         }else{
 
 
@@ -598,6 +657,22 @@ class HostModel extends Model
                 'termination_time' => time(),
                 'update_time'      => time(),
             ], ['id'=>$id]);
+			add_task([
+				'type' => 'email',
+				'description' => '产品删除通知,发送邮件',
+				'task_data' => [
+					'name'=>'host_terminate',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
+			add_task([
+				'type' => 'sms',
+				'description' => '产品删除通知,发送短信',
+				'task_data' => [
+					'name'=>'host_terminate',//发送动作名称
+					'host_id'=>$id,//主机ID
+				],		
+			]);
         }else{
 
         }
@@ -760,6 +835,111 @@ class HostModel extends Model
         $ModuleLogic = new ModuleLogic();
         $result = $ModuleLogic->changeConfigOptionCalculatePrice($host, $param['config_options']);
         return $result;
+    }
+    /**
+     * 时间 2022-05-28
+     * @title 升降级
+     * @desc 升降级
+     * @author hh
+     * @version v1
+     * @param int id - upgrade表ID
+     * @return int status - 状态码,200=成功,400=失败
+     * @return string msg - 提示信息
+     */
+    public function upgradeAccount($id)
+    {
+        $upgrade = UpgradeModel::find($id);
+        if (empty($upgrade)){
+            return false;
+        }
+
+        # 升降级
+        if($upgrade['type']=='product'){
+            // 获取接口
+            $product = ProductModel::find($upgrade['rel_id']);
+            if($product['type']=='server_group'){
+                $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
+                $serverId = $server['id'] ?? 0;
+            }else{
+                $serverId = $product['rel_id'];
+            }
+            $this->update([
+                'product_id' => $upgrade['rel_id'],
+                'server_id' => $serverId,
+                'first_payment_amount' => $upgrade['price'],
+                'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $upgrade['price'] : 0,
+                'billing_cycle' => $product['pay_type'],
+                'billing_cycle_name' => $upgrade['billing_cycle_name'],
+                'billing_cycle_time' => $upgrade['billing_cycle_time'],
+            ],['id' => $upgrade['host_id']]);
+            $ModuleLogic = new ModuleLogic();
+            $host = $this->find($upgrade['host_id']);
+            $ModuleLogic->changeProduct($host, json_decode($upgrade['data'], true));
+        }else if($upgrade['type']=='config_option'){
+            $ModuleLogic = new ModuleLogic();
+            $host = $this->find($upgrade['host_id']);
+            $ModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
+        }
+
+        # 发送邮件短信
+		add_task([
+			'type' => 'email',
+			'description' => '产品升降级,发送邮件',
+			'task_data' => [
+				'name'=>'host_upgrad',//发送动作名称
+				'host_id'=>$upgrade['host_id'],//主机ID
+			],		
+		]);
+		add_task([
+			'type' => 'sms',
+			'description' => '产品升降级,发送短信',
+			'task_data' => [
+				'name'=>'host_upgrad',//发送动作名称
+				'host_id'=>$upgrade['host_id'],//主机ID
+			],		
+		]);
+        return ['status'=>200, 'msg'=>lang('success_message')];
+    }
+
+    /**
+     * 时间 2022-08-11
+     * @title 修改产品备注
+     * @desc 修改产品
+     * @author theworld
+     * @version v1
+     * @param int param.id - 产品ID required
+     * @param string param.notes - 备注
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function updateHostNotes($param)
+    {
+        $clientId = get_client_id();
+        // 验证产品ID
+        $host = $this->find($param['id']);
+        if (empty($host)){
+            return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+        }
+
+        if($clientId!=$host['client_id']){
+            return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+        }
+
+
+        $this->startTrans();
+        try {
+            $this->update([
+                'client_notes' => $param['notes'] ?? '',
+                'update_time' => time()
+            ], ['id' => $param['id']]);
+            
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
     }
 
 }

@@ -117,48 +117,6 @@ return [
 		'admin_order_amount', 			 	 // 订单金额修改
 		'order_pay', 			 			 // 订单支付通知
 		'order_recharge', 			 		 // 充值成功通知
-		//插件
-		/* 'ticket_create', 			 		 // 客户新增工单
-		'ticket_close', 			 		 // 客户关闭工单
-		'ticket_admin_reply', 			     // 管理员回复工单
-		'refund_host_request', 			 	 // 产品退款申请
-		'refund_host_success', 			 	 // 产品退款成功
-		'refund_host_reject', 			 	 // 产品退款驳回
-		'refund_host_cancell', 			 	 // 产品取消请求
-		'aff_stats', 			 		     // 推介统计 */
-		
-		
-		
-		
-		
-	
-/* 		'code', 			 				 // 验证码
-		'admin_create_account', 			 // 超级管理员添加后台管理员
-		'admin_order_amount', 			 	 // 后台管理员调整订单价格
-		//'admin_order_pay', 			 		 // 后台管理员标记支付订单
-		'client_register', 			 		 // 用户注册
-		'client_change_phone', 				 // 用户更改手机
-		'client_change_email', 			 	 // 用户更改邮箱
-		'client_change_password', 			 // 用户更改密码
-		'order_pay', 			 			 // 用户支付
-		'order_recharge', 			 		 // 用户充值
-		'order_overdue', 			 		 // 订单未付款通知
-		'host_renewal_first', 			 	 // 客户续费第一次提醒
-		'host_renewal_second', 			 	 // 客户续费第二次提醒
-		'host_suspend', 			 		 // 产品停用提醒
-		'host_terminate', 					 // 产品未续费删除提醒
-		'host_overdue_first', 			 	 // 逾期第一次提醒
-		'host_overdue_second', 			 	 // 逾期第二次提醒
-		'host_overdue_third', 			 	 // 逾期第二次提醒*/
-		/* 'login_success', 	 			 // 登录成功 
-		'register', 		 // 注册验证
-		'register_success',  // 注册成功
-		'forget_password',   // 忘记密码
-		'bind', 			 // 绑定手机/邮箱
-		'update', 			 // 修改手机/邮箱
-		'change_password', 	 // 修改密码
-		'buy_success',		 // 产品购买成功
-		'renewal_success', 	 // 续费成功
-		'recharge_success',  // 充值成功 */
+
 	],
 ];

@@ -2,7 +2,6 @@
 namespace app\home\controller;
 
 use app\common\model\ApiModel;
-use app\common\model\ApiLogModel;
 use app\home\validate\ApiValidate;
 
 /**
@@ -143,44 +142,4 @@ class ApiController extends HomeBaseController
 
         return json($result);
     }
-
-    /**
-     * 时间 2022-07-06
-     * @title API日志
-     * @desc API日志
-     * @author theworld
-     * @version v1
-     * @url /console/v1/api/log
-     * @method  GET
-     * @param string keywords - 关键字
-     * @param int page - 页数
-     * @param int limit - 每页条数
-     * @param string orderby - 排序 id,description,create_time,ip
-     * @param string sort - 升/降序 asc,desc
-     * @return array list - API日志
-     * @return int list[].id - API日志ID 
-     * @return string list[].description - 描述 
-     * @return int list[].create_time - 时间 
-     * @return string list[].ip - IP 
-     * @return string list[].api_id - API密钥ID 
-     * @return int count - API日志总数
-     */
-	public function logList()
-    {
-		// 合并分页参数
-        $param = array_merge($this->request->param(), ['page' => $this->request->page, 'limit' => $this->request->limit, 'sort' => $this->request->sort]);
-        
-        // 实例化模型类
-        $ApiLogModel = new ApiLogModel();
-
-        // 获取API日志列表
-        $data = $ApiLogModel->apiLogList($param);
-
-        $result = [
-            'status' => 200,
-            'msg' => lang('success_message'),
-            'data' => $data
-        ];
-        return json($result);
-	}
 }

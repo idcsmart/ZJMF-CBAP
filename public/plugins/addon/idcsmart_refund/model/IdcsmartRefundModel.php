@@ -116,7 +116,33 @@ class IdcsmartRefundModel extends Model
             $ClientModel = new ClientModel();
             $client = $ClientModel->find($refund['client_id']);
             active_log(lang_plugins('refund_pending_refund_product', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{currency_prefix}'=>configuration('currency_prefix'),'{amount}'=>$refund['amount'],'{currency_suffix}'=>configuration('currency_suffix')]), 'addon_idcsmart_refund', $id);
-
+			
+			$host = (new HostModel())->find($refund['host_id']);
+			$product = (new ProductModel())->find($host['product_id']);
+			//产品退款成功短信添加到任务队列
+			add_task([
+				'type' => 'sms',
+				'description' => '产品退款成功,发送短信',
+				'task_data' => [
+					'name'=>'client_refund_success',//发送动作名称
+					'client_id'=>$client['id'],//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
+			//产品退款成功邮件添加到任务队列
+			add_task([
+				'type' => 'email',
+				'description' => '产品退款成功,发送邮件',
+				'task_data' => [
+					'name'=>'client_refund_success',//发送动作名称
+					'client_id'=>$client['id'],//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -154,7 +180,33 @@ class IdcsmartRefundModel extends Model
             $ClientModel = new ClientModel();
             $client = $ClientModel->find($refund['client_id']);
             active_log(lang_plugins('refund_reject_refund_product', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{reason}'=>$refund['suspend_reason']]), 'addon_idcsmart_refund', $id);
-
+			
+			$host = (new HostModel())->find($refund['host_id']);
+			$product = (new ProductModel())->find($host['product_id']);
+			//产品退款驳回短信添加到任务队列
+			add_task([
+				'type' => 'sms',
+				'description' => '产品退款驳回,发送短信',
+				'task_data' => [
+					'name'=>'admin_refund_reject',//发送动作名称
+					'client_id'=>$client['id'],//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
+			//产品退款驳回邮件添加到任务队列
+			add_task([
+				'type' => 'email',
+				'description' => '产品退款驳回,发送邮件',
+				'task_data' => [
+					'name'=>'admin_refund_reject',//发送动作名称
+					'client_id'=>$client['id'],//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -191,7 +243,34 @@ class IdcsmartRefundModel extends Model
             $ClientModel = new ClientModel();
             $client = $ClientModel->find($refund['client_id']);
             active_log(lang_plugins('refund_cancel_refund_product', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{client}'=>'client#'.$client['id'].'#'.$client['username'].'#']), 'addon_idcsmart_refund', $id);
-
+			
+			
+			$host = (new HostModel())->find($refund['host_id']);
+			$product = (new ProductModel())->find($host['product_id']);
+			//产品取消请求短信添加到任务队列
+			add_task([
+				'type' => 'sms',
+				'description' => '产品取消请求,发送短信',
+				'task_data' => [
+					'name'=>'client_refund_cancel',//发送动作名称
+					'client_id'=>$client['id'],//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
+			//产品取消请求邮件添加到任务队列
+			add_task([
+				'type' => 'email',
+				'description' => '产品取消请求,发送邮件',
+				'task_data' => [
+					'name'=>'client_refund_cancel',//发送动作名称
+					'client_id'=>$client['id'],//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -304,7 +383,7 @@ class IdcsmartRefundModel extends Model
                 'client_id' => get_client_id(),
                 'host_id' => $param['host_id'],
                 'amount' => $amount,
-                'suspend_reason' => $suspendReason,
+                'suspend_reason' => $suspendReason?:'',
                 'type' => $param['type'],
                 'create_time' => time(),
                 'status' => $status
@@ -313,7 +392,30 @@ class IdcsmartRefundModel extends Model
             $ProductModel = new ProductModel();
             $product = $ProductModel->find($productId);
             active_log(lang_plugins('refund_refund_host', ['{client}'=>'client#'.get_client_id().'#'. request()->client_name .'#','{host}'=>'host#'.$param['host_id'].'#'.$product['name'].'#','{currency_prefix}'=>configuration('currency_prefix'),'{amount}'=>$amount,'{currency_suffix}'=>configuration('currency_suffix')]), 'addon_idcsmart_refund', $refund->id);
-
+			//产品退款申请短信添加到任务队列
+			add_task([
+				'type' => 'sms',
+				'description' => '产品退款申请,发送短信',
+				'task_data' => [
+					'name'=>'client_create_refund',//发送动作名称
+					'client_id'=>get_client_id(),//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
+			//产品退款申请邮件添加到任务队列
+			add_task([
+				'type' => 'email',
+				'description' => '产品退款申请,发送邮件',
+				'task_data' => [
+					'name'=>'client_create_refund',//发送动作名称
+					'client_id'=>get_client_id(),//客户ID
+					'template_param'=>[
+						'product_name' => $product['name'].'-'.$host['name'],//产品名称
+					],
+				],		
+			]);
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -410,7 +512,7 @@ class IdcsmartRefundModel extends Model
     # 退款停用按钮模板钩子
     public function templateAfterServicedetailSuspended($param)
     {
-        $hostId = intval($param['host_id']);
+        $hostId = intval($param['host_id']??0);
         $HostModel = new HostModel();
         $host = $HostModel->find($hostId);
 
@@ -513,7 +615,6 @@ class IdcsmartRefundModel extends Model
                     $status = 'Suspend'; # 停用中
                 }
             }
-
             # 更新停用申请
             $this->update([
                 'status' => $status,
@@ -531,7 +632,7 @@ class IdcsmartRefundModel extends Model
 
         $IdcsmartRefundModel = new IdcsmartRefundModel();
 
-        $refund = $IdcsmartRefundModel->where('host_id',$id)->find();
+        $refund = $IdcsmartRefundModel->where('host_id',$id)->where('amount','>',0)->find();
 
         # 订单有退款
         if (!empty($refund)){
@@ -540,5 +641,36 @@ class IdcsmartRefundModel extends Model
         }else{ # 订单无退款
             return ['status'=>400,'msg'=>lang_plugins('fail_message')];
         }
+    }
+
+    # 获取待审核金额
+    public function pendingAmount()
+    {
+        $amount = $this->where('client_id',get_client_id())
+            ->where('status','Pending')
+            ->where('amount','>',0)
+            ->sum('amount');
+
+        return ['status'=>200,'msg'=>lang_plugins('success_message'),'data'=>['amount'=>bcsub($amount,0,2)]];
+    }
+
+    # 获取产品退款信息
+    public function hostRefundInfo($param)
+    {
+        $id = $param['id']??0;
+
+        $HostModel = new HostModel();
+
+        $host = $HostModel->where('id',$id)->where('client_id',get_client_id())->find();
+        if (empty($host)){
+            return ['status'=>400,'msg'=>lang_plugins('refund_host_is_not_exist')];
+        }
+
+        $refund = $this->field('id,amount,suspend_reason,type,status,reject_reason,create_time')
+            ->where('host_id',$id)
+            ->order('id','desc')
+            ->find();
+
+        return ['status'=>200,'msg'=>lang_plugins('success_message'),'data'=>['refund'=>$refund]];
     }
 }

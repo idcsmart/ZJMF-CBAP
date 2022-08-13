@@ -95,11 +95,32 @@
           roleList: [],
           configTip: '',
           configData: [],
+          urlPath: url,
           installTip: '',
           configVisble: false,
           name: '', // 插件标识
           type: '', // 安装/卸载
           module: 'mail' // 当前模块
+        }
+      },
+      computed: {
+        enableTitle () {
+          return (status) => {
+            if (status === 1) {
+              return lang.disable
+            } else if (status === 0) {
+              return lang.enable
+            }
+          }
+        },
+        installTitle () {
+          return (status) => {
+            if (status === 3) {
+              return lang.install
+            } else {
+              return lang.uninstall
+            }
+          }
         }
       },
       methods: {
@@ -191,7 +212,7 @@
           this.$refs.userDialog.reset()
         },
         sendManage () {
-          location.href = '/notice_send.html'
+          location.href = 'notice_send.html'
         },
         // 停用/启用
         changeStatus (row) {
@@ -230,16 +251,14 @@
         async sureDel () {
           try {
             const params = {
-              type: this.type,
               module: this.module,
               name: this.name
             }
-            const res = await deleteMoudle(this.type,params)
+            const res = await deleteMoudle(this.type, params)
             this.$message.success(res.data.msg)
             this.delVisible = false
             this.getEmailList()
           } catch (error) {
-              console.log(error)
             this.$message.error(error.data.msg)
           }
         },

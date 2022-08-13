@@ -31,9 +31,11 @@ class TransactionController extends HomeBaseController
      * @return string list[].transaction_number - 交易流水号
      * @return int list[].order_id - 订单ID 
      * @return int list[].create_time - 创建时间
+     * @return string list[].type - 订单类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return array list[].hosts - 产品
      * @return int list[].hosts[].id - 产品ID
      * @return string list[].hosts[].name - 商品名称
+     * @return array list[].descriptions - 描述
      * @return int count - 交易流水总数
      */
 	public function transactionList()

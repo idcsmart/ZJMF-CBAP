@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
-<div id="content" class="notice-sms-template hasCrumb" v-cloak>
+<div id="content" class="notice-sms-template hasCrumb table" v-cloak>
   <!-- crumb -->
   <div class="com-crumb">
     <span>{{lang.notice_interface}}</span>
@@ -22,10 +22,12 @@
     <div class="common-header">
       <div class="left">
         <t-button @click="createTemplate" class="add">{{lang.create_template}}</t-button>
+        <t-button @click="batchSubmit" class="add">{{lang.batch_submit}}</t-button>
         <t-button theme="default" @click="back" class="add">{{lang.back}}</t-button>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :max-height="maxHeight" :hover="hover" 
+    :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template #type="{row}">
         <span>{{ row.type === 1 ? lang.international : lang.domestic }}</span>
       </template>
@@ -81,9 +83,9 @@
   </t-dialog>
 
   <!-- 删除弹窗 -->
-  <t-dialog theme="warning" :header="lang.sureDelete" :visible.sync="delVisible">
+  <t-dialog theme="warning" :header="delOrSubmitTitle" :visible.sync="delVisible">
     <template slot="footer">
-      <t-button theme="primary" @click="sureDel">{{lang.sure}}</t-button>
+      <t-button theme="primary" @click="sureHandler">{{lang.sure}}</t-button>
       <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
     </template>
   </t-dialog>

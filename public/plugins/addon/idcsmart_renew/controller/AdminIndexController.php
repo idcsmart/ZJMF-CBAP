@@ -2,14 +2,14 @@
 namespace addon\idcsmart_renew\controller;
 
 use addon\idcsmart_renew\model\IdcsmartRenewModel;
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 
 /**
  * @title 续费
  * @desc 续费
  * @use addon\idcsmart_renew\controller\AdminIndexController
  */
-class AdminIndexController extends PluginBaseController
+class AdminIndexController extends PluginAdminBaseController
 {
     /**
      * 时间 2022-06-02

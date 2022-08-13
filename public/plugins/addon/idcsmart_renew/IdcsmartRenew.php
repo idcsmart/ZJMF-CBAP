@@ -4,6 +4,7 @@ namespace addon\idcsmart_renew;
 use addon\idcsmart_renew\model\IdcsmartRenewModel;
 use app\common\lib\Plugin;
 use app\common\model\OrderItemModel;
+use app\common\model\OrderModel;
 use think\facade\Db;
 
 /*
@@ -24,6 +25,10 @@ class IdcsmartRenew extends Plugin
         'author'      => 'idcsmart',  //开发者
         'version'     => '1.0',      // 版本号
     );
+
+    # 定义此变量,表示不需要默认导航
+    public $noNav;
+
     # 插件安装
     public function install()
     {
@@ -36,7 +41,7 @@ class IdcsmartRenew extends Plugin
   `new_billing_cycle` VARCHAR(255) NOT NULL DEFAULT '' COMMENT '新周期',
   `new_billing_cycle_time` INT(11) NOT NULL DEFAULT '0' COMMENT '新周期时间',
   `new_billing_cycle_amount` DECIMAL(10,2) NOT NULL DEFAULT '0.00' COMMENT '新周期续费金额',
-  `status` ENUM('Completed','Pending') NOT NULL DEFAULT 'Unpaid' COMMENT '状态:Pending待执行,Completed已完成',
+  `status` ENUM('Completed','Pending') NOT NULL DEFAULT 'Pending' COMMENT '状态:Pending待执行,Completed已完成',
   `create_time` INT(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `client_id` (`client_id`),
@@ -77,6 +82,38 @@ class IdcsmartRenew extends Plugin
             ->select();
         foreach ($orderItems as $orderItem){
             $IdcsmartRenewModel->renewHandle($orderItem->rel_id);
+        }
+
+        return true;
+    }
+
+    # 实现订单创建后钩子
+    public function afterOrderCreate($param)
+    {
+        if (!isset($param['id'])){
+            return false;
+        }
+
+        $OrderModel = new OrderModel();
+        $order = $OrderModel->find($param['id']);
+        if (empty($order)){
+            return false;
+        }
+
+        # 升降级订单,删除续费订单
+        if ($order['type'] == 'upgrade'){
+            $renewOrderIds = $OrderModel->where('client_id',$order->client_id)
+                ->where('type','renew')
+                ->where('status','Unpaid')
+                ->column('id');
+
+            $OrderItemModel = new OrderItemModel();
+            $OrderItemModel->whereIn('order_id',$renewOrderIds)->delete();
+
+            $OrderModel->where('client_id',$order->client_id)
+                ->where('type','renew')
+                ->where('status','Unpaid')
+                ->delete();
         }
 
         return true;

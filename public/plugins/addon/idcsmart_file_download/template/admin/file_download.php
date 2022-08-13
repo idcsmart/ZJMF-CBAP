@@ -69,6 +69,7 @@
                                         @click="deletenode(node)">
                                     </t-icon>
                                 </t-input>
+
                                 <span class="filenum">{{node.data.file_num}}</span>
                                 <t-icon v-if="node.value!==nodevalue" class="iconsolt" name="edit-1" color="#0052D9"
                                     style="margin-right: 5px;" @click="editfolder(node)">
@@ -76,11 +77,17 @@
                                 <t-icon v-if="node.value==nodevalue" name="save" class="iconsolt" color="#0052D9"
                                     style="margin-right: 5px;" @click="savefolder(node.data.label,node.data.id)">
                                 </t-icon>
+                                <t-icon v-if="node.value==nodevalue" class="iconsolt" name="close-rectangle"
+                                    color="#0052D9" @click="canceledit()">
+                                </t-icon>
                                 <t-popconfirm :visible="isdelete===node.data.id" content="确认删除吗"
                                     @cancel="()=>{isdelete=''}" @Confirm="deletefolder(node,'confirm')">
-                                    <t-icon class="iconsolt" name="delete" color="#0052D9" @click="deletefolder(node)">
+                                    <t-icon v-if="node.value!==nodevalue" class="iconsolt" name="delete" color="#0052D9"
+                                        @click="deletefolder(node)">
+                                    </t-icon>
                                 </t-popconfirm>
-                                </t-icon>
+
+
                             </template>
                         </t-tree>
                         <div v-if="appendfolder" class="addfolder">
@@ -90,9 +97,9 @@
                                 </t-icon>
                             </t-input>
                             <div class="iconsolt2">
-                                <t-icon name="save" color="#0052D9" @click="addnewfolder">
+                                <t-icon name="save" class="iconsolt" @click="addnewfolder">
                                 </t-icon>
-                                <t-icon name="delete" color="#0052D9" @click="()=>{appendfolder=false}">
+                                <t-icon name="close-rectangle" class="iconsolt" @click="()=>{appendfolder=false}">
                                 </t-icon>
                             </div>
                         </div>
@@ -103,13 +110,12 @@
                         @EscKeydown="onKeydownEsc" @CloseBtnClick="onClickCloseBtn" @Close="close" width="70%"
                         @Confirm="uploadConfirm" @progress="uploadProgress">
                         <div class="uploadfile">
-                            <t-upload action="http://101.35.248.14/console/v1/upload" :format-response="formatResponse"
-                                @Change="changeupload" v-model="files" allowUploadDuplicateFile="false"
-                                @progress="uploadProgress" theme="custom">
+                            <t-upload action="http://kfc.idcsmart.com//console/v1/upload"
+                                :format-response="formatResponse" @Change="changeupload" v-model="files"
+                                allowUploadDuplicateFile="false" @progress="uploadProgress" theme="custom" multiple>
                                 <t-button theme="outline">上传文件</t-button>
                                 <span>{{uploadTip}}</span>
                             </t-upload>
-
                         </div>
 
                         <t-table :key="key" row-key="index" :data="uploadfilelist" :columns="columns2" maxHeight="80%"
@@ -146,7 +152,7 @@
                             <template #op="slotProps">
                                 <div>
                                     <t-switch v-model="slotProps.row.hidden"> </t-switch>
-                                    <t-icon name="delete" color="#0052D9" @click="deleteupfile(slotProps.row.id)">
+                                    <t-icon name="delete" color="#0052D9" @click="deleteupfile(slotProps.row.filename)">
                                     </t-icon>
                                 </div>
                             </template>

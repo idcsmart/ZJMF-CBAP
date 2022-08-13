@@ -13,6 +13,7 @@
           delVisible: false,
           statusVisble: false,
           hover: true,
+          urlPath: url,
           columns: [
             {
               colKey: 'id',
@@ -47,8 +48,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 100,
-              fixed: 'right'
+              width: 100
             },
           ],
           hideSortTips: true,
@@ -72,6 +72,26 @@
           maxHeight: '',
           curName: '',
           installTip: ''
+        }
+      },
+      computed: {
+        enableTitle () {
+          return (status) => {
+            if (status === 1) {
+              return lang.disable
+            } else if (status === 0) {
+              return lang.enable
+            }
+          }
+        },
+        installTitle () {
+          return (status) => {
+            if (status === 3) {
+              return lang.install
+            } else {
+              return lang.uninstall
+            }
+          }
         }
       },
       mounted () {
@@ -176,8 +196,11 @@
             this.$message.success(res.data.msg)
             this.delVisible = false
             this.getAddonList()
+            // 获取导航
+            const menus = await getMenus()
+            localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
           } catch (error) {
-              console.log(error)
+            console.log(error)
             this.$message.error(error.data.msg)
           }
         },

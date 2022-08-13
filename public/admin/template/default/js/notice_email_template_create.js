@@ -7,10 +7,15 @@
       data () {
         return {
           formData: {
+            name:'',
             subject: '',
             message: ''
           },
           rules: {
+            name: [
+              { required: true, message: lang.input + lang.nickname, type: 'error' },
+              { validator: val => val.length <= 100, message: lang.verify3 + 100, type: 'warning'}
+            ],
             subject: [
               { required: true, message: lang.input + lang.title, type: 'error' },
               { validator: val => val.length <= 100, message: lang.verify3 + 100, type: 'warning'}
@@ -36,7 +41,7 @@
               const res = await createEmailTemplate('create', this.formData)
               this.$message.success(res.data.msg)
               setTimeout(() => {
-                location.href = '/notice_email_template.html'
+                location.href = 'notice_email_template.html'
               }, 500)
             } catch (error) {
               this.$message.error(error.data.msg)

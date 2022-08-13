@@ -113,6 +113,9 @@ class Paypal extends Plugin
             }
         }
 
+        $html = "<a href='$approvalUrl' target='_blank'>去支付</a>";
+        return $html;
+        header("location:{$approvalUrl}");die;
         return redirect($approvalUrl); # 直接重定向至Paypal支付页面
     }
 

@@ -52,7 +52,13 @@ class ClientValidate extends Validate
 
     protected $scene = [
         'create' => ['username', 'email', 'phone_code', 'phone', 'password', 'repassword'],
-        'update' => ['id', 'username', 'email', 'phone_code', 'phone', 'company', 'country', 'address', 'notes'],
         'status' => ['id', 'status'],
     ];
+
+    # 修改验证
+    public function sceneUpdate()
+    {
+        return $this->only(['id', 'username', 'email', 'phone_code', 'phone', 'password', 'company', 'country', 'address', 'notes'])
+            ->remove('password', 'require');
+    }
 }

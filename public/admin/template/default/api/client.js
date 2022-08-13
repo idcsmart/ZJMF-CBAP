@@ -24,6 +24,10 @@ function deleteClient (id) {
 function getClientDetail (id) {
   return Axios.get(`/client/${id}`)
 }
+// 以用户登录
+function loginByUserId (id) {
+  return Axios.post(`/client/${id}/login`)
+}
 
 // 用户余额管理-用户余额变更记录列表
 function getMoneyDetail (id, params) {
@@ -139,7 +143,10 @@ function updateProduct (id, params) {
 function getInterface (params) {
   return Axios.get('/server', { params })
 }
-
+// 获取升降级订单金额
+function getUpgradeAmount (params) {
+  return Axios.post('/order/upgrade/amount', params)
+}
 // 产品模块
 function getproModule (id) {
   return Axios.get(`/host/${id}/module`)

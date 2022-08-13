@@ -38,11 +38,11 @@
       methods: {
         //选标题
         changetitle(e) {
-          this.typelist.map((item) => {
-            if (item.id === e) {
-              this.dialog_name = item.name;
-            }
-          });
+          // this.typelist.map((item) => {
+          //   if (item.id === e) {
+          //     this.dialog_name = item.name;
+          //   }
+          // });
           console.log(e, "title");
         },
         getindexlist() {
@@ -128,8 +128,8 @@
           });
           console.log(this.checkgroup, "this.checkgroup");
         },
-        keywordssearch() {
-          this.helplistIndexs();
+        keywordssearch(page) {
+          this.helplistIndexs(page);
         },
         // 切换分页
         changePage(e) {
@@ -158,12 +158,12 @@
           this.helplistIndexs(this.dialog);
           this.helplistIndexsall(this.dialog);
         },
-        helplistIndexs() {
+        helplistIndexs(page) {
           let params = {
             addon_idcsmart_help_type_id: this.dialog.id,
             // keywords: this.params.keywords,
             ...this.params,
-            // page: this.params.page,
+            page: page === 1 ? 1 : this.params.page,
             // limit: this.params.limit,
             // orderby: "",
             // sort: "",

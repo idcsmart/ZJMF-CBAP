@@ -188,6 +188,7 @@ class ConfigurationController extends AdminBaseController
      * @return  int captcha_width - 图形验证码宽度
      * @return  int captcha_height - 图形验证码高度
      * @return  int captcha_length - 图形验证码字符长度
+     * @return  int code_client_email_register - 邮箱注册数字验证码开关:1开启0关闭
      */
     public function securityList()
     {
@@ -219,6 +220,7 @@ class ConfigurationController extends AdminBaseController
      * @param  int captcha_width - 图形验证码宽度
      * @param  int captcha_height - 图形验证码高度
      * @param  int captcha_length - 图形验证码字符长度
+     * @param  int code_client_email_register - 邮箱注册数字验证码开关:1开启0关闭
      */
     public function securityUpdate()
     {
@@ -324,9 +326,11 @@ class ConfigurationController extends AdminBaseController
      * @return int cron_overdue_second_day - 产品逾期X天后第二次提醒
      * @return int cron_overdue_third_swhitch - 产品逾期第三次提醒开关 1开启，0关闭
      * @return int cron_overdue_third_day - 产品逾期X天后第三次提醒
-     * @return int cron_ticket_swhitch - 自动关闭工单开关 1开启，0关闭
+     * @return int cron_ticket_close_swhitch - 自动关闭工单开关 1开启，0关闭
      * @return int cron_ticket_close_day - 已回复状态的工单超过x小时后关闭
      * @return int cron_aff_swhitch - 推介月报开关 1开启，0关闭
+     * @return int cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
+     * @return int cron_order_overdue_day - 订单未付款X天后通知 required
      */
     public function cronList()
     {
@@ -366,9 +370,11 @@ class ConfigurationController extends AdminBaseController
      * @return int cron_overdue_second_day - 产品逾期X天后第二次提醒 required
      * @return int cron_overdue_third_swhitch - 产品逾期第三次提醒开关1开启，0关闭 required
      * @return int cron_overdue_third_day - 产品逾期X天后第三次提醒 required
-     * @return int cron_ticket_swhitch - 自动关闭工单开关 1开启，0关闭 required
+     * @return int cron_ticket_close_swhitch - 自动关闭工单开关 1开启，0关闭 required
      * @return int cron_ticket_close_day - 已回复状态的工单超过x小时后关闭 required
      * @return int cron_aff_swhitch - 推介月报开关 1开启，0关闭 required
+     * @return int cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
+     * @return int cron_order_overdue_day - 订单未付款X天后通知 required
      */
     public function cronUpdate()
     {
@@ -386,6 +392,68 @@ class ConfigurationController extends AdminBaseController
 		//保存安全设置
 		$result = $ConfigurationModel->cronUpdate($param);   
 		
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-08-12
+     * @title 获取主题设置
+     * @desc 获取主题设置
+     * @url /admin/v1/configuration/theme
+     * @method  GET
+     * @author theworld
+     * @version v1
+     * @return string admin_theme - 后台主题
+     * @return string clientarea_theme - 会员中心主题
+     * @return array admin_theme_list - 后台主题列表
+     * @return string admin_theme_list[].name - 名称
+     * @return string admin_theme_list[].img - 图片
+     * @return array clientarea_theme_list - 会员中心主题列表
+     * @return string clientarea_theme_list[].name - 名称
+     * @return string clientarea_theme_list[].img - 图片
+     */
+    public function themeList()
+    {
+        //实例化模型类
+        $ConfigurationModel = new ConfigurationModel();
+        
+        //获取主题设置
+        $data = $ConfigurationModel->themeList();
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => $data,
+        ];
+       return json($result);
+    }
+
+    /**
+     * 时间 2022-08-12
+     * @title 保存主题设置
+     * @desc 保存主题设置
+     * @url /admin/v1/configuration/theme
+     * @method  PUT
+     * @author theworld
+     * @version v1
+     * @param string admin_theme - 后台主题 required
+     * @param string clientarea_theme - 会员中心主题 required
+     */
+    public function themeUpdate()
+    {
+        //接收参数
+        $param = $this->request->param();
+        
+        //参数验证
+        if (!$this->validate->scene('theme_update')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+        
+        //实例化模型类
+        $ConfigurationModel = new ConfigurationModel();
+        
+        //保存主题设置
+        $result = $ConfigurationModel->themeUpdate($param);   
+        
         return json($result);
     }
 }

@@ -37,3 +37,7 @@ function getAuthRole () {
 function globalSearch (keywords) {
   return Axios.get(`/global_search?keywords=${keywords}`)
 }
+// 获取导航
+function getMenus () {
+  return Axios.get('/menu')
+}

@@ -232,6 +232,9 @@ ol {
   padding: 0 0 0 1.2em;
   line-height: 22px;
 }
+.log-description-width a {
+  color: var(--td-brand-color);
+}
 ::selection {
   background-color: var(--td-brand-color-8);
   color: #fff;
@@ -254,6 +257,10 @@ a {
 .t-table td,
 .t-table th {
   padding: 12px 5px;
+}
+.t-submenu a {
+  display: block;
+  width: 100%;
 }
 body {
   color: var(--td-text-color-secondary);
@@ -290,6 +297,20 @@ body {
   color: var(--td-brand-color);
 }
 .t-row {
+  width: 100%;
+}
+.com-h-box {
+  position: relative;
+}
+.com-h-box .user {
+  position: absolute;
+  width: 300px;
+  right: 0;
+  top: 0;
+  height: 50px;
+  line-height: 50px;
+}
+.com-h-box .user .t-select {
   width: 100%;
 }
 /* loading */
@@ -810,12 +831,28 @@ textarea {
   height: 1px;
   background-color: var(--td-component-border);
 }
-/**** client_detail *****/
+/* cloud-config */
+.cloud-config {
+  padding: 24px;
+}
 /**** client_host *****/
 .common-look {
   color: var(--td-brand-color);
   cursor: pointer;
   margin-right: 6px;
+}
+.common-look .t-icon {
+  font-size: 18px;
+}
+.common-look.t-icon {
+  font-size: 18px;
+  margin-right: 10px;
+}
+.common-look.t-icon:last-child {
+  margin-right: 0;
+}
+.common-look.t-icon.rotate {
+  transform: rotate(45deg);
 }
 .common-look.disable {
   color: #999;
@@ -850,6 +887,32 @@ textarea {
 .common-tab li.active a {
   color: var(--td-brand-color-8);
   font-weight: bold;
+}
+/* no-auth */
+.no-auth {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.no-auth img {
+  width: 190px;
+  height: 190px;
+  margin-bottom: 80px;
+}
+.no-auth p {
+  margin: 0;
+  color: #606060;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+.no-auth .tit {
+  font-size: 16px;
+}
+.no-auth .path {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.4);
 }
 /* com-transparent */
 .com-transparent {

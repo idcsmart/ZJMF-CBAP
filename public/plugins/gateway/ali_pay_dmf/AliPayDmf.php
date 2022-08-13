@@ -73,8 +73,17 @@ class AliPayDmf extends Plugin
 
         require_once 'phpqrcode/phpqrcode.php';
 
-        \QRcode::png($qrPayResult->getResponse()->qr_code,false,0,4,5);die;
-        #return $qrPayResult->getResponse()->qr_code;
+        $response = \QRcode::png($qrPayResult->getResponse()->qr_code,false,0,4,5,false); # 这里需要修改扩展库的代码
+
+        $base64 = 'data:png;base64,' . base64_encode($response->getData());
+
+        return '<img src="'. $base64 .'" alt="" width="250" height="250">';
+
+        # 方式二、生成图片
+        /*$path = WEB_ROOT . "plugins/gateway/ali_pay_dmf/upload/{$param['out_trade_no']}.png";
+        $response = \QRcode::png($qrPayResult->getResponse()->qr_code,$path,0,4,5,true);
+        $outPath = request()->domain() . "/plugins/gateway/ali_pay_dmf/upload/{$param['out_trade_no']}.png";
+        return '<img src="'. $outPath .'" alt="" width="250" height="250">';*/
     }
 
     // 获取配置

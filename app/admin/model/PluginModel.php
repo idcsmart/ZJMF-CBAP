@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\model;
 
+use app\common\model\NavModel;
 use think\db\Query;
 use think\Model;
 use think\Validate;
@@ -157,6 +158,7 @@ class PluginModel extends Model
             return ['status'=>400,'msg'=>lang('plugin_is_installed')];
         }
         $plugin = new $class;
+
         $info = $plugin->info;
         if (!$info || !$plugin->checkInfo()){
             return ['status'=>400,'msg'=>lang('plugin_information_is_missing')];
@@ -167,14 +169,30 @@ class PluginModel extends Model
             return ['status'=>400,'msg'=>lang('plugin_pre_install_fail')];
         }
 
-        $methods = get_class_methods($plugin);
+        # 修改为允许客户自定义hook
+        $reflect = new \ReflectionClass($class);
+        $methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
+        $methodsFinal = $reflect->getMethods(\ReflectionMethod::IS_FINAL);
+        $methodsFilter = [];
+        foreach ($methods as $method){
+            $methodsFilter[] = parse_name($method->name);
+        }
+        $methodsFinalFilter = [];
+        foreach ($methodsFinal as $methodFinal){
+            $methodsFinalFilter[] = parse_name($methodFinal->name);
+        }
+        $methods = array_diff($methodsFilter,$methodsFinalFilter);
+        # 排除
+        $methods = array_diff($methods,['install','uninstall','construct','get_view']);
+        $pluginHooks = $methods;
+
+        # 仅支持系统存在的hook
+        /*$methods = get_class_methods($plugin);
         foreach ($methods as $methodKey => $method) {
             $methods[$methodKey] = parse_name($method);
         }
-
         $systemHooks = get_system_hooks();
-
-        $pluginHooks = array_intersect($systemHooks, $methods);
+        $pluginHooks = array_intersect($systemHooks, $methods);*/
 
         $info['config'] = json_encode($plugin->getConfig());
 
@@ -210,6 +228,14 @@ class PluginModel extends Model
                 ];
             }
             $PluginHookModel->insertAll($insert);
+
+            # 插入导航
+            if (!array_key_exists('noNav',get_class_vars($class))){
+                $this->pluginInsertNav($module,$name);
+            }
+
+            # 插入权限
+            $this->pluginInsertAuth($module,$name);
 
             # 记录日志
             $pluginId = $this->where('name',$name)->value('id');
@@ -247,6 +273,8 @@ class PluginModel extends Model
 						$message_template['template_id'] ='';
 						$message_template['notes'] ='';
 						$message_template['status'] = 0; 
+						$message_template['create_time'] = $time; 
+						$message_template['update_time'] = $time; 
 						$insertAll[]=$message_template;
 					}
 					if(count($insertAll)) Db::name('sms_template')->insertAll($insertAll);
@@ -299,6 +327,14 @@ class PluginModel extends Model
                     throw new \Exception(lang('plugin_uninstall_pre_fail'));
                 }
             }
+
+            # 删除插件导航
+            $NavModel = new NavModel();
+            $NavModel->deletePluginNav(['module'=>$module,'plugin'=>parse_name($param['name'],1)]);
+
+            # 删除插件权限
+            $AuthModel = new AuthModel();
+            $AuthModel->deletePluginAuth($module,parse_name($param['name'],1));
 			
             # 记录日志
             active_log(lang('log_admin_uninstall_plugin',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{module}'=>lang('log_admin_plugin_'.$module),'{name}'=>$param['name']]),'plugin',$plugin->id);
@@ -642,6 +678,129 @@ class PluginModel extends Model
         }
 
         return $newRules;
+    }
+
+    # 插入插件导航
+    private function pluginInsertNav($module,$name)
+    {
+        # 非插件,不插入导航
+        if (!in_array($module,['addon'])){
+            return false;
+        }
+
+        $name = parse_name($name);
+
+        # 添加插件默认导航
+        $NavModel = new NavModel();
+
+        $maxOrder = $NavModel->max('order');
+
+        $navPluginId = $NavModel->where('type','admin')->where('name','nav_plugin')->value('id')?:0;
+        $NavModel->create([
+            'type' => 'admin',
+            'name' => "nav_plugin_addon_{$name}",
+            'url' => "plugin/{$name}/index.html",
+            'parent_id' => $navPluginId,
+            'order' => $maxOrder+1,
+            'module' => $module,
+            'plugin' => parse_name($name,1)
+        ]);
+
+        # 后台导航文件存在,导航添加至插件之上,管理之下
+        if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/sidebar.php")){
+            $navs = require WEB_ROOT . "plugins/{$module}/{$name}/sidebar.php";
+            if (!empty($navs[0])){
+                foreach ($navs as $nav){
+                    $NavModel->createPluginNav($nav,$module,$name);
+                }
+            }
+        }
+
+        # 添加插件默认前台导航
+        /*$maxOrder = $NavModel->max('order');
+
+        $navPluginId2 = $NavModel->where('type','home')->where('name','nav_plugin')->value('id')?:0;
+        $NavModel->create([
+            'type' => 'home',
+            'name' => "nav_plugin_addon_{$name}",
+            'url' => "plugin/{$name}/index.html",
+            'parent_id' => $navPluginId2,
+            'order' => $maxOrder+1,
+            'module' => $module,
+            'plugin' => parse_name($name,1)
+        ]);*/
+
+        # 前台导航文件存在
+        if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/sidebar_home.php")){
+            $navs = require WEB_ROOT . "plugins/{$module}/{$name}/sidebar_home.php";
+            if (!empty($navs[0])){
+                $NavModel = new NavModel();
+                foreach ($navs as $nav){
+                    $NavModel->createPluginNav($nav,$module,$name,'home');
+                }
+            }
+        }
+
+        # 修改插件导航的排序为最后
+        $maxOrder = $NavModel->max('order');
+        $NavModel->update([
+            'order' => $maxOrder+1
+        ],['id'=>$navPluginId]);
+
+        return true;
+    }
+
+    # 插入权限
+    private function pluginInsertAuth($module,$name)
+    {
+        # 非插件,不插入权限
+        if (!in_array($module,['addon'])){
+            return false;
+        }
+
+        # 存入默认一级权限
+        $class = get_plugin_class(parse_name($name,1), $module);
+        $plugin = new $class;
+        $AuthModel = new AuthModel();
+        $maxOrder = $AuthModel->max('order');
+        $authObject = $AuthModel->create([
+            'title' => (isset($plugin->info['title']) && !empty($plugin->info['title']))?$plugin->info['title']:parse_name($name),
+            'url'  => '',
+            'parent_id' => 0,
+            'order'  => $maxOrder+1,
+            'module' => $module,
+            'plugin' => parse_name($name,1)
+        ]);
+
+        $name = parse_name($name);
+
+        $AuthModel = new AuthModel();
+        if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/auth.php")){
+            $auths = require WEB_ROOT . "plugins/{$module}/{$name}/auth.php";
+
+            if (!empty($auths[0])){
+                foreach ($auths as $auth){
+                    $auth['parent_id'] = $authObject->id;
+                    $AuthModel->createPluginAuth($auth,$module,$name);
+                }
+            }
+        }
+
+        # 更改超级管理员分组权限为所有权限
+        $supperAdminId = 1;
+        $AuthLinkModel = new AuthLinkModel();
+        $AuthLinkModel->where('admin_role_id',$supperAdminId)->delete();
+        $authIds = $AuthModel->column('id');
+        $all = [];
+        foreach ($authIds as $authId){
+            $all[] = [
+                'auth_id' => $authId,
+                'admin_role_id' => $supperAdminId
+            ];
+        }
+        $AuthLinkModel->insertAll($all);
+
+        return true;
     }
 
 }

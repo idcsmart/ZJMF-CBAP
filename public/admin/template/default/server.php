@@ -5,16 +5,12 @@
     <div class="common-header">
       <t-button @click="addUser" class="add">{{lang.create_interface}}</t-button>
       <div class="com-search">
-        <t-input v-model="params.keywords" class="search-input"
-          :placeholder="`${lang.please_search}ID、${lang.nickname}、${lang.interface_group_name}`"
-          @keyup.enter.native="seacrh" :on-clear="clearKey" clearable>
+        <t-input v-model="params.keywords" class="search-input" :placeholder="`${lang.please_search}ID、${lang.nickname}、${lang.interface_group_name}`" @keyup.enter.native="seacrh" :on-clear="clearKey" clearable>
         </t-input>
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
-      :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips"
-      :max-height="maxHeight">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -23,7 +19,11 @@
       </template>
       <template #name="{row}">
         <t-icon v-if="row.linkStatus === 200" name="check-circle-filled" style="color:#00a870;"></t-icon>
-        <t-icon v-else name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
+        <template v-else>
+          <t-tooltip :content="row.fail_reason" theme="light" :show-arrow="false">
+            <t-icon name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
+          </t-tooltip>
+        </template>
         {{row.name}}
       </template>
       <template #link="{row}">
@@ -31,17 +31,23 @@
           <t-tag theme="success" class="status" variant="light" v-if="">{{row.linkStatus}}</t-tag>
         </div>
       </template>
+      <template #module="{row}">
+        <span>{{calcName(row.module)}}</span>
+      </template>
       <template #status="{row}">
         <t-tag theme="success" class="status" v-if="row.status" variant="light">{{lang.enable}}</t-tag>
         <t-tag theme="danger" class="status" v-else variant="light">{{lang.deactivate}}</t-tag>
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="updateHandler(row)">{{lang.edit}}</a>
-        <a class="common-look" @click="deleteUser(row)">{{lang.delete}}</a>
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+          <t-icon name="edit-1" @click="updateHandler(row)" class="common-look"></t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+          <t-icon name="delete" @click="deleteUser(row)" class="common-look"></t-icon>
+        </t-tooltip>
       </template>
     </t-table>
-    <t-pagination :total="total" :page-size="params.limit" :current="params.page"
-      :page-size-options="pageSizeOptions" :on-change="changePage" />
+    <t-pagination :total="total" :page-size="params.limit" :current="params.page" :page-size-options="pageSizeOptions" :on-change="changePage" />
   </t-card>
 
   <!-- 添加用户弹窗 -->

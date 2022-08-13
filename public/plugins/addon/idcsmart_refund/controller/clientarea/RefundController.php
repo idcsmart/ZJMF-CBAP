@@ -100,5 +100,53 @@ class RefundController extends PluginBaseController
 
         return json($result);
     }
+
+    /**
+     * 时间 2022-08-11
+     * @title 获取待审核金额
+     * @desc 获取待审核金额
+     * @author wyh
+     * @version v1
+     * @url /console/v1/refund/pending/amount
+     * @method get
+     * @return float amount - 退款待审核金额
+     */
+    public function pendingAmount()
+    {
+        $IdcsmartRefundModel = new IdcsmartRefundModel();
+
+        $result = $IdcsmartRefundModel->pendingAmount();
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-08-11
+     * @title 获取产品停用信息
+     * @desc 获取产品停用信息
+     * @author wyh
+     * @version v1
+     * @url /console/v1/refund/host/:id/refund
+     * @method get
+     * @param int id - 产品ID
+     * @return object refund - 退款信息
+     * @return int refund.id - 退款ID
+     * @return float refund.amount - 退款金额:-1表示不需要退款
+     * @return string refund.suspend_reason - 停用原因
+     * @return string refund.type - 类型:Expire到期退款,Immediate立即退款
+     * @return string refund.status - 状态:Pending待审核,Suspending待停用,Suspend停用中,Suspended已停用,Refund已退款,Reject审核驳回,Cancelled已取消
+     * @return string refund.reject_reason - 驳回原因
+     * @return int refund.create_time - 申请时间
+     */
+    public function hostRefundInfo()
+    {
+        $param = $this->request->param();
+
+        $IdcsmartRefundModel = new IdcsmartRefundModel();
+
+        $result = $IdcsmartRefundModel->hostRefundInfo($param);
+
+        return json($result);
+    }
     
 }

@@ -13,7 +13,8 @@
             captcha_admin_login: false,
             captcha_width: '',
             captcha_height: '',
-            captcha_length: ''
+            captcha_length: '',
+            code_client_email_register: 0
           },
           rules: {
             lang_admin: [{ required: true }],

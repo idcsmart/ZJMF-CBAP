@@ -35,6 +35,7 @@ class SystemLogModel extends Model
      * @desc 系统日志列表
      * @author theworld
      * @version v1
+     * @param string type - 类型system:系统日志api:API日志
      * @param string param.keywords - 关键字
      * @param int param.client_id - 用户ID
      * @param int param.page - 页数
@@ -64,6 +65,7 @@ class SystemLogModel extends Model
             $param['client_id'] = isset($param['client_id']) ? intval($param['client_id']) : 0;
         }
 
+        $param['type'] = $param['type'] ?? '';
         $param['keywords'] = $param['keywords'] ?? '';
         $param['orderby'] = isset($param['orderby']) && in_array($param['orderby'], ['id', 'description', 'create_time', 'ip']) ? $param['orderby'] : 'id';
 
@@ -80,6 +82,11 @@ class SystemLogModel extends Model
                         $query->where('client_id', $param['client_id']);
                     }
                 }
+                if($param['type']=='system'){
+                    $query->where('user_type', '<>', "api");
+                }else if($param['type']=='api'){
+                    $query->where('user_type', "api");
+                }
 		    })
 		    ->count();
     	$logs = $this->field('id,description,create_time,ip,user_type,user_id,user_name')
@@ -94,7 +101,70 @@ class SystemLogModel extends Model
                         $query->where('client_id', $param['client_id']);
                     }
                 }
+                if($param['type']=='system'){
+                    $query->where('user_type', '<>', "api");
+                }else if($param['type']=='api'){
+                    $query->where('user_type', "api");
+                }
 		    })
+            ->withAttr('description',function ($value,$data){
+                $app = app('http')->getName();
+                $pattern = "/(?P<name>\w+)#(?P<digit>\d+)#(?P<desc>[^#]+)#/";
+                preg_match_all($pattern,$value,$matches);
+                $name = $matches['name'];
+                $digit = $matches['digit'];
+                $desc = $matches['desc'];
+                if (!empty($name)){
+                    foreach ($name as $k=>$v){
+                        $relid = $digit[$k];
+                        $str = $v.'#'.$relid.'#'.$desc[$k].'#';
+                        $str1 = '#'.$relid.$desc[$k];
+
+                        if ($v == 'client'){
+                            if($app=='home'){
+                                $url = $str1;
+                            }else{
+                                $url = '<a class="el-link el-link--primary is-underline" href="client_detail.html?client_id=' . $relid . '"><span class="el-link--inner">'.$str1.'</span></a>';
+                            }
+                            
+                            $value = str_replace($str,$url,$value);
+                        }
+                        elseif ($v == 'host'){
+                            $host = HostModel::field('client_id')
+                                ->find($relid);
+                            if($app=='home'){
+                                $url = $str1;
+                            }else{
+                                $url = '<a class="el-link el-link--primary is-underline" href="host_detail.html?client_id='.$host['client_id'].'&id=' . $relid . '"><span class="el-link--inner">'.$str1.'</span></a>';
+                            }
+                            
+                            $value = str_replace($str,$url,$value);
+                        }
+                        elseif ($v == 'product'){
+                            if($app=='home'){
+                                $url = $str1;
+                            }else{
+                                $url = '<a class="el-link el-link--primary is-underline" href="product_detail.html?id=' . $relid . '"><span class="el-link--inner">'.$str1.'</span></a>';
+                            }
+                            $value = str_replace($str,$url,$value);
+                        }
+                        elseif ($v == 'ticket'){
+                            if($app=='home'){
+                                $url = $str1;
+                            }else{
+                                $url = '<a class="el-link el-link--primary is-underline" href="plugin/idcsmart_ticket/ticket_detail.html?id=' . $relid . '"><span class="el-link--inner">'.$str1.'</span></a>';
+                            }
+                            
+                            $value = str_replace($str,$url,$value);
+                        }
+                        
+                    }
+                    return $value;
+                }else{
+                    return $value;
+                }
+
+            })
     		->limit($param['limit'])
     		->page($param['page'])
     		->order($param['orderby'], $param['sort'])
@@ -104,7 +174,14 @@ class SystemLogModel extends Model
     	foreach ($logs as $key => $log) {    
             // 前台接口去除字段
             if($app=='home'){
+                if($log['user_type']=='api'){
+                    $logs[$key]['description'] = '['.$log['user_id'].']'.$log['description'];
+                }
                 unset($logs[$key]['user_type'], $logs[$key]['user_id'], $logs[$key]['user_name']);
+            }else{
+                if($log['user_type']=='api'){
+                    $logs[$key]['user_name'] = '[API]'.$log['user_id'];
+                }
             }
     	}
 
@@ -174,9 +251,9 @@ class SystemLogModel extends Model
         }
 
         // API的日志前加API标志
-        if($userType=='cron'){
+        /*if($userType=='api'){
             $description = 'Api_'.$description;
-        }
+        }*/
 
         // 获取关联用户ID
         if(empty($clientId) && !empty($type) && !empty($relId)){
@@ -195,7 +272,7 @@ class SystemLogModel extends Model
         }
 
         try {
-            if($userType=='api'){
+            /*if($userType=='api'){
                 ApiLogModel::create([
                     'type' => $type,
                     'rel_id' => $relId,
@@ -208,7 +285,7 @@ class SystemLogModel extends Model
                     'port' => $remotePort,
                     'create_time' => time(),
                 ]);
-            }else{
+            }else{*/
                 $this->create([
                     'type' => $type,
                     'rel_id' => $relId,
@@ -221,7 +298,7 @@ class SystemLogModel extends Model
                     'port' => $remotePort,
                     'create_time' => time(),
                 ]);
-            }
+            //}
             
         } catch (\Exception $e) {
             // 回滚事务

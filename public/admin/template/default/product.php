@@ -37,8 +37,12 @@
         <t-switch size="large" :custom-value="[1,0]" v-model="row.hidden" @change="onChange(row)" v-if="row.qty !== undefined"></t-switch>
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="editHandler(row)">{{lang.edit}}</a>
-        <a class="common-look" @click="deleteHandler(row)">{{lang.delete}}</a>
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+          <t-icon name="edit-1" size="18px" @click="editHandler(row)" class="common-look"></t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+          <t-icon name="delete" size="18px" @click="deleteHandler(row)" class="common-look"></t-icon>
+        </t-tooltip>
       </template>
     </t-enhanced-table>
   </t-card>

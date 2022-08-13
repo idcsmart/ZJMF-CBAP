@@ -361,7 +361,7 @@ class CartModel extends Model
                     }
                     ProductModel::where('id', $value['product_id'])->dec('qty', $value['qty'])->update();
                 }
-                $productLog[] = $product['name'];
+                $productLog[] = 'product#'.$product['id'].'#'.$product['name'].'#';
 
                 if($product['type']=='server_group'){
                     $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
@@ -382,6 +382,8 @@ class CartModel extends Model
                         'billing_cycle' => $product['pay_type'],
                         'billing_cycle_name' => $value['billing_cycle'],
                         'billing_cycle_time' => $value['duration'],
+                        'active_time' => $time,
+                        'due_time' => $product['pay_type']!='onetime' ? $time : 0,
                         'create_time' => $time
                     ]);
                     $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
@@ -404,7 +406,7 @@ class CartModel extends Model
             $OrderItemModel->saveAll($orderItem);
 
             # 记录日志
-            active_log(lang('submit_order', ['{client}'=>'#'.$clientId.request()->client_name, '{order}'=>$order->id, '{product}'=>implode(',', $productLog)]), 'order', $order->id);
+            active_log(lang('submit_order', ['{client}'=>'client#'.$clientId.'#'.request()->client_name.'#', '{order}'=>$order->id, '{product}'=>implode(',', $productLog)]), 'order', $order->id);
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$customfield]);
 

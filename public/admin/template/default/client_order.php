@@ -10,26 +10,34 @@
     <span class="cur">{{lang.order_manage}}</span>
   </div>
   <t-card class="list-card-container">
-    <ul class="common-tab">
-      <li>
-        <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
-      </li>
-      <li>
-        <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>
-      </li>
-      <li class="active">
-        <a href="javascript:;">{{lang.order_manage}}</a>
-      </li>
-      <li>
-        <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
-      </li>
-      <li>
-        <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
-      </li>
-      <li>
-        <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
-      </li>
-    </ul>
+    <div class="com-h-box">
+      <ul class="common-tab">
+        <li>
+          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
+        </li>
+        <li>
+          <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>
+        </li>
+        <li class="active">
+          <a href="javascript:;">{{lang.order_manage}}</a>
+        </li>
+        <li>
+          <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
+        </li>
+        <li>
+          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+        </li>
+        <li>
+          <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+        </li>
+      </ul>
+      <t-select class="user" v-if="this.clientList.length>0" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
+        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+          #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
+          <span v-if="item.company">({{item.company}})</span>
+        </t-option>
+      </t-select>
+    </div>
     <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading" class="user-order" :hide-sort-tips="true" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
@@ -53,6 +61,7 @@
           <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
             <img :src="`${rootRul}/img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
           </t-tooltip>
+          <!-- <span v-if="row.type==='artificial'">{{lang.artificial}}</span> -->
           <span>{{row.product_names[0]}}</span>
           <span v-if="row.product_names.length>1">、{{row.product_names[1]}}</span>
           <span v-if="row.product_names.length>2">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
@@ -107,9 +116,15 @@
       </template>
       <template #op="{row}">
         <div v-if="row.type">
-          <a class="common-look" @click="updatePrice(row)" v-if="row.status!=='Paid'">{{lang.update_price}}</a>
-          <a class="common-look" @click="signPay(row)" v-if="row.status!=='Paid'" :class="{disable:row.status==='Paid'}">{{lang.sign_pay}}</a>
-          <a class="common-look" @click="delteOrder(row)">{{lang.delete}}</a>
+          <t-tooltip :content="lang.update_price" :show-arrow="false" theme="light">
+            <t-icon name="money-circle" @click="updatePrice(row)" class="common-look" v-if="row.status!=='Paid'"></t-icon>
+          </t-tooltip>
+          <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light">
+            <t-icon name="discount" @click="signPay(row)" class="common-look" v-if="row.status!=='Paid'" :class="{disable:row.status==='Paid'}"></t-icon>
+          </t-tooltip>
+          <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+            <t-icon name="delete" @click="delteOrder(row)" class="common-look"></t-icon>
+          </t-tooltip>
         </div>
       </template>
     </t-enhanced-table>

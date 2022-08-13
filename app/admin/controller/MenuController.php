@@ -7,7 +7,7 @@ use app\admin\validate\MenuValidate;
 /**
  * @title 导航管理
  * @desc 导航管理
- * @use app\admin\controller\LogController
+ * @use app\admin\controller\MenuController
  */
 class MenuController extends AdminBaseController
 {
@@ -31,6 +31,7 @@ class MenuController extends AdminBaseController
      * @return string menu[].name - 名称
      * @return object menu[].language - 语言
      * @return string menu[].url - 网址
+     * @return string menu[].icon - 图标
      * @return int menu[].nav_id - 导航ID
      * @return int menu[].parent_id - 父ID
      * @return array menu[].child - 子菜单
@@ -38,8 +39,9 @@ class MenuController extends AdminBaseController
      * @return string menu[].child[].type - 菜单类型system系统plugin插件custom自定义
      * @return string menu[].child[].name - 名称
      * @return object menu[].child[].language - 语言
-     * @return string menu[].child[].url - 网址 菜单类型为自定义时需要传递
-     * @return int menu[].child[].nav_id - 导航ID 菜单类型不为自定义时需要传递
+     * @return string menu[].child[].icon - 图标
+     * @return string menu[].child[].url - 网址 
+     * @return int menu[].child[].nav_id - 导航ID 
      * @return int menu[].child[].parent_id - 父ID
      * @return array language - 语言
      * @return string language[].display_name - 语言名称
@@ -84,6 +86,7 @@ class MenuController extends AdminBaseController
      * @return string menu[].name - 名称
      * @return object menu[].language - 语言
      * @return string menu[].url - 网址
+     * @return string menu[].icon - 图标
      * @return int menu[].nav_id - 导航ID
      * @return int menu[].parent_id - 父ID
      * @return array menu[].child - 子菜单
@@ -91,8 +94,9 @@ class MenuController extends AdminBaseController
      * @return string menu[].child[].type - 菜单类型system系统plugin插件custom自定义
      * @return string menu[].child[].name - 名称
      * @return object menu[].child[].language - 语言
-     * @return string menu[].child[].url - 网址 菜单类型为自定义时需要传递
-     * @return int menu[].child[].nav_id - 导航ID 菜单类型不为自定义时需要传递
+     * @return string menu[].child[].url - 网址
+     * @return string menu[].child[].icon - 图标
+     * @return int menu[].child[].nav_id - 导航ID
      * @return int menu[].child[].parent_id - 父ID
      * @return array language - 语言
      * @return string language[].display_name - 语言名称
@@ -136,12 +140,14 @@ class MenuController extends AdminBaseController
      * @param string menu[].name - 名称 required
      * @param object menu[].language - 语言 required
      * @param string menu[].url - 网址 菜单类型为自定义时需要传递
+     * @param string menu[].icon - 图标
      * @param int menu[].nav_id - 导航ID 菜单类型不为自定义时需要传递
      * @param array menu[].child - 子菜单 required
      * @param string menu[].child[].type - 菜单类型system系统plugin插件custom自定义 required
      * @param string menu[].child[].name - 名称 required
      * @param object menu[].child[].language - 语言 required
      * @param string menu[].child[].url - 网址 菜单类型为自定义时需要传递
+     * @param string menu[].child[].icon - 图标
      * @param int menu[].child[].nav_id - 导航ID 菜单类型不为自定义时需要传递
      */
     public function saveAdminMenu()
@@ -176,12 +182,14 @@ class MenuController extends AdminBaseController
      * @param string menu[].name - 名称 required
      * @param object menu[].language - 语言 required
      * @param string menu[].url - 网址 菜单类型为自定义时需要传递
+     * @param string menu[].icon - 图标
      * @param int menu[].nav_id - 导航ID 菜单类型不为自定义时需要传递
      * @param array menu[].child - 子菜单 required
      * @param string menu[].child[].type - 菜单类型system系统plugin插件custom自定义 required
      * @param string menu[].child[].name - 名称 required
      * @param object menu[].child[].language - 语言 required
      * @param string menu[].child[].url - 网址 菜单类型为自定义时需要传递
+     * @param string menu[].child[].icon - 图标
      * @param int menu[].child[].nav_id - 导航ID 菜单类型不为自定义时需要传递
      */
     public function saveHomeMenu()

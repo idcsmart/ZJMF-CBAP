@@ -115,7 +115,7 @@ function getEmailInterface () {
   return Axios.get('/email')
 }
 
-// 短信模板
+/* 短信模板 */
 function getSmsTemplate (name) {
   return Axios.get(`/notice/sms/${name}/template`)
 }
@@ -138,6 +138,14 @@ function deleteSmsTemplate (params) {
 }
 function testSmsTemplate (params) {
   return Axios.get(`/notice/sms/${params.name}/template/${params.id}/test`, { params })
+}
+// 批量提交短信模板审核
+function batchSubmitById (params) {
+  return Axios.post(`/notice/sms/${params.name}/template/audit`, params)
+}
+// 更新状态
+function updateTemplateStatus (name) {
+  return Axios.get(`/notice/sms/${name}/template/status`)
 }
 
 // 邮件模板
@@ -167,4 +175,12 @@ function getSendList () {
 }
 function updateSend (params) {
   return Axios.put(`/notice/send`, params)
+}
+
+/* 获取主题设置 */
+function getThemeConfig () {
+  return Axios.get(`/configuration/theme`)
+}
+function updateThemeConfig (params) {
+  return Axios.put(`configuration/theme`, params)
 }

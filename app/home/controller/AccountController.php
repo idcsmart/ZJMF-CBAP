@@ -274,7 +274,7 @@ class AccountController extends HomeBaseController
      * @param int limit - 每页条数
      * @return array list - 记录
      * @return int list[].id - 记录ID
-     * @return string list[].type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund 
+     * @return string list[].type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund,提现Withdraw
      * @return string list[].amount - 金额 
      * @return string list[].notes - 备注 
      * @return int list[].create_time - 变更时间 

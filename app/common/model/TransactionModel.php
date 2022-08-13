@@ -49,11 +49,14 @@ class TransactionModel extends Model
      * @return string list[].email - 邮箱 
      * @return string list[].phone_code - 国际电话区号 
      * @return string list[].phone - 手机号 
+     * @return string list[].company - 公司 
      * @return int list[].order_id - 订单ID 
      * @return int list[].create_time - 创建时间
+     * @return string list[].type - 订单类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return array list[].hosts - 产品
      * @return int list[].hosts[].id - 产品ID
      * @return string list[].hosts[].name - 商品名称
+     * @return array list[].descriptions - 描述
      * @return int count - 交易流水总数
      */
     public function transactionList($param)
@@ -88,8 +91,9 @@ class TransactionModel extends Model
             })
             ->count();
         $transactions = $this->alias('t')
-            ->field('t.id,t.amount,t.gateway_name gateway,t.transaction_number,t.client_id,c.username client_name,c.email,c.phone_code,c.phone,t.order_id,t.create_time')
+            ->field('t.id,t.amount,t.gateway_name gateway,t.transaction_number,t.client_id,c.username client_name,c.email,c.phone_code,c.phone,c.company,t.order_id,t.create_time,o.type')
             ->leftjoin('client c', 'c.id=t.client_id')
+            ->leftjoin('order o', 'o.id=t.order_id')
             ->where(function ($query) use($param) {
                 if(!empty($param['client_id'])){
                     $query->where('t.client_id', $param['client_id']);
@@ -111,26 +115,30 @@ class TransactionModel extends Model
         $orderId = array_column($transactions, 'order_id');
 
         $orderItems = OrderItemModel::alias('oi')
-        	->field('oi.order_id,h.id,p.name')
+        	->field('oi.order_id,h.id,p.name,oi.description')
         	->leftjoin('host h',"h.id=oi.host_id")
         	->leftjoin('product p',"p.id=oi.product_id")
         	->whereIn('oi.order_id', $orderId)
         	->select()
             ->toArray();
         $hosts = [];
+        $descriptions = [];
         foreach ($orderItems as $key => $orderItem) {
         	if(!empty($orderItem['name'])){
         		$hosts[$orderItem['order_id']][] = ['id' => $orderItem['id'], 'name' => $orderItem['name']];
         	}
-        	
+        	if(!empty($orderItem['description'])){
+                $descriptions[$orderItem['order_id']][] = $orderItem['description'];
+            }
         }
 
         foreach ($transactions as $key => $transaction) {
         	$transactions[$key]['hosts'] = $hosts[$transaction['order_id']] ?? [];
+            $transactions[$key]['descriptions'] = $descriptions[$transaction['order_id']] ?? [];
 
             // 前台接口去除字段
             if($app=='home'){
-                unset($transactions[$key]['client_id'], $transactions[$key]['client_name'], $transactions[$key]['email'], $transactions[$key]['phone_code'], $transactions[$key]['phone']);
+                unset($transactions[$key]['client_id'], $transactions[$key]['client_name'], $transactions[$key]['email'], $transactions[$key]['phone_code'], $transactions[$key]['phone'], $transactions[$key]['company']);
             }
         }
 
@@ -176,7 +184,7 @@ class TransactionModel extends Model
 	    	]);
 
             # 记录日志
-            active_log(lang('admin_add_transaction', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$client->id.$client->username, '{transaction}'=>'#'.$transaction->id]), 'transaction', $transaction->id);
+            active_log(lang('admin_add_transaction', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{transaction}'=>'#'.$transaction->id]), 'transaction', $transaction->id);
 
 	        $this->commit();
 		} catch (\Exception $e) {
@@ -212,10 +220,10 @@ class TransactionModel extends Model
             if(empty($client)){
                 $clientName = '#'.$transaction->client_id;
             }else{
-                $clientName = '#'.$client->id.$client->username;
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
             }
             # 记录日志
-            active_log(lang('admin_delete_transaction', ['{admin}'=>request()->admin_name, '{client}'=>'#'.$clientName, '{transaction}'=>'#'.$transaction->id]), 'transaction', $transaction->id);
+            active_log(lang('admin_delete_transaction', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{transaction}'=>'#'.$transaction->id]), 'transaction', $transaction->id);
 
 			$this->destroy($id);
 		    $this->commit();

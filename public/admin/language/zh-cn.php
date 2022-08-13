@@ -4,6 +4,7 @@ return [
 	'display_name' => '中文简体',//用于在语言切换下拉中显示
 	'display_flag' => 'CN',//用于显示图片，使用国家代码大写
 	
+
     'success_message' => '请求成功',
     'fail_message' => '请求失败',
     'create_success' => '创建成功',
@@ -255,7 +256,17 @@ return [
     'admin_delete_email_template' => '{admin}删除邮件模板：{template}',
     'admin_create_email_template' => '{admin}创建邮件模板：{template}',
     'admin_retry_task' => '{admin}重试任务：{task}{description}',
-
+    'admin_configuration_system' => '{admin}将系统设置的{description}',
+    'admin_configuration_login' => '{admin}将登录设置的{description}',
+    'admin_configuration_security' => '{admin}将安全设置的{description}',
+    'admin_configuration_currency' => '{admin}将货币设置的{description}',
+    'admin_configuration_cron' => '{admin}将自动化设置的{description}',
+    'admin_configuration_send' => '{admin}将默认通知接口设置的{description}',
+    'admin_old_to_new' => '{field}的{old}改为{new}',
+    'admin_sms_template_log_create' => '{admin}短信接口"{sms_name}"创建模板"{sms_title}"成功',
+    'admin_sms_template_log_update' => '{admin}短信接口"{sms_name}"模板修改：{description}',
+    'admin_sms_template_log_delete' => '{admin}短信接口"{sms_name}"模板删除"{sms_title}"成功',
+    'admin_notice_send_log_update' => '{admin}发送设置，{description}',
 
     'client_username' => '姓名',
     'client_email' => '邮箱',
@@ -282,6 +293,7 @@ return [
     'admin_create_admin_role' => '{admin}添加人员分组{name}',
     'admin_update_admin_role' => '{admin}修改人员分组{name}',
     'admin_delete_admin_role' => '{admin}删除人员分组{name}',
+    'log_change_password' => '修改密码',
 
     'admin_name' => '用户名',
     'admin_password' => '密码',
@@ -420,6 +432,18 @@ return [
     'only_failed_task_can_retry' => '失败的任务才可以发起重试',
 
 	# 系统设置
+    'configuration_log_switch_1' =>'开启',
+    'configuration_log_switch_0' =>'关闭',
+    'configuration_log_lang_admin' =>'后台默认语言',
+    'configuration_log_lang_home' =>'前台默认语言',
+    'configuration_log_lang_home_open' =>'是否允许用户选择语言',
+    'configuration_log_lang_home_open_0' =>'禁止',
+    'configuration_log_lang_home_open_1' =>'允许',
+    'configuration_log_maintenance_mode' =>'维护模式',
+    'configuration_log_maintenance_mode_message' =>'维护模式内容',
+    'configuration_log_website_name' =>'网站名称',
+    'configuration_log_website_url' =>'网站域名地址',
+    'configuration_log_terms_service_url' =>'服务条款地址',   
     'configuration_admin_default_language_cannot_empty' => '后台默认语言不能为空',
     'configuration_admin_default_language_error' => '后台默认语言设置错误',
     'configuration_home_default_language_open_cannot_empty' => '前台多语言开关不能为空',
@@ -435,6 +459,11 @@ return [
     'configuration_website_url_error' => '请输入有效的URL地址',
     'configuration_terms_service_url_cannot_exceed_255_chars' => '服务条款地址最多不能超过255个字符',
 	# 登录设置
+    'configuration_log_register_phone' =>'手机是否支持注册',
+    'configuration_log_register_email' =>'邮箱是否支持注册',
+    'configuration_log_login_phone_verify' =>'手机是否支持免密码登录',
+    'configuration_log_register_1' =>'是',
+    'configuration_log_register_0' =>'否',
     'configuration_register_email_cannot_empty' => '邮箱注册开关不能为空',
     'configuration_register_email' => '邮箱注册开关值只能是1或0',
     'configuration_register_phone_cannot_empty' => '手机号注册开关不能为空',
@@ -442,6 +471,16 @@ return [
     'configuration_login_phone_verify_cannot_empty' => '手机号登录短信验证开关不能为空',
     'configuration_login_phone_verify' => '手机号登录短信验证开关值只能是1或0',
 	# 安全设置
+    'configuration_log_rcaptcha_client_register' =>'新用户注册启用图形验证码',
+    'configuration_log_captcha_client_login' =>'用户登录启用图形验证码',
+    'configuration_log_captcha_admin_login' =>'后台系统登录启用图形验证码',
+    'configuration_log_captcha_client_login_error' =>'客户登录失败时验证码',
+    'configuration_log_captcha_client_login_error_1' =>'失败三次后显示',
+    'configuration_log_captcha_client_login_error_0' =>'始终显示',
+    'configuration_log_captcha_width' =>'图形验证码宽度',
+    'configuration_log_captcha_height' =>'图形验证码高度',
+    'configuration_log_captcha_length' =>'图形验证码字符长度',
+    'configuration_log_code_client_email_register' =>'邮箱注册数字验证码',
 	'configuration_captcha_client_register_cannot_empty' => '客户注册图形验证码开关不能为空',
 	'configuration_captcha_client_register' => '客户注册图形验证码开关值只能是1或0',
 	'configuration_captcha_client_login_cannot_empty' => '客户登录图形验证码开关不能为空',
@@ -457,6 +496,11 @@ return [
 	'configuration_captcha_length_cannot_empty' => '图形验证码字符长度不能为空',
 	'configuration_captcha_length' => '图形验证码字符长度只能是在4到6之间的整数',
 	# 货币设置
+    'configuration_log_currency_code' =>'货币代码',
+    'configuration_log_currency_prefix' =>'货币符号',
+    'configuration_log_currency_suffix' =>'货币后缀',
+    'configuration_log_recharge_open' =>'启用充值',
+    'configuration_log_recharge_min' =>'单笔最小金额',
 	'configuration_currency_code_cannot_empty' => '货币代码不能为空',
 	'configuration_currency_prefix_cannot_empty' => '货币符号不能为空',
 	'configuration_currency_suffix_cannot_empty' => '货币后缀不能为空',
@@ -464,6 +508,19 @@ return [
 	'configuration_recharge_open' => '启用充值开关值只能是1或0',
 	'configuration_recharge_min_float' => '单笔最小金额必须大于零的数字',
 	# 定时任务设置
+    'configuration_log_cron_due_suspend_swhitch' =>'产品暂停',
+    'configuration_log_cron_due_unsuspend_swhitch' =>'产品解除暂停',
+    'configuration_log_cron_due_terminate_swhitch' =>'产品删除',
+    'configuration_log_cron_due_renewal_first_swhitch' =>'第一次续费提醒',
+    'configuration_log_cron_due_renewal_second_swhitch' =>'第二次续费提醒',
+    'configuration_log_cron_overdue_first_swhitch' =>'第一次逾期提醒',
+    'configuration_log_cron_overdue_second_swhitch' =>'第二次逾期提醒',
+    'configuration_log_cron_overdue_third_swhitch' =>'第三次逾期提醒',
+    'configuration_log_cron_ticket_close_swhitch' =>'已回复工单关闭',
+    'configuration_log_cron_aff_swhitch' =>'推广成果',
+    'configuration_log_cron_order_overdue_swhitch' =>'订单未付款通知',
+    'configuration_log_cron_due_day' =>'天',
+    'configuration_log_cron_due_hour' =>'小时',
     'configuration_cron_due_suspend_day_cannot_empty' => '产品到期暂停天数大于或等于0的整数',
     'configuration_cron_due_terminate_day_cannot_empty' => '产品到期删除天数大于或等于0的整数',
     'configuration_cron_due_renewal_first_day_cannot_empty' => '续费第一次提醒天数大于或等于0的整数',
@@ -471,7 +528,8 @@ return [
     'configuration_cron_overdue_first_day_cannot_empty' => '产品逾期第一次提醒天数大于或等于0的整数',
     'configuration_cron_overdue_second_day_cannot_empty' => '产品逾期第二次提醒天数大于或等于0的整数',
     'configuration_cron_overdue_third_day_cannot_empty' => '产品逾期第三次提醒天数大于或等于0的整数',
-    'configuration_cron_ticket_close_day_cannot_empty' => '已回复状态的工单提醒小时大于或等于0的整数',	
+    'configuration_cron_ticket_close_day_cannot_empty' => '已回复状态的工单提醒小时大于或等于0的整数',  
+    'configuration_cron_order_overdue_day_cannot_empty' => '订单未付款通知天数大于或等于0的整数',	
     'configuration_cron_due_suspend_swhitch' => '产品到期暂停开关值只能是1或0',
     'configuration_cron_due_unsuspend_swhitch' => '自动解除暂停开关值只能是1或0',
     'configuration_cron_due_terminate_swhitch' => '产品到期删除开关值只能是1或0',
@@ -480,12 +538,19 @@ return [
     'configuration_cron_overdue_first_swhitch' => '产品逾期第一次提醒开关值只能是1或0',
     'configuration_cron_overdue_second_swhitch' => '产品逾期第二次提醒开关值只能是1或0',
     'configuration_cron_overdue_third_swhitch' => '产品逾期第三次提醒开关值只能是1或0',
-    'configuration_cron_ticket_swhitch' => '自动关闭工单开关值只能是1或0',
+    'configuration_cron_ticket_close_swhitch' => '自动关闭工单开关值只能是1或0',
     'configuration_cron_aff_swhitch' => '推介月报开关值只能是1或0',
+    'configuration_cron_order_overdue_swhitch' => '订单未付款通知开关值只能是1或0',
 
     'configuration_cron_suspend_day_less_terminate_day' => '产品到期暂停天数应小于产品到期删除天数',
     'configuration_cron_renewal_first_day_less_renewal_second_day' => '第一次续费提醒天数应大于第二次续费提醒天数',
     'configuration_cron_overdue_day_less_terminate_day' => '第一次逾期提醒天数应小于第二次逾期提醒天数小于第三次逾期提醒天数小于产品到期删除天数',
+
+    # 主题设置
+    'configuration_theme_admin_theme_cannot_empty' => '后台主题不能为空',
+    'configuration_theme_admin_theme_cannot_error' => '后台主题错误',
+    'configuration_theme_clientarea_theme_cannot_empty' => '会员中心主题不能为空',
+    'configuration_theme_clientarea_theme_cannot_error' => '会员中心主题错误',
 
 
     # 管理员与管理员分组
@@ -582,13 +647,27 @@ return [
 
     # 邮件模板
     'email_template_is_not_exist' => '邮件模板不存在',
+    'please_enter_email_name' => '请输入邮件名称',
     'please_enter_email_subject' => '请输入邮件标题',
+    'email_name_cannot_exceed_100_chars' => '邮件名称最多不能超过100个字符',
     'email_subject_cannot_exceed_100_chars' => '邮件标题最多不能超过100个字符',
     'please_enter_email_message' => '请输入邮件内容',
     'email_cannot_be_empty' => '邮箱不能为空',
     'email_format_error' => '邮箱格式错误',
 	
 	# 短信模板
+    'sms_template_log_template_id' => '短信模板ID',
+    'sms_template_log_type' => '模板类型',
+    'sms_template_log_type_0' => '大陆',
+    'sms_template_log_type_1' => '国际',
+    'sms_template_log_title' => '模板标题',
+    'sms_template_log_content' => '模版内容',
+    'sms_template_log_notes' => '备注',
+    'sms_template_log_status' => '状态',
+    'sms_template_log_status_0' => '未提交',
+    'sms_template_log_status_1' => '审核中',
+    'sms_template_log_status_2' => '通过',
+    'sms_template_log_status_3' => '未通过',
 	'sms_template_is_not_exist' => '短信模板不存在',
 	'sms_template_review_before_sending' => '短信模板审核通过才能发短信',
 	'sms_template_cannot_be_modified' => '短信模板状态审核中，不能修改',
@@ -606,6 +685,12 @@ return [
     'sms_phone_number_must_be_integer' => '手机号必须是整数',
 	
 	# 短信/邮件发送
+    'send_notice_log_sms_global_name' => '短信国际接口',
+    'send_notice_log_sms_global_template' => '短信国际接口模板',
+    'send_notice_log_sms_name' => '短信国内接口',
+    'send_notice_log_sms_template' => '短信国内接口模板',
+    'send_notice_log_email_name' => '邮件接口',
+    'send_notice_log_email_template' => '邮件接口模板',
 	'send_wrong_action_name' => '动作名称错误',
     'send_sms_success' => '短信发送成功',
     'send_sms_error' => '短信发送失败',

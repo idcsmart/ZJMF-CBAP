@@ -63,29 +63,57 @@
           maxHeight: '',
           messageVisable: false,
           messagePop: '',
-          emailTitle: ''
+          emailTitle: '',
+          clinetParams: {
+            page: 1,
+            limit: 1000,
+            orderby: 'id',
+            sort: 'desc'
+          },
+          clientList: [], // 用户列表
+          popupProps: {
+            overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
+          },
         }
       },
       created () {
         const query = location.href.split('?')[1].split('&')
         this.id = this.params.client_id = Number(this.getQuery(query[0]))
-        this.getClientList()
+        this.getNoticeEmail()
+        this.getClintList()
       },
       mounted () {
-        this.maxHeight = document.getElementById('content').clientHeight - 220
+        this.maxHeight = document.getElementById('content').clientHeight - 240
         let timer = null
         window.onresize = () => {
           if (timer) {
             return
           }
           timer = setTimeout(() => {
-            this.maxHeight = document.getElementById('content').clientHeight - 220
+            this.maxHeight = document.getElementById('content').clientHeight - 240
             clearTimeout(timer)
             timer = null
           }, 300)
         }
       },
       methods: {
+        changeUser (id) {
+          this.id = id
+          location.href = `client_order.html?client_id=${this.id}`
+        },
+        async getClintList () {
+          try {
+            const res = await getClientList(this.clinetParams)
+            this.clientList = res.data.data.list
+            this.clientTotal = res.data.data.count
+            if (this.clientList.length < this.clientTotal) {
+              this.clinetParams.limit = this.clientTotal
+              this.getClintList()
+            }
+          } catch (error) {
+            console.log(error.data.msg)
+          }
+        },
         getQuery (val) {
           return val.split('=')[1]
         },
@@ -95,9 +123,9 @@
         changePage (e) {
           this.params.page = e.current
           this.params.limit = e.pageSize
-          this.getClientList()
+          this.getNoticeEmail()
         },
-        async getClientList () {
+        async getNoticeEmail () {
           try {
             this.loading = true
             const res = await getEmailLog(this.params)
@@ -118,14 +146,14 @@
             this.params.orderby = val.sortBy
             this.params.sort = val.descending ? 'desc' : 'asc'
           }
-          this.getClientList()
+          this.getNoticeEmail()
         },
         clearKey () {
           this.params.keywords = ''
           this.seacrh()
         },
         seacrh () {
-          this.getClientList()
+          this.getNoticeEmail()
         },
         // 显示邮件详情
         showMessage (row) {

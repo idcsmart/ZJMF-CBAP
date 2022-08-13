@@ -17,25 +17,26 @@
             {
               colKey: 'id',
               title: 'ID',
-              width: 120,
+              width: 100,
               sortType: 'all',
               sorter: true
             },
             {
               colKey: 'description',
               title: lang.description,
-              width: 300,
-              ellipsis: true
+              width: 900,
+              ellipsis: true,
+              className: 'log-description-width'
             },
             {
               colKey: 'create_time',
               title: lang.time,
-              width: 200
+              width: 150
             },
             {
               colKey: 'ip',
               title: 'IP' + lang.address,
-              width: 200,
+              width: 100,
               ellipsis: true
             },
             {

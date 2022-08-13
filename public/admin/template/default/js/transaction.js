@@ -38,16 +38,16 @@
             },
             {
               colKey: 'client_name',
-              title: lang.user + '(' + lang.acount + ')',
+              title: lang.user + '(' + lang.company + ')',
               width: 240,
               ellipsis: true
             },
-            {
-              colKey: 'hosts',
-              title: lang.product_name,
-              width: 180,
-              ellipsis: true
-            },
+            // {
+            //   colKey: 'hosts',
+            //   title: lang.product_name,
+            //   width: 180,
+            //   ellipsis: true
+            // },
             {
               colKey: 'transaction_number',
               title: lang.flow_number,
@@ -69,8 +69,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 100,
-              fixed: 'right'
+              width: 80
             }
           ],
           orderColumns: [

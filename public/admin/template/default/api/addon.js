@@ -14,3 +14,7 @@ function deleteMoudle (type, name) {
     return Axios.delete(`/plugin/addon/${name}`)
   }
 }
+// 获取导航
+function getMenus () {
+  return Axios.get('/menu')
+}

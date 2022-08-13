@@ -45,7 +45,7 @@
             max_times_control: [{ required: true, message: "可使用次数必填" }],
             total_control: [{ required: true, message: "总金额必填" }],
             apply_client: [{ required: true, message: "适用客户必填" }],
-            // product_type: [{ required: true, message: "适用产品及规格必填" }],
+            apply_product: [{ required: true, message: "适用产品及规格必填" }],
             apply_scene: [{ required: true, message: "适用付款场景必填" }],
             overlay: [{ required: true, message: "是否允许叠加必填" }],
           },
@@ -446,6 +446,10 @@
                   oj.optionfield = this.configoption[key][i].optionfield;
                   oj.option = [];
                   oj.optionvalue = [];
+                  console.log(
+                    this.configoption[key][i],
+                    "this.configoption[key][i].option"
+                  );
                   this.configoption[key][i].option.map((op) => {
                     oj.option.push(op.name);
                     oj.optionvalue.push(op.value);

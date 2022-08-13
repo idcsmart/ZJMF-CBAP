@@ -40,11 +40,14 @@
             creating_notice_sms_api: 0,
             creating_notice_sms_api_template: 0,
             creating_notice_mail: 0,
+            creating_notice_mail_api: 0,
             creating_notice_mail_template: 0,
+            
             created_notice_sms: 0,
             created_notice_sms_api: 0,
             created_notice_sms_api_template: '',
             created_notice_mail: 0,
+            created_notice_mail_api: 0,
             created_notice_mail_template: 0,
             pay_type: 'recurring_prepayment',
             upgrade: []
@@ -134,6 +137,10 @@
         },
       },
       methods: {
+        changeSmsInterface(e){
+          const name = this.smsInterList.filter(item=>item.id === e)[0]?.name
+          this.creatingName = name
+        },
         async getRelationList () {
           try {
             const res = await getProduct()
@@ -237,25 +244,25 @@
             const res = await getProductDetail(this.id)
             const temp = res.data.data.product
             this.formData = temp
-            // this.formData.creating_notice_sms = String(temp.creating_notice_sms)
-            // this.formData.creating_notice_mail = String(temp.creating_notice_mail)
-            // this.formData.created_notice_sms = String(temp.created_notice_sms)
-            // this.formData.created_notice_mail = String(temp.created_notice_mail)
-            this.formData.creating_notice_sms_api = temp.creating_notice_sms_api === 0 ? '' : temp.creating_notice_sms_api
-            this.formData.creating_notice_sms_api_template = temp.creating_notice_sms_api_template === 0 ? '' : temp.creating_notice_sms_api_template
-            this.formData.creating_notice_mail_template = temp.creating_notice_mail_template === 0 ? '' : temp.creating_notice_mail_template
-            this.formData.created_notice_sms_api = temp.created_notice_sms_api === 0 ? '' : temp.created_notice_sms_api
-            this.formData.created_notice_sms_api_template = temp.created_notice_sms_api_template === 0 ? '' : temp.created_notice_sms_api_template
-            this.formData.created_notice_mail_template = temp.created_notice_mail_template === 0 ? '' : temp.created_notice_mail_template
+            this.formData.creating_notice_sms_api = temp.creating_notice_sms_api || ''
+            this.formData.creating_notice_sms_api_template = temp.creating_notice_sms_api_template || '' 
+            this.formData.creating_notice_mail_api = temp.creating_notice_mail_api || '' 
+            this.formData.creating_notice_mail_template = temp.creating_notice_mail_template ||''
+
+            this.formData.created_notice_sms_api = temp.created_notice_sms_api || ''
+            this.formData.created_notice_sms_api_template = temp.created_notice_sms_api_template|| ''
+            this.formData.created_notice_mail_api = temp.created_notice_mail_api|| ''
+            this.formData.created_notice_mail_template = temp.created_notice_mail_template || '' 
             const result = await getSmsInterface()
             const temp1 = result.data.data.list
             this.smsInterList = temp1
             temp1.forEach(item => {
               this.getSmsTemp(item.name)
             })
-            this.creatingName = temp1.filter(item => item.id === temp.creating_notice_sms_api)[0].name
-            this.createdName = temp1.filter(item => item.id == temp.created_notice_sms_api)[0].name
+            this.creatingName = temp1.filter(item => item.id === temp.creating_notice_sms_api)[0]?.name
+            this.createdName = temp1.filter(item => item.id == temp.created_notice_sms_api)[0]?.name
           } catch (error) {
+            console.log(error)
           }
         },
         back () {

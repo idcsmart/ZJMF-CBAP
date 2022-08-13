@@ -100,9 +100,9 @@ class IdcsmartWithdrawModel extends Model
             if($param['status']==1){
                 if($idcsmartWithdraw['source']=='credit'){
                     $result = update_credit([
-                        'type' => 'Refund',
+                        'type' => 'Withdraw',
                         'amount' => -$idcsmartWithdraw['amount'],
-                        'notes' => "Withdraw Refund",
+                        'notes' => "Withdraw",
                         'client_id' => $idcsmartWithdraw['client_id'],
                     ]);
                     if(!$result){

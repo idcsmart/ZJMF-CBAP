@@ -49,7 +49,8 @@
             address: '',
             company: '',
             language: '',
-            notes: ''
+            notes: '',
+            password: ''
           },
           clientList: [], // 用户列表
           rules: {
@@ -70,6 +71,9 @@
                 validator: val => val.length <= 1000,
                 message: lang.verify3 + 1000, type: 'waring'
               }
+            ],
+            password: [
+              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8  + '6~32' + '，' + lang.verify14, type: 'warning' }
             ],
           },
           visibleMoney: false,
@@ -151,9 +155,18 @@
           clientTotal: 0,
           clinetParams: {
             page: 1,
-            limit: 20,
+            limit: 1000,
             orderby: 'id',
             sort: 'desc'
+          }
+        }
+      },
+      computed: {
+        inputLabel () {
+          if (this.moneyData.type === 'recharge') {
+            return this.currency_prefix
+          } else {
+            return '-' + this.currency_prefix
           }
         }
       },
@@ -167,7 +180,19 @@
         this.getClintList()
       },
       methods: {
-        changeUser(id){
+        // 以用户登录
+        async loginByUser () {
+          try {
+            const res = await loginByUserId(this.id)
+            localStorage.setItem('jwt', res.data.data.jwt)
+            const url = '/reactmember/#/'
+            const newPage = window.open('', '_blank')
+            newPage.location = url
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
+        },
+        changeUser (id) {
           this.id = id
           location.href = `client_detail.html?client_id=${this.id}`
         },
@@ -176,7 +201,7 @@
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
             this.clientTotal = res.data.data.count
-            if(this.clientList.length < this.clientTotal){
+            if (this.clientList.length < this.clientTotal) {
               this.clinetParams.limit = this.clientTotal
               this.getClintList()
             }
@@ -228,9 +253,9 @@
           this.moneyData.amount = ''
           this.moneyData.notes = ''
           if (type === 'recharge') {
-            this.diaTitle = lang.Recharge
+            this.diaTitle = lang.add_money
           } else {
-            this.diaTitle = lang.deduction
+            this.diaTitle = lang.sub_money
           }
           this.visibleMoney = true
         },
@@ -289,6 +314,7 @@
               const res = await updateClient(this.id, this.formData)
               this.$message.success(res.data.msg)
               this.getUserDetail()
+              this.formData.password = ''
             } catch (error) {
               this.$message.error(error.data.msg)
             }

@@ -1,7 +1,8 @@
 <?php
 $domain = configuration('website_url');
 $info = parse_url($domain);
-if ($info['schema'] == 'https'){
+
+if (isset($info['scheme']) && $info['scheme'] == 'https'){
     $protocol = 'https';
 }else{
     $protocol = 'http';

@@ -79,7 +79,7 @@ class Task extends Command
 		}else{
 			Db::commit();
 		}
-		Db::name('task_demo')->insert(['description'=>'desc','date'=>date('Y-m-d H:i:s',time())]);
+		
 
 	}
 
@@ -88,9 +88,15 @@ class Task extends Command
 		try {	
 			$action=strtolower($action).'Account';
 			$HostModel = new HostModel();
-			get_class_methods($HostModel);
-			if(in_array($action,$HostModel)){
-				$send_result = $HostModel->$action($task_data['host_id']);
+			$HostModelAction = get_class_methods($HostModel);
+			if(in_array($action,$HostModelAction)){
+				if($action=='suspendAccount'){
+					$send_result = $HostModel->$action(['suspend_reason'=>'产品到期暂停','id'=>$task_data['host_id']]);
+				}else if($action=='upgradeAccount'){
+					$send_result = $HostModel->$action($task_data['upgrade_id']);
+				}else{
+					$send_result = $HostModel->$action($task_data['host_id']);
+				}
 				if($send_result['status']==200){
 					$result['status'] = 'Finish';
 				}else{

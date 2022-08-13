@@ -17,4 +17,8 @@ return [
     'addon_idcsmart_ssh_key_public_key_error' => '公钥格式错误,需要以ssh-rsa ,ecdsa-sha2-nistp256 ,ssh-ed25519 这几种之一为开头',
     'addon_idcsmart_ssh_key_is_not_exist' => 'SSH密钥不存在',
     'addon_idcsmart_ssh_key_create_max' => 'SSH密钥最多创建20个',
+
+    'log_client_add_ssh_key' => '{client}添加SSH密钥，密钥名称：{name}',
+    'log_client_edit_ssh_key' => '{client}修改SSH密钥，密钥名称：{name}',
+    'log_client_delete_ssh_key' => '{client}删除SSH密钥，密钥名称：{name}',
 ];

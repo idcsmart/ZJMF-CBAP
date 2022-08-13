@@ -104,6 +104,8 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::put('configuration/currency', 'admin/Configuration/currencyUpdate'); # 保存货币设置
 	Route::get('configuration/cron', 'admin/Configuration/cronList'); # 获取定时任务
     Route::put('configuration/cron', 'admin/Configuration/cronUpdate'); # 保存定时任务
+    Route::get('configuration/theme', 'admin/Configuration/themeList'); # 获取主题设置
+    Route::put('configuration/theme', 'admin/Configuration/themeUpdate'); # 保存主题设置
 	
 	# 邮件模板管理
     Route::get('notice/email/template', 'admin/NoticeEmail/emailTemplateList'); # 获取邮件模板
@@ -168,6 +170,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('admin/auth', 'admin/common/adminAuthList'); # 当前管理员权限列表 
     Route::post('upload', 'admin/common/upload'); # 上传文件
     Route::get('global_search', 'admin/common/globalSearch'); # 全局搜索
+    Route::get('menu', 'admin/common/adminMenu'); # 获取导航
 
     # 接口管理
     Route::get('server/group', 'admin/serverGroup/serverGroupList'); # 接口分组列表
@@ -188,6 +191,11 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('system/upgrade_download', 'admin/upgradeSystem/upgradeDownload'); # 更新下载
     Route::get('system/upgrade_download_progress', 'admin/upgradeSystem/upgradeDownloadProgress'); # 获取更新下载进度
 
+    # 导航管理
+    Route::get('menu/admin', 'admin/menu/getAdminMenu'); # 接口分组列表
+    Route::get('menu/home', 'admin/menu/getHomeMenu'); # 新建接口分组
+    Route::put('menu/admin', 'admin/menu/saveAdminMenu'); # 修改接口分组
+    Route::put('menu/home', 'admin/menu/saveHomeMenu'); # 删除接口分组
 
 })  
     ->allowCrossDomain([

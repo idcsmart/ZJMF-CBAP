@@ -24,6 +24,7 @@ Route::group('console/v1',function (){
     Route::post('phone/code', 'home/common/sendPhoneCode'); // 发送手机验证码
 	Route::post('email/code', 'home/common/sendEmailCode'); // 发送邮件验证码
     Route::post('upload', 'home/common/upload'); // 上传文件
+    Route::get('menu', 'home/common/homeMenu'); // 获取导航
 
     // 购物车
     Route::get('product/group/first', 'home/product/productGroupFirstList'); // 获取商品一级分组
@@ -66,6 +67,7 @@ Route::group('console/v1',function (){
     Route::get('host/:id/upgrade/config_option', 'home/host/changeConfigOption'); // 产品升降级配置
     Route::post('host/:id/upgrade/config_option', 'home/host/changeConfigOptionCalculatePrice'); // 产品升降级配置计算价格
 	Route::rule('module/:module/:controller/:method', 'home/module/customFunction', 'GET|POST'); // 模块自定义方法
+    Route::put('host/:id/notes', 'home/host/updateHostNotes'); // 修改产品备注
 
 	// 订单管理
 	Route::get('order', 'home/order/orderList'); // 订单列表
@@ -92,7 +94,6 @@ Route::group('console/v1',function (){
     Route::post('api', 'home/api/create'); // 创建API密钥
     Route::put('api/:id/white_list', 'home/api/whiteListSetting'); // API白名单设置
     Route::delete('api/:id', 'home/api/delete'); // 删除API密钥
-    Route::get('api/log', 'home/api/logList'); // API日志
 
     // 公共接口
     Route::get('global_search', 'home/common/globalSearch'); # 全局搜索

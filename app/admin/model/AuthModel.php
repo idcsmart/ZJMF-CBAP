@@ -21,6 +21,8 @@ class AuthModel extends Model
         'url'           => 'string',
         'order'         => 'int',
         'parent_id'     => 'int',
+        'module'        => 'string',
+        'plugin'        => 'string',
     ];
 
     /**
@@ -54,7 +56,7 @@ class AuthModel extends Model
     public function authList()
     {
         $rules = AuthRuleModel::alias('ar')
-            ->field('ar.title,ar.name,arl.auth_id')
+            ->field('ar.title,ar.name,arl.auth_id,ar.module,ar.plugin')
             ->leftjoin('auth_rule_link arl', 'arl.auth_rule_id=ar.id')
             ->select()
             ->toArray();
@@ -62,7 +64,11 @@ class AuthModel extends Model
         $auths = $this->select()->toArray();
         $ruleList = [];
         foreach ($rules as $key => $value) {
-            $ruleList[$value['auth_id']][] = lang($value['title']);
+            if ($value['module'] && $value['plugin']){
+                $ruleList[$value['auth_id']][] = lang_plugins($value['title']);
+            }else{
+                $ruleList[$value['auth_id']][] = lang($value['title']);
+            }
         }
 
         // 将数组转换成树形结构
@@ -70,7 +76,12 @@ class AuthModel extends Model
         if (is_array($auths)) {
             $refer = [];
             foreach ($auths as $key => $data) {
-                $auths[$key]['title'] = lang($data['title']);
+                if ($data['module'] && $data['plugin']){
+                    $auths[$key]['title'] = lang_plugins($data['title']);
+                }else{
+                    $auths[$key]['title'] = lang($data['title']);
+                }
+
                 $auths[$key]['rules'] = $ruleList[$data['id']] ?? [];
                 $refer[$data['id']] = &$auths[$key];
             }
@@ -116,6 +127,7 @@ class AuthModel extends Model
      * @return string list[].child[].child[].url - 地址
      * @return int list[].child[].child[].order - 排序
      * @return int list[].child[].child[].parent_id - 父级ID
+     * @return array rules - 权限规则
      */
     public function adminAuthList()
     {
@@ -148,11 +160,13 @@ class AuthModel extends Model
         
         // 将数组转换成树形结构
         $tree = [];
+        $rules = [];
         if (is_array($auths)) {
             $refer = [];
             foreach ($auths as $key => $data) {
                 $auths[$key]['title'] = lang($data['title']);
                 $auths[$key]['rules'] = $ruleList[$data['id']] ?? [];
+                $rules = array_merge($rules, $auths[$key]['rules']);
                 $refer[$data['id']] = &$auths[$key];
             }
             foreach ($auths as $key => $data) {
@@ -170,6 +184,69 @@ class AuthModel extends Model
                 }
             }
         }
-        return ['list' => $tree];
+        return ['list' => $tree, 'rule' => $rules];
+    }
+
+    public function createPluginAuth($auth,$module,$name)
+    {
+        $maxOrder = $this->max('order');
+
+        $object = $this->create([
+            'title' => $auth['title']??'',
+            'url'  => (isset($auth['url']) && !empty($auth['url']) && is_string($auth['url']))?"plugin/{$name}/".$auth['url'].'.html':'',
+            'parent_id' => isset($auth['parent_id'])?intval($auth['parent_id']):0,
+            'order'  => $maxOrder+1,
+            'module' => $module,
+            'plugin' => parse_name($name,1)
+        ]);
+
+        # 插入auth_rule
+        if (isset($auth['auth_rule']) && !empty($auth['auth_rule']) && is_string($auth['auth_rule'])){
+            $AuthRuleModel = new AuthRuleModel();
+
+            $authRule = $AuthRuleModel->create([
+                'name' => "{$module}\\{$name}\\controller\\".$auth['auth_rule'],
+                'title' => $auth['auth_rule_title']??'',
+                'module' => $module,
+                'plugin' => parse_name($name,1)
+            ]);
+
+            $AuthRuleLinkModel = new AuthRuleLinkModel();
+            $AuthRuleLinkModel->create([
+                'auth_rule_id' => $authRule->id,
+                'auth_id' => $object->id,
+            ]);
+        }
+
+        $child = $auth['child']??[];
+        foreach ($child as $item){
+            $item['parent_id'] = $object->id;
+            $this->createPluginAuth($item,$module,$name);
+        }
+
+        return ['status' => 200, 'msg' => lang('create_success')];
+    }
+
+    # 删除插件关联的所有权限数据
+    public function deletePluginAuth($module,$name)
+    {
+        $authIds = $this->where('module',$module)
+            ->where('plugin',$name)
+            ->column('id');
+
+        $AuthRuleModel = new AuthRuleModel();
+        $AuthRuleModel->where('module',$module)
+            ->where('plugin',$name)
+            ->delete();
+
+        $AuthRuleLinkModel = new AuthRuleLinkModel();
+        $AuthRuleLinkModel->whereIn('auth_id',$authIds)->delete();
+
+        $this->where('module',$module)->where('plugin',$name)->delete();
+
+        $AuthLinkModel = new AuthLinkModel();
+        $AuthLinkModel->whereIn('auth_id',$authIds)->delete();
+
+        return ['status' => 200, 'msg' => lang('create_success')];
     }
 }

@@ -84,7 +84,7 @@
             username: [{ required: true, message: lang.input + lang.name, type: 'error' }],
             password: [
               { required: true, message: lang.input + lang.password, type: 'error' },
-              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '，' + lang.verify14 + '6~32', type: 'warning' }
+              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '6~32' + '，' + lang.verify14 , type: 'warning' }
             ],
             repassword: [
               { required: true, message: lang.input + lang.surePassword, type: 'error' },

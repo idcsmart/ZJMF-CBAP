@@ -11,6 +11,9 @@
       <li>
         <a :href="`configuration_login.html`">{{lang.login_setting}}</a>
       </li>
+      <li>
+        <a href="configuration_theme.html">{{lang.theme_setting}}</a>
+      </li>
     </ul>
     <div class="box">
       <t-form :data="formData" :rules="rules" :label-width="80" ref="formValidatorStatus" label-align="top"

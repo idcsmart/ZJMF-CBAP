@@ -253,7 +253,7 @@ class ProductModel extends Model
             ]);
 
             # 记录日志
-            active_log(lang('log_admin_create_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>$param['name']]),'product',$product->id);
+            active_log(lang('log_admin_create_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$product->id.'#'.$param['name'].'#']),'product',$product->id);
 
             $this->commit();
         }catch (\Exception $e){
@@ -989,10 +989,12 @@ class ProductModel extends Model
                     'name' => generate_host_name(),
                     'status' => 'Unpaid',
                     'first_payment_amount' => $param['price'],
-                    'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring') ? $param['price'] : 0,
+                    'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $param['price'] : 0,
                     'billing_cycle' => $product['pay_type'],
                     'billing_cycle_name' => $param['billing_cycle'],
                     'billing_cycle_time' => $param['duration'],
+                    'active_time' => $time,
+                    'due_time' => $product['pay_type']!='onetime' ? $time : 0,
                     'create_time' => $time
                 ]);
                 $ModuleLogic->afterSettle($product, $host->id, $param['config_options']);
@@ -1025,7 +1027,7 @@ class ProductModel extends Model
             }
 
             # 记录日志
-            active_log(lang('submit_order', ['{client}'=>'#'.$clientId.request()->client_name, '{order}'=>$order->id, '{product}'=>$product['name']]), 'order', $order->id);
+            active_log(lang('submit_order', ['{client}'=>'#'.$clientId.request()->client_name, '{order}'=>$order->id, '{product}'=>'product#'.$product['id'].'#'.$product['name'].'#']), 'order', $order->id);
             
             $this->commit();
         } catch (\Exception $e) {

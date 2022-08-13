@@ -29,11 +29,11 @@
             },
             {
               colKey: 'sms_name',
-              title: lang.sms_interface
+              title: lang.home_sms_interface
             },
             {
               colKey: 'sms_template',
-              title: lang.sms_template
+              title: lang.home_sms_template
             },
             {
               colKey: 'sms_enable',
@@ -55,7 +55,13 @@
             }
           ],
           hideSortTips: true,
-          formData: {},
+          formData: {
+            configuration: {
+              send_sms: '',
+              send_sms_global: '',
+              send_email: ''
+            }
+          },
           loading: false,
           country: [],
           delId: '',
@@ -71,7 +77,18 @@
           emailTemplateList: [], // 邮件模板列表
           interTempObj: {},
           tempObj: {},
-          maxHeight: ''
+          maxHeight: '',
+          rules: {
+            send_sms_global: [
+              { required: true, message: lang.select + lang.sms_global_name },
+            ],
+            send_sms: [
+              { required: true, message: lang.select + lang.home_sms_interface },
+            ],
+            send_email: [
+              { required: true, message: lang.select + lang.email_interface },
+            ],
+          }
         }
       },
       mounted () {
@@ -117,7 +134,7 @@
               })
             }
             if (type === 0) {
-              this.smsInterList.forEach(item => {
+              this.smsList.forEach(item => {
                 if (item.name === val) {
                   this.$set(this.tempObj, `${item.name}_temp`, temp)
                 }
@@ -168,7 +185,7 @@
         async save () {
           try {
             const params = JSON.parse(JSON.stringify(this.formData))
-            for(const item in params){
+            for (const item in params) {
               if (params[item].sms_template === '') {
                 params[item].sms_template = 0
               }
@@ -210,6 +227,7 @@
               //this.$set(this.formData, item.name, item)
               this.formData[item.name] = item
             })
+            this.formData.configuration = res.data.data.configuration
           } catch (error) {
             this.loading = false
             console.log(error)

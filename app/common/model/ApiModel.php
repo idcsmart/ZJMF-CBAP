@@ -125,6 +125,9 @@ class ApiModel extends Model
                 'create_time' => time()
             ]);
 
+            # 记录日志
+            active_log(lang('log_client_add_api', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$param['name']]), 'api', $api->id);
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -174,6 +177,9 @@ class ApiModel extends Model
                 'update_time' => time()
             ], ['id' => $param['id']]);
 
+            # 记录日志
+            active_log(lang('log_client_edit_api', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$param['name']]), 'api', $api->id);
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -213,6 +219,9 @@ class ApiModel extends Model
         }
         $this->startTrans();
         try {
+            # 记录日志
+            active_log(lang('log_client_delete_api', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$api['name']]), 'api', $api->id);
+            
             $this->destroy($id);
             $this->commit();
         } catch (\Exception $e) {

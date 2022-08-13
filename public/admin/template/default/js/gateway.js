@@ -83,7 +83,8 @@
           configVisble: false,
           configTip: '',
           configData: [],
-          maxHeight: ''
+          maxHeight: '',
+          urlPath: url
         }
       },
       mounted () {

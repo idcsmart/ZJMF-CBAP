@@ -34,12 +34,12 @@
               width: 64,
             },
             {
-              maxwidth: "200",
+              width: "400",
               colKey: "name",
               title: "文件名",
               ellipsis: true,
               cell: "name",
-              align: "center",
+              // align: "center",
             },
             {
               colKey: "admin",
@@ -341,6 +341,10 @@
         append(node) {
           this.appendfolder = true;
           //   this.getfolderlist();
+        },
+        //取消编辑
+        canceledit() {
+          this.getfolderlist();
         },
         changetabs(data) {
           this.activetabs = data;

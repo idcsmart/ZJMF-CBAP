@@ -1,76 +1,26 @@
 <?php
 /*
- *  自定义菜单
+ *  自定义后台导航菜单(仅支持一二级),注意系统会在插件导航下默认创建url为"plugin/插件名称/index.html"的导航,因此需要在template/admin/目录下创建index.php文件作为插件入口
  */
 return [
-    [
-        'name' => '样式1', # 链接名称
-        'url'  => 'DemoStyle://AdminIndex/addhelp', # 链接格式   插件名://控制器名/方法
-        'custom' => 0, # 是否为自定义路由
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式1', # 中文
-            'chinese_tw' => '樣式1', # 台湾
-            'english' => 'Demo style 1', # 英文
-        ],
-    ],
-    [
-        'name' => '样式2',
-        'url'  => 'DemoStyle://AdminIndex/customerdetail1',
-        'custom' => 0,
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式2', # 中文
-            'chinese_tw' => '樣式2', # 台湾
-            'english' => 'Demo style 2', # 英文
-        ],
-    ],
-    [
-        'name' => '样式3',
-        'url'  => 'DemoStyle://AdminIndex/customerdetail2',
-        'custom' => 0,
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式3', # 中文
-            'chinese_tw' => '樣式3', # 台湾
-            'english' => 'Demo style 3', # 英文
-        ],
-    ],
-    [
-        'name' => '样式4',
-        'url'  => 'DemoStyle://AdminIndex/customerdetail3',
-        'custom' => 0,
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式4', # 中文
-            'chinese_tw' => '樣式4', # 台湾
-            'english' => 'Demo style 4', # 英文
-        ],
-    ],
-    [
-        'name' => '样式5',
-        'url'  => 'DemoStyle://AdminIndex/customerdetail4',
-        'custom' => 0,
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式5', # 中文
-            'chinese_tw' => '樣式5', # 台湾
-            'english' => 'Demo style 5', # 英文
-        ],
-    ],
-    [
-        'name' => '样式6',
-        'url'  => 'DemoStyle://AdminIndex/helplist',
-        'custom' => 0,
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式6', # 中文
-            'chinese_tw' => '樣式6', # 台湾
-            'english' => 'Demo style 6', # 英文
-        ],
-    ],
-    [
-        'name' => '样式7',
-        'url'  => 'https://www.baidu.com',
-        'custom' => 1, # 自定义路由,不对url做任何处理
-        'lang' => [ # 菜单多语言
-            'chinese' => '样式7', # 中文
-            'chinese_tw' => '樣式7', # 台湾
-            'english' => 'Demo style 7', # 英文
-        ],
+    [ # 一级导航
+        'name' => 'nav_plugin_addon_refund', # 导航名称,不要与系统冲突(参考idcsmart_nav表中name字段),同时需要在lang/目录下定义语言
+        'url'  => '', # 为空表示一级导航,不需要链接
+        'icon' => 'tools', # 图标,获取图标:https://tdesign.tencent.com/vue/components/icon
+        'in' => '', # 一级导航,此值为空
+        'child' => [ # 二级导航
+            [
+                'name' => 'nav_plugin_addon_refund_list', # 导航名称
+                'url' => 'refund', # 链接格式,会自动加上.html
+                'in' => '', # 可定义导航在某个一级导航之下,默认会放置在此一级导航最后的位置(获取方式:idcsmart_nav表中的parent_id==0的name字段)
+                'icon' => '', # 图标,获取图标:https://tdesign.tencent.com/vue/components/icon
+            ],
+            [
+                'name' => 'nav_plugin_addon_refund_product_list', # 导航名称
+                'url' => 'refund_product', # 链接格式,会自动加上.html
+                'in' => '', # 可定义导航在某个一级导航之下,默认会放置在此一级导航最后的位置
+                'icon' => '', # 图标,获取图标:https://tdesign.tencent.com/vue/components/icon
+            ],
+        ]
     ],
 ];

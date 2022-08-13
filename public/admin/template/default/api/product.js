@@ -20,10 +20,12 @@ function editProduct (params) {
 function editProductServer (id, params) {
   return Axios.put(`/product/${id}/server`, params)
 }
+
 // 选择接口获取配置 
 function getProductConfig (id, params) {
   return Axios.get(`/product/${id}/server/config_option`, { params })
 }
+
 // 删除商品
 function deleteProduct (id) {
   return Axios.delete(`/product/${id}`)
@@ -68,6 +70,14 @@ function moveFirstGroup (params) {
 // 移动商品至其他商品组
 function moveProductGroup (params) {
   return Axios.put(`/product/group/${params.id}/product`, params)
+}
+// 拖动商品至其他二级分组
+function dragProductGroup (params){
+  return Axios.put(`/product/order/${params.id}`, params)
+}
+// 拖动二级商品分组
+function draySecondGroup (params){
+  return Axios.put(`/product/group/order/${params.id}`, params)
 }
 // 短信接口
 function getSmsInterface () {

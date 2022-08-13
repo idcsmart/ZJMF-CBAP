@@ -18,6 +18,9 @@
     <div class="box">
       <!-- @submit="onSubmit" -->
       <t-form :rules="rules" :data="formData" ref="userDialog" label-align="top">
+        <t-form-item :label="lang.nickname" name="name">
+          <t-input v-model="formData.name" :placeholder="lang.input+lang.nickname"></t-input>
+        </t-form-item>
         <t-form-item :label="lang.title" name="subject">
           <t-input v-model="formData.subject" :placeholder="lang.input+lang.title"></t-input>
         </t-form-item>

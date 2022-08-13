@@ -17,7 +17,7 @@
             {
               colKey: 'id',
               title: 'ID',
-              width: 120,
+              width: 100,
               sortType: 'all',
               sorter: true
             },
@@ -36,13 +36,13 @@
             {
               colKey: 'create_time',
               title: lang.time,
-              width: 200,
+              width: 150,
               ellipsis: true
             },
             {
               colKey: 'user_name',
               title: lang.receiver,
-              width: 200,
+              width: 150,
               ellipsis: true
             }
           ],

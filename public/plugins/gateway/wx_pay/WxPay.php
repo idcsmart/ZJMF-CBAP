@@ -81,7 +81,12 @@ class WxPay extends Plugin
             }
             require_once 'phpqrcode/phpqrcode.php';
 
-            \QRcode::png($result['code_url'],false,0,4,5);die;
+            $response = \QRcode::png($result['code_url'],false,0,4,5); # 这里需要修改扩展库的代码
+
+            $base64 = 'data:png;base64,' . base64_encode($response->getData());
+
+            return '<img src="'. $base64 .'" alt="" width="250" height="250">';
+
         }else{
             return ['status'=>400,'msg'=>'二维码制作失败'];
         }

@@ -3,14 +3,14 @@ namespace addon\idcsmart_ticket\controller;
 
 use addon\idcsmart_ticket\model\IdcsmartTicketInternalModel;
 use addon\idcsmart_ticket\validate\TicketInternalValidate;
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 
 /**
  * @title 内部工单(后台)
  * @desc 内部工单(后台)
  * @use addon\idcsmart_ticket\controller\TicketInternalController
  */
-class TicketInternalController extends PluginBaseController
+class TicketInternalController extends PluginAdminBaseController
 {
     private $validate=null;
 

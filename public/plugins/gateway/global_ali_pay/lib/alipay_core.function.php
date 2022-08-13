@@ -24,16 +24,17 @@
  */
 function createLinkstring($para) {
 	$arg  = "";
-	while (list ($key, $val) = each ($para)) {
+
+	while (list ($key, $val) = func_new_each ($para)) {
 		$arg.=$key."=".$val."&";
 	}
 	//去掉最后一个&字符
 	//remove the last &
-	$arg = substr($arg,0,count($arg)-2);
+	$arg = substr($arg,0,func_new_count($arg)-2);
 	//如果存在转义字符，那么去掉转义
 	//remove escape character if there's any
-	
-	if(get_magic_quotes_gpc()){$arg = stripslashes($arg);}
+
+    $arg = stripslashes($arg);
 	
 	return $arg;
 }
@@ -45,16 +46,16 @@ function createLinkstring($para) {
  */
 function createLinkstringUrlencode($para) {
 	$arg  = "";
-	while (list ($key, $val) = each ($para)) {
+	while (list ($key, $val) = func_new_each ($para)) {
 		$arg.=$key."=".urlencode($val)."&";
 	}
 	//去掉最后一个&字符
 	//remove the last &
-	$arg = substr($arg,0,count($arg)-2);
+	$arg = substr($arg,0,func_new_count($arg)-2);
 	
 	//如果存在转义字符，那么去掉转义
 	//remove escape character if there's any
-	if(get_magic_quotes_gpc()){$arg = stripslashes($arg);}
+    $arg = stripslashes($arg);
 	
 	return $arg;
 }
@@ -65,13 +66,51 @@ function createLinkstringUrlencode($para) {
  * return 去掉空值与签名参数后的新签名参数组The new signature paramaters with the blank ,sign and sign_type removed
  */
 function paraFilter($para) {
-	$para_filter = array();
-	while (list ($key, $val) = each ($para)) {
+	while (list ($key, $val) = func_new_each ($para)) {
 		if($key == "sign" || $key == "sign_type" || $val == "")continue;
 		else	$para_filter[$key] = $para[$key];
 	}
 	return $para_filter;
 }
+
+function func_new_each(&$array){
+
+    $res = array();
+
+    $key = key($array);
+
+    if($key !== null){
+
+        next($array);
+
+        $res[1] = $res['value'] = $array[$key];
+
+        $res[0] = $res['key'] = $key;
+
+    }else{
+
+        $res = false;
+
+    }
+
+    return $res;
+
+}
+
+function func_new_count($array_or_countable,$mode = COUNT_NORMAL){
+
+    if(is_array($array_or_countable) || is_object($array_or_countable)){
+
+        return count($array_or_countable, $mode);
+
+    }else{
+
+        return 0;
+
+    }
+
+}
+
 /**
  * 对数组排序 rearrange
  * @param $para 排序前的数组 before rearrange

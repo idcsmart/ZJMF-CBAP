@@ -29,18 +29,18 @@
               </div>
             </div>
           </t-card>
-          <t-dialog :close-btn="false" placement="center" :visible.sync="showdialog" @Cancel="onCancel" width="70%"
+          <t-dialog :close-btn="false" placement="center" :visible.sync="showdialog" @Cancel="onCancel" width="40%"
             cancel-btn="关闭" @Confirm="Confirmindex">
             <div class="content">
               <div class="content_left">
                 <div>文档分类 > <span class="blodtitle">{{dialog_name?dialog_name:dialog.name}}</span></div>
                 <t-input class="inputsearchbox" v-model="params.keywords" placeholder="请输入你需要搜索的内容"
-                  @Enter="keywordssearch">
-                  <t-icon name="search" slot="suffixIcon" @click="keywordssearch"></t-icon>
+                  @change="keywordssearch(1)">
+                  <t-icon name="search" slot="suffixIcon" @click="keywordssearch(1)"></t-icon>
                 </t-input>
                 <t-checkbox-group class="con_chexkbox" v-model="checkgroup" @change="titlecheck($event)">
-                  <t-tooltip v-for="(it,ind) in searchlist" :key="it.id" class="placement top left" :content="it.title"
-                    placement="top-left" :showArrow='false' theme="light">
+                  <t-tooltip v-for="(it,ind) in searchlist" :key="it.id" v-if="it.hidden===0" class="placement top left"
+                    :content="it.title" placement="top-left" :showArrow='false' theme="light">
                     <t-checkbox class="checkboxitem" :value="it.id"
                       :class="{checkboxitem_acitve:checkgroup.includes(it.id)}">
                       {{it.title}}</t-checkbox>

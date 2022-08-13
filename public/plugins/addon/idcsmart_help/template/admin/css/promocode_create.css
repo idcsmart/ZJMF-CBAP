@@ -10,8 +10,8 @@
   margin-right: 20px;
 }
 .add_tform {
-  display: flex;
-  flex-wrap: wrap;
+  /* display: flex;
+  flex-wrap: wrap; */
 }
 #tiny {
   width: 100%;
@@ -21,8 +21,6 @@
   display: flex;
   justify-content: end;
   margin-top: 10px;
-}
-.rich_btns {
   margin-left: 15px;
 }
 .rich_btns_save {
@@ -53,7 +51,7 @@
   border: none;
 }
 .tablebox {
-  width: 80%;
+  width: 70%;
   border-top: 1px solid #f2f2f2;
   border-left: 1px solid #f2f2f2;
   margin-bottom: 20px;
@@ -94,4 +92,11 @@
 }
 .add_tform .t-form__controls-content {
   align-items: start;
+}
+.lineheight30 {
+  line-height: 32px;
+  margin: 0 10px;
+}
+.inlineflex {
+  float: left;
 }

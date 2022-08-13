@@ -46,7 +46,7 @@
             },
             {
               colKey: 'status',
-              title: window.lang.status,
+              title: lang.status,
               width: 100
             },
             {
@@ -82,22 +82,22 @@
             phone: ''
           },
           rules: {
-            template_id: [ 
-              { pattern: /^[A-Za-z0-9]{0,100}$/, message: lang.verify15 + '，' + lang.verify3 + 100, type: 'warning'}
+            template_id: [
+              { pattern: /^[A-Za-z0-9]{0,100}$/, message: lang.verify15 + '，' + lang.verify3 + 100, type: 'warning' }
             ],
             phone: [{ required: true, message: lang.input + lang.phone, type: 'error' }],
             title: [
               { required: true, message: lang.input + lang.title, type: 'error' },
-              { validator: val => val.length <= 50, message: lang.verify3 + 50, type: 'warning'}
+              { validator: val => val.length <= 50, message: lang.verify3 + 50, type: 'warning' }
             ],
             content: [
               { required: true, message: lang.input + lang.content, type: 'error' },
-              { validator: val => val.length <= 255, message: lang.verify3 + 255, type: 'warning'}
+              { validator: val => val.length <= 255, message: lang.verify3 + 255, type: 'warning' }
             ],
             notes: [
-              { validator: val => val.length <= 1000, message: lang.verify3 + 1000, type: 'warning'}
+              { validator: val => val.length <= 1000, message: lang.verify3 + 1000, type: 'warning' }
             ],
-            status: [{ required: true, message: lang.select+lang.template+lang.status, type: 'error' }]
+            status: [{ required: true, message: lang.select + lang.template + lang.status, type: 'error' }]
           },
           country: [],
           loading: false,
@@ -107,6 +107,9 @@
           addTip: '',
           installTip: '',
           optType: '',
+          maxHeight: '',
+          delOrSubmit: '',
+          delOrSubmitTitle: '',
           name: '', // 插件标识
           type: '', // 安装/卸载
           module: 'sms', // 当前模块
@@ -119,6 +122,20 @@
         this.getCountry()
         this.getSmsTemplateStatus()
       },
+      mounted () {
+        this.maxHeight = document.getElementById('content').clientHeight - 180
+        let timer = null
+        window.onresize = () => {
+          if (timer) {
+            return
+          }
+          timer = setTimeout(() => {
+            this.maxHeight = document.getElementById('content').clientHeight - 180
+            clearTimeout(timer)
+            timer = null
+          }, 300)
+        }
+      },
       methods: {
         // 获取短信接口状态
         async getSmsTemplateStatus () {
@@ -128,7 +145,7 @@
           }
         },
         // 测试接口
-        testHandler (row) { 
+        testHandler (row) {
           this.isChina = row.type === 0 ? true : false
           this.testForm.name = row.sms_name
           this.testForm.id = row.id
@@ -201,8 +218,16 @@
         createTemplate () {
           this.visible = true
           this.formData.type = '0'
+          this.formData.id = ''
+          this.formData.name = this.name
+          this.formData.template_id = ''
+          this.formData.title = ''
+          this.formData.content = ''
+          this.formData.notes = ''
+          this.formData.status = ''
           this.optType = 'create'
           this.addTip = window.lang.create_template
+
         },
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
@@ -244,11 +269,21 @@
           } catch (error) {
           }
         },
-        // 删除
         deleteHandler (row) {
           this.delVisible = true
           this.delId = row.id
+          this.delOrSubmitTitle = lang.sureDelete
+          this.delOrSubmit = 'delete'
         },
+        // 删除/批量提交确认按钮
+        sureHandler () {
+          if (this.delOrSubmit === 'delete') {
+            this.sureDel()
+          } else if (this.delOrSubmit === 'batch') {
+            this.batchSubmitVerify()
+          }
+        },
+        // 删除
         async sureDel () {
           try {
             const params = {
@@ -263,6 +298,38 @@
             this.$message.error(error.data.msg)
           }
         },
+        batchSubmit () {
+          this.delOrSubmit = 'batch'
+          this.delVisible = true
+          this.delOrSubmitTitle = lang.sure_batch_submit
+        },
+        // 批量提交审核
+        async batchSubmitVerify () {
+          try {
+            const ids = this.data.reduce((all, cur) => {
+              all.push(cur.id)
+              return all
+            }, [])
+            const params = {
+              name: this.name,
+              ids
+            }
+            const res = await batchSubmitById(params)
+            this.$message.success(lang.submit_success)
+            this.delVisible = false
+            this.updateStatus()
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
+        },
+        // 更新审核状态
+        async updateStatus () {
+          try {
+            await updateTemplateStatus(this.name)
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
+        }
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

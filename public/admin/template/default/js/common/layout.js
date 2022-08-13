@@ -9,7 +9,10 @@
     const footer = document.getElementById('footer')
     Vue.prototype.lang = window.lang
     if (!localStorage.getItem('backJwt')) {
-      location.href = 'login.html'
+      const host = location.host
+      const fir = location.pathname.split('/')[1]
+      const str = `${host}/${fir}/`
+      location.href = 'http://' + str + '/login.html'
     }
     const MODE_OPTIONS = [
       { type: 'light', text: window.lang.theme_light, src: `${url}/img/assets-setting-light.svg` },
@@ -60,18 +63,26 @@
         langList: [],
         expanded: [],
         curValue: Number(localStorage.getItem('curValue')) || 2,
-        iconList: ['user', 'view-module', 'cart', 'setting', 'folder-open', 'precise-monitor','control-platform'],
+        iconList: ['user', 'view-module', 'cart', 'setting', 'folder-open', 'precise-monitor', 'control-platform'],
         navList: [],
         global: null,
         loadingSearch: false,
         noData: false,
         isShow: false,
         userName: localStorage.getItem('name') || '-',
-        logUrl: `${url}/img/logo.png`
+      },
+      computed: {
+        logUrl () {
+          if (this.collapsed) {
+            return `${url}/img/small-logo.png`
+          } else {
+            return `${url}/img/logo.png`
+          }
+        }
       },
       mounted () {
-        const auth = JSON.parse(localStorage.getItem('auth'))
-        this.navList = this.getAuth(auth)
+        const auth = JSON.parse(localStorage.getItem('backMenus'))
+        this.navList = JSON.parse(localStorage.getItem('backMenus'))
         this.navList.forEach(item => {
           item.child.forEach(el => {
             if (el.id === this.curValue) {
@@ -94,7 +105,7 @@
           const host = location.host
           const fir = location.pathname.split('/')[1]
           const str = `${host}/${fir}/`
-          location.href = 'http://' + str + e.url || (e.child &&  str + e.child[0].url)
+          location.href = 'http://' + str + e.url || (e.child && str + e.child[0].url)
         },
         changeCollapsed () {
           this.collapsed = !this.collapsed
@@ -141,7 +152,10 @@
             const res = await Axios.post('/logout')
             this.$message.success(res.data.msg)
             setTimeout(() => {
-              location.href = 'login.html'
+              const host = location.host
+              const fir = location.pathname.split('/')[1]
+              const str = `${host}/${fir}/`
+              location.href = 'http://' + str + 'login.html'
             }, 300)
           } catch (error) {
             this.$message.error(error.data.msg)

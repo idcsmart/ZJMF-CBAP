@@ -52,12 +52,12 @@ class AppInit
         }
 
         # 获取系统允许钩子
-        $systemHook = get_system_hooks();
+        #$systemHook = get_system_hooks();
         # 获取插件注册钩子
         $systemHookPlugins = Db::name('plugin_hook')
             ->field('name,plugin')
             ->where('status',1)
-            ->whereIn('name',$systemHook)
+            #->whereIn('name',$systemHook)
             ->select()->toArray();
         if (!empty($systemHookPlugins)) {
             foreach ($systemHookPlugins as $hookPlugin) {

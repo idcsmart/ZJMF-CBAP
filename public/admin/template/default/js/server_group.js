@@ -48,7 +48,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 160,
+              width: 100,
             },
           ],
           hideSortTips: true,

@@ -13,10 +13,10 @@
   <t-card class="product-container">
     <ul class="common-tab">
       <li class="active">
-        <a>基础信息</a>
+        <a>{{lang.basic_info}}</a>
       </li>
       <li>
-        <a :href="`product_api.html?id=${id}`">接口管理</a>
+        <a :href="`product_api.html?id=${id}`">{{lang.interface_manage}}</a>
       </li>
     </ul>
     <div class="box">
@@ -49,17 +49,17 @@
               </t-form-item>
             </div>
             <t-form-item :label="lang.product_descript" name="description" class="textarea">
-              <t-textarea :placeholder="lang.input+lang.notes" v-model="formData.description" />
+              <t-textarea :placeholder="lang.input+lang.product_descript" v-model="formData.description" />
             </t-form-item>
             <!-- <p class="com-tit connect"><span>{{ lang.connect }}</span></p>
-            <div class="item">
-              <t-form-item :label="lang.connect_goods" name="address">
-                <t-select v-model="formData.type">
-                  <t-option value="server" label="server" key="server"></t-option>
-                  <t-option value="server_group" label="server_group" key="server_group"></t-option>
-                </t-select>
-              </t-form-item>
-            </div> -->
+                    <div class="item">
+                      <t-form-item :label="lang.connect_goods" name="address">
+                        <t-select v-model="formData.type">
+                          <t-option value="server" label="server" key="server"></t-option>
+                          <t-option value="server_group" label="server_group" key="server_group"></t-option>
+                        </t-select>
+                      </t-form-item>
+                    </div> -->
             <p class="com-tit connect"><span>{{ lang.upAndDown }}</span></p>
             <div class="item">
               <t-form-item :label="lang.demote_range" name="language">
@@ -72,15 +72,17 @@
           </t-col>
           <!-- 个人中心右侧 -->
           <t-col :xs="12" :xl="6" class="r-box">
-            <p class="com-tit"><span>{{lang.notice}}</span></p>
+            <p class="com-tit"><span>{{lang.product_notice}}</span></p>
             <t-row :gutter="{ xs: 0, xxl: 30 }" class="dis-box">
               <t-col :xs="12" :xl="6">
+                <p class="small-tit">{{lang.sms_notice}}</p>
                 <t-form-item :label="lang.open_notice">
                   <t-radio-group name="creating_notice_sms" v-model="formData.creating_notice_sms" :options="checkOptions">
                   </t-radio-group>
                 </t-form-item>
               </t-col>
               <t-col :xs="12" :xl="6">
+                <p class="small-tit">{{lang.email_notice}}</p>
                 <t-form-item :label="lang.open_notice">
                   <t-radio-group name="creating_notice_sms" v-model="formData.creating_notice_mail" :options="checkOptions">
                   </t-radio-group>
@@ -88,7 +90,7 @@
               </t-col>
               <t-col :xs="12" :xl="6" class="half">
                 <t-form-item :label="lang.sms_interface">
-                  <t-select v-model="formData.creating_notice_sms_api" :popup-props="popupProps" @change="changeCreating">
+                  <t-select v-model="formData.creating_notice_sms_api" @change="changeSmsInterface">
                     <t-option v-for="item in smsInterList" :value="item.id" :label="item.title" :key="item.id">
                     </t-option>
                   </t-select>
@@ -101,14 +103,13 @@
                 </t-form-item>
               </t-col>
               <t-col :xs="12" :xl="6" class="half">
-                <!-- <t-form-item :label="lang.email_interface" name="hidden">
-                  <t-select v-model="formData.hidden">
-                    <t-option v-for="item in smsInterTemp" :value="item.name"
-                    :label="item.title" :key="item.name">
+                <t-form-item :label="lang.email_interface" name="hidden">
+                  <t-select v-model="formData.creating_notice_mail_api">
+                    <t-option v-for="item in emailInterList" :value="item.name" :label="item.title" :key="item.name">
                     </t-option>
                   </t-select>
-                </t-form-item> -->
-                <t-form-item :label="lang.email_temp" name="hidden">
+                </t-form-item>
+                <t-form-item :label="lang.email_temp">
                   <t-select v-model="formData.creating_notice_mail_template">
                     <t-option v-for="item in emailInterTemp" :value="item.id" :label="item.subject" :key="item.id">
                     </t-option>
@@ -116,25 +117,25 @@
                 </t-form-item>
               </t-col>
               <t-col :xs="12" :xl="6">
-                <t-form-item :label="lang.opened_notice" name="hidden">
+                <t-form-item :label="lang.opened_notice">
                   <t-radio-group v-model="formData.created_notice_sms" :options="checkOptions">
                   </t-radio-group>
                 </t-form-item>
               </t-col>
               <t-col :xs="12" :xl="6">
-                <t-form-item :label="lang.opened_notice" name="hidden">
+                <t-form-item :label="lang.opened_notice">
                   <t-radio-group v-model="formData.created_notice_mail" :options="checkOptions">
                   </t-radio-group>
                 </t-form-item>
               </t-col>
               <t-col :xs="12" :xl="6" class="half">
-                <t-form-item :label="lang.sms_interface" name="hidden">
+                <t-form-item :label="lang.sms_interface">
                   <t-select v-model="formData.created_notice_sms_api" @change="changeCreated">
                     <t-option v-for="item in smsInterList" :value="item.id" :label="item.title" :key="item.id">
                     </t-option>
                   </t-select>
                 </t-form-item>
-                <t-form-item :label="lang.choose_template" name="hidden">
+                <t-form-item :label="lang.choose_template">
                   <t-select v-model="formData.created_notice_sms_api_template">
                     <t-option v-for="item in smsTempList[createdName]" :value="item.id" :label="item.title" :key="item.id">
                     </t-option>
@@ -142,13 +143,13 @@
                 </t-form-item>
               </t-col>
               <t-col :xs="12" :xl="6" class="half">
-                <!-- <t-form-item :label="lang.email_interface" name="hidden">
-                  <t-select v-model="formData.hidden">
-                    <t-option :value="1" :label="lang.open" :key="1"></t-option>
-                    <t-option :value="0" :label="lang.close" :key="0"></t-option>
+                <t-form-item :label="lang.email_interface" name="">
+                  <t-select v-model="formData.created_notice_mail_api">
+                    <t-option v-for="item in emailInterList" :value="item.id" :label="item.title" :key="item.id">
+                    </t-option>
                   </t-select>
-                </t-form-item> -->
-                <t-form-item :label="lang.email_temp" name="hidden">
+                </t-form-item>
+                <t-form-item :label="lang.email_temp" name="">
                   <t-select v-model="formData.created_notice_mail_template">
                     <t-option v-for="item in emailInterTemp" :value="item.id" :label="item.subject" :key="item.id">
                     </t-option>

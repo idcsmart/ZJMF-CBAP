@@ -28,46 +28,105 @@
             </div>
           </t-col>
         </t-row>
-        <p class="com-tit"><span>{{lang.automation_switch}}</span></p>
-        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
-          <t-col :xs="12" :xl="6">
-            <t-form-item :label="lang.host_renewal_one" name="cron_due_day_distance_1">
-              <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_day_distance_1_switch"></t-switch>
-              <span class="tip">{{lang.before_due}}</span>
-              <t-input v-model="formData.cron_due_day_distance_1"></t-input>
-              <span>{{lang.day_remind}}</span>
-            </t-form-item>
-            <t-form-item :label="lang.host_renewal_two" name="cron_due_day_distance_2">
-              <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_day_distance_2_switch"></t-switch>
-              <span>{{lang.before_due}}</span>
-              <t-input v-model="formData.cron_due_day_distance_2"></t-input>
-              <span>{{lang.day_remind}}</span>
-            </t-form-item>
-            <t-form-item :label="lang.host_renewal_three" name="cron_due_day_distance_3">
-              <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_day_distance_3_switch"></t-switch>
-              <span>{{lang.after_due}}</span>
-              <t-input v-model="formData.cron_due_day_distance_3"></t-input>
-              <span>{{lang.day_remind}}</span>
-            </t-form-item>
-          </t-col>
-        </t-row>
-        <p class="com-tit" style="margin-top: 30px;"><span>{{lang.module_tasks}}</span></p>
-        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
-          <t-col :xs="12" :xl="6">
-            <t-form-item :label="lang.host_suspend" name="cron_due_day_already_suspend">
-              <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_day_already_suspend_switch"></t-switch>
-              <span>{{lang.after_due}}</span>
-              <t-input v-model="formData.cron_due_day_already_suspend"></t-input>
-              <span>{{lang.day_remind}}</span>
-            </t-form-item>
-            <t-form-item :label="lang.host_terminate" name="cron_due_day_already_terminate">
-              <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_day_already_terminate_switch"></t-switch>
-              <span>{{lang.after_due}}</span>
-              <t-input v-model="formData.cron_due_day_already_terminate"></t-input>
-              <span>{{lang.day_remind}}</span>
-            </t-form-item>
-          </t-col>
-        </t-row>
+        <div class="item-box">
+          <p class="com-tit"><span>{{lang.module}}</span></p>
+          <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+            <t-col :xs="12" :xl="6">
+              <t-form-item :label="lang.product_suspend">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_suspend_swhitch">
+                </t-switch>
+                <span class="tip">{{lang.after_due}}</span>
+                <t-input-number v-model="formData.cron_due_suspend_day" theme="normal"></t-input-number>
+                <span>{{lang.tip12}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.product_relieve_suspend">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_unsuspend_swhitch">
+                </t-switch>
+                <span>{{lang.tip13}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.product_delete">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_terminate_swhitch">
+                </t-switch>
+                <span>{{lang.after_due}}</span>
+                <t-input-number v-model="formData.cron_due_terminate_day" theme="normal"></t-input-number>
+                <span>{{lang.tip14}}</span>
+              </t-form-item>
+            </t-col>
+          </t-row>
+        </div>
+        <div class="item-box">
+          <p class="com-tit"><span>{{lang.financial}}</span></p>
+          <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+            <t-col :xs="12" :xl="6">
+              <t-form-item :label="lang.order_unpaid_notice" name="cron_due_renewal_first_day">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_order_overdue_swhitch ">
+                </t-switch>
+                <span class="tip">{{lang.after_orders}}</span>
+                <t-input-number v-model="formData.cron_order_overdue_day" theme="normal"></t-input-number>
+                <span>{{lang.day_remind}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.host_renewal_one" name="cron_due_renewal_first_day">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_renewal_first_swhitch ">
+                </t-switch>
+                <span class="tip">{{lang.before_due}}</span>
+                <t-input-number v-model="formData.cron_due_renewal_first_day" theme="normal"></t-input-number>
+                <span>{{lang.day_remind}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.host_renewal_two">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_due_renewal_second_swhitch">
+                </t-switch>
+                <span>{{lang.before_due}}</span>
+                <t-input-number v-model="formData.cron_due_renewal_second_day" theme="normal"></t-input-number>
+                <span>{{lang.day_remind}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.host_overdue_one">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_overdue_first_swhitch">
+                </t-switch>
+                <span>{{lang.after_due}}</span>
+                <t-input-number v-model="formData.cron_overdue_first_day" theme="normal"></t-input-number>
+                <span>{{lang.day_remind}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.host_overdue_two">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_overdue_second_swhitch">
+                </t-switch>
+                <span>{{lang.after_due}}</span>
+                <t-input-number v-model="formData.cron_overdue_second_day" theme="normal"></t-input-number>
+                <span>{{lang.day_remind}}</span>
+              </t-form-item>
+              <t-form-item :label="lang.host_overdue_three">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_overdue_third_swhitch">
+                </t-switch>
+                <span>{{lang.after_due}}</span>
+                <t-input-number v-model="formData.cron_overdue_third_day" theme="normal"></t-input-number>
+                <span>{{lang.day_remind}}</span>
+              </t-form-item>
+            </t-col>
+          </t-row>
+        </div>
+        <div class="item-box">
+          <p class="com-tit"><span>{{lang.auto_order}}</span></p>
+          <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+            <t-col :xs="12" :xl="6">
+              <t-form-item :label="lang.replied">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_ticket_close_swhitch"></t-switch>
+                <span>{{lang.replied}}</span>
+                <t-input-number v-model="formData.cron_ticket_close_day" theme="normal"></t-input-number>
+                <span>{{lang.tip15}}</span>
+              </t-form-item>
+            </t-col>
+          </t-row>
+        </div>
+        <div class="item-box">
+          <p class="com-tit"><span>{{lang.promote}}</span></p>
+          <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+            <t-col :xs="12" :xl="6">
+              <t-form-item :label="lang.promotion_results">
+                <t-switch size="medium" :custom-value="[1,0]" v-model="formData.cron_aff_swhitch"></t-switch>
+                <span>{{lang.tip16}}</span>
+              </t-form-item>
+            </t-col>
+          </t-row>
+        </div>
         <t-form-item class="f-btn">
           <t-button theme="primary" type="submit">{{lang.hold}}</t-button>
           <!-- <t-button theme="default" variant="base">{{lang.close}}</t-button> -->

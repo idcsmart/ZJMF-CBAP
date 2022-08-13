@@ -5,8 +5,7 @@
   <t-card class="list-card-container">
     <!-- <p class="com-h-tit">{{lang.currency_setting}}</p> -->
     <div class="box">
-      <t-form :data="formData" :rules="rules" :label-width="80" label-align="top"
-      ref="formValidatorStatus" @submit="onSubmit">
+      <t-form :data="formData" :rules="rules" :label-width="80" label-align="top" ref="formValidatorStatus" @submit="onSubmit">
         <p class="com-tit"><span>{{ lang.currency_setting }}</span></p>
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col :xs="12" :xl="3" :md="6">
@@ -18,6 +17,14 @@
           <t-col :xs="12" :xl="3" :md="6">
             <t-form-item name="currency_prefix" :label="lang.currency_prefix">
               <t-input v-model="formData.currency_prefix" :placeholder="lang.input">
+              </t-input>
+            </t-form-item>
+          </t-col>
+        </t-row>
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="currency_suffix" :label="lang.currency_suffix">
+              <t-input v-model="formData.currency_suffix" :placeholder="lang.input+lang.currency_code">
               </t-input>
             </t-form-item>
           </t-col>

@@ -48,6 +48,7 @@ class ConfigurationValidate extends Validate
 		'cron_overdue_second_day' => 'number',
 		'cron_overdue_third_day' => 'number',
 		'cron_ticket_close_day' => 'number',
+		'cron_order_overdue_day' => 'number',
 		'cron_due_suspend_swhitch' => 'require|in:0,1',
 		'cron_due_unsuspend_swhitch' => 'require|in:0,1',
 		'cron_due_terminate_swhitch' => 'require|in:0,1',
@@ -56,8 +57,13 @@ class ConfigurationValidate extends Validate
 		'cron_overdue_first_swhitch' => 'require|in:0,1',
 		'cron_overdue_second_swhitch' => 'require|in:0,1',
 		'cron_overdue_third_swhitch' => 'require|in:0,1',
-		'cron_ticket_swhitch' => 'require|in:0,1',
+		'cron_ticket_close_swhitch' => 'require|in:0,1',
 		'cron_aff_swhitch' => 'require|in:0,1',
+		'cron_order_overdue_swhitch' => 'require|in:0,1',
+
+		# 主题设置
+		'admin_theme' => 'require',
+		'clientarea_theme' => 'require',
     ];
 
     protected $message  =  [
@@ -120,6 +126,7 @@ class ConfigurationValidate extends Validate
 		'cron_overdue_second_day.number' => 'configuration_cron_overdue_second_day_cannot_empty',
 		'cron_overdue_third_day.number' => 'configuration_cron_overdue_third_day_cannot_empty',
 		'cron_ticket_close_day.number' => 'configuration_cron_ticket_close_day_cannot_empty',
+		'cron_order_overdue_day.number' => 'configuration_cron_order_overdue_day_cannot_empty',
 		
 		'cron_due_suspend_swhitch.require' => 'configuration_cron_due_suspend_swhitch',		
 		'cron_due_unsuspend_swhitch.require' => 'configuration_cron_due_unsuspend_swhitch',		
@@ -129,8 +136,9 @@ class ConfigurationValidate extends Validate
 		'cron_overdue_first_swhitch.require' => 'configuration_cron_overdue_first_swhitch',
 		'cron_overdue_second_swhitch.require' => 'configuration_cron_overdue_second_swhitch',
 		'cron_overdue_third_swhitch.require' => 'configuration_cron_overdue_third_swhitch',
-		'cron_ticket_swhitch.require' => 'configuration_cron_ticket_swhitch',
+		'cron_ticket_close_swhitch.require' => 'configuration_cron_ticket_close_swhitch',
 		'cron_aff_swhitch.require' => 'configuration_cron_aff_swhitch',
+		'cron_order_overdue_swhitch.require' => 'configuration_cron_order_overdue_swhitch',
 		
 		'cron_due_suspend_swhitch.in' => 'configuration_cron_due_suspend_swhitch',		
 		'cron_due_unsuspend_swhitch.in' => 'configuration_cron_due_unsuspend_swhitch',		
@@ -140,14 +148,42 @@ class ConfigurationValidate extends Validate
 		'cron_overdue_first_swhitch.in' => 'configuration_cron_overdue_first_swhitch',
 		'cron_overdue_second_swhitch.in' => 'configuration_cron_overdue_second_swhitch',
 		'cron_overdue_third_swhitch.in' => 'configuration_cron_overdue_third_swhitch',
-		'cron_ticket_swhitch.in' => 'configuration_cron_ticket_swhitch',
+		'cron_ticket_close_swhitch.in' => 'configuration_cron_ticket_close_swhitch',
 		'cron_aff_swhitch.in' => 'configuration_cron_aff_swhitch',
+		'cron_order_overdue_swhitch.in' => 'configuration_cron_order_overdue_swhitch',
+
+		# 主题设置
+		'admin_theme.require' => 'configuration_theme_admin_theme_cannot_empty',
+		'clientarea_theme.require' => 'configuration_theme_clientarea_theme_cannot_empty',
     ];
     protected $scene = [
         'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url'],
         'login_update' => ['register_email','register_phone','login_phone_verify'],
         'security_update' => ['captcha_client_register','captcha_client_login','captcha_client_login_error','captcha_admin_login','captcha_width','captcha_height','captcha_length'],
         'currency_update' => ['currency_code','currency_prefix','recharge_open','recharge_min'],
-        'cron_update' => ['cron_due_day_distance_1','cron_due_day_distance_2','cron_due_day_distance_3','cron_due_day_already_suspend','cron_due_day_already_terminate','cron_due_day_distance_1_switch','cron_due_day_distance_2_switch','cron_due_day_distance_3_switch','cron_due_day_already_suspend_switch','cron_due_day_already_terminate_switch'],
+        'cron_update' => 
+	        [
+			 'cron_due_suspend_day',
+			'cron_due_terminate_day',
+			'cron_due_renewal_first_day',
+			'cron_due_renewal_second_day',
+			'cron_overdue_first_day',
+			'cron_overdue_second_day',
+			'cron_overdue_third_day',
+			'cron_ticket_close_day',
+			'cron_due_suspend_swhitch',
+			'cron_due_unsuspend_swhitch',
+			'cron_due_terminate_swhitch',
+			'cron_due_renewal_first_swhitch',
+			'cron_due_renewal_second_swhitch',
+			'cron_overdue_first_swhitch',
+			'cron_overdue_second_swhitch',
+			'cron_overdue_third_close_swhitch',
+			'cron_ticket_swhitch',
+			'cron_aff_swhitch',
+			'cron_order_overdue_swhitch',
+			'cron_order_overdue_day',
+			],
+		'theme_update' => ['admin_theme', 'clientarea_theme'],
     ];
 }

@@ -12,18 +12,13 @@ return [
     ],
     [
         'title' => '用户注册',
-        'content' => '@var(account)，感谢您支持@var(website_name)',
+        'content' => '@var(account)，感谢您支持@var(system_website_name)',
         'name'=>'client_register_success'
     ],
     [
         'title'=> '客户更改手机',
         'content' => '您的手机号被改为：@var(client_phone)，请注意账户安全',
         'name'=>'client_change_phone'
-    ],
-    [
-        'title' => '客户更改邮箱',
-        'content' => '您的邮箱被改为：@var(client_email)，请注意账户安全',
-        'name'=>'client_change_email'
     ],
     [
         'title' => '客户更改密码',
@@ -37,7 +32,7 @@ return [
     ],
     [
         'title' => '产品开通中',
-        'content' => '您的订单@var(order_id)正在开通，请耐心等待',
+        'content' => '您的产品：{product_name}（产品名称）正在开通，请耐心等待',
         'name'=>'host_pending'
     ],
     [
@@ -47,7 +42,7 @@ return [
     ],
     [
         'title' => '产品暂停通知',
-        'content' => '您的产品：@var(product_name)（产品名称），由于yyy（停用原因），已停用',
+        'content' => '您的产品：@var(product_name)（产品名称），由于@var(product_suspend_reason)，已停用',
         'name'=>'host_suspend'
     ],
     [
@@ -62,7 +57,7 @@ return [
     ],
     [
         'title' => '产品升降级',
-        'content' => '您已成功升级产品@var(product_info)，感谢您的支持',
+        'content' => '您已成功升级产品@var(product_name)，感谢您的支持',
         'name'=>'host_upgrad'
     ],
     [

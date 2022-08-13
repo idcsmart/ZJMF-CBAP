@@ -1,7 +1,6 @@
-
 {include file="header"}
 <!-- =======内容区域======= -->
-<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/setting.css">
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
 <div id="content" class="gateway" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
@@ -14,8 +13,7 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div> -->
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
-      :table-layout="tableLayout ? 'auto' : 'fixed'" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -31,16 +29,26 @@
         <t-tag theme="default" class="status" v-if="row.status===3" variant="light">{{lang.not_install}}</t-tag>
       </template>
       <template #op="{row}">
-        <a class="common-look" :href="row.help_url" v-if="row.help_url">申请接口</a>
-        <a class="common-look" @click="handleConfig(row)">配置</a>
-        <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3">{{row.status==1 ? lang.disable
-          : lang.enable}}</a>
-        <a class="common-look" @click="deletePay(row)">{{ row.status !== 3 ?
-          lang.uninstall : lang.install }}</a>
+        <t-tooltip :content="lang.apply_interface" :show-arrow="false" theme="light">
+          <a :href="row.help_url" v-if="row.help_url">
+            <t-icon name="link" class="common-look"></t-icon>
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.config" :show-arrow="false" theme="light" v-if="row.status !== 3">
+          <t-icon name="tools" class="common-look" @click="handleConfig(row)"></t-icon>
+        </t-tooltip>
+        <t-tooltip :content="row.status==1 ? lang.disable : lang.enable" :show-arrow="false" theme="light">
+          <t-icon :name="row.status==1 ? 'minus-circle' : 'play-circle-stroke'" class="common-look" :class="{rotate: row.status== 1}" @click="changeStatus(row)" v-if="row.status !== 3">
+          </t-icon>
+        </t-tooltip>
+        <t-tooltip :content="row.status !== 3 ? lang.uninstall : lang.install" :show-arrow="false" theme="light">
+          <a class="common-look" @click="deletePay(row)">
+            <img :src="`${urlPath}/img/icon/uninstall.png`" alt="" v-if="row.status !== 3">
+            <img :src="`${urlPath}/img/icon/install.png`" alt="" v-else>
+        </t-tooltip>
       </template>
     </t-table>
-    <t-pagination :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions"
-      :on-change="changePage" :current="params.page"/>
+    <t-pagination :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions" :on-change="changePage" :current="params.page" />
   </t-card>
 
   <!-- 配置弹窗 -->
@@ -55,10 +63,9 @@
         <t-textarea v-if="item.type==='textarea'" v-model="item.value" :placeholder="lang.input+item.title">
         </t-textarea>
         <!-- radio -->
-        <t-radio-group v-if="item.type==='radio'" v-model="item.value"
-          :options="computedRadio(item.options)">
+        <t-radio-group v-if="item.type==='radio'" v-model="item.value" :options="computedRadio(item.options)">
         </t-radio-group>
-          <!-- checkbox -->
+        <!-- checkbox -->
         <t-checkbox-group v-if="item.type==='checkbox'" v-model="item.value" :options="item.options"></t-checkbox-group>
         <!-- select -->
         <t-select v-if="item.type==='select'" v-model="item.value" :placeholder="lang.select+item.title">

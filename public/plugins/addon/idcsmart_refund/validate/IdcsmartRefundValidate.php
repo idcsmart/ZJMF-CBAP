@@ -56,6 +56,11 @@ class IdcsmartRefundValidate extends Validate
         $config = $IdcsmartRefund->getConfig();
         # 自定义原因
         if (isset($config['reason_custom']) && $config['reason_custom']==1){
+
+            if (!is_string($value)){
+                return 'param_error';
+            }
+
             if (mb_strlen($value)>500){
                 return 'refund_suspend_reason_max';
             }

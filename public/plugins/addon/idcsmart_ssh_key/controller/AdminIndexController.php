@@ -1,7 +1,7 @@
 <?php
 namespace addon\idcsmart_ssh_key\controller;
 
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 use addon\idcsmart_ssh_key\model\IdcsmartSshKeyModel;
 
 /**
@@ -9,7 +9,7 @@ use addon\idcsmart_ssh_key\model\IdcsmartSshKeyModel;
  * @desc SSH密钥(后台)
  * @use addon\idcsmart_ssh_key\controller\AdminIndexController
  */
-class AdminIndexController extends PluginBaseController
+class AdminIndexController extends PluginAdminBaseController
 {
     /**
      * 时间 2022-07-07

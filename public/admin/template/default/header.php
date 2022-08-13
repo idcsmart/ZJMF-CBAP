@@ -163,44 +163,44 @@
         <div v-for="(item,index) in navList" :key="index">
           <t-menu-item :value="item.id" v-if="!item.child">
             <template #icon>
-              <t-icon :name="iconList[index]" />
+              <t-icon :name="item.icon" />
             </template>
-            <span @click="jumpHandler(item.url)">{{item.title}}</span>
+            <span @click="jumpHandler(item.url)">{{item.name}}</span>
           </t-menu-item>
           <t-submenu :value="item.id" mode="popup" v-else>
             <template #icon>
-              <t-icon :name="iconList[index]" />
+              <t-icon :name="item.icon" />
             </template>
-            <span slot="title">{{item.title}}</span>
+            <span slot="title">{{item.name}}</span>
             <t-menu-item :value="e.id" v-for="e in item.child" :key="e.id" @click="jumpHandler(e)">
-              {{e.title}}
+              {{e.name}}
             </t-menu-item>
-            <template v-if="item.id===91">
+            <!-- <template v-if="item.id===25">
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
                 <a href="#">推介计划</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://101.35.248.14/admin/plugin/idcsmart_ticket/ticket.html">工单</a>
+                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_ticket/ticket.html">工单</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://101.35.248.14/admin/plugin/idcsmart_promo_code/promo_code.html">优惠码</a>
+                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_promo_code/promo_code.html">优惠码</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://101.35.248.14/admin/plugin/idcsmart_refund/refund_product.html">退款</a>
+                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_refund/refund_product.html">退款</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
                 <a href="#">提现</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://101.35.248.14/admin/plugin/idcsmart_help/help.html">帮助中心</a>
+                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_help/help.html">帮助中心</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://101.35.248.14/admin/plugin/idcsmart_news/news.html">新闻中心</a>
+                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_news/news.html">新闻中心</a>
               </li>
               <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://101.35.248.14/admin/plugin/idcsmart_file_download/file_download.html">文件下载</a>
+                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_file_download/file_download.html">文件下载</a>
               </li>
-            </template>
+            </template> -->
           </t-submenu>
         </div>
       </t-menu>

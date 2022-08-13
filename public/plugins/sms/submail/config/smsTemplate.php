@@ -12,18 +12,13 @@ return [
     ],
     [
         'title' => '用户注册',
-        'content' => '@var(account)，感谢您支持@var(website_name)',
+        'content' => '@var(account)，感谢您支持@var(system_website_name)',
         'name'=>'client_register_success'
     ],
     [
         'title'=> '客户更改手机',
         'content' => '您的手机号被改为：@var(client_phone)，请注意账户安全',
         'name'=>'client_change_phone'
-    ],
-    [
-        'title' => '客户更改邮箱',
-        'content' => '您的邮箱被改为：@var(client_email)，请注意账户安全',
-        'name'=>'client_change_email'
     ],
     [
         'title' => '客户更改密码',
@@ -41,13 +36,13 @@ return [
         'name'=>'host_pending'
     ],
     [
-        'title' => '开通成功邮件',
+        'title' => '开通成功',
         'content' => '您的产品：@var(product_name)（产品名称），已开通可使用',
         'name'=>'host_active'
     ],
     [
         'title' => '产品暂停通知',
-        'content' => '您的产品：@var(product_name)（产品名称），由于yyy（停用原因），已停用',
+        'content' => '您的产品：@var(product_name)（产品名称），由于@var(product_suspend_reason)，已停用',
         'name'=>'host_suspend'
     ],
     [
@@ -62,7 +57,7 @@ return [
     ],
     [
         'title' => '产品升降级',
-        'content' => '您已成功升级产品@var(product_info)，感谢您的支持',
+        'content' => '您已成功升级产品@var(product_name)，感谢您的支持',
         'name'=>'host_upgrad'
     ],
     [
@@ -81,29 +76,19 @@ return [
         'name'=>'host_renewal_second'
     ],
     [
-        'title' => '逾期付款第一次',
+        'title' => '逾期付款第一次提醒',
         'content' => '您的产品：@var(product_name)（产品名称）已到期，将会删除，请及时续费',
         'name'=>'host_overdue_first'
     ],
     [
-        'title'=>'逾期付款第二次',
+        'title'=>'逾期付款第二次提醒',
         'content'=> '您的产品：@var(product_name)（产品名称）已到期，将会删除，请及时续费',
         'name'=>'host_overdue_second'
     ],
     [
-        'title' => '逾期付款第三次',
+        'title' => '逾期付款第三次提醒',
         'content' => '您的产品：@var(product_name)（产品名称）已到期，将会删除，请及时续费',
         'name'=>'host_overdue_third'
-    ],
-    [
-        'title' => '客户第二次续费提醒',
-        'content' => '您的产品：@var(product_name)（产品名称），还有@var(product_due_day_distance)天到期，请注意是否续费',
-        'name'=>'host_renewal_two'
-    ],
-    [
-        'title'=> '客户第三次续费提醒',
-        'content' => '您的产品：@var(product_name)（产品名称），已到期@var(product_due_day_already)天，若不续费，即将删除产品数据',
-        'name'=>'host_renewal_three'
     ],
     [
         'title' => '订单未付款通知',

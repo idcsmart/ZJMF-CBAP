@@ -169,6 +169,7 @@ class ClientController extends AdminBaseController
      * @param string address - 地址
      * @param string language - 语言
      * @param string notes - 备注
+     * @param string password - 密码 为空代表不修改
      */
 	public function update()
     {

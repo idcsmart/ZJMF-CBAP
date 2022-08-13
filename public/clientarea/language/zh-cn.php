@@ -125,6 +125,10 @@ return [
     'log_client_pay_with_credit_fail' => '{client}使用部分余额支付失败,失败原因:余额不足(可能将余额应用至其它订单).已将支付金额存入客户余额',
     'log_client_recharge' => '{client}交易流水号:{transaction},充值金额:{amount}',
 
+    'log_client_add_api' => '{client}添加API，API名称：{name}',
+    'log_client_edit_api' => '{client}修改API，API名称：{name}',
+    'log_client_delete_api' => '{client}删除API，API名称：{name}',
+
 
     'client_username' => '姓名',
     'client_company' => '公司',
@@ -165,4 +169,7 @@ return [
     'please_enter_api_ip' => '请输入白名单IP',
     'api_ip_error' => '白名单IP格式错误',
     'api_key_create_max' => '单个用户最多只允许创建10个API密钥',
+
+    # 产品
+    'host_notes_cannot_exceed_1000_chars' => '备注最多不能超过1000个字符',
 ];

@@ -170,6 +170,10 @@ class NoticeSettingModel extends Model
 				}
 				(new ConfigurationModel())->sendUpdate($configuration);//保存默认发送接口
 			}
+			
+			
+			$description = [];
+
 			foreach($params as $name=>$param){
 				$notice_setting = $this->find($param['name']);
 				//短信判断
@@ -260,8 +264,48 @@ class NoticeSettingModel extends Model
 						'email_enable' => isset($param['email_enable']) ? trim($param['email_enable']) : $notice_setting['email_enable'],
 					], ['name' => $param['name']]);
 				}
-				$this->commit();
+				# 日志描述
+				$notice_setting=$notice_setting->toArray();
+				$new_param=['sms_global_name'=>$param['sms_global_name'],'sms_global_template'=>$param['sms_global_template'],'sms_name'=>$param['sms_name'],'sms_template'=>$param['sms_template'],'sms_enable'=>$param['sms_enable'],'email_name'=>$param['email_name'],'email_template'=>$param['email_template'],'email_enable'=>$param['email_enable']];
+				$desc = array_diff_assoc($new_param,$notice_setting);
+				foreach($desc as $k=>$v){				
+					$lang = '"'.lang("send_notice_log_{$k}").'"';
+					if($k=='sms_enable' || $k=='email_enable'){
+						$lang = '"'.lang("send_notice_log_".str_replace('enable','name',$k)).'"';
+						$lang_old = lang("configuration_log_switch_{$notice_setting[$k]}");
+						$lang_new = lang("configuration_log_switch_{$v}");
+					}else if(strpos($k,'name')>0){	
+						$sms_list = array_column($sms['list'],"title","name");	
+						$sms_name=$sms_list[$param['name']];
+						$lang_old = $sms_name[$notice_setting[$k]];
+						$lang_new = $sms_name[$v];
+					}else if(strpos($k,'template')>0){	
+						$old_sms_param = [
+							'id'=>$notice_setting[$k],
+							'name'=>$notice_setting[str_replace('template','name',$k)],
+						];
+						$old_sms_template = $SmsTemplateModel->indexSmsTemplate($old_sms_param);
+						$old_sms_template = array_column($old_sms_template,"title","id");	
+						$lang_old = $old_sms_template[$notice_setting[$k]];
+						$sms_param = [
+							'id'=>$k,
+							'name'=>$desc[str_replace('template','name',$k)],
+						];
+						$sms_template = $SmsTemplateModel->indexSmsTemplate($sms_param);
+						$sms_template = array_column($sms_template,"title","id");
+						$lang_new = $sms_template[$v];
+					}else{				
+						$lang_old = $notice_setting[$k];
+						$lang_new = $v;		
+					}
+					
+					$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+				}
 			}
+			$description = implode(',', $description);
+			//日志
+            if($description) active_log(lang('admin_notice_send_log_update', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
+            $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
             $this->rollback();
@@ -283,54 +327,73 @@ class NoticeSettingModel extends Model
 	 * @param string param.sms_global_template[].title  - 国际短信模板标题 required
 	 * @param string param.sms_global_template[].content  - 国际短信模板内容 required
 	 * @param string param.email_name  - 邮件接口名称（可以为空，默认SMTP接口）  
+	 * @param string param.email_template[].name  - 邮件模板名称 required
 	 * @param string param.email_template[].title  - 邮件模板标题 required
 	 * @param string param.email_template[].content  - 邮件模板内容 required
 	 * @return mixed
 	 */
 	function noticeActionCreate($param)
 	{	
+		$notice_setting = $this->field('name,sms_global_name,sms_global_template,sms_name,sms_template,sms_enable,email_name,email_template,email_enable')
+		->find($param['name']);
+		if (!empty($notice_setting)){
+            return ['status'=>400, 'msg'=>lang('添加失败，动作已经存在')];
+        }else if (!empty($patam['name_lang'])){
+            return ['status'=>400, 'msg'=>lang('动作名称不能为空')];
+        }
 		$this->startTrans();
         try {
-			$EmailTemplateModel=new EmailTemplateModel();
-			$SmsTemplateModel=new SmsTemplateModel();
-			
-			//创建国内短信模板
-			$sms=[
-				'name'=>$param['sms_name'],
-				'type'=>0,
-				'title'=>$param['sms_template']['title'],
-				'content'=>$param['sms_template']['content'],
-				'notes'=>'',
-				'status'=>0,
-			];
-			$sms_template=$SmsTemplateModel->createSmsTemplate($sms);			
-			//创建国际短信模板
-			$sms1=[
-				'name'=>$param['sms_global_name'],
-				'type'=>1,
-				'title'=>$param['sms_global_template']['title'],
-				'content'=>$param['sms_global_template']['content'],
-				'notes'=>'',
-				'status'=>0,
-			];
-			$sms_global_template=$SmsTemplateModel->createSmsTemplate($sms1);
-			//添加邮件模板
-			$email=[
-				'subject'=>$param['sms_global_template']['title'],
-				'message'=>$param['sms_global_template']['content'],
-			];
-			$email_template=$EmailTemplateModel->createEmailTemplate($email);		
-			
+			$EmailTemplateModel = new EmailTemplateModel();
+			$SmsTemplateModel = new SmsTemplateModel();
+			$sms_name = '';
+			if(!empty($param['sms_name']) || !empty($param['sms_template'])){			
+				$sms_name = $param['sms_name'] ? trim($param['sms_name']) : 'Idcsmart';
+				//创建国内短信模板
+				$sms = [
+					'name'=>$sms_name,
+					'type'=>0,
+					'title'=>$param['sms_template']['title'],
+					'content'=>$param['sms_template']['content'],
+					'notes'=>'',
+					'status'=>0,
+				];
+				$sms_template = $SmsTemplateModel->createSmsTemplate($sms);	
+			}	
+			$sms_global_name = '';
+			if(!empty($param['sms_global_name']) || !empty($param['sms_global_template'])){	
+				$sms_global_name = $param['sms_global_name'] ? trim($param['sms_global_name']) : 'Idcsmart';
+				//创建国际短信模板
+				$sms1=[
+					'name'=>$sms_global_name,
+					'type'=>1,
+					'title'=>$param['sms_global_template']['title'],
+					'content'=>$param['sms_global_template']['content'],
+					'notes'=>'',
+					'status'=>0,
+				];
+				$sms_global_template = $SmsTemplateModel->createSmsTemplate($sms1);
+			}
+			$email_name = '';
+			if(!empty($param['email_name'])){
+				$email_name = $param['email_name'] ? trim($param['email_name']) : 'Smtp';
+				//添加邮件模板
+				$email=[
+					'name'=>$param['email_template']['name'],
+					'subject'=>$param['email_template']['title'],
+					'message'=>$param['email_template']['content'],
+				];
+				$email_template=$EmailTemplateModel->createEmailTemplate($email);		
+			}
 			
 			$create_notice_setting = [
 				'name' => $param['name'],
 				'name_lang' => $param['name_lang'],
-				'sms_global_name' => $param['sms_global_name'] ? trim($param['sms_global_name']) : '',
+				'sms_global_name' => $sms_global_name,
 				'sms_global_template' => !empty($sms_global_template['id'])?$sms_global_template['id']:0,
-				'sms_name' => $param['sms_name'] ? trim($param['sms_name']) : '',
+				'sms_name' => $sms_name,
 				'sms_template' => !empty($sms_template['id'])?$sms_template['id']:0,
 				'sms_enable' => 1,
-				'email_name' => $param['email_name'] ? trim($param['email_name']) : '',
+				'email_name' => $email_name,
 				'email_template' => !empty($email_template['id'])?$email_template['id']:0,
 				'email_enable' => 1,
 			];

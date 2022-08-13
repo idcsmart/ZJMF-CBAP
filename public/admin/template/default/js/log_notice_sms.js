@@ -17,14 +17,16 @@
             {
               colKey: 'id',
               title: 'ID',
-              width: 120,
+              width: 80,
               sortType: 'all',
               sorter: true
             },
             {
               colKey: 'content',
               title: lang.content,
-              ellipsis: true
+              ellipsis: true,
+              width: 600,
+              className: 'notice-width'
             },
             {
               colKey: 'create_time',
@@ -40,7 +42,7 @@
             {
               colKey: 'phone',
               title: lang.phone,
-              width: 250,
+              width: 150,
               ellipsis: true
             }
           ],
@@ -75,7 +77,7 @@
         }
       },
       methods: {
-        jump(){
+        jump () {
           location.href = 'log_notice_email.html'
         },
         changePage (e) {

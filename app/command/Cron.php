@@ -24,14 +24,19 @@ class Cron extends Command
 		$this->minuteCron();// 每分钟执行一次hook需要
 		$config = $this->cronConfig();	
 		$this->configurationUpdate('cron_lock_start_time',time());
-		//锁
-		if(!empty($config['cron_lock'])){
-			return false;
-		}
+		
 		//最后执行时间判断
 		if(((time() - $config["cron_lock_last_time"]) < 5*60)){
             return false;
         }
+		//最后执行时间判断
+		if(((time() - $config["cron_lock_last_time"]) > 5*60)){
+            $this->configurationUpdate('cron_lock',0);
+        }
+		//锁
+		if(!empty($config['cron_lock'])){
+			return false;
+		}
 		$output->writeln('自动任务开始:'.date('Y-m-d H:i:s'));
 		$this->configurationUpdate('cron_lock',1);
         // 指令输出			
@@ -47,7 +52,10 @@ class Cron extends Command
 			return false;
 		}
 		$this->hostDue($config);//主机续费提示
+		$this->hostOverdue($config);//主机逾期提示
+		$this->orderOverdue($config);//订单未付款
 		$output->writeln('续费提醒结束:'.date('Y-m-d H:i:s'));
+
 		hook('daily_cron');// 每日执行一次定时任务钩子
 		$this->configurationUpdate('cron_lock_day_last_time',time());
 	}
@@ -71,7 +79,7 @@ class Cron extends Command
 		$renewal_second_swhitch=$config['cron_due_renewal_second_swhitch'];
 		$renewal_second_day=$config['cron_due_renewal_second_day'];
         $time=time();
-		$host=Db::name('host')->whereIn('status','Active,Suspended')->where('due_time','>',0);
+		$host=Db::name('host')->whereIn('status','Active,Suspended')->where('due_time','>',0)->select()->toArray();
 		foreach($host as $h){
 			
 			//第一次提醒
@@ -81,7 +89,7 @@ class Cron extends Command
 					'type' => 'email',
 					'description' => '第一次客户续费提醒,发送邮件',
 					'task_data' => [
-						'name'=>'host_renewal_one',//发送动作名称
+						'name'=>'host_renewal_first',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);
@@ -89,7 +97,7 @@ class Cron extends Command
 					'type' => 'sms',
 					'description' => '第一次客户续费提醒,发送短信',
 					'task_data' => [
-						'name'=>'host_renewal_one',//发送动作名称
+						'name'=>'host_renewal_first',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);				
@@ -101,7 +109,7 @@ class Cron extends Command
 					'type' => 'email',
 					'description' => '第二次客户续费提醒,发送邮件',
 					'task_data' => [
-						'name'=>'host_renewal_two',//发送动作名称
+						'name'=>'host_renewal_second',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);
@@ -109,7 +117,7 @@ class Cron extends Command
 					'type' => 'sms',
 					'description' => '第二次客户续费提醒,发送短信',
 					'task_data' => [
-						'name'=>'host_renewal_two',//发送动作名称
+						'name'=>'host_renewal_second',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);					
@@ -139,17 +147,17 @@ class Cron extends Command
 			if($overdue_first_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time1)){
 				add_task([
 					'type' => 'email',
-					'description' => '第一次客户续费提醒,发送邮件',
+					'description' => '逾期付款第一次,发送邮件',
 					'task_data' => [
-						'name'=>'host_renewal_one',//发送动作名称
+						'name'=>'host_overdue_first',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);
 				add_task([
 					'type' => 'sms',
-					'description' => '第一次客户续费提醒,发送短信',
+					'description' => '逾期付款第一次,发送短信',
 					'task_data' => [
-						'name'=>'host_renewal_one',//发送动作名称
+						'name'=>'host_overdue_first',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);				
@@ -159,17 +167,17 @@ class Cron extends Command
 			if($overdue_second_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time2)){
 				add_task([
 					'type' => 'email',
-					'description' => '第二次客户续费提醒,发送邮件',
+					'description' => '逾期付款第二次,发送邮件',
 					'task_data' => [
-						'name'=>'host_renewal_two',//发送动作名称
+						'name'=>'host_overdue_second',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);
 				add_task([
 					'type' => 'sms',
-					'description' => '第二次客户续费提醒,发送短信',
+					'description' => '逾期付款第二次,发送短信',
 					'task_data' => [
-						'name'=>'host_renewal_two',//发送动作名称
+						'name'=>'host_overdue_second',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);					
@@ -179,18 +187,49 @@ class Cron extends Command
 			if($overdue_third_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time3)){
 				add_task([
 					'type' => 'email',
-					'description' => '第三次客户续费提醒,发送邮件',
+					'description' => '逾期付款第三次,发送邮件',
 					'task_data' => [
-						'name'=>'host_renewal_two',//发送动作名称
+						'name'=>'host_overdue_third',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);
 				add_task([
 					'type' => 'sms',
-					'description' => '第三次客户续费提醒,发送短信',
+					'description' => '逾期付款第三次,发送短信',
 					'task_data' => [
-						'name'=>'host_renewal_two',//发送动作名称
+						'name'=>'host_overdue_third',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
+					],		
+				]);					
+			}
+		}
+	}
+	//订单未付款通知
+	public function orderOverdue($config){
+		$order_overdue_swhitch=$config['cron_order_overdue_swhitch'];
+		$order_overdue=$config['cron_order_overdue_day'];
+        $time=time();
+		$order=Db::name('order')
+		->where('status','Unpaid')
+		->where('create_time','>',0)
+		->select()->toArray();
+		foreach($order as $o){
+			$end_time = $time-$order_overdue*24*3600;
+			if($order_overdue_swhitch==1 && date('Y-m-d',$o['create_time'])==date('Y-m-d',$end_time)){
+				add_task([
+					'type' => 'email',
+					'description' => '订单未付款通知,发送邮件',
+					'task_data' => [
+						'name'=>'order_overdue',//发送动作名称
+						'order_id'=>$o['id'],//订单ID
+					],		
+				]);
+				add_task([
+					'type' => 'sms',
+					'description' => '订单未付款通知,发送短信',
+					'task_data' => [
+						'name'=>'order_overdue',//发送动作名称
+						'order_id'=>$o['id'],//订单ID
 					],		
 				]);					
 			}
@@ -203,7 +242,7 @@ class Cron extends Command
 		$terminate_switch=$config['cron_due_terminate_swhitch'];
 		$terminate_day=$config['cron_due_terminate_day'];
         $time=time();
-		$host=Db::name('host')->where('status','Active')->where('due_time','>',0);
+		$host=Db::name('host')->where('status','Active')->where('due_time','>',0)->select()->toArray();
 		foreach($host as $h){
 			$end_time_suspend = $time-$suspend_day*24*3600;
 			if($suspend_switch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time_suspend)){

@@ -18,8 +18,8 @@ class IdcsmartTicket extends Plugin
     # 插件基本信息
     public $info = array(
         'name'        => 'IdcsmartTicket', //插件英文名,作为插件唯一标识,改成你的插件英文就行了
-        'title'       => '智简魔方工单插件',
-        'description' => '智简魔方工单插件',
+        'title'       => '智简魔方工单插件', //插件名称
+        'description' => '智简魔方工单插件', //插件描述
         'author'      => 'idcsmart',  //开发者
         'version'     => '1.0',      // 版本号
     );

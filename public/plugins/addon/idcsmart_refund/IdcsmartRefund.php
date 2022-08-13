@@ -55,6 +55,7 @@ class IdcsmartRefund extends Plugin
   `range_control` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否开启购买后X天内控制:0否默认,1是',
   `range` int(11) NOT NULL DEFAULT '0' COMMENT '购买后X天内',
   `rule` varchar(25) NOT NULL DEFAULT '' COMMENT '退款规则:Day按天退款,Month按月退款,Ratio按比例退款',
+  `ratio_value` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '比例',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`)
@@ -72,6 +73,14 @@ class IdcsmartRefund extends Plugin
         foreach ($sql as $v){
             Db::execute($v);
         }
+		
+		 # 插入邮件短信模板
+		$templates = include __DIR__ . '/config/config.php';
+        foreach ($templates as $key=>$template){
+            $template['name'] = $key;
+            notice_action_create($template);
+        }
+		
         # 安装成功返回true，失败false
         return true;
     }
@@ -86,7 +95,11 @@ class IdcsmartRefund extends Plugin
         foreach ($sql as $v){
             Db::execute($v);
         }
-
+		# 删除插入的邮件短信模板
+        $templates = include __DIR__ . '/config/config.php';
+        foreach ($templates as $key=>$template){
+            notice_action_delete($key);
+        }
         return true;
     }
     

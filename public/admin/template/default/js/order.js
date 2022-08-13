@@ -71,8 +71,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 180,
-              fixed: 'right'
+              width: 100
             }
           ],
           params: {

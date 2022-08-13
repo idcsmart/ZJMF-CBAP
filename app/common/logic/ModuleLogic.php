@@ -366,7 +366,7 @@ class ModuleLogic
 
 	/**
 	 * 时间 2022-05-31
-	 * @title 后台商品保存
+	 * @title 后台商品保存(暂时未用)
 	 * @desc 后台商品保存
 	 * @author hh
 	 * @version v1
@@ -482,7 +482,7 @@ class ModuleLogic
 
 	/**
 	 * 时间 2022-05-31
-	 * @title 前台产品升降级配置输出
+	 * @title 前台产品升降级配置输出(暂时未用)
 	 * @desc 前台产品升降级配置输出
 	 * @author hh
 	 * @version v1
@@ -506,7 +506,7 @@ class ModuleLogic
 
 	/**
 	 * 时间 2022-05-31
-	 * @title 后台产品升降级配置输出
+	 * @title 后台产品升降级配置输出(暂时未用)
 	 * @desc 后台产品升降级配置输出
 	 * @author hh
 	 * @version v1
@@ -530,7 +530,7 @@ class ModuleLogic
 
 	/**
 	 * 时间 2022-05-31
-	 * @title 升降级配置项计算价格
+	 * @title 升降级配置项计算价格(暂时未用)
 	 * @desc 升降级配置项计算价格
 	 * @author hh
 	 * @version v1

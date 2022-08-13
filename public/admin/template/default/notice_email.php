@@ -51,12 +51,28 @@
         <t-tag theme="default" class="com-status" v-if="row.status===3" variant="light">{{lang.not_install}}</t-tag>
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3">{{row.status ? lang.disable :
-          lang.enable}}</a>
-        <a class="common-look" v-if="row.help_url" :href="row.help_url" target="_blank">{{lang.apply_interface}}</a>
-        <a class="common-look" @click="handleConfig(row)">{{lang.config}}</a>
-        <a class="common-look" @click="installHandler(row)">{{ row.status !== 3 ?
-          lang.uninstall : lang.install }}</a>
+        <t-tooltip :content="enableTitle(row.status)" :show-arrow="false" theme="light">
+          <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3">
+            <img v-if="row.status === 0" :src='`${urlPath}/img/icon/enable.png`' alt="">
+            <img v-else-if="row.status === 1" :src='`${urlPath}/img/icon/disable.png`' alt="">
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.apply_interface" :show-arrow="false" theme="light">
+          <a class="common-look" v-if="row.help_url && row.status !== 3" :href="row.help_url" target="_blank">
+            <t-icon name="link" size="20px"></t-icon>
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.config" :show-arrow="false" theme="light">
+          <a class="common-look" @click="handleConfig(row)" v-if="row.status!==3">
+            <t-icon name="tools"></t-icon>
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="installTitle(row.status)" :show-arrow="false" theme="light">
+          <a class="common-look" @click="installHandler(row)">
+            <img v-if="row.status === 3" :src='`${urlPath}/img/icon/install.png`' alt="">
+            <img v-else-if="row.status !== 3" :src='`${urlPath}/img/icon/uninstall.png`' alt="">
+          </a>
+        </t-tooltip>
       </template>
     </t-table>
   </t-card>

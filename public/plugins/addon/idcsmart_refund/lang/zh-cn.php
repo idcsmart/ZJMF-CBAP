@@ -71,4 +71,10 @@ return [
     'refund_cancel_refund_product' => '{admin}取消用户:{client}的停用申请',
     'refund_refund_host' => '{client}停用产品:{host},退款金额:{currency_prefix}{amount}{currency_suffix}',
 
+    # 导航
+    'nav_plugin_addon_idcsmart_refund' => '退款',
+    'nav_plugin_addon_refund' => '退款',
+    'nav_plugin_addon_refund_list' => '停用列表',
+    'nav_plugin_addon_refund_product_list' => '商品管理',
+
 ];

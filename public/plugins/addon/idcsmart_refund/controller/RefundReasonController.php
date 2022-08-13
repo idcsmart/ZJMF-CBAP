@@ -3,14 +3,14 @@ namespace addon\idcsmart_refund\controller;
 
 use addon\idcsmart_refund\model\IdcsmartRefundReasonModel;
 use addon\idcsmart_refund\validate\IdcsmartRefundReasonValidate;
-use app\event\controller\PluginBaseController;
+use app\event\controller\PluginAdminBaseController;
 
 /**
  * @title 停用原因管理(后台)
  * @desc 停用原因管理(后台)
  * @use addon\idcsmart_refund\controller\RefundReasonController
  */
-class RefundReasonController extends PluginBaseController
+class RefundReasonController extends PluginAdminBaseController
 {
     private $validate=null;
 

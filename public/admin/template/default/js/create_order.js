@@ -11,8 +11,27 @@ async function changeProductConfigPrice (id, tag, config) {
   $('.config-show .box>div').each((ind, el) => {
     totalPrice += Number($(el).attr('data-price'))
   })
-  $('.config-show .total .total-price').html(Math.round(totalPrice.toFixed(2) * 100) / 100)
+  // 升降级单独调用
+  if (window.orderType === 'upgrade') {
+    const upgradeParams = {
+      host_id: window.host_id,
+      product: {
+        product_id: window.product_id,
+        config_options: config,
+        price: res.data.data.price
+      },
+      client_id: window.client_id
+    }
+    const result = await getUpgradeAmount(upgradeParams)
+    const data = result.data.data
+    $('.upgrade .config-show .refund').html(data.refund)
+    $('.upgrade .config-show .pay').html(data.pay)
+    $('.upgrade .config-show .amount').html(data.amount)
+    return
+  }
+  $('.config-show .total .total-price').html(totalPrice.toFixed(2))
 }
+
 (function (window, undefined) {
   var old_onload = window.onload
   window.onload = function () {
@@ -33,7 +52,7 @@ async function changeProductConfigPrice (id, tag, config) {
           currency_code: JSON.parse(localStorage.getItem('common_set')).currency_code,
           formData: {
             client_id: '', // 用户id
-            type: '', // new新订单 renew 续费订单 upgrade 升降级订单 artificial 人工订单
+            type: 'new', // new新订单 renew 续费订单 upgrade 升降级订单 artificial 人工订单
             // 新订单
             products: [
               {
@@ -41,6 +60,7 @@ async function changeProductConfigPrice (id, tag, config) {
                 config_options: {
                 },
                 qty: 1,
+                price: '',
                 product_name: '',
                 key: new Date().getTime()
               }
@@ -51,6 +71,7 @@ async function changeProductConfigPrice (id, tag, config) {
             product: {
               product_id: '',
               config_options: {},
+              price: '',
               product_name: ''
             },
             // 人工订单
@@ -104,8 +125,27 @@ async function changeProductConfigPrice (id, tag, config) {
               'max-height': '362px'
             }),
           },
-          renewIds: []
+          renewIds: [],
+          visibleTreeObj: [
+            { visibleTree: false }
+          ]
         }
+      },
+      mounted () {
+        document.onclick = () => {
+          this.visibleTreeObj.forEach(item => {
+            item.visibleTree = false
+          })
+        }
+        this.$nextTick(() => {
+          document.getElementById(`myPopup${this.curNum}`).onclick = () => {
+            event.stopPropagation()
+          }
+        })
+
+        // document.getElementById("product-tree").onclick = function () {
+        //   event.stopPropagation();
+        // }
       },
       watch: {
         'formData.client_id' (val) {
@@ -114,7 +154,7 @@ async function changeProductConfigPrice (id, tag, config) {
           this.formData.host_name = ''
           this.formData.product.product_id = ''
           this.formData.product.config_options = {}
-          this.formData.product.product_name = ''
+          this.formData.product.price = ''
           this.getActiveShop(val)
         },
         // 检测vue版下插件数据的改变
@@ -133,17 +173,21 @@ async function changeProductConfigPrice (id, tag, config) {
         this.getProductList()
       },
       methods: {
+        // 选择用户
+        chooseUser (e) {
+          window.client_id = e
+        },
         // 改变类型
         changeType (type) {
+          window.orderType = type
           if (type === 'new') {
+            this.visibleTreeObj = []
             this.formData.products = []
-            this.formData.products.push({
-              product_id: '',
-              config_options: {
-              },
-              qty: 1,
-              product_name: '',
-              key: new Date().getTime()
+            this.addMore()
+            this.$nextTick(() => {
+              this.curNum = 0
+              this.$forceUpdate()
+              console.log(2323232)
             })
           }
           if ((type === 'new') || (type === 'upgrade')) {
@@ -159,7 +203,9 @@ async function changeProductConfigPrice (id, tag, config) {
         },
         /*** 升降级 ***/
         chooseActive (e) {
-          this.formData.product.product_id = ''
+          window.host_id = e
+          this.formData.product.product_id = e
+          this.formData.product.price = ''
           this.formData.product.product_name = ''
           $('.config-area').html('')
           $('.config-show .box').html('')
@@ -171,9 +217,30 @@ async function changeProductConfigPrice (id, tag, config) {
             }
           })
         },
+        // 选择升级至的商品
         chooseUpgrade (e) {
           this.formData.product.product_id = e
+          window.product_id = e
           this.getProConfig(e, `tag_0_${e}`)
+        },
+        // 单独获取升降级的价格
+        async getUpgradeAmount () {
+          try {
+            const { host_id, product, client_id } = this.formData
+            const params = {
+              host_id,
+              product,
+              client_id
+            }
+            delete params.product.product_name
+            const res = await getUpgradeAmount(params)
+            const data = res.data.data
+            $('.upgrade .config-show .refund').html(data.refund)
+            $('.upgrade .config-show .pay').html(data.pay)
+            $('.upgrade .config-show .amount').html(data.amount)
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
         },
         // 获取用户已开通的产品
         async getActiveShop (val) {
@@ -212,30 +279,44 @@ async function changeProductConfigPrice (id, tag, config) {
           this.changPrice()
         },
         // 重新计算当前页面的价格
-        changPrice () {
+        async changPrice () {
+          // 升降级的时候单独处理价格
           let total = 0
           $('.config-show .box>div').each((ind, el) => {
             total += Number($(el).attr('data-price'))
           })
+          if (this.formData.type === 'upgrade') {
+            this.getUpgradeAmount()
+            return false
+          }
           $('.config-show .total-price').html(Math.round(total.toFixed(2) * 100) / 100)
         },
         checkNum (num) {
           this.curNum = num
+        },
+        focusHandler (index) {
+          this.curNum = index
+          console.log(this.visibleTreeObj[index].visibleTree)
+          this.$set(this.visibleTreeObj[index], 'visibleTree', !this.visibleTreeObj[index].visibleTree)
+          console.log(this.visibleTreeObj[index].visibleTree)
         },
         // 商品选择
         onClick (e) {
           if (!e.node.data.children) {
             const pName = e.node.data.name
             const pId = e.node.data.id
-            this.formData.products[this.curNum].product_name = pName
+            this.$set(this.formData.products[this.curNum], 'product_name', pName)
+            // this.formData.products[this.curNum].product_name = pName
             this.formData.products[this.curNum].product_id = pId
             // 获取该商品的自定义配置项，需传入右侧展示位置的tag：tag-index-id
+            console.log('index:', this.curNum)
             const tag = `tag_${this.curNum}_${pId}`
             this.getProConfig(pId, tag)
             this.totalPrice = 0
-            $('.t-popup').hide()
-            $('.tree-select .t-select').removeClass('t-is-active')
-            $('.tree-select .t-select svg.t-fake-arrow').removeClass('t-fake-arrow--active')
+            this.$set(this.visibleTreeObj[this.curNum], 'visibleTree', false)
+            // $('.t-popup').hide()
+            // $('.tree-select .t-select').removeClass('t-is-active')
+            // $('.tree-select .t-select svg.t-fake-arrow').removeClass('t-fake-arrow--active')
           }
         },
         // 原生根据所选商品获取自定义配置
@@ -280,6 +361,13 @@ async function changeProductConfigPrice (id, tag, config) {
                 </div>`
                 )
               }
+              if (this.formData.type === 'upgrade') {
+                this.formData.product.price = result.data.data.price
+                this.formData.product.config_options = pParams.config_options
+              }
+              if (this.formData.type === 'new') {
+                this.formData.products[this.curNum].price = result.data.data.price
+              }
               this.changPrice()
             })
           } catch (error) {  // 处理添加过后，修改产品没有配置项的时候
@@ -293,21 +381,28 @@ async function changeProductConfigPrice (id, tag, config) {
             $('.config-show .box>div').each((ind, el) => {
               totalPrice += Number($(el).attr('data-price'))
             })
-            $('.config-show .total-price').html(totalPrice)
+            $('.config-show .total-price').html(totalPrice.toFixed(2))
           }
         },
         addMore () {
+          this.visibleTreeObj.push({
+            visibleTree: false
+          })
           this.formData.products.push({
             product_id: '',
             config_options: {
             },
             qty: 1,
+            price: '',
             product_name: '',
             key: new Date().getTime()
           })
-        },
-        onActive () {
-
+          this.curNum = this.formData.products.length - 1
+          this.$nextTick(() => {
+            document.getElementById(`myPopup${this.curNum}`).onclick = () => {
+              event.stopPropagation()
+            }
+          })
         },
         // 获取列表
         async getProductList () {
@@ -413,6 +508,15 @@ async function changeProductConfigPrice (id, tag, config) {
                       })
                     })
                   }
+                  $('.config-show .box>div').each((ind, el) => {
+                    params1.products[ind].price = Number($(el).attr('data-price'))
+                  })
+                  // 过滤没有选择商品的项目
+                  params1.products = params1.products.filter(item => {
+                    delete item.key
+                    delete item.product_name
+                    return item.product_id
+                  })
                   const res1 = await createOrder(params1)
                   this.$message.success(res1.data.msg)
                   setTimeout(() => {
@@ -427,12 +531,21 @@ async function changeProductConfigPrice (id, tag, config) {
                   const params3 = {
                     type, product, client_id, host_id
                   }
+                  if (!params3.host_id) {
+                    this.$message.error(lang.select + lang.tailorism)
+                    return
+                  }
+                  if (!params3.product.product_id) {
+                    this.$message.error(lang.select + lang.product)
+                    return
+                  }
                   $('.pro-item').find('form').each((ind, el) => {
                     let arr = $(el).serializeArray()
                     arr.forEach(item => {
                       params3.product.config_options[item.name] = item.value
                     })
                   })
+                  product.price = $('.upgrade .config-show .box>div').attr('data-price') * 1
                   const res3 = await createOrder(params3)
                   this.$message.success(res3.data.msg)
                   setTimeout(() => {
@@ -441,6 +554,7 @@ async function changeProductConfigPrice (id, tag, config) {
                   break;
               }
             } catch (error) {
+              console.log(error)
               this.$message.error(error.data.msg)
             }
           } else {
@@ -471,17 +585,8 @@ async function changeProductConfigPrice (id, tag, config) {
           this.getUserList()
         },
         clearKey () {
-          console.log(2222)
           this.userParams.keywords = ''
           this.getUserList()
-        },
-        // 获取商品列表
-        async getProduct () {
-          try {
-            const res = await getProList()
-          } catch (error) {
-
-          }
         }
       },
     }).$mount(template)
