@@ -477,7 +477,7 @@ class ConfigurationModel extends Model
 			}
 		}
 		//最后执行时间判断
-		if(((time() - configuration("cron_lock_last_time") > 10*60)){
+		if(((time() - configuration("cron_lock_last_time") > 10*60))){
             $data['cron_status'] = 'error';
         }else{
 			$data['cron_status'] = 'success';
