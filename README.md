@@ -49,6 +49,10 @@ http://ip/doc
 ***
 
 ## 如何开发
+### 验证码开发接口
+整理中
+### 实名认证接口
+整理中
 ### 支付接口开发文档
 https://www.idcsmart.com/wiki_list/882.html
 ### 插件开发文档
@@ -60,9 +64,10 @@ https://www.idcsmart.com/wiki_list/885.html
 ### 邮件接口开发文档
 https://www.idcsmart.com/wiki_list/886.html
 ### HOOK
+整理中，820前上线
+### 产品模块开发文档
 整理中
-###产品模块开发文档
-整理中
+### 验证码开发接口整理中
 ***
 
 ## License
