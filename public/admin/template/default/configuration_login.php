@@ -10,7 +10,7 @@
       <a href="javascript:;">{{lang.login_setting}}</a>
     </li>
     <li>
-      <a href="configuration_theme.html">{{lang.login_setting}}</a>
+      <a href="configuration_theme.html">{{lang.theme_setting}}</a>
     </li>
   </ul>
   <div class="box">

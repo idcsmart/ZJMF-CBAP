@@ -26,8 +26,7 @@
         <t-button theme="default" @click="back" class="add">{{lang.back}}</t-button>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :max-height="maxHeight" :hover="hover" 
-    :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :max-height="maxHeight" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template #type="{row}">
         <span>{{ row.type === 1 ? lang.international : lang.domestic }}</span>
       </template>
@@ -40,9 +39,19 @@
         <t-tag theme="danger" class="com-status" v-if="row.status===3" variant="light">{{lang.fail}}</t-tag>
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="updateHandler(row)" :class="{disable: row.status===1}">{{lang.edit}}</a>
-        <a class="common-look" @click="testHandler(row)" v-if="row.status===2">{{lang.test}}</a>
-        <a class="common-look" @click="deleteHandler(row)">{{lang.delete}}</a>
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+          <t-icon name="edit-1" class="common-look" @click="updateHandler(row)" :class="{disable: row.status===1}">
+          </t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.test" :show-arrow="false" theme="light">
+          <a class="common-look" @click="testHandler(row)" v-if="row.status===2">
+            <img :src="`${urlPath}img/retry.svg`" alt="">
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+          <t-icon name="delete" class="common-look" @click="deleteHandler(row)">
+          </t-icon>
+        </t-tooltip>
       </template>
     </t-table>
   </t-card>

@@ -147,7 +147,7 @@ class AdminRoleController extends AdminBaseController
     {
         $param = $this->request->param();
 
-        $result = (new AdminRoleModel())->deleteAdminRole(intval($param['id']));
+        $result = (new AdminRoleModel())->deleteAdminRole($param);
 
         return json($result);
     }

@@ -49,7 +49,7 @@ class CountryModel extends Model
             }
         };
 
-        $countries = $this->field('name,name_zh,phone_code')
+        $countries = $this->field('name,name_zh,phone_code,iso')
             ->where($where)
             ->select()
             ->toArray();

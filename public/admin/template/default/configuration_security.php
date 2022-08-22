@@ -68,8 +68,8 @@
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col>
             <t-divider></t-divider>
-            <t-form-item :label="lang.error_choose_code" class="code">
-              <t-checkbox v-model="formData.captcha_client_register">{{lang.email_register}}</t-checkbox>
+            <t-form-item :label="lang.open_number_code" class="code">
+              <t-checkbox v-model="formData.code_client_email_register">{{lang.email_register}}</t-checkbox>
             </t-form-item>
             <div class="tip">
               <t-icon name="error-circle" size="18"></t-icon>

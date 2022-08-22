@@ -4,7 +4,7 @@ namespace app\common\model;
 use think\Model;
 use think\Db;
 use app\common\logic\ModuleLogic;
-
+use app\common\model\NoticeSettingModel;
 /**
  * @title 产品模型
  * @desc 产品模型
@@ -354,6 +354,9 @@ class HostModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => lang('update_fail')];
         }
+
+        hook('after_host_edit',['id'=>$param['id'],'customfield'=>$param['customfield']??[]]);
+
         return ['status' => 200, 'msg' => lang('update_success')];
     }
 
@@ -367,8 +370,9 @@ class HostModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function deleteHost($id)
+    public function deleteHost($param)
     {
+        $id = $param['id']??0;
         // 验证产品ID
         $host = $this->find($id);
         if (empty($host)){
@@ -407,6 +411,9 @@ class HostModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => lang('delete_fail')];
         }
+
+        hook('after_host_delete',['id'=>$id]);
+
         return ['status' => 200, 'msg' => lang('delete_success')];
     }
 
@@ -476,9 +483,15 @@ class HostModel extends Model
         if($host['status'] == 'Supended'){
             return ['status'=>400, 'msg'=>lang('host_is_suspended')];
         }
+
+        hook('before_host_create',['id'=>$id]);
+
         $ModuleLogic = new ModuleLogic();
         $res = $ModuleLogic->createAccount($host);
         if($res['status'] == 200){
+
+            hook('after_host_create_success',['id'=>$id]);
+
             if($host['billing_cycle']=='onetime'){
                 $due_time = 0;
             }else{
@@ -490,23 +503,33 @@ class HostModel extends Model
                 'due_time' => $due_time,
                 'update_time' => time(),
             ], ['id'=>$id]);
-			add_task([
-				'type' => 'email',
-				'description' => '产品开通成功,发送邮件',
-				'task_data' => [
-					'name'=>'host_active',//发送动作名称
-					'host_id'=>$id,//主机ID
-				],		
-			]);
-			add_task([
-				'type' => 'sms',
-				'description' => '产品开通成功,发送短信',
-				'task_data' => [
-					'name'=>'host_active',//发送动作名称
-					'host_id'=>$id,//主机ID
-				],		
-			]);
+
+            $host_active = (new NoticeSettingModel())->indexSetting('host_active');
+            if($host_active['sms_enable']==1){
+                add_task([
+                    'type' => 'email',
+                    'description' => '产品开通成功,发送邮件',
+                    'task_data' => [
+                        'name'=>'host_active',//发送动作名称
+                        'host_id'=>$id,//主机ID
+                    ],      
+                ]);
+            }
+            if($host_active['email_enable']==1){
+               add_task([
+                    'type' => 'sms',
+                    'description' => '产品开通成功,发送短信',
+                    'task_data' => [
+                        'name'=>'host_active',//发送动作名称
+                        'host_id'=>$id,//主机ID
+                    ],      
+                ]); 
+            }
+			
+			
         }else{
+            hook('after_host_create_fail',['id'=>$id]);
+
             $this->update([
                 'status'      => 'Failed',
                 'update_time' => time(),
@@ -543,9 +566,15 @@ class HostModel extends Model
         if($host['status'] != 'Active'){
             return ['status'=>400, 'msg'=>lang('host_is_not_active_cannot_suspend')];
         }
+
+        hook('before_host_suspend',['id'=>$id]);
+
         $ModuleLogic = new ModuleLogic();
         $res = $ModuleLogic->suspendAccount($host);
         if($res['status'] == 200){
+
+            hook('after_host_suspend_success',['id'=>$id]);
+
             $this->update([
                 'status'         => 'Suspended',
                 'suspend_type'   => $param['suspend_type'] ?? 'overdue',
@@ -570,6 +599,7 @@ class HostModel extends Model
 				],		
 			]);
         }else{
+            hook('after_host_suspend_fail',['id'=>$id,'fail_reason'=>$res['msg']??'']);
 
         }
         return $res;
@@ -598,9 +628,15 @@ class HostModel extends Model
         if($host['status'] != 'Active' && $host['status'] != 'Suspended'){
             return ['status'=>400, 'msg'=>lang('host_status_not_need_unsuspend')];
         }
+
+        hook('before_host_unsuspend',['id'=>$id]);
+
         $ModuleLogic = new ModuleLogic();
         $res = $ModuleLogic->unsuspendAccount($host);
         if($res['status'] == 200){
+
+            hook('after_host_unsuspend_success',['id'=>$id]);
+
             $this->update([
                 'status'         => 'Active',
                 'suspend_reason' => '',
@@ -626,7 +662,7 @@ class HostModel extends Model
 				]);
 			}
         }else{
-
+            hook('after_host_unsuspend_fail',['id'=>$id,'fail_reason'=>$res['msg']??'']);
 
         }
         return $res;
@@ -648,10 +684,16 @@ class HostModel extends Model
         if(empty($host)){
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
+
+        hook('before_host_terminate',['id'=>$id]);
+
         // 暂不判断状态,所有状态应该都能删除
         $ModuleLogic = new ModuleLogic();
         $res = $ModuleLogic->terminateAccount($host);
         if($res['status'] == 200){
+
+            hook('after_host_terminate_success',['id'=>$id]);
+
             $this->update([
                 'status'           => 'Deleted',
                 'termination_time' => time(),
@@ -674,7 +716,7 @@ class HostModel extends Model
 				],		
 			]);
         }else{
-
+            hook('after_host_terminate_fail',['id'=>$id,'fail_reason'=>$res['msg']??'']);
         }
         return $res;
     }

@@ -43,7 +43,7 @@
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #id="{row}">
-        <span v-if="row.type" @click="itemClick(row)" class="order-id">
+        <span v-if="row.type" @click="itemClick(row)" class="order-id" :class="{'com-no-child': row.order_item_count <= 1}">
           <t-icon :name="row.isExpand ? 'caret-up-small' : 'caret-down-small'" v-if="row.order_item_count > 1">
           </t-icon>
           {{row.id}}
@@ -103,14 +103,15 @@
           <!-- 混合支付 -->
           <template v-if="row.credit>0 && row.credit < row.amount">
             <t-tooltip :content="currency_prefix+row.credit" theme="light" placement="bottom-right">
-              <span>{{lang.credit}}</span>
+              <span class="theme-color">{{lang.credit}}</span>
             </t-tooltip>
             <span>{{row.gateway ? '+ ' + row.gateway: '' }}</span>
           </template>
           <template v-if="row.amount*1 != 0 && row.credit==row.amount">
-            <t-tooltip :content="currency_prefix+row.credit" theme="light" placement="bottom-right">
+            <!-- <t-tooltip :content="currency_prefix+row.credit" theme="light" placement="bottom-right">
               <span>{{lang.credit}}</span>
-            </t-tooltip>
+            </t-tooltip> -->
+            <span>{{lang.credit}}</span>
           </template>
         </div>
       </template>

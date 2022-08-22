@@ -111,7 +111,8 @@ class MenuValidate extends Validate
                         }
                     }
                 }
-            }   
+            }  
         }
+        return true;
     }
 }

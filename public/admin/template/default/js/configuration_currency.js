@@ -11,11 +11,13 @@
             currency_prefix: '',
             currency_suffix: '',
             recharge_open: 0,
-            recharge_min: ''
+            recharge_min: '',
+            recharge_max: ''
           },
           rules: {
             currency_code: [{ required: true, message: lang.input + lang.currency_code, type: 'error' }],
             currency_prefix: [{ required: true, message: lang.input + lang.currency_prefix, type: 'error' }],
+            currency_suffix: [{ required: true, message: lang.input + lang.currency_suffix, type: 'error' }],
             recharge_min: [
               { required: true, message: lang.input + lang.recharge_min, type: 'error' },
               {
@@ -29,6 +31,23 @@
         }
       },
       methods: {
+        checkMin (val) {
+          if (val > this.formData.recharge_max) {
+            return { result: false, message: lang.currency_tip, type: 'warning' }
+          }
+          return { result: true }
+        },
+        checkMax (val) {
+          if (val < this.formData.recharge_min) {
+            return { result: false, message: lang.currency_tip, type: 'warning' }
+          }
+          return { result: true }
+        },
+        changeMoney () {
+          this.$refs.formValidatorStatus.validate({
+            fields: ['recharge_min', 'recharge_max']
+          });
+        },
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {

@@ -155,6 +155,8 @@ class AdminRoleModel extends Model
             return ['status'=>400,'msg'=>$e->getMessage()];
         }
 
+        hook('after_admin_role_create',['id'=>$adminRole->id,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('admin_role_create_success')];
     }
 
@@ -221,6 +223,8 @@ class AdminRoleModel extends Model
             return ['status'=>400,'msg'=>$e->getMessage()];
         }
 
+        hook('after_admin_role_edit',['id'=>$param['id'],'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('update_success')];
     }
 
@@ -234,8 +238,10 @@ class AdminRoleModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function deleteAdminRole($id)
+    public function deleteAdminRole($param)
     {
+        $id = $param['id']??0;
+
         if ($id == 1){
             return ['status'=>400,'msg'=>lang('super_admin_role_cannot_delete')];
         }
@@ -265,6 +271,9 @@ class AdminRoleModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('delete_fail')];
         }
+
+        hook('after_admin_role_delete',['id'=>$id]);
+
         return ['status'=>200,'msg'=>lang('delete_success')];
     }
 

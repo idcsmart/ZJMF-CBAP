@@ -78,6 +78,7 @@ class TicketInternalController extends PluginAdminBaseController
      * @return int ticket_internal.admin_id - 接单人ID(具体数据从管理员列表里获取)
      * @return int ticket_internal.post_admin_id - 提交人ID(具体数据从管理员列表里获取)
      * @return int ticket_internal.client_id - 关联用户ID(具体数据从客户列表里获取)
+     * @return string ticket_internal.client_name - 用户名称
      * @return array ticket_internal.host_ids - 关联产品ID,数组(/admin/v1/host?client_id= 获取所选客户的产品)
      * @return array ticket_internal.replies - 沟通记录,数组
      * @return string ticket_internal.replies[].content - 内容

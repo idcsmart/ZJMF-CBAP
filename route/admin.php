@@ -55,6 +55,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     # 用户余额管理
     Route::get('client/:id/credit', 'admin/clientCredit/clientCreditList'); # 用户余额变更记录列表
     Route::put('client/:id/credit', 'admin/clientCredit/update'); # 更改用户余额
+    Route::post('client/:id/recharge', 'admin/clientCredit/recharge'); # 充值
 
     # 订单管理
     Route::get('order', 'admin/order/orderList'); # 订单列表

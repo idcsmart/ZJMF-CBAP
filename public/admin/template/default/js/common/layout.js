@@ -69,7 +69,7 @@
         loadingSearch: false,
         noData: false,
         isShow: false,
-        userName: localStorage.getItem('name') || '-',
+        userName: localStorage.getItem('userName') || '-',
       },
       computed: {
         logUrl () {
@@ -84,7 +84,7 @@
         const auth = JSON.parse(localStorage.getItem('backMenus'))
         this.navList = JSON.parse(localStorage.getItem('backMenus'))
         this.navList.forEach(item => {
-          item.child.forEach(el => {
+          item.child && item.child.forEach(el => {
             if (el.id === this.curValue) {
               this.expanded = []
               this.expanded.push(item.id)
@@ -93,7 +93,19 @@
         })
         this.langList = JSON.parse(localStorage.getItem('common_set')).lang_admin
       },
+      created () {
+        this.getSystemConfig()
+        
+      },
       methods: {
+        async getSystemConfig (){
+          try {
+            const res = await Axios.get('/configuration/system')
+            document.title = res.data.data.website_name
+          } catch (error) {
+            console.log(error)
+          }
+        },
         getAuth (auth) {
           return auth.map(item => {
             item.child = item.child.filter(el => el.url)
@@ -163,13 +175,12 @@
         },
         // 语言切换
         changeLang (e) {
-          console.log(e)
-          const index = this.langList.findIndex(item => item.file_name === e.value)
+          const index = this.langList.findIndex(item => item.display_lang === e.value)
           if (localStorage.getItem('lang') !== e.value || !localStorage.getItem('lang')) {
             if (localStorage.getItem('lang')) {
               window.location.reload()
             }
-            localStorage.setItem('country_imgUrl', this.langList[index].country_imgUrl)
+            localStorage.setItem('country_imgUrl', this.langList[index].display_img)
             localStorage.setItem('lang', e.value)
           }
         },

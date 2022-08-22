@@ -32,7 +32,7 @@ return [
     ],
     [
         'title' => '产品开通中',
-        'content' => '您的产品：{product_name}（产品名称）正在开通，请耐心等待',
+        'content' => '您的产品：@var(product_name)（产品名称）正在开通，请耐心等待',
         'name'=>'host_pending'
     ],
     [
@@ -52,18 +52,13 @@ return [
     ],
     [
         'title' => '产品删除通知',
-        'content' => '您的产品：@var(product_name)（产品名称），由于yyy，已删除',
+        'content' => '您的产品：@var(product_name)（产品名称），由于到期未续费，已删除',
         'name'=>'host_terminate'
     ],
     [
         'title' => '产品升降级',
         'content' => '您已成功升级产品@var(product_name)，感谢您的支持',
         'name'=>'host_upgrad'
-    ],
-    [
-        'title'=> '超级管理员添加后台管理员',
-        'content' => '您已被设置为后台管理员，登录账户为：@var(admin_name)，密码为：@var(admin_password)',
-        'name'=>'admin_create_account'
     ],
     [
         'title' => '第一次续费提醒',

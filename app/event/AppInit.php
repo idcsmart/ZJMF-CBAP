@@ -11,7 +11,7 @@ use think\facade\Event;
  * @time 2022-05-26
  *
  * */
-class AppInit
+class  AppInit
 {
     public function handle()
     {
@@ -57,6 +57,7 @@ class AppInit
         $systemHookPlugins = Db::name('plugin_hook')
             ->field('name,plugin')
             ->where('status',1)
+            ->where('module','addon') # 仅插件
             #->whereIn('name',$systemHook)
             ->select()->toArray();
         if (!empty($systemHookPlugins)) {

@@ -53,6 +53,7 @@ return [
     'root_namespace' => [
         'gateway' => WEB_ROOT . 'plugins/gateway/',
         'addon' => WEB_ROOT . 'plugins/addon/',
+        'captcha' => WEB_ROOT . 'plugins/captcha/',
         'sms' => WEB_ROOT . 'plugins/sms/',
         'mail' => WEB_ROOT . 'plugins/mail/',
         'server' => WEB_ROOT . 'plugins/server/',

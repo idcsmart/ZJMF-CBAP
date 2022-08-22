@@ -38,6 +38,13 @@
   background-color: #F3F5F8;
 }
 /* product-detail */
+.product-detail .t-radio {
+  display: flex;
+  align-items: center;
+}
+.product-detail .small-tit {
+  font-size: 18px;
+}
 .product-detail .t-form {
   display: flex;
 }
@@ -123,4 +130,7 @@
 }
 .product-api .t-button {
   margin-right: 20px;
+}
+.product-api .t-select {
+  width: 200px;
 }

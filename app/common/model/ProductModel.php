@@ -261,6 +261,8 @@ class ProductModel extends Model
             return ['status'=>400,'msg'=>lang('create_fail')];
         }
 
+        hook('after_product_create',['id'=>$product->id,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('create_success'),'data' => ['product_id' => $product->id]];
     }
 
@@ -501,6 +503,8 @@ class ProductModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
         }
+
+        hook('after_product_edit',['id'=>$product->id,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('update_success')];
     }

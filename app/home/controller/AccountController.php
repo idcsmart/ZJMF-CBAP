@@ -247,6 +247,37 @@ class AccountController extends HomeBaseController
     }
 
     /**
+     * 时间 2022-05-23
+     * @title 验证码修改密码
+     * @desc 验证码修改密码
+     * @author wyh
+     * @version v1
+     * @url /console/v1/account/password/code
+     * @method  PUT
+     * @param string type phone 验证类型:phone手机,email邮箱 required
+     * @param string code 1234 验证码 required
+     * @param string password 123456 密码 required
+     * @param string re_password 1 重复密码 required
+     */
+    public function codeUpdatePassword()
+    {
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('code_update_password')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $ClientModel = new ClientModel();
+
+        // 修改用户密码
+        $result = $ClientModel->codeUpdatePassword($param);
+
+        return json($result);
+    }
+
+    /**
      * 时间 2022-5-23
      * @title 注销
      * @desc 注销
@@ -257,7 +288,10 @@ class AccountController extends HomeBaseController
      */
     public function logout()
     {
-        $result = (new ClientModel())->logout();
+        // 接收参数
+        $param = $this->request->param();
+
+        $result = (new ClientModel())->logout($param);
 
         return json($result);
     }
@@ -274,7 +308,7 @@ class AccountController extends HomeBaseController
      * @param int limit - 每页条数
      * @return array list - 记录
      * @return int list[].id - 记录ID
-     * @return string list[].type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund,提现Withdraw
+     * @return string list[].type - 类型:人工Artificial,充值Recharge,应用至订单Applied,退款Refund,提现Withdraw
      * @return string list[].amount - 金额 
      * @return string list[].notes - 备注 
      * @return int list[].create_time - 变更时间 

@@ -177,7 +177,7 @@ class HostController extends AdminBaseController
         $HostModel = new HostModel();
         
         // 删除产品
-        $result = $HostModel->deleteHost($param['id']);
+        $result = $HostModel->deleteHost($param);
 
         return json($result);
 	}

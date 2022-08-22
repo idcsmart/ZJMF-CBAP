@@ -146,7 +146,7 @@ class CommonController extends HomeBaseController
      * @method  POST
      * @author wyh
      * @version v1
-     * @param string captcha - 图形验证码,base64格式 required
+     * @param string captcha - 图形验证码, required
      * @param string token - 图形验证码唯一识别码 required
      */
     public function checkCaptcha()
@@ -194,6 +194,7 @@ class CommonController extends HomeBaseController
      * @author wyh
      * @version v1
      * @param string account - 账户
+     * @return array lang_list - 语言列表
      * @return string lang_home zh-cn 前台默认语言
      * @return string lang_home_open 1 前台多语言开关:1开启，0关闭
      * @return string maintenance_mode 1 维护模式开关:1开启，0关闭
@@ -212,12 +213,15 @@ class CommonController extends HomeBaseController
      * @return string recharge_min 1 单笔最小金额
      * @return string currency_code CNY 货币代码
      * @return string currency_prefix ￥ 货币符号
-     * @return string code_client_email_register ￥ 邮箱注册数字验证码开关:1开启0关闭
+     * @return string currency_suffix 元 货币后缀
+     * @return string code_client_email_register 0 邮箱注册数字验证码开关:1开启0关闭
      */
     public function common()
     {
         $param = $this->request->param();
-
+		$lang = [ 
+			'lang_list'=> lang_list('home') ,
+		];
         $setting = [
             'lang_home',
             'lang_home_open',
@@ -237,11 +241,12 @@ class CommonController extends HomeBaseController
             'recharge_min',
             'currency_code',
             'currency_prefix',
+            'currency_suffix',
             'code_client_email_register',
         ];
 
-        $data = configuration($setting);
-
+        //$data = configuration($setting);
+		$data = array_merge($lang,configuration($setting));
         $account = $param['account']??'';
 
         # 登录3次失败

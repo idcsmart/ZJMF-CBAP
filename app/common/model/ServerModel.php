@@ -182,6 +182,9 @@ class ServerModel extends Model
             $this->rollback();
             return ['status'=>400, 'msg'=>lang('create_fail')];
         }
+
+        hook('after_server_create',['id'=>$server->id,'customfield'=>$param['customfield']??[]]);
+
         $result = [
             'status' => 200,
             'msg'    => lang('create_success'),
@@ -265,6 +268,9 @@ class ServerModel extends Model
             $this->rollback();
             return ['status'=>400, 'msg'=>lang('update_fail')];
         }
+
+        hook('after_server_edit',['id'=>$server->id,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('update_success')];
     }
 

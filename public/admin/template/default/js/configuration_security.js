@@ -14,7 +14,7 @@
             captcha_width: '',
             captcha_height: '',
             captcha_length: '',
-            code_client_email_register: 0
+            code_client_email_register: false
           },
           rules: {
             lang_admin: [{ required: true }],
@@ -35,11 +35,11 @@
         }
       },
       methods: {
-        getCode(){
+        getCode () {
           // 验证是否规范再提交获取
-          this.$refs.formValidatorStatus.validate().then(res=>{
-            if (res === true){
-             this.getPreviewCode()
+          this.$refs.formValidatorStatus.validate().then(res => {
+            if (res === true) {
+              this.getPreviewCode()
             }
           })
         },
@@ -56,11 +56,13 @@
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
-              this.captcha_client_register = Number(this.captcha_client_register)
-              this.captcha_client_login = Number(this.captcha_client_login)
-              this.captcha_client_login_error = Number(this.captcha_client_login_error)
-              this.captcha_admin_login = Number(this.captcha_admin_login)
-              const res = await updateSafeOpt(this.formData)
+              const params = JSON.parse(JSON.stringify(this.formData))
+              params.captcha_client_register = Number(params.captcha_client_register)
+              params.captcha_client_login = Number(params.captcha_client_login)
+              params.captcha_client_login_error = Number(params.captcha_client_login_error)
+              params.captcha_admin_login = Number(params.captcha_admin_login)
+              params.code_client_email_register = params.code_client_email_register ? 1 : 0
+              const res = await updateSafeOpt(params)
               this.$message.success(res.data.msg)
               this.getSetting()
             } catch (error) {
@@ -80,9 +82,11 @@
             this.formData.captcha_client_login = Boolean(temp.captcha_client_login)
             this.formData.captcha_client_login_error = String(temp.captcha_client_login_error)
             this.formData.captcha_admin_login = Boolean(temp.captcha_admin_login)
+            console.log(temp.code_client_email_register)
+            this.formData.code_client_email_register = Boolean(temp.code_client_email_register)
             this.getPreviewCode()
           } catch (error) {
-
+            console.log(error)
           }
         }
       },

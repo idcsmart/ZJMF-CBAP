@@ -287,7 +287,7 @@ class OrderController extends AdminBaseController
         $OrderModel = new OrderModel();
         
         // 删除订单
-        $result = $OrderModel->deleteOrder($param['id'], $param['delete_host']);
+        $result = $OrderModel->deleteOrder($param);
 
         return json($result);
 	}

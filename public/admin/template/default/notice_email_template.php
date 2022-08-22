@@ -2,8 +2,8 @@
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
 <div id="content" class="notice-email-template hasCrumb table" v-cloak>
-   <!-- crumb -->
-   <div class="com-crumb">
+  <!-- crumb -->
+  <div class="com-crumb">
     <span>{{lang.notice_interface}}</span>
     <t-icon name="chevron-right"></t-icon>
     <a href="notice_email.html">{{lang.email_notice}}</a>
@@ -40,8 +40,7 @@
         </t-input>
       </div> -->
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :max-height="maxHeight"
-      :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :max-height="maxHeight" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template #type="{row}">
         <span>{{ row.type === 1 ? lang.international : lang.domestic }}</span>
       </template>
@@ -54,9 +53,19 @@
         <t-tag theme="danger" class="com-status" v-if="row.status===3" variant="light">{{lang.fail}}</t-tag>
       </template>
       <template #op="{row}">
-        <a class="common-look" @click="updateHandler(row)">{{lang.edit}}</a>
-        <a class="common-look" @click="testHandler(row)">{{lang.test}}</a>
-        <a class="common-look" @click="deleteHandler(row)">{{lang.delete}}</a>
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+          <t-icon name="edit-1" class="common-look" @click="updateHandler(row)">
+          </t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.test" :show-arrow="false" theme="light">
+          <a class="common-look" @click="testHandler(row)">
+            <img :src="`${urlPath}img/retry.svg`" alt="">
+          </a>
+        </t-tooltip>
+        <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+          <t-icon name="delete" class="common-look" @click="deleteHandler(row)">
+          </t-icon>
+        </t-tooltip>
       </template>
     </t-table>
   </t-card>
@@ -111,12 +120,10 @@
         <t-input :placeholder="lang.input+lang.email" v-model="testForm.email" />
       </t-form-item>
       <t-form-item :label="lang.email_interface" name="name">
-        <t-select v-model="testForm.name"
-        :placeholder="lang.email_interface">
-        <t-option v-for="item in emailList" :value="item.name"
-          :label="item.title" :key="item.name">
-        </t-option>
-      </t-select>
+        <t-select v-model="testForm.name" :placeholder="lang.email_interface">
+          <t-option v-for="item in emailList" :value="item.name" :label="item.title" :key="item.name">
+          </t-option>
+        </t-select>
       </t-form-item>
       <div class="com-f-btn">
         <t-button theme="primary" type="submit">{{lang.send}}</t-button>

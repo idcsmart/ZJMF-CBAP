@@ -50,7 +50,7 @@ class SmsLogic
 			$data['mobile'] = $param['phone'];
 			$sms_methods = $this->smsMethods('sendCnSms',$data);
 		}else{
-			$data['mobile'] = $param['phone_code'].$param['phone'];
+			$data['mobile'] = '+'.$param['phone_code'].$param['phone'];
 			$sms_methods = $this->smsMethods('sendGlobalSms',$data);
 		}
 
@@ -78,12 +78,38 @@ class SmsLogic
     {
 		//读取发送动作
 		$index_setting = (new NoticeSettingModel())->indexSetting($param['name']);
+		//产品开通中
+		if($param['name']=='host_pending'){
+			if(empty($param['host_id'])){
+				return ['status'=>400, 'msg'=>lang('id_error')];
+			}
+			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			$index_product = Db::name('product')->find($index_host['product_id']);
+			if($index_product['creating_notice_sms_api']>0 && $index_product['creating_notice_sms_api_template']>0){
+				$plugin = Db::name('plugin')->field('id,name')->find($index_product['creating_notice_sms_api']);
+				$index_setting['sms_enable'] = 1;
+				$index_setting['sms_name'] = $plugin['name'];
+				$index_setting['sms_template'] = $index_product['creating_notice_sms_api_template'];
+			}
+
+		}
+		//产品开通成功
+		if($param['name']=='host_active'){
+			if(empty($param['host_id'])){
+				return ['status'=>400, 'msg'=>lang('id_error')];
+			}
+			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			$index_product = Db::name('product')->find($index_host['product_id']);
+			if($index_product['created_notice_sms_api']>0 && $index_product['created_notice_sms_api_template']>0){
+				$plugin = Db::name('plugin')->field('id,name')->find($index_product['created_notice_sms_api']);
+				$index_setting['sms_enable'] = 1;
+				$index_setting['sms_name'] = $plugin['name'];
+				$index_setting['sms_template'] = $index_product['created_notice_sms_api_template'];
+			}
+		}
 		if(empty($index_setting['name'])){
 			return ['status'=>400, 'msg'=>lang('send_wrong_action_name')];//动作名称错误
-		}
-		
-				
-		request()->notice_logic = 'admin';//不管前后台使用的短信发送都需要获取全部数据
+		}	
 		
 		$template_param = $client = $order = $host = [];
 		$client_id = 0;
@@ -133,7 +159,7 @@ class SmsLogic
 				'client_register_time' => $index_client['register_time'],
 				'client_username' => $index_client['username'],
 				'client_email' => $index_client['email'],
-				'client_phone' => $index_client['phone_code'].$index_client['phone'],
+				'client_phone' => $index_client['phone_code'].'-'.$index_client['phone'],
 				'client_company' => $index_client['company'],
 				'client_last_login_time' => $index_client['last_login_time'],
 				'client_last_login_ip' => $index_client['last_login_ip'],

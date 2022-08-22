@@ -19,6 +19,7 @@
           delVisible: false,
           statusVisble: false,
           hover: true,
+          urlPath: url,
           columns: [
             {
               colKey: 'id',
@@ -37,7 +38,7 @@
             {
               colKey: 'op',
               title: lang.manage,
-              width: 200
+              width: 120
             },
           ],
           hideSortTips: true,

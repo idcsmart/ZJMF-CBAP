@@ -252,7 +252,7 @@ a {
   cursor: pointer;
 }
 .aHover:hover {
-  text-decoration: underline;
+  border-bottom: 1px solid var(--td-text-color-primary);
 }
 .t-table td,
 .t-table th {
@@ -312,6 +312,9 @@ body {
 }
 .com-h-box .user .t-select {
   width: 100%;
+}
+.theme-color {
+  color: var(--td-brand-color);
 }
 /* loading */
 #loading {

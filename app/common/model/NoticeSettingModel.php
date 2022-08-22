@@ -83,7 +83,7 @@ class NoticeSettingModel extends Model
      * @desc 发送管理
      * @author xiong
      * @version v1
-     * @param int id - 用户ID required
+     * @param string name - 动作名称 required
      * @return string name - 动作名称 
      * @return int sms_global_name - 短信国际接口名称 
      * @return int sms_global_template - 短信国际接口模板id 
@@ -96,7 +96,7 @@ class NoticeSettingModel extends Model
      */
     public function indexSetting($name)
     {
-        $notice_setting = $this->field('name,sms_global_name,sms_global_template,sms_name,sms_template,sms_enable,email_name,email_template,email_enable')
+        $notice_setting = $this->field('name,name_lang,sms_global_name,sms_global_template,sms_name,sms_template,sms_enable,email_name,email_template,email_enable')
 		->find($name);
 		if(empty($notice_setting)){
 			$notice_setting = [
@@ -111,6 +111,7 @@ class NoticeSettingModel extends Model
 					'email_enable' => 0,
 				];
 		}
+		if(empty($notice_setting['name_lang'])) $notice_setting['name_lang'] = lang('notice_action_'.$notice_setting['name']);
         return $notice_setting;
     }
     /**
@@ -155,7 +156,7 @@ class NoticeSettingModel extends Model
 			$mail=(new PluginModel)->pluginList(['module'=>'mail']);//邮件插件
 			$sms_type = !empty($sms['list']) ? array_column($sms['list'],"sms_type","name"):[]; 	
 			$sms_status = !empty($sms['list']) ? array_column($sms['list'],"status","name"):[]; 
-			$mail = !empty($mail['list']) ? array_column($mail['list'],"name","name"):[]; 
+			$mail_name = !empty($mail['list']) ? array_column($mail['list'],"name","name"):[]; 
 			$SmsTemplateModel=new SmsTemplateModel();
 			$EmailTemplateModel=new EmailTemplateModel();
 			if(!empty($configuration)){
@@ -165,7 +166,7 @@ class NoticeSettingModel extends Model
 				if(empty($sms_type[$configuration['send_sms_global']]) || !in_array(1,$sms_type[$configuration['send_sms_global']]) || empty($sms_status[$configuration['send_sms_global']])){
 					return ['status'=>400, 'msg'=>lang('send_sms_interface_is_not_exist_domestic')];//默认设置国际短信接口不存在
 				}
-				if(empty($mail[$configuration['send_email']]) ){
+				if(empty($mail_name[$configuration['send_email']]) ){
 					return ['status'=>400, 'msg'=>lang('send_mail_interface_is_not_exist')];//邮件接口不存在
 				}
 				(new ConfigurationModel())->sendUpdate($configuration);//保存默认发送接口
@@ -175,7 +176,7 @@ class NoticeSettingModel extends Model
 			$description = [];
 
 			foreach($params as $name=>$param){
-				$notice_setting = $this->find($param['name']);
+				$notice_setting = $this->indexSetting($param['name']);
 				//短信判断
 								
 					
@@ -227,7 +228,7 @@ class NoticeSettingModel extends Model
 				if(!empty($param['email_name'])){
 									
 						
-					if(empty($mail[$param['email_name']]) ){
+					if(empty($mail_name[$param['email_name']]) ){
 						return ['status'=>400, 'msg'=>lang('send_mail_interface_is_not_exist')];//邮件接口不存在
 					}
 					$email_template = $EmailTemplateModel->emailTemplateList();
@@ -265,35 +266,67 @@ class NoticeSettingModel extends Model
 					], ['name' => $param['name']]);
 				}
 				# 日志描述
-				$notice_setting=$notice_setting->toArray();
-				$new_param=['sms_global_name'=>$param['sms_global_name'],'sms_global_template'=>$param['sms_global_template'],'sms_name'=>$param['sms_name'],'sms_template'=>$param['sms_template'],'sms_enable'=>$param['sms_enable'],'email_name'=>$param['email_name'],'email_template'=>$param['email_template'],'email_enable'=>$param['email_enable']];
+				$notice_setting = $notice_setting->toArray();
+				$new_param=[
+					'sms_global_name'=>$param['sms_global_name'],
+					'sms_global_template'=>$param['sms_global_template'],
+					'sms_name'=>$param['sms_name'],
+					'sms_template'=>$param['sms_template'],
+					'sms_enable'=>$param['sms_enable'],
+					'email_name'=>$param['email_name'],
+					'email_template'=>$param['email_template'],
+					'email_enable'=>$param['email_enable']
+				];
 				$desc = array_diff_assoc($new_param,$notice_setting);
+				$name_lang = $notice_setting['name_lang'];
 				foreach($desc as $k=>$v){				
-					$lang = '"'.lang("send_notice_log_{$k}").'"';
+					$lang = '"'.$name_lang.'-'.lang("send_notice_log_{$k}").'"';
 					if($k=='sms_enable' || $k=='email_enable'){
 						$lang = '"'.lang("send_notice_log_".str_replace('enable','name',$k)).'"';
 						$lang_old = lang("configuration_log_switch_{$notice_setting[$k]}");
 						$lang_new = lang("configuration_log_switch_{$v}");
 					}else if(strpos($k,'name')>0){	
-						$sms_list = array_column($sms['list'],"title","name");	
-						$sms_name=$sms_list[$param['name']];
-						$lang_old = $sms_name[$notice_setting[$k]];
-						$lang_new = $sms_name[$v];
-					}else if(strpos($k,'template')>0){	
-						$old_sms_param = [
-							'id'=>$notice_setting[$k],
-							'name'=>$notice_setting[str_replace('template','name',$k)],
-						];
-						$old_sms_template = $SmsTemplateModel->indexSmsTemplate($old_sms_param);
-						$old_sms_template = array_column($old_sms_template,"title","id");	
-						$lang_old = $old_sms_template[$notice_setting[$k]];
-						$sms_param = [
-							'id'=>$k,
-							'name'=>$desc[str_replace('template','name',$k)],
-						];
-						$sms_template = $SmsTemplateModel->indexSmsTemplate($sms_param);
-						$sms_template = array_column($sms_template,"title","id");
-						$lang_new = $sms_template[$v];
+						if(strpos($k,'sms')!==false){
+							$sms_list = array_column($sms['list'],"title","name");				
+							$lang_old = (!empty($notice_setting[$k])) ? ((!empty($sms_list[$notice_setting[$k]])) ? $sms_list[$notice_setting[$k]] : "''") : "''";
+							$lang_new = $sms_list[$v];
+						}else{
+							$mail_list = array_column($mail['list'],"title","name");				
+							$lang_old = (!empty($notice_setting[$k])) ? ((!empty($mail_list[$notice_setting[$k]])) ? $mail_list[$notice_setting[$k]] : "''") : "''";
+							$lang_new = $mail_list[$v];
+						}
+					}else if(strpos($k,'template')>0){
+						$interface = str_replace('template','name',$k);
+						if(strpos($k,'sms')!==false){
+							if(!empty($notice_setting[$k])){	
+								
+								$old_sms_param = [
+									'id'=>$notice_setting[$k],
+									'name'=>$notice_setting[$interface],
+								];
+								$old_sms_template = $SmsTemplateModel->indexSmsTemplate($old_sms_param);
+								$lang_old = $old_sms_template['title'];
+
+							}else{
+								$lang_old = "''";
+							}	
+							if(empty($desc[$interface])){
+							    $sms_param_name = $notice_setting[$interface];
+							}else{
+							    $sms_param_name = $desc[$interface];
+							}	
+							$sms_param = [
+								'id'=>$v,
+								'name'=>$sms_param_name,
+							];
+							$sms_template = $SmsTemplateModel->indexSmsTemplate($sms_param); 
+							$lang_new = $sms_template['title'];
+						}else{
+							$old_mail_template = $EmailTemplateModel->indexEmailTemplate($notice_setting[$k]);
+							$lang_old = $old_mail_template['name'];
+							$mail_template = $EmailTemplateModel->indexEmailTemplate($v); 
+							$lang_new = $mail_template['name'];
+						}
 					}else{				
 						$lang_old = $notice_setting[$k];
 						$lang_new = $v;		

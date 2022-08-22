@@ -13,6 +13,10 @@ function getPayList () {
 function getCommon () {
   return Axios.get('/common')
 }
+// 获取系统配置
+function getSystem () {
+  return Axios.get('/configuration/system')
+}
 // 获取登录信息
 function getLoginInfo () {
   return Axios.get('/login')

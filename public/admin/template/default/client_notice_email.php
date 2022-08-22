@@ -13,7 +13,7 @@
     <div class="com-h-box">
       <ul class="common-tab">
         <li>
-          <a :href="`client_notice_sms.html?id=${id}`">{{lang.personal}}</a>
+          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
         </li>
         <li>
           <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>

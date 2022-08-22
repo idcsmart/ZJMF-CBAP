@@ -27,13 +27,13 @@
       </template>
       <template #op="{row}">
         <t-tooltip :content="enableTitle(row.status)" :show-arrow="false" theme="light">
-          <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3">
+          <a class="common-look" @click="changeStatus(row)" v-if="row.status !== 3 && authList.includes('PluginController::status')">
             <img v-if="row.status === 0" :src='`${urlPath}/img/icon/enable.png`' alt="">
             <img v-else-if="row.status === 1" :src='`${urlPath}/img/icon/disable.png`' alt="">
           </a>
         </t-tooltip>
         <t-tooltip :content="installTitle(row.status)" :show-arrow="false" theme="light">
-          <a class="common-look" @click="installHandler(row)">
+          <a class="common-look" @click="installHandler(row)" v-if="authList.includes('PluginController::setting')">
             <img v-if="row.status === 3" :src='`${urlPath}/img/icon/install.png`' alt="">
             <img v-else-if="row.status !== 3" :src='`${urlPath}/img/icon/uninstall.png`' alt="">
           </a>

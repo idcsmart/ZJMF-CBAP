@@ -38,7 +38,8 @@ class ConfigurationValidate extends Validate
 		'currency_suffix' => 'require',
 		'recharge_open' => 'require|in:0,1',
 		'recharge_min' => 'gt:0|float',
-		
+		'recharge_max' => 'egt:recharge_min|float',
+
 		# 定时任务
 		'cron_due_suspend_day' => 'number',
 		'cron_due_terminate_day' => 'number',
@@ -115,7 +116,8 @@ class ConfigurationValidate extends Validate
 		'recharge_open.in' => 'configuration_recharge_open',
 		'recharge_min.gt' => 'configuration_recharge_min_float',
 		'recharge_min.float' => 'configuration_recharge_min_float',
-		
+		'recharge_max.egt' => 'configuration_recharge_max_egt_recharge_min',
+
 		# 定时任务
 		
 		'cron_due_suspend_day.number' => 'configuration_cron_due_suspend_day_cannot_empty',		
@@ -160,7 +162,7 @@ class ConfigurationValidate extends Validate
         'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url'],
         'login_update' => ['register_email','register_phone','login_phone_verify'],
         'security_update' => ['captcha_client_register','captcha_client_login','captcha_client_login_error','captcha_admin_login','captcha_width','captcha_height','captcha_length'],
-        'currency_update' => ['currency_code','currency_prefix','recharge_open','recharge_min'],
+        'currency_update' => ['currency_code','currency_prefix','recharge_open','recharge_min','recharge_max'],
         'cron_update' => 
 	        [
 			 'cron_due_suspend_day',

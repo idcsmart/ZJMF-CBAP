@@ -258,7 +258,7 @@ function lang_list($app = 'admin')
 			if(empty($_LANG['display_name'])) continue;
 			$lang_data_now['display_name'] = $_LANG['display_name'];
 			$lang_data_now['display_flag'] = $_LANG['display_flag'];
-			$lang_data_now['display_img'] = 'upload/common/country/'.$_LANG['display_flag'].'.png';
+			$lang_data_now['display_img'] = '/upload/common/country/'.$_LANG['display_flag'].'.png';
 			$lang_data_now['display_lang'] = str_replace(".php","",$filename);
 			$lang_data_now_all[] = $lang_data_now;
 			unset($_LANG);

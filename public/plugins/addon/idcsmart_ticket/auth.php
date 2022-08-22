@@ -8,7 +8,7 @@ return [
         'url' => 'ticket',
         'child' => [ # 操作权限
             [
-                'title' => 'auth_plugin_addon_ticket_view', # 工单查看
+                'title' => 'auth_plugin_addon_ticket_view', # 工单查看   
                 'url' => '',
                 'auth_rule' => 'TicketController::ticketList',  # 工单列表具体控制器方法
                 'auth_rule_title' => 'auth_rule_plugin_addon_ticket_list'  # 具体权限名称

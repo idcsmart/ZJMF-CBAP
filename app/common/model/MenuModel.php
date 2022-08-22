@@ -4,6 +4,7 @@ namespace app\common\model;
 use think\Model;
 use think\Db;
 use app\admin\model\PluginModel;
+use app\admin\model\AuthModel;
 
 /**
  * @title 导航管理模型
@@ -212,7 +213,7 @@ class MenuModel extends Model
         }
         $this->startTrans();
         try {
-            $this->where('type', 'admin')->delele();
+            $this->where('type', 'admin')->delete();
             $list = [];
             $order = 0;
             foreach ($param['menu'] as $key => $value) {
@@ -252,7 +253,7 @@ class MenuModel extends Model
         } catch (\Exception $e) {
             // 回滚事务
             $this->rollback();
-            return ['status' => 400, 'msg' => lang('update_fail')];
+            return ['status' => 400, 'msg' => $e->getMessage()];
         }
         return ['status' => 200, 'msg' => lang('update_success')];
     }
@@ -292,7 +293,7 @@ class MenuModel extends Model
         }
         $this->startTrans();
         try {
-            $this->where('type', 'home')->delele();
+            $this->where('type', 'home')->delete();
             $list = [];
             $order = 0;
             foreach ($param['menu'] as $key => $value) {
@@ -348,6 +349,20 @@ class MenuModel extends Model
             unset($navs[$key]['module']);
         }
 
+        $urls = AuthModel::where('url', '<>', '')
+            ->column('url');
+
+        $adminId = get_admin_id();
+        $auths = AuthModel::alias('au')
+            ->leftjoin('auth_link al', 'al.auth_id=au.id')
+            ->leftjoin('admin_role adr', 'adr.id=al.admin_role_id')
+            ->leftjoin('admin_role_link adrl', 'adrl.admin_role_id=adr.id')
+            ->where('adrl.admin_id', $adminId)
+            ->where('au.url', '<>', '')
+            ->column('au.url');
+
+        $language = get_system_lang(true);  
+    
         $menus = $this->alias('m')
             ->field('m.id,m.name,m.language,m.url,m.icon,m.parent_id,n.url nav_url')
             ->leftjoin('nav n', 'n.id=m.nav_id')
@@ -358,13 +373,19 @@ class MenuModel extends Model
         foreach ($menus as $key => $data) {
             $data['language'] = json_decode($data['language'], true);
             $menus[$key]['name'] = $data['language'][$language] ?? $data['name'];
-            $menus[$key]['name'] = $data['nav_url'] ?? $data['url'];
+            $menus[$key]['url'] = $data['nav_url'] ?? $data['url'];
             unset($menus[$key]['language'], $menus[$key]['nav_url']);
         }
         if(empty($menus)){
             $menus = $navs;
         }
-        $language = get_system_lang(true);
+        foreach ($menus as $key => $value) {
+            if(!empty($value['url']) && !in_array($value['url'], $auths) && in_array($value['url'], $urls)){
+                unset($menus[$key]);
+            }
+        }
+        $menus = array_values($menus);
+        
         // 将数组转换成树形结构
         $tree = [];
         if (is_array($menus)) {
@@ -387,6 +408,12 @@ class MenuModel extends Model
                 }
             }
         }
+        foreach ($tree as $key => $value) {
+            if((!isset($value['child']) || empty($value['child'])) && empty($value['url'])){
+                unset($tree[$key]);
+            }
+        }
+        $tree = array_values($tree);
         return ['menu' => $tree];
     }
 
@@ -401,6 +428,8 @@ class MenuModel extends Model
             unset($navs[$key]['module']);
         }
 
+        $language = get_system_lang(false); 
+
         $menus = $this->alias('m')
             ->field('m.id,m.name,m.language,m.url,m.icon,m.parent_id,n.url nav_url')
             ->leftjoin('nav n', 'n.id=m.nav_id')
@@ -411,13 +440,13 @@ class MenuModel extends Model
         foreach ($menus as $key => $data) {
             $data['language'] = json_decode($data['language'], true);
             $menus[$key]['name'] = $data['language'][$language] ?? $data['name'];
-            $menus[$key]['name'] = $data['nav_url'] ?? $data['url'];
+            $menus[$key]['url'] = $data['nav_url'] ?? $data['url'];
             unset($menus[$key]['language'], $menus[$key]['nav_url']);
         }
         if(empty($menus)){
             $menus = $navs;
         }
-        $language = get_system_lang(true);
+
         // 将数组转换成树形结构
         $tree = [];
         if (is_array($menus)) {

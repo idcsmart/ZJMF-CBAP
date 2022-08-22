@@ -170,6 +170,9 @@ class AdminModel extends Model
             return ['status'=>400,'msg'=>lang('create_fail')];
         }
 
+        hook('after_admin_create',['name'=>$param['name']??'','password'=>$param['password']??'','email'=>$param['email']??'',
+            'nickname'=>$param['nickname']??'','status'=>$param['status']??'','role_id'=>$param['role_id']??'','customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('create_success')];
     }
 
@@ -266,6 +269,10 @@ class AdminModel extends Model
             return ['status'=>400,'msg'=>lang('update_fail')];
         }
 
+        hook('after_admin_edit',['name'=>$param['name']??'','password'=>$param['password']??'','email'=>$param['email']??'',
+            'nickname'=>$param['nickname']??'','status'=>$param['status']??'','role_id'=>$param['role_id']??'','customfield'=>$param['customfield']??[]]);
+
+
         return ['status'=>200,'msg'=>lang('update_success')];
     }
 
@@ -279,8 +286,11 @@ class AdminModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function deleteAdmin($id)
+    public function deleteAdmin($param)
     {
+
+        $id = $param['id']??0;
+
         # 超级管理员不可删除
         if ($id == 1){
             return ['status'=>400,'msg'=>lang('super_admin_cannot_delete')];
@@ -304,6 +314,9 @@ class AdminModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('delete_fail')];
         }
+
+        hook('before_admin_delete',['id'=>$id]);
+
         return ['status'=>200,'msg'=>lang('delete_success')];
     }
 
@@ -466,6 +479,8 @@ class AdminModel extends Model
                 'jwt' => create_jwt($adminInfo,$expired,true)
             ];
 
+            hook('after_admin_login',['id'=>$admin->id,'customfield'=>$param['customfield']??[]]);
+
             return ['status'=>200,'msg'=>lang('login_success'),'data'=>$data];
         }else{
             return ['status'=>400,'msg'=>lang('admin_name_or_password_error')];
@@ -480,7 +495,7 @@ class AdminModel extends Model
      * @author wyh
      * @version v1
      */
-    public function logout()
+    public function logout($param)
     {
         $adminId = get_admin_id();
 
@@ -495,6 +510,8 @@ class AdminModel extends Model
 
         # 记录日志
         active_log(lang('log_admin_logout',['{admin}'=>'admin#'.$admin->id.'#'.$admin['name'].'#']),'admin',$admin->id);
+
+        hook('after_admin_logout',['id'=>$adminId,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('logout_success')];
 

@@ -37,7 +37,7 @@
                 </t-select>
               </t-form-item>
               <t-form-item :label="lang.choose_interface">
-                <t-select v-model="formData.rel_id" :disabled="!formData.type" @change="chooseId">
+                <t-select v-model="formData.rel_id" :disabled="!formData.type" @change="chooseInterfaceId" :key="formData.rel_id">
                   <t-option v-for="item in curList" :value="item.id" :label="item.name" :key="item.id">
                   </t-option>
                 </t-select>

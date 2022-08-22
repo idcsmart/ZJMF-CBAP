@@ -26,6 +26,16 @@
       </template>
       <template #description="{row}">
         <t-icon v-if="row.status === 'Finish'" name="check-circle-filled" style="color:#00a870;"></t-icon>
+        <template v-else-if="row.status === 'Wait'">
+          <t-tooltip :content="lang.Wait" theme="light" :show-arrow="false">
+            <img :src="`${urlPath}img/wait.svg`" alt="" class="task-icon">
+          </t-tooltip>
+        </template>
+        <template v-else-if="row.status === 'Exec'">
+          <t-tooltip :content="lang.Exec" theme="light" :show-arrow="false">
+            <img :src="`${urlPath}img/exec.svg`" alt="" class="task-icon">
+          </t-tooltip>
+        </template>
         <template v-else>
           <t-tooltip :content="row.fail_reason" theme="light" :show-arrow="false">
             <t-icon name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
@@ -46,7 +56,11 @@
         {{row.finish_time === 0 ? '-' : moment(row.finish_time * 1000).format('YYYY-MM-DD HH:mm')}}
       </template>
       <template #retry="{row}">
-        <a class="common-look" v-if="!row.retry && row.status === 'Failed'" @click="retryFun(row.id)">{{lang.retry}}</a>
+        <t-tooltip :content="lang.retry" :show-arrow="false" theme="light">
+          <a class="common-look" v-if="!row.retry && row.status === 'Failed'" @click="retryFun(row.id)">
+            <img :src="`${urlPath}img/retry.svg`" alt="">
+          </a>
+        </t-tooltip>
       </template>
     </t-table>
     <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions" :on-change="changePage" :current="params.page" />

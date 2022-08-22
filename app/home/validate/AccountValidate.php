@@ -66,7 +66,8 @@ class AccountValidate extends Validate
         'update_phone' => ['phone_code', 'phone', 'code'],
         'verify_old_email' => ['code'],
         'update_email' => ['email', 'code'],
-        'register' => ['type', 'account','code','username','password','re_password'],
+        'register' => ['type', 'account','username','password','re_password'],
         'password_reset' => ['password','re_password'],
+        'code_update_password' => ['code', 'password','re_password'],
     ];
 }

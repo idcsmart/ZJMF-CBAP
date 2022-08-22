@@ -8,6 +8,7 @@
         return {
           check: false,
           type: 'password',
+          loading: false,
           formData: {
             name: localStorage.getItem('name') || '',
             password: localStorage.getItem('password') || '',
@@ -57,6 +58,7 @@
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
+              this.loading = true
               this.formData.remember_password = this.check === true ? 1 : 0
               const params = { ...this.formData }
               if (!this.captcha_admin_login) {
@@ -77,16 +79,22 @@
               await this.getCommonSetting()
               // 获取权限
               const auth = await getAuthRole()
-              localStorage.setItem('auth', JSON.stringify(auth.data.data.list))
+              const authTemp = auth.data.data.rule.map(item => {
+                item = item.split('\\')[3]
+                return item
+              })
+              localStorage.setItem('backAuth', JSON.stringify(authTemp))
               this.$message.success(res.data.msg)
               localStorage.setItem('curValue', 2)
               // 获取导航
               const menus = await getMenus()
               localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
+              this.loading = false
               location.href = 'client.html'
             } catch (error) {
               (this.captcha_admin_login == 1) && this.getCaptcha()
               this.$message.error(error.data.msg)
+              this.loading = false
             }
           } else {
             console.log('Errors: ', validateResult);

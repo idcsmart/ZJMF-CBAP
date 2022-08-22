@@ -35,21 +35,6 @@ class Idcsmart extends Plugin
         return true;//卸载成功返回true，失败false
     }
 	
-	# 后台页面创建模板时可用参数
-	public function description()
-	{
-		return file_get_contents(__DIR__.'/config/description.html');    
-    } 
-	# 国内营销模板 后台页面创建或编辑模板时模板说明
-	public function descriptionTemplate()
-	{
-		$data=[
-			'cn'=>"国内短信按照 70 字节为一条计费，超过 70 字节，按照每 67 字计费一条，最终在一条短信内呈现。",
-			'global'=>"",
-			'cnpro'=>"",
-		];
-		return $data;    
-    } 	
 	#获取国内模板
 	/*
 	返回数据格式
@@ -73,7 +58,7 @@ class Idcsmart extends Plugin
 	public function getCnTemplate($params)
 	{		
 		$param['template_id']=trim($params['template_id']);		
-		$resultTemplate=$this->APIHttpRequestCURL("template",$param,$params['config'],'GET');
+		$resultTemplate=$this->APIHttpRequestCURL('cn',"template",$param,$params['config'],'GET');
 		if($resultTemplate['status']==200){
 			$data['status']="success";
 			if($resultTemplate['template']){
@@ -114,7 +99,7 @@ class Idcsmart extends Plugin
 		$param['title']=trim($params['title']);	
 		$param['signature']=$this->templateSign($params['config']['sign']);	
 		$param['content']=trim($params['content']);		
-        $resultTemplate= $this->APIHttpRequestCURL("template",$param,$params['config'],'POST');
+        $resultTemplate= $this->APIHttpRequestCURL('cn',"template",$param,$params['config'],'POST');
 		if($resultTemplate['status']==200){
 			$data['status']="success";
 			$data['template']['template_id']=$resultTemplate['template_id'];
@@ -150,7 +135,7 @@ class Idcsmart extends Plugin
 		$param['title']=trim($params['title']);	
 		$param['signature']=$this->templateSign($params['config']['sign']);	
 		$param['content']=trim($params['content']);
-        $resultTemplate=  $this->APIHttpRequestCURL("template",$param,$params['config'],'PUT');
+        $resultTemplate=  $this->APIHttpRequestCURL('cn',"template",$param,$params['config'],'PUT');
 		if($resultTemplate['status']==200){
 			$data['status']="success";
 			$data['template']['template_status']=1;
@@ -178,7 +163,7 @@ class Idcsmart extends Plugin
 	public function deleteCnTemplate($params)
 	{
 		$param['template_id']=trim($params['template_id']);
-        $resultTemplate=$this->APIHttpRequestCURL("template",$param,$params['config'],'DELETE');
+        $resultTemplate=$this->APIHttpRequestCURL('cn',"template",$param,$params['config'],'DELETE');
 		if($resultTemplate['status']==200){
 			$data['status']="success";
 		}else{
@@ -211,7 +196,7 @@ class Idcsmart extends Plugin
         $content=$this->templateParam($params['content'],$params['templateParam']);
         $param['to']=trim($params['mobile']);
 		$param['content']=$this->templateSign($params['config']['sign']).$content;
-        $resultTemplate= $this->APIHttpRequestCURL("send",$param,$params['config'],'POST');
+        $resultTemplate= $this->APIHttpRequestCURL('cn',"send",$param,$params['config'],'POST');
 		if($resultTemplate['status']==200){
 			$data['status']="success";
 			$data['content']=$content;
@@ -222,16 +207,110 @@ class Idcsmart extends Plugin
 		}
 		return $data;
     }		
-	
+	#获取国际模板
+	public function getGlobalTemplate($params=[])
+	{		
+		$param['template_id']=trim($params['template_id']);		
+		$resultTemplate=$this->APIHttpRequestCURL('global',"template",$param,$params['config'],'GET');
+		if($resultTemplate['status']==200){
+			$data['status']="success";
+			if($resultTemplate['template']){
+				//单个模板
+				$data['template']['template_id']=$resultTemplate['template']['template_id'];
+				$data['template']['template_status']=$resultTemplate['template']['status'];
+			}
+		}else{
+			$data['status']="error";
+			$data['msg']=$resultTemplate['msg'];
+		}
+
+		return $data;
+		
+
+	}
+	#创建国际模板
+	public function createGlobalTemplate($params=[])
+	{
+		$param['title']=trim($params['title']);	
+		$param['signature']=$this->templateSign($params['config']['global_sign']);	
+		$param['content']=trim($params['content']);		
+        $resultTemplate= $this->APIHttpRequestCURL('global',"template",$param,$params['config'],'POST');
+		if($resultTemplate['status']==200){
+			$data['status']="success";
+			$data['template']['template_id']=$resultTemplate['template_id'];
+			$data['template']['template_status']=1;
+		}else{
+			$data['status']="error";
+			$data['msg']=$resultTemplate['msg'];
+		}
+		return $data;
+	}
+	#修改国际模板
+	public function putGlobalTemplate($params=[])
+	{
+		$param['template_id']=trim($params['template_id']);
+		$param['title']=trim($params['title']);	
+		$param['signature']=$this->templateSign($params['config']['global_sign']);	
+		$param['content']=trim($params['content']);
+        $resultTemplate=  $this->APIHttpRequestCURL('global',"template",$param,$params['config'],'PUT');
+		if($resultTemplate['status']==200){
+			$data['status']="success";
+			$data['template']['template_status']=1;
+		}else{
+			$data['status']="error";
+			$data['msg']=$resultTemplate['msg'];
+		}
+		return $data;
+	}
+	#删除国际模板
+	public function deleteGlobalTemplate($params=[])
+	{
+		$param['template_id']=trim($params['template_id']);
+        $resultTemplate=$this->APIHttpRequestCURL('global',"template",$param,$params['config'],'DELETE');
+		if($resultTemplate['status']==200){
+			$data['status']="success";
+		}else{
+			$data['status']="error";
+			$data['msg']=$resultTemplate['msg'];
+		}
+		return $data;
+	}
+	#发送国际短信
+    public function sendGlobalSms($params=[])
+    {
+    	$content=$this->templateParam($params['content'],$params['templateParam']);
+        $param['to']=trim($params['mobile']);
+		$param['content']=$this->templateSign($params['config']['global_sign']).$content;
+        $resultTemplate= $this->APIHttpRequestCURL('global',"send",$param,$params['config'],'POST');
+		if($resultTemplate['status']==200){
+			$data['status']="success";
+			$data['content']=$content;
+		}else{
+			$data['status']="error";
+			$data['content']=$content;
+			$data['msg']=$resultTemplate['msg'];
+		}
+		return $data;
+    }		
 	# 以下函数名自定义
 
-	private function APIHttpRequestCURL($action,$param,$config,$method='POST'){			
-		$api='http://api1.idcsmart.com/smsapi.php?action='.$action;
-		$headers = array(
-			"api:".$config['api'],
-			"key:".$config['key'],
-			"Content-Type: application/x-www-form-urlencoded"
-		);
+	private function APIHttpRequestCURL($sms_type,$action,$param,$config,$method='POST'){			
+		if($sms_type=='cn'){			
+			$api='http://api1.idcsmart.com/smsapi.php?action='.$action;
+			$headers = array(
+				"api:".$config['api'],
+				"key:".$config['key'],
+				"Content-Type: application/x-www-form-urlencoded"
+			);
+		}else if($sms_type=="global"){
+			$api='http://api1.idcsmart.com/smsglobalapi.php?action='.$action;
+			$headers = array(
+				"global-api:".$config['global_api'],
+				"global-key:".$config['global_key'],
+				"Content-Type: application/x-www-form-urlencoded"
+			);
+		}
+
 		$postfields=http_build_query($param);
 		/* var_dump($headers);
 		var_dump($postfields);

@@ -3,26 +3,27 @@
 <div id="content" class="client table" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
-      <t-button @click="addUser" class="add">{{lang.create_user}}</t-button>
+      <t-button @click="addUser" class="add" v-if="authList.includes('ClientController::create')">
+        {{lang.create_user}}
+      </t-button>
+      <p v-else></p>
       <div class="com-search">
-        <t-input v-model="params.keywords" class="search-input"
-          :placeholder="`${lang.please_search}ID、${lang.username}、${lang.email}、${lang.phone}`" 
-          @keyup.enter.native="seacrh" :on-clear="clearKey" clearable>
+        <t-input v-model="params.keywords" class="search-input" :placeholder="`${lang.please_search}ID、${lang.username}、${lang.email}、${lang.phone}`" @keyup.enter.native="seacrh" :on-clear="clearKey" clearable>
         </t-input>
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
-      :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width"
-      :hide-sort-tips="true" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #id="{row}">
-        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover">{{row.id}}</a>
+        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-if="authList.includes('ClientController::index')">{{row.id}}</a>
+        <span v-else>{{row.id}}</span>
       </template>
       <template #username="{row}">
-        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover">{{row.username}}</a>
+        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-if="authList.includes('ClientController::index')">{{row.username}}</a>
+        <span v-else>{{row.username}}</span>
       </template>
       <template #host_active_num="{row}">
         {{row.host_active_num}}({{row.host_num}})
@@ -40,8 +41,7 @@
         <a class="common-look" @click="deleteUser(row)">{{lang.delete}}</a>
       </template>
     </t-table>
-    <t-pagination :total="total" :page-size="params.limit" :current="params.page" :page-size-options="pageSizeOptions"
-      @change="changePage"/>
+    <t-pagination :total="total" :page-size="params.limit" :current="params.page" :page-size-options="pageSizeOptions" @change="changePage" />
   </t-card>
 
   <!-- 添加用户弹窗 -->
@@ -55,14 +55,12 @@
       [{ required: true,message: lang.input + lang.phone, type: 'error' },
       {pattern: /^\d{0,11}$/, message: lang.verify11,type: 'warning' }]">
         <t-select v-model="formData.phone_code" filterable style="width: 100px" :placeholder="lang.phone_code">
-          <t-option v-for="item in country" :value="item.phone_code"
-            :label="item.name_zh + '+' + item.phone_code" :key="item.name">
+          <t-option v-for="item in country" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code" :key="item.name">
           </t-option>
         </t-select>
-        <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" @change="cancelEmail"/>
+        <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" @change="cancelEmail" />
       </t-form-item>
-      <t-form-item :label="lang.email" name="email" class="email" 
-        :rules="formData.phone ? 
+      <t-form-item :label="lang.email" name="email" class="email" :rules="formData.phone ? 
         [{ required: false }, 
         {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
         message: lang.email_tip, type: 'warning' }]: 

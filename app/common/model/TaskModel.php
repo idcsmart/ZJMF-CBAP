@@ -140,6 +140,9 @@ class TaskModel extends Model
 		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('fail_message')];
 		}
+
+		hook('after_task_retry',['id'=>$id]);
+
     	return ['status' => 200, 'msg' => lang('success_message')];
     }
     // 添加到任务队列(后台读取的就是这里添加的数据，执行任务队列是TaskWaitModel添加的数据)

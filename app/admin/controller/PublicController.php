@@ -65,6 +65,9 @@ class PublicController extends BaseController
             return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
         }
 
+        hook_one('before_admin_login',['name'=>$param['name']??'','password'=>$param['password']??'', 'remember_password'=>$param['remember_password']??'',
+            'token'=>$param['token']??'','captcha'=>$param['captcha']??'','customfield'=>$param['customfield']??[]]);
+
         $result = (new AdminModel())->login($param);
 
         return json($result);

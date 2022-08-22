@@ -18,7 +18,7 @@ class ViewController extends HomeBaseController
 		];
 		$data['template_catalog'] = 'clientarea';
 		$data['themes'] = configuration('clientarea_theme');
-		$tplName = $param['view_html'];
+		$tplName = empty($param['view_html'])?'index':$param['view_html'];
 		$view_path = '../public/clientarea/template/'.$data['themes'].'/';
 		if(!file_exists($view_path.$tplName)){
 			$theme_config=$this->themeConfig($view_path);
@@ -36,7 +36,7 @@ class ViewController extends HomeBaseController
     	$param = $this->request->param();
 		$data['themes'] = configuration('clientarea_theme');
 		$plugin_id = $param['plugin_id'];
-		$tplName = $param['view_html']; 
+		$tplName = empty($param['view_html'])?'index':$param['view_html'];
 		$addon = (new PluginModel())->plugins('addon')['list'];
 	    $addon = array_column($addon,'name','id');
 		$name=parse_name($addon[$plugin_id]);

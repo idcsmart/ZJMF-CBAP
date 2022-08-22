@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace app\common\model;
 
 use think\Model;
@@ -10,116 +10,117 @@ use think\Db;
  */
 class ConfigurationModel extends Model
 {
-	
-	protected $name = 'configuration';
-	protected $pk = 'setting';
-	private $config=[
-		'system'=>[
-			'lang_admin',
-			'lang_home',
-			'lang_home_open',
-			'maintenance_mode',
-			'maintenance_mode_message',
-			'website_name',
-			'website_url',
-			'terms_service_url',
-		],
-		'login'=>[
-			'login_phone_verify',
-			'register_email',
-			'register_phone',
-		],
-		'security'=>[
-			'captcha_client_register',
-			'captcha_client_login',
-			'captcha_admin_login',
-			'captcha_client_login_error',
-			'captcha_width',
-			'captcha_height',
-			'captcha_length',
+
+    protected $name = 'configuration';
+    protected $pk = 'setting';
+    private $config=[
+        'system'=>[
+            'lang_admin',
+            'lang_home',
+            'lang_home_open',
+            'maintenance_mode',
+            'maintenance_mode_message',
+            'website_name',
+            'website_url',
+            'terms_service_url',
+        ],
+        'login'=>[
+            'login_phone_verify',
+            'register_email',
+            'register_phone',
+        ],
+        'security'=>[
+            'captcha_client_register',
+            'captcha_client_login',
+            'captcha_admin_login',
+            'captcha_client_login_error',
+            'captcha_width',
+            'captcha_height',
+            'captcha_length',
             'code_client_email_register',
-		],
-		'currency'=>[
-			'currency_code',
-			'currency_prefix',
-			'currency_suffix',
-			'recharge_open',
-			'recharge_min',
-		],
-		'cron'=>[
-			'cron_due_suspend_swhitch',
-			'cron_due_suspend_day',
-			'cron_due_unsuspend_swhitch',
-			'cron_due_terminate_swhitch',
-			'cron_due_terminate_day',
-			'cron_due_renewal_first_swhitch',
-			'cron_due_renewal_second_swhitch',
-			'cron_due_renewal_first_day',
-			'cron_due_renewal_second_day',
-			'cron_overdue_first_swhitch',
-			'cron_overdue_second_swhitch',
-			'cron_overdue_third_swhitch',
-			'cron_overdue_first_day',
-			'cron_overdue_second_day',
-			'cron_overdue_third_day',
-			'cron_ticket_close_swhitch',
-			'cron_ticket_close_day',
-			'cron_aff_swhitch',
-			'cron_order_overdue_swhitch',
-			'cron_order_overdue_day',
-		],
-		'send'=>[
-			'send_sms',
-			'send_sms_global',
-			'send_email',
-		],
-		'theme' => [
-			'admin_theme',
-			'clientarea_theme',
-		],
-	];
-	/**
-	* 时间 2022-5-10
-	* @title 获取所有配置项数据
-	* @desc 获取所有配置项数据
-	* @author xiong
-	* @version v1
-    * @return string [].setting - 配置项名称 
-    * @return string [].value - 配置项值 
-	*/	
-	public function index()
-	{
-		return $this->field('setting,value')->select()->toArray();
-	}	
-	/**
-	* 时间 2022-5-10
-	* @title 获取系统设置
-	* @desc 获取系统设置
-	* @author xiong
-	* @version v1
-	* @return  string lang_admin - 后台默认语言
-	* @return  int lang_home_open - 前台多语言开关:1开启0关闭
-	* @return  string lang_home - 前台默认语言
-	* @return  int maintenance_mode - 维护模式开关:1开启0关闭
-	* @return  string maintenance_mode_message - 维护模式内容
-	* @return  string website_name - 网站名称
-	* @return  string website_url - 网站域名地址
-	* @return  string terms_service_url - 服务条款地址
-	*/
-	public function systemList()
-	{
-		$configuration = $this->index();
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['system'])){
-				if($v['setting'] == 'lang_home_open' || $v['setting'] == 'maintenance_mode'){
-					$data[$v['setting']] = (int)$v['value'];
-				}else{	
-					$data[$v['setting']] = (string)$v['value'];
-				}
-			}
-		}
-		return $data;
-	}
+        ],
+        'currency'=>[
+            'currency_code',
+            'currency_prefix',
+            'currency_suffix',
+            'recharge_open',
+            'recharge_min',
+            'recharge_max',
+        ],
+        'cron'=>[
+            'cron_due_suspend_swhitch',
+            'cron_due_suspend_day',
+            'cron_due_unsuspend_swhitch',
+            'cron_due_terminate_swhitch',
+            'cron_due_terminate_day',
+            'cron_due_renewal_first_swhitch',
+            'cron_due_renewal_second_swhitch',
+            'cron_due_renewal_first_day',
+            'cron_due_renewal_second_day',
+            'cron_overdue_first_swhitch',
+            'cron_overdue_second_swhitch',
+            'cron_overdue_third_swhitch',
+            'cron_overdue_first_day',
+            'cron_overdue_second_day',
+            'cron_overdue_third_day',
+            'cron_ticket_close_swhitch',
+            'cron_ticket_close_day',
+            'cron_aff_swhitch',
+            'cron_order_overdue_swhitch',
+            'cron_order_overdue_day',
+        ],
+        'send'=>[
+            'send_sms',
+            'send_sms_global',
+            'send_email',
+        ],
+        'theme' => [
+            'admin_theme',
+            'clientarea_theme',
+        ],
+    ];
+    /**
+     * 时间 2022-5-10
+     * @title 获取所有配置项数据
+     * @desc 获取所有配置项数据
+     * @author xiong
+     * @version v1
+     * @return string [].setting - 配置项名称
+     * @return string [].value - 配置项值
+     */
+    public function index()
+    {
+        return $this->field('setting,value')->select()->toArray();
+    }
+    /**
+     * 时间 2022-5-10
+     * @title 获取系统设置
+     * @desc 获取系统设置
+     * @author xiong
+     * @version v1
+     * @return  string lang_admin - 后台默认语言
+     * @return  int lang_home_open - 前台多语言开关:1开启0关闭
+     * @return  string lang_home - 前台默认语言
+     * @return  int maintenance_mode - 维护模式开关:1开启0关闭
+     * @return  string maintenance_mode_message - 维护模式内容
+     * @return  string website_name - 网站名称
+     * @return  string website_url - 网站域名地址
+     * @return  string terms_service_url - 服务条款地址
+     */
+    public function systemList()
+    {
+        $configuration = $this->index();
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['system'])){
+                if($v['setting'] == 'lang_home_open' || $v['setting'] == 'maintenance_mode'){
+                    $data[$v['setting']] = (int)$v['value'];
+                }else{
+                    $data[$v['setting']] = (string)$v['value'];
+                }
+            }
+        }
+        return $data;
+    }
     /**
      * 时间 2022-05-10
      * @title 保存系统设置
@@ -135,61 +136,61 @@ class ConfigurationModel extends Model
      * @param  string param.website_url - 网站域名地址
      * @param  string param.terms_service_url - 服务条款地址
      * @return int status - 状态码,200成功,400失败
-     * @return string msg - 提示信息	 
+     * @return string msg - 提示信息
      */
-	public function systemUpdate($param)
-	{
-		$admin = array_column(lang_list('admin'),'display_lang','display_lang');
-		$home =  array_column(lang_list('home'),'display_lang','display_lang');
-		if(empty($admin[$param['lang_admin']])){
-			return ['status' => 400, 'msg' => lang('configuration_admin_default_language_error')];
-		}
-		if(empty($admin[$param['lang_home']])){
-			return ['status' => 400, 'msg' => lang('configuration_home_default_language_error')];
-		}
-		$param['lang_home_open'] = intval($param['lang_home_open']);
-		$param['maintenance_mode'] = intval($param['maintenance_mode']);
-		# 日志
-		$description = [];
-		$systemList = $this->systemList();
-		$desc = array_diff_assoc($param,$systemList);
-		foreach($desc as $k=>$v){
-			$lang = '"'.lang("configuration_log_{$k}").'"';
-			if($k=='lang_home_open'){
-				$lang_old = lang("configuration_log_home_open_{$systemList[$k]}");
-				$lang_new = lang("configuration_log_home_open_{$v}");
-			}else if($k=='maintenance_mode'){
-				$lang_old = lang("configuration_log_switch_{$systemList[$k]}");
-				$lang_new = lang("configuration_log_switch_{$v}");
-			}else{
-				$lang_old = $systemList[$k];
-				$lang_new = $v;
-			}
-			$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
-		}
-		$description = implode(',', $description);
-		
-		
-		$this->startTrans();
-		try {
-			foreach($this->config['system'] as $v){
-				$list[]=[
-					'setting'=>$v,
-					'value'=>$param[$v],
-				];
-			}			
-	    	$this->saveAll($list);
-			# 记录日志
-			if($description)
-			active_log(lang('admin_configuration_system', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
-	}
+    public function systemUpdate($param)
+    {
+        $admin = array_column(lang_list('admin'),'display_lang','display_lang');
+        $home =  array_column(lang_list('home'),'display_lang','display_lang');
+        if(empty($admin[$param['lang_admin']])){
+            return ['status' => 400, 'msg' => lang('configuration_admin_default_language_error')];
+        }
+        if(empty($admin[$param['lang_home']])){
+            return ['status' => 400, 'msg' => lang('configuration_home_default_language_error')];
+        }
+        $param['lang_home_open'] = intval($param['lang_home_open']);
+        $param['maintenance_mode'] = intval($param['maintenance_mode']);
+        # 日志
+        $description = [];
+        $systemList = $this->systemList();
+        $desc = array_diff_assoc($param,$systemList);
+        foreach($desc as $k=>$v){
+            $lang = '"'.lang("configuration_log_{$k}").'"';
+            if($k=='lang_home_open'){
+                $lang_old = lang("configuration_log_home_open_{$systemList[$k]}");
+                $lang_new = lang("configuration_log_home_open_{$v}");
+            }else if($k=='maintenance_mode'){
+                $lang_old = lang("configuration_log_switch_{$systemList[$k]}");
+                $lang_new = lang("configuration_log_switch_{$v}");
+            }else{
+                $lang_old = $systemList[$k];
+                $lang_new = $v;
+            }
+            $description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+        }
+        $description = implode(',', $description);
+
+
+        $this->startTrans();
+        try {
+            foreach($this->config['system'] as $v){
+                $list[]=[
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+            # 记录日志
+            if($description)
+                active_log(lang('admin_configuration_system', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
 	/**
 	* 时间 2022-5-10
 	* @title 获取登录设置
@@ -199,18 +200,18 @@ class ConfigurationModel extends Model
      * @return  int register_email - 邮箱注册开关:1开启0关闭
      * @return  int register_phone - 手机号注册开关:1开启0关闭
      * @return  int login_phone_verify - 手机号登录短信验证开关:1开启0关闭
-	*/
-	public function loginList()
-	{
-		
-		$configuration = $this->index();
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['login'])){
-				$data[$v['setting']] = (int)$v['value'];
-			}
-		}
-		return $data;
-	}
+     */
+    public function loginList()
+    {
+
+        $configuration = $this->index();
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['login'])){
+                $data[$v['setting']] = (int)$v['value'];
+            }
+        }
+        return $data;
+    }
     /**
      * 时间 2022-05-10
      * @title 保存登录设置
@@ -223,48 +224,48 @@ class ConfigurationModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-	public function loginUpdate($param)
-	{
-		foreach($param as $k=>$v){
-			$param[$k] = intval($v);
-		}
-		# 日志
-		$description = [];
-		$loginList = $this->loginList();
-		$desc = array_diff_assoc($param,$loginList);
-		foreach($desc as $k=>$v){
-			$lang = '"'.lang("configuration_log_{$k}").'"';
-			$lang_old = lang("configuration_log_register_{$loginList[$k]}");
-			$lang_new = lang("configuration_log_register_{$v}");
-			$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
-		}
-		$description = implode(',', $description);
-		$this->startTrans();
-		try {
-			foreach($this->config['login'] as $v){
-				$list[]=[
-					'setting'=>$v,
-					'value'=>intval($param[$v]),
-				];
-			}			
-	    	$this->saveAll($list);
-			# 记录日志
-			if($description)
-			active_log(lang('admin_configuration_login', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
-	}
-	/**
-	* 时间 2022-5-10
-	* @title 获取安全设置
-	* @desc 获取安全设置
-	* @author xiong
-	* @version v1
+    public function loginUpdate($param)
+    {
+        foreach($param as $k=>$v){
+            $param[$k] = intval($v);
+        }
+        # 日志
+        $description = [];
+        $loginList = $this->loginList();
+        $desc = array_diff_assoc($param,$loginList);
+        foreach($desc as $k=>$v){
+            $lang = '"'.lang("configuration_log_{$k}").'"';
+            $lang_old = lang("configuration_log_register_{$loginList[$k]}");
+            $lang_new = lang("configuration_log_register_{$v}");
+            $description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+        }
+        $description = implode(',', $description);
+        $this->startTrans();
+        try {
+            foreach($this->config['login'] as $v){
+                $list[]=[
+                    'setting'=>$v,
+                    'value'=>intval($param[$v]),
+                ];
+            }
+            $this->saveAll($list);
+            # 记录日志
+            if($description)
+                active_log(lang('admin_configuration_login', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+    /**
+     * 时间 2022-5-10
+     * @title 获取安全设置
+     * @desc 获取安全设置
+     * @author xiong
+     * @version v1
      * @return  int captcha_client_register - 客户注册图形验证码开关:1开启0关闭
      * @return  int captcha_client_login - 客户登录图形验证码开关:1开启0关闭
      * @return  int captcha_client_login_error - 客户登录失败图形验证码开关:1开启0关闭
@@ -273,22 +274,22 @@ class ConfigurationModel extends Model
      * @return  int captcha_height - 图形验证码高度
      * @return  int captcha_length - 图形验证码字符长度
      * @return  int code_client_email_register - 邮箱注册数字验证码开关:1开启0关闭
-	*/
-	public function securityList()
-	{
-		
-		$configuration = $this->index();
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['security'])){
-				if($v=="captcha_width" || $v=="captcha_height"){
-					$data[$v['setting']] = (float)$v['value'];
-				} else{
-					$data[$v['setting']] = (int)$v['value'];
-				}
-			}
-		}
-		return $data;
-	}
+     */
+    public function securityList()
+    {
+
+        $configuration = $this->index();
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['security'])){
+                if($v=="captcha_width" || $v=="captcha_height"){
+                    $data[$v['setting']] = (float)$v['value'];
+                } else{
+                    $data[$v['setting']] = (int)$v['value'];
+                }
+            }
+        }
+        return $data;
+    }
     /**
      * 时间 2022-05-10
      * @title 保存安全设置
@@ -306,80 +307,80 @@ class ConfigurationModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-	public function securityUpdate($param)
-	{
-		foreach($param as $k=>$v){
-			if($k=="captcha_width" || $k=="captcha_height") $param[$k]=round($v,2);
-			else $param[$k] = intval($v);
-		}
-		# 日志
-		$description = [];
-		$systemList = $this->securityList();
-		$desc = array_diff_assoc($param,$systemList);
-		foreach($desc as $k=>$v){
-			$lang = '"'.lang("configuration_log_{$k}").'"';
-			if($k=='captcha_width' || $k=='captcha_height' || $k=='captcha_length'){
-				$lang_old = $systemList[$k];
-				$lang_new = $v;	
-			}else if($k=='captcha_client_login_error'){
-				$lang_old = lang("configuration_log_captcha_client_login_error_{$systemList[$k]}");
-				$lang_new = lang("configuration_log_captcha_client_login_error_{$v}");		
-			}else{
-				$lang_old = lang("configuration_log_switch_{$systemList[$k]}");
-				$lang_new = lang("configuration_log_switch_{$v}");
-			}
-			$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
-		}
-		$description = implode(',', $description);
-		$this->startTrans();
-		try {
-			foreach($this->config['security'] as $v){
-				if($v=="captcha_width" || $v=="captcha_height") $param[$v]=round($param[$v],2);
-				else $param[$v] = intval($param[$v]);
-				$list[]=[
-					'setting'=>$v,
-					'value'=>$param[$v],
-				];
-			}			
-	    	$this->saveAll($list);
-			# 记录日志
-			if($description)
-			active_log(lang('admin_configuration_security', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
-	}
-	/**
-	* 时间 2022-5-10
-	* @title 获取货币设置
-	* @desc 获取货币设置
-	* @author xiong
-	* @version v1
-	* @return  string currency_code - 货币代码
-	* @return  string currency_prefix - 货币符号
-	* @return  string currency_suffix - 货币后缀
-	* @return  int recharge_open - 启用充值:1开启0关闭
-	* @return  int recharge_min - 单笔最小金额
-	*/
-	public function currencyList()
-	{
-		
-		$configuration = $this->index();
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['currency'])){
-				if($v['setting'] == 'recharge_open' || $v['setting'] == 'recharge_min'){
-					$data[$v['setting']] = (float)$v['value'];
-				}else{	
-					$data[$v['setting']] = (string)$v['value'];
-				}
-			}
-		}
-		return $data;
-	}
+    public function securityUpdate($param)
+    {
+        foreach($param as $k=>$v){
+            if($k=="captcha_width" || $k=="captcha_height") $param[$k]=round($v,2);
+            else $param[$k] = intval($v);
+        }
+        # 日志
+        $description = [];
+        $systemList = $this->securityList();
+        $desc = array_diff_assoc($param,$systemList);
+        foreach($desc as $k=>$v){
+            $lang = '"'.lang("configuration_log_{$k}").'"';
+            if($k=='captcha_width' || $k=='captcha_height' || $k=='captcha_length'){
+                $lang_old = $systemList[$k];
+                $lang_new = $v;
+            }else if($k=='captcha_client_login_error'){
+                $lang_old = lang("configuration_log_captcha_client_login_error_{$systemList[$k]}");
+                $lang_new = lang("configuration_log_captcha_client_login_error_{$v}");
+            }else{
+                $lang_old = lang("configuration_log_switch_{$systemList[$k]}");
+                $lang_new = lang("configuration_log_switch_{$v}");
+            }
+            $description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+        }
+        $description = implode(',', $description);
+        $this->startTrans();
+        try {
+            foreach($this->config['security'] as $v){
+                if($v=="captcha_width" || $v=="captcha_height") $param[$v]=round($param[$v],2);
+                else $param[$v] = intval($param[$v]);
+                $list[]=[
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+            # 记录日志
+            if($description)
+                active_log(lang('admin_configuration_security', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+    /**
+     * 时间 2022-5-10
+     * @title 获取货币设置
+     * @desc 获取货币设置
+     * @author xiong
+     * @version v1
+     * @return  string currency_code - 货币代码
+     * @return  string currency_prefix - 货币符号
+     * @return  string currency_suffix - 货币后缀
+     * @return  int recharge_open - 启用充值:1开启0关闭
+     * @return  int recharge_min - 单笔最小金额
+     */
+    public function currencyList()
+    {
+
+        $configuration = $this->index();
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['currency'])){
+                if($v['setting'] == 'recharge_open' || $v['setting'] == 'recharge_min' || $v['setting'] == 'recharge_max'){
+                    $data[$v['setting']] = (float)$v['value'];
+                }else{
+                    $data[$v['setting']] = (string)$v['value'];
+                }
+            }
+        }
+        return $data;
+    }
     /**
      * 时间 2022-05-10
      * @title 保存货币设置
@@ -391,59 +392,63 @@ class ConfigurationModel extends Model
      * @param  string param.currency_suffix - 货币后缀
      * @param  int param.recharge_open - 启用充值:1开启0关闭
      * @param  int param.recharge_min - 单笔最小金额
+     * @param  int param.recharge_max - 单笔最大金额
      * @return int status - 状态码,200成功,400失败
-     * @return string msg - 提示信息	 
+     * @return string msg - 提示信息
      */
-	public function currencyUpdate($param)
-	{
-		# 日志
-		$description = [];
-		$systemList = $this->currencyList();
-		$desc = array_diff_assoc($param,$systemList);
-		foreach($desc as $k=>$v){
-			$lang = '"'.lang("configuration_log_{$k}").'"';
-			if($k=='recharge_open'){
-				$lang_old = lang("configuration_log_switch_{$systemList[$k]}");
-				$lang_new = lang("configuration_log_switch_{$v}");	
-			}else{
-				$lang_old = $systemList[$k];
-				$lang_new = $v;
-			}
-			$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
-		}
-		$description = implode(',', $description);
-		$this->startTrans();
-		try {
-			foreach($this->config['currency'] as $v){
-				if($v == 'recharge_min'){
-					$param[$v] = round($param[$v],2);
-				}else if($v == 'recharge_open'){
-					$param['recharge_open'] = intval($param['recharge_open']);
-				}
-				
-				$list[] = [
-					'setting'=>$v,
-					'value'=>$param[$v],
-				];
-			}			
-	    	$this->saveAll($list);
-			# 记录日志
-			if($description)
-			active_log(lang('admin_configuration_currency', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
-	}
-	/**
-	 * 时间 2022-5-10
-	 * @title 获取自动化设置
-	 * @desc 获取自动化设置
-	 * @author xiong
-	 * @version v1
+    public function currencyUpdate($param)
+    {
+        # 日志
+        $description = [];
+        $systemList = $this->currencyList();
+        $desc = array_diff_assoc($param,$systemList);
+        foreach($desc as $k=>$v){
+            $lang = '"'.lang("configuration_log_{$k}").'"';
+            if($k=='recharge_open'){
+                $lang_old = lang("configuration_log_switch_{$systemList[$k]}");
+                $lang_new = lang("configuration_log_switch_{$v}");
+            }else{
+                $lang_old = $systemList[$k];
+                $lang_new = $v;
+            }
+            $description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+        }
+        $description = implode(',', $description);
+        $this->startTrans();
+        try {
+            foreach($this->config['currency'] as $v){
+                if($v == 'recharge_min'){
+                    $param[$v] = round($param[$v],2);
+                }else if($v == 'recharge_max'){
+                    $param[$v] = round($param[$v],2);
+                }
+                else if($v == 'recharge_open'){
+                    $param['recharge_open'] = intval($param['recharge_open']);
+                }
+
+                $list[] = [
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+            # 记录日志
+            if($description)
+                active_log(lang('admin_configuration_currency', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+    /**
+     * 时间 2022-5-10
+     * @title 获取自动化设置
+     * @desc 获取自动化设置
+     * @author xiong
+     * @version v1
      * @return int cron_shell - 自动化脚本
      * @return int cron_status - 自动化状态,正常返回success,不正常返回error
      * @return int cron_due_suspend_swhitch - 产品到期暂停开关 1开启，0关闭
@@ -466,26 +471,26 @@ class ConfigurationModel extends Model
      * @return int cron_aff_swhitch - 推介月报开关 1开启，0关闭
      * @return int cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
      * @return int cron_order_overdue_day - 订单未付款X天后通知 required
-	*/
-	public function cronList()
-	{
-		
-		$configuration = $this->index();
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['cron'])){
-				$data[$v['setting']] = (int)$v['value'];
-			}
-		}
-		//最后执行时间判断
-		if(((time() - configuration("cron_lock_last_time") > 10*60))){
+     */
+    public function cronList()
+    {
+
+        $configuration = $this->index();
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['cron'])){
+                $data[$v['setting']] = (int)$v['value'];
+            }
+        }
+        //最后执行时间判断
+        if((time() - configuration("cron_lock_last_time") > 10*60)){
             $data['cron_status'] = 'error';
         }else{
-			$data['cron_status'] = 'success';
-		}
-		$data['cron_shell'] = 'php '. root_path() .'cron/cron.php';
-		
-		return $data;
-	}
+            $data['cron_status'] = 'success';
+        }
+        $data['cron_shell'] = 'php '. root_path() .'cron/cron.php';
+
+        return $data;
+    }
     /**
      * 时间 2022-05-10
      * @title 保存自动化设置
@@ -513,154 +518,154 @@ class ConfigurationModel extends Model
      * @return int param.cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
      * @return int param.cron_order_overdue_day - 订单未付款X天后通知 required
      * @return int status - 状态码,200成功,400失败
-     * @return string msg - 提示信息	 
+     * @return string msg - 提示信息
      */
-	public function cronUpdate($param)
-	{
-		$day=[
-			'cron_due_suspend_day',
-			'cron_due_terminate_day',
-			'cron_due_renewal_first_day',
-			'cron_due_renewal_second_day',
-			'cron_overdue_first_day',
-			'cron_overdue_second_day',
-			'cron_overdue_third_day',
-			'cron_ticket_close_day',
-			'cron_order_overdue_day',
-		];
-		foreach($day as $v){
-			if(empty($param[$v])){
-				$param[$v]=0;
-			}
-		}
-		
-		//暂停和删除
-		if($param['cron_due_suspend_day']>$param['cron_due_terminate_day'] && $param['cron_due_suspend_swhitch']==1 && $param['cron_due_terminate_swhitch']==1){
-			return ['status' => 400, 'msg' => lang('configuration_cron_suspend_day_less_terminate_day')];//产品到期暂停天数应小于产品到期删除天数
-		}
-		//续费提醒
-		if($param['cron_due_renewal_first_day']<$param['cron_due_renewal_second_day'] && $param['cron_due_renewal_first_swhitch']==1 && $param['cron_due_renewal_second_swhitch']==1){
-			return ['status' => 400, 'msg' => lang('configuration_cron_renewal_first_day_less_renewal_second_day')];//第一次续费提醒天数应大于第二次续费提醒天数
-		}
-		//逾期天数
-		$overdueday = [];
-		if($param['cron_overdue_first_swhitch']==1){
-			$overdueday[count($overdueday)] = $param['cron_overdue_first_day'];			
-		}
-		if($param['cron_overdue_second_swhitch']==1){
-			$overdueday[count($overdueday)] = $param['cron_overdue_second_day'];			
-		}
-		if($param['cron_overdue_third_swhitch']==1){
-			$overdueday[count($overdueday)] = $param['cron_overdue_third_day'];			
-		}
-		if($param['cron_due_terminate_swhitch']==1){
-			$overdueday[count($overdueday)] = $param['cron_due_terminate_day'];			
-		}
-		$overdueday_sort = $overdueday;
-		sort($overdueday_sort);
-		$overdueday_array_diff=array_diff_assoc($overdueday,$overdueday_sort);
-		if(!empty($overdueday_array_diff)){
-			return ['status' => 400, 'msg' => lang('configuration_cron_overdue_day_less_terminate_day')];//第一次逾期提醒天数应小于第二次逾期提醒天数小于第三次逾期提醒天数小于产品到期删除天数
-		}
-		# 日志
-		$description = [];
-		$systemList = $this->cronList();
-		$desc = array_diff_assoc($param,$systemList);
-		foreach($desc as $k=>$v){
-			$lang = '"'.lang("configuration_log_".str_replace('day','swhitch',$k)).'"';
-			$unit = '';
-			if($k=='cron_ticket_close_day'){
-				$unit = lang("configuration_log_cron_due_hour");	
-			}else{
-				$unit = lang("configuration_log_cron_due_day");	
-			}
-			
-			if(strpos($k,'swhitch')>0){
-				$lang_old = lang("configuration_log_switch_{$systemList[$k]}");
-				$lang_new = lang("configuration_log_switch_{$v}");	
-			}else{
-				$lang_old = $systemList[$k].$unit;
-				$lang_new = $v.$unit;
-			}
-			$description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
-		}
-		$description = implode(',', $description);
-		$this->startTrans();
-		try {
-			
-			foreach($this->config['cron'] as $v){
-				$list[] = [
-					'setting'=>$v,
-					'value'=>$param[$v],
-				];
-			}			
-	    	$this->saveAll($list);
-			# 记录日志
-			if($description)
-			active_log(lang('admin_configuration_cron', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
-	}
-	/**
-	* 时间 2022-5-10
-	* @title 默认发送设置
-	* @desc 默认发送设置
-	* @author xiong
-	* @version v1
-	* @return  string send_sms - 默认短信发送国内接口
-	* @return  string send_sms_global - 默认短信发送国际接口
-	* @return  string send_email - 默认邮件信发送接口
-	*/
-	public function sendList()
-	{		
-		$configuration = $this->index();
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['send'])){				
-				$data[$v['setting']] = (string)$v['value'];				
-			}
-		}
-		return $data;
-	}
+    public function cronUpdate($param)
+    {
+        $day=[
+            'cron_due_suspend_day',
+            'cron_due_terminate_day',
+            'cron_due_renewal_first_day',
+            'cron_due_renewal_second_day',
+            'cron_overdue_first_day',
+            'cron_overdue_second_day',
+            'cron_overdue_third_day',
+            'cron_ticket_close_day',
+            'cron_order_overdue_day',
+        ];
+        foreach($day as $v){
+            if(empty($param[$v])){
+                $param[$v]=0;
+            }
+        }
+
+        //暂停和删除
+        if($param['cron_due_suspend_day']>$param['cron_due_terminate_day'] && $param['cron_due_suspend_swhitch']==1 && $param['cron_due_terminate_swhitch']==1){
+            return ['status' => 400, 'msg' => lang('configuration_cron_suspend_day_less_terminate_day')];//产品到期暂停天数应小于产品到期删除天数
+        }
+        //续费提醒
+        if($param['cron_due_renewal_first_day']<$param['cron_due_renewal_second_day'] && $param['cron_due_renewal_first_swhitch']==1 && $param['cron_due_renewal_second_swhitch']==1){
+            return ['status' => 400, 'msg' => lang('configuration_cron_renewal_first_day_less_renewal_second_day')];//第一次续费提醒天数应大于第二次续费提醒天数
+        }
+        //逾期天数
+        $overdueday = [];
+        if($param['cron_overdue_first_swhitch']==1){
+            $overdueday[count($overdueday)] = $param['cron_overdue_first_day'];
+        }
+        if($param['cron_overdue_second_swhitch']==1){
+            $overdueday[count($overdueday)] = $param['cron_overdue_second_day'];
+        }
+        if($param['cron_overdue_third_swhitch']==1){
+            $overdueday[count($overdueday)] = $param['cron_overdue_third_day'];
+        }
+        if($param['cron_due_terminate_swhitch']==1){
+            $overdueday[count($overdueday)] = $param['cron_due_terminate_day'];
+        }
+        $overdueday_sort = $overdueday;
+        sort($overdueday_sort);
+        $overdueday_array_diff=array_diff_assoc($overdueday,$overdueday_sort);
+        if(!empty($overdueday_array_diff)){
+            return ['status' => 400, 'msg' => lang('configuration_cron_overdue_day_less_terminate_day')];//第一次逾期提醒天数应小于第二次逾期提醒天数小于第三次逾期提醒天数小于产品到期删除天数
+        }
+        # 日志
+        $description = [];
+        $systemList = $this->cronList();
+        $desc = array_diff_assoc($param,$systemList);
+        foreach($desc as $k=>$v){
+            $lang = '"'.lang("configuration_log_".str_replace('day','swhitch',$k)).'"';
+            $unit = '';
+            if($k=='cron_ticket_close_day'){
+                $unit = lang("configuration_log_cron_due_hour");
+            }else{
+                $unit = lang("configuration_log_cron_due_day");
+            }
+
+            if(strpos($k,'swhitch')>0){
+                $lang_old = lang("configuration_log_switch_{$systemList[$k]}");
+                $lang_new = lang("configuration_log_switch_{$v}");
+            }else{
+                $lang_old = $systemList[$k].$unit;
+                $lang_new = $v.$unit;
+            }
+            $description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
+        }
+        $description = implode(',', $description);
+        $this->startTrans();
+        try {
+
+            foreach($this->config['cron'] as $v){
+                $list[] = [
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+            # 记录日志
+            if($description)
+                active_log(lang('admin_configuration_cron', ['{admin}'=>request()->admin_name, '{description}'=>$description]), 'admin', request()->admin_id);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+    /**
+     * 时间 2022-5-10
+     * @title 默认发送设置
+     * @desc 默认发送设置
+     * @author xiong
+     * @version v1
+     * @return  string send_sms - 默认短信发送国内接口
+     * @return  string send_sms_global - 默认短信发送国际接口
+     * @return  string send_email - 默认邮件信发送接口
+     */
+    public function sendList()
+    {
+        $configuration = $this->index();
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['send'])){
+                $data[$v['setting']] = (string)$v['value'];
+            }
+        }
+        return $data;
+    }
     /**
      * 时间 2022-05-10
      * @title 默认发送设置
      * @desc 默认发送设置
      * @author xiong
      * @version v1
-	 * @param  string send_sms - 默认短信发送国内接口
-	 * @param  string send_sms_global - 默认短信发送国际接口
-	 * @param  string send_email - 默认邮件信发送接口
+     * @param  string send_sms - 默认短信发送国内接口
+     * @param  string send_sms_global - 默认短信发送国际接口
+     * @param  string send_email - 默认邮件信发送接口
      * @return int status - 状态码,200成功,400失败
-     * @return string msg - 提示信息	 
+     * @return string msg - 提示信息
      */
-	public function sendUpdate($param)
-	{
+    public function sendUpdate($param)
+    {
 
-		$this->startTrans();
-		try {
-			foreach($this->config['send'] as $v){
-				$list[] = [
-					'setting'=>$v,
-					'value'=>$param[$v],
-				];
-			}			
-	    	$this->saveAll($list);
+        $this->startTrans();
+        try {
+            foreach($this->config['send'] as $v){
+                $list[] = [
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
 
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
-	}
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
 
-	/**
+    /**
      * 时间 2022-08-12
      * @title 获取主题设置
      * @desc 获取主题设置
@@ -679,26 +684,26 @@ class ConfigurationModel extends Model
     {
         $configuration = $this->index();
         $data = [
-        	'admin_theme' => '',
-        	'clientarea_theme' => '',
-        	'admin_theme_list' => [],
-        	'clientarea_theme_list' => [],
+            'admin_theme' => '',
+            'clientarea_theme' => '',
+            'admin_theme_list' => [],
+            'clientarea_theme_list' => [],
         ];
-		foreach($configuration as $v){
-			if(in_array($v['setting'], $this->config['theme'])){				
-				$data[$v['setting']] = (string)$v['value'];				
-			}
-		}
-		$domain = request()->domain();
-		$adminThemeList = get_files(IDCSMART_ROOT . 'public/'. DIR_ADMIN .'/template');
-		foreach ($adminThemeList as $key => $value) {
-			$data['admin_theme_list'][] = ['name' => $value, 'img' => $domain . '/'. DIR_ADMIN .'/template/'.$value.'/theme.jpg'];
-		}
-		$clientareaThemeList = get_files(IDCSMART_ROOT . 'public/clientarea/template');
-		foreach ($clientareaThemeList as $key => $value) {
-			$data['clientarea_theme_list'][] = ['name' => $value, 'img' => $domain . '/clientarea/template/'.$value.'/theme.jpg'];
-		}
-		return $data;
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['theme'])){
+                $data[$v['setting']] = (string)$v['value'];
+            }
+        }
+        $domain = request()->domain();
+        $adminThemeList = get_files(IDCSMART_ROOT . 'public/'. DIR_ADMIN .'/template');
+        foreach ($adminThemeList as $key => $value) {
+            $data['admin_theme_list'][] = ['name' => $value, 'img' => $domain . '/'. DIR_ADMIN .'/template/'.$value.'/theme.jpg'];
+        }
+        $clientareaThemeList = get_files(IDCSMART_ROOT . 'public/clientarea/template');
+        foreach ($clientareaThemeList as $key => $value) {
+            $data['clientarea_theme_list'][] = ['name' => $value, 'img' => $domain . '/clientarea/template/'.$value.'/theme.jpg'];
+        }
+        return $data;
     }
 
     /**
@@ -710,34 +715,34 @@ class ConfigurationModel extends Model
      * @param string param.admin_theme - 后台主题 required
      * @param string param.clientarea_theme - 会员中心主题 required
      * @return int status - 状态码,200成功,400失败
-     * @return string msg - 提示信息	 
+     * @return string msg - 提示信息
      */
     public function themeUpdate($param)
     {
-    	$adminThemeList = get_files(IDCSMART_ROOT . 'public/admin/template');
-    	$clientareaThemeList = get_files(IDCSMART_ROOT . 'public/clientarea/template');
+        $adminThemeList = get_files(IDCSMART_ROOT . 'public/admin/template');
+        $clientareaThemeList = get_files(IDCSMART_ROOT . 'public/clientarea/template');
 
-    	if(!in_array($param['admin_theme'], $adminThemeList)){
-    		return ['status' => 400, 'msg' => lang('configuration_theme_admin_theme_cannot_error')];
-    	}
-    	if(!in_array($param['clientarea_theme'], $clientareaThemeList)){
-    		return ['status' => 400, 'msg' => lang('configuration_theme_clientarea_theme_cannot_error')];
-    	}
+        if(!in_array($param['admin_theme'], $adminThemeList)){
+            return ['status' => 400, 'msg' => lang('configuration_theme_admin_theme_cannot_error')];
+        }
+        if(!in_array($param['clientarea_theme'], $clientareaThemeList)){
+            return ['status' => 400, 'msg' => lang('configuration_theme_clientarea_theme_cannot_error')];
+        }
         $this->startTrans();
-		try {
-			foreach($this->config['theme'] as $v){
-				$list[] = [
-					'setting'=>$v,
-					'value'=>$param[$v],
-				];
-			}			
-	    	$this->saveAll($list);
-	        $this->commit();
-		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
-		    return ['status' => 400, 'msg' => lang('update_fail')];
-		}
-		return ['status' => 200, 'msg' => lang('update_success')];
+        try {
+            foreach($this->config['theme'] as $v){
+                $list[] = [
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
     }
 }

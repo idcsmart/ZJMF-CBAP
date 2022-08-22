@@ -84,7 +84,7 @@
             username: [{ required: true, message: lang.input + lang.name, type: 'error' }],
             password: [
               { required: true, message: lang.input + lang.password, type: 'error' },
-              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '6~32' + '，' + lang.verify14 , type: 'warning' }
+              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '6~32' + '，' + lang.verify14, type: 'warning' }
             ],
             repassword: [
               { required: true, message: lang.input + lang.surePassword, type: 'error' },
@@ -96,7 +96,8 @@
           delId: '',
           curStatus: 1,
           statusTip: '',
-          maxHeight: ''
+          maxHeight: '',
+          authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth')))
         }
       },
       mounted () {
@@ -114,18 +115,22 @@
         }
       },
       created () {
+        // 权限相关
+        if (!this.authList.includes('ClientController::clientList')) {
+          return this.$message.error(lang.tip17 + ',' + lang.tip18)
+        }
         this.getClientList()
         this.getCountry()
       },
       methods: {
         // 输入邮箱的时候取消手机号验证
-        cancelPhone(val){
-          if(val){
+        cancelPhone (val) {
+          if (val) {
             this.$refs.userDialog.clearValidate(['phone'])
           }
         },
-        cancelEmail(val){
-          if(val){
+        cancelEmail (val) {
+          if (val) {
             this.$refs.userDialog.clearValidate(['email'])
           }
         },

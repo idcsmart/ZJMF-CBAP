@@ -48,6 +48,7 @@ class SmsTemplateModel extends Model
      * @version v1
      * @param string param.name - 短信接口标识名称 required
      * @param int param.id - 短信模板id required
+     * @return string id - ID 
      * @return string template_id - 模板ID 
      * @return string type - 模板类型（0大陆，1国际）
      * @return string title - 模板标题 
@@ -57,7 +58,7 @@ class SmsTemplateModel extends Model
      */
     public function indexSmsTemplate($param)
     {
-        $sms_template = $this->field('template_id,type,title,content,notes,status')
+        $sms_template = $this->field('id,template_id,type,title,content,notes,status')
 		->where('id',$param['id'])
 		->where('sms_name',$param['name'])
 		->select()
@@ -69,8 +70,8 @@ class SmsTemplateModel extends Model
     }  
 	/**
      * 时间 2022-05-17
-     * @title 获取单个短信模板
-     * @desc 获取单个短信模板
+     * @title 更新短信模板状态
+     * @desc 更新短信模板状态
      * @author xiong
      * @version v1
      * @param string param.name - 短信接口标识名称 required
@@ -98,7 +99,7 @@ class SmsTemplateModel extends Model
 			if($sms_methods['status'] == 'success'){
 				$this->update([
 					'status' => $sms_methods['template']['template_status'],
-					'error' => !empty($sms_methods['msg'])?:'', 
+					'error' => !empty($sms_methods['msg'])?$sms_methods['msg']:'',
 					'update_time' => time()
 				], ['id' => $template['id']]);
 			}

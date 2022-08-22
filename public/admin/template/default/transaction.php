@@ -26,7 +26,8 @@
         {{currency_prefix}}&nbsp;{{row.amount}}<span v-if="row.billing_cycle">/</span>{{row.billing_cycle}}
       </template>
       <template #order_id="{row}">
-        <span v-if="row.order_id" class="aHover" @click="rowClick(row)">{{row.order_id}}</span> 
+        <span v-if="row.order_id!==0" @click="rowClick(row)" class="aHover">{{row.order_id}}</span>
+        <span v-else>--</span>
       </template>
       <template #create_time="{row}">
         <span>{{moment(row.create_time * 1000).format('YYYY-MM-DD HH:mm')}}</span>

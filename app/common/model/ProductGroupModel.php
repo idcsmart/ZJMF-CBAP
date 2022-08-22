@@ -131,6 +131,8 @@ class ProductGroupModel extends Model
             return ['status'=>400,'msg'=>lang('create_fail')];
         }
 
+        hook('after_product_group_create',['id'=>$productGroup->id,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('create_success')];
     }
 
@@ -166,6 +168,8 @@ class ProductGroupModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('update_fail')];
         }
+
+        hook('after_product_group_edit',['id'=>$productGroup->id,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('update_success')];
     }
@@ -210,6 +214,8 @@ class ProductGroupModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('delete_fail')];
         }
+
+        hook('after_product_group_delete',['id'=>$id]);
 
         return ['status'=>200,'msg'=>lang('delete_success')];
     }

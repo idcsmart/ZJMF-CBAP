@@ -12,8 +12,8 @@
   <t-card class="list-card-container">
     <div class="com-h-box">
       <ul class="common-tab">
-        <li :href="`client_detail.html?id=${id}`">
-          <a>{{lang.personal}}</a>
+        <li>
+          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
         </li>
         <li>
           <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>

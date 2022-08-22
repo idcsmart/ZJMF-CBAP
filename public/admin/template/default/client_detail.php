@@ -11,7 +11,7 @@
     <span class="cur">{{lang.personal}}</span>
   </div>
   <t-card class="list-card-container" :class="{ stop: data.status===0}">
-    <div class="h-box">
+    <div class="com-h-box">
       <ul class="common-tab">
         <li class="active">
           <a>{{lang.personal}}</a>
@@ -73,7 +73,7 @@
               </t-form-item>
               <t-form-item :label="lang.country" name="country">
                 <t-select v-model="formData.country" filterable style="width: 100%" :placeholder="lang.country">
-                  <t-option v-for="item in country" :value="item.name_zh" :label="item.name_zh" :key="item.name">
+                  <t-option v-for="item in country" :value="item.name" :label="item.name_zh" :key="item.name">
                   </t-option>
                 </t-select>
               </t-form-item>
@@ -88,8 +88,8 @@
             </div>
             <div class="item">
               <t-form-item :label="lang.language" name="language">
-                <t-select v-model="formData.language || 'CN'" :placeholder="lang.select+lang.language">
-                  <t-option v-for="item in langList" :value="item.display_flag" :label="item.display_name" :key="item.display_flag">
+                <t-select v-model="formData.language" :placeholder="lang.select+lang.language">
+                  <t-option v-for="item in langList" :value="item.display_lang" :label="item.display_name" :key="item.display_lang">
                   </t-option>
                 </t-select>
               </t-form-item>
@@ -106,12 +106,21 @@
         <t-col :xs="12" :xl="6">
           <p class="com-tit"><span>{{lang.financial_info}}</span></p>
           <div class="header-btn">
-            <t-button theme="primary" @click="changeMoney('recharge')">{{lang.add_money}}</t-button>
-            <t-button theme="default" @click="changeMoney('deduction')">{{lang.sub_money}}</t-button>
-            <div class="com-transparent change_log" @click="changeLog">
+            <!-- <template v-if="authList.includes('ClientCreditController::update')">
+              <t-button theme="primary" @click="changeMoney('recharge')">{{lang.add_money}}</t-button>
+              <t-button theme="default" @click="changeMoney('deduction')">{{lang.sub_money}}</t-button>
+            </template> -->
+            <!-- 充值按钮 -->
+            <t-button theme="primary" @click="showRecharge">{{lang.Recharge}}</t-button>
+            <!-- 强制变更 -->
+            <template v-if="authList.includes('ClientCreditController::update')">
+              <t-button theme="primary" @click="changeMoney('recharge')">{{lang.force_change}}</t-button>
+            </template>
+            <div class="com-transparent change_log" @click="changeLog" v-if="authList.includes('ClientCreditController::clientCreditList')">
               <t-button theme="primary">{{lang.change_log}}</t-button>
               <span class="txt">{{lang.change_log}}</span>
             </div>
+
           </div>
           <t-row :gutter="{ xs: 0, xxl: 30 }" class="dis-box">
             <t-col :xs="12" :xl="3">
@@ -172,20 +181,47 @@
     </div>
     <!-- 底部操作按钮 -->
     <div class="footer-btn">
-      <t-button theme="primary" @click="updateUserInfo" type="submit">{{lang.hold}}</t-button>
-      <div class="com-transparent" @click="changeStatus">
+      <t-button theme="primary" @click="updateUserInfo" type="submit" v-if="authList.includes('ClientController::update')">{{lang.hold}}</t-button>
+      <div class="com-transparent" @click="changeStatus" v-if="authList.includes('ClientController::status')">
         <t-button theme="primary" variant="base">
           <span>{{data.status===0 ? lang.enable :lang.deactivate}}</span>
         </t-button>
         <span class="txt">{{data.status===0 ? lang.enable : lang.deactivate}}</span>
       </div>
-      <t-button theme="default" variant="base" @click="deleteUser">{{lang.delete}}</t-button>
-      <t-button theme="primary" type="submit" @click="loginByUser" :disabled="!data.status">{{lang.login_as_user}}</t-button>
+      <t-button theme="default" variant="base" @click="deleteUser" v-if="authList.includes('ClientController::delete')">{{lang.delete}}</t-button>
+      <t-button theme="primary" type="submit" @click="loginByUser">{{lang.login_as_user}}</t-button>
     </div>
   </t-card>
+  <!-- 充值弹窗 -->
+  <t-dialog :visible.sync="visibleRecharge" :header="lang.Recharge" :footer="false" @close="closeRechorge">
+    <t-form :data="rechargeData" :rules="rechargeRules" ref="rechargeRef" :label-width="80" @submit="confirmRecharge" v-if="visibleRecharge">
+      <!-- 支付方式 -->
+      <t-form-item :label="lang.pay_way" name="gateway">
+        <t-select v-model="rechargeData.gateway" filterable style="width: 100%" :placeholder="lang.select+lang.pay_way">
+          <t-option v-for="item in gatewayList" :value="item.name" :label="item.title" :key="item.id">
+          </t-option>
+        </t-select>
+      </t-form-item>
+      <!-- 充值金额 -->
+      <t-form-item :label="lang.Recharge+lang.money" name="amount">
+        <t-input v-model="rechargeData.amount" :placeholder="lang.input+lang.Recharge+lang.money" :label="currency_prefix">
+        </t-input>
+      </t-form-item>
+      <div class="submit-btn">
+        <t-button theme="primary" type="submit">{{lang.sure+lang.Recharge}}</t-button>
+        <t-button theme="default" variant="base" @click="closeRechorge">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
   <!-- 充值/扣费弹窗 -->
   <t-dialog :header="diaTitle" :visible.sync="visibleMoney" :footer="false" @close="closeMoney">
     <t-form :data="moneyData" :rules="moneyRules" ref="moneyRef" :label-width="80" @submit="confirmMoney" v-if="visibleMoney">
+      <t-form-item :label="lang.type" name="amount">
+        <t-select v-model="moneyData.type" :placeholder="lang.select+lang.type">
+          <t-option value="recharge" :label="lang.Recharge" key="recharge"></t-option>
+          <t-option value="deduction" :label="lang.deduction" key="deduction"></t-option>
+        </t-select>
+      </t-form-item>
       <t-form-item :label="lang.money" name="amount">
         <t-input v-model="moneyData.amount" :placeholder="lang.input+lang.money" :label="inputLabel">
         </t-input>

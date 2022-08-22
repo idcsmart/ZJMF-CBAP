@@ -24,7 +24,7 @@
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col :xs="12" :xl="3" :md="6">
             <t-form-item name="currency_suffix" :label="lang.currency_suffix">
-              <t-input v-model="formData.currency_suffix" :placeholder="lang.input+lang.currency_code">
+              <t-input v-model="formData.currency_suffix" :placeholder="lang.input+lang.currency_suffix">
               </t-input>
             </t-form-item>
           </t-col>
@@ -38,9 +38,35 @@
               <span class="tip">{{lang.tip6}}</span>
             </t-form-item>
           </t-col>
+        </t-row>
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col :xs="12" :xl="3" :md="6">
-            <t-form-item name="recharge_min" :label="lang.recharge_min">
-              <t-input v-model="formData.recharge_min" :placeholder="lang.input+lang.recharge_min">
+            <t-form-item name="recharge_min" :label="lang.recharge_min" :rules="[
+                    { validator: checkMin},
+                    { required: true, message: lang.input + lang.recharge_min, type: 'error' },
+                    {
+                      pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify4, type: 'warning'
+                    },
+                    {
+                      validator: (val) => val > 0, message: lang.verify4, type: 'warning'
+                    }
+                    ]">
+              <t-input v-model="formData.recharge_min" :placeholder="lang.input+lang.recharge_min" @change="changeMoney">
+              </t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="recharge_max" :label="lang.recharge_max" :rules="[
+                    { validator: checkMax},
+                    { required: true, message: lang.input + lang.recharge_min, type: 'error' },
+                    {
+                      pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify4, type: 'warning'
+                    },
+                    {
+                      validator: (val) => val > 0, message: lang.verify4, type: 'warning'
+                    }
+                    ]">
+              <t-input v-model="formData.recharge_max" :placeholder="lang.input+lang.recharge_max" @change="changeMoney">
               </t-input>
             </t-form-item>
           </t-col>

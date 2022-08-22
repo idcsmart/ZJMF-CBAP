@@ -5,6 +5,7 @@ use think\db\Where;
 use think\Model;
 use app\admin\model\PluginModel;
 use app\common\logic\ModuleLogic;
+use app\common\model\NoticeSettingModel;
 
 /**
  * @title 订单模型
@@ -338,6 +339,7 @@ class OrderModel extends Model
                 ];
                 $id = $this->createOrderBase($param);
 
+                hook('after_order_create',['id'=>$id,'customfield'=>$param['customfield']??[]]);
                 # 记录日志
                 active_log(lang('admin_create_artificial_order', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{order}'=>'#'.$id]), 'order', $id);
                 $this->commit();
@@ -721,6 +723,9 @@ class OrderModel extends Model
                 'notes' => '',
                 'create_time' => $time,
             ]);
+
+            hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
             if($amount<=0){
                 // 获取接口
                 if($product['type']=='server_group'){
@@ -772,7 +777,7 @@ class OrderModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
-        hook('after_order_create',['id'=>$order->id]);
+
         return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['id' => $order->id]];
 
 
@@ -848,6 +853,9 @@ class OrderModel extends Model
                 'notes' => '',
                 'create_time' => $time,
             ]);
+
+            hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
             if($amount<=0){
                 
                 $ModuleLogic = new ModuleLogic();
@@ -880,7 +888,7 @@ class OrderModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
-        hook('after_order_create',['id'=>$order->id]);
+
         return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['id' => $order->id]];
 
 
@@ -1143,8 +1151,12 @@ class OrderModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function deleteOrder($id, $delete_host = 1)
+    public function deleteOrder($param)
     {
+        $id = $param['id']??0;
+
+        $delete_host = $param['delete_host']??1;
+
         // 验证订单ID
         $order = $this->find($id);
         if (empty($order)){
@@ -1185,6 +1197,9 @@ class OrderModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => lang('delete_fail')];
         }
+
+        hook('after_order_delete',['id'=>$id]);
+
         return ['status' => 200, 'msg' => lang('delete_success')];
     }
 
@@ -1281,7 +1296,7 @@ class OrderModel extends Model
     {
         $HostModel = new HostModel();
         $host = $HostModel->alias('h')
-            ->field('h.status,h.billing_cycle,h.billing_cycle_time,p.auto_setup')
+            ->field('h.status,h.billing_cycle,h.billing_cycle_time,p.auto_setup,p.creating_notice_sms,p.creating_notice_mail')
             ->leftjoin('product p','h.product_id=p.id')
             ->where('h.id',$id)
             ->find();
@@ -1316,14 +1331,28 @@ class OrderModel extends Model
 
         # 开通
         if($host->auto_setup==1){
-			add_task([
-				'type' => 'email',
-				'description' => '产品开通中,发送邮件',
-				'task_data' => [
-					'name'=>'host_pending',//发送动作名称
-					'host_id'=>$id,//主机ID
-				],		
-			]);
+            $host_pending = (new NoticeSettingModel())->indexSetting('host_pending');
+            if($host_pending['sms_enable']==1){
+                add_task([
+                    'type' => 'sms',
+                    'description' => '产品开通中,发送短信',
+                    'task_data' => [
+                        'name'=>'host_pending',//发送动作名称
+                        'host_id'=>$id,//主机ID
+                    ],      
+                ]);
+            }
+            if($host_pending['email_enable']==1){
+                add_task([
+                    'type' => 'email',
+                    'description' => '产品开通中,发送邮件',
+                    'task_data' => [
+                        'name'=>'host_pending',//发送动作名称
+                        'host_id'=>$id,//主机ID
+                    ],      
+                ]);
+            }
+			
 			add_task([
 				'type' => 'host_create',
 				'description' => '主机创建',

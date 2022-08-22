@@ -397,7 +397,7 @@ class IdcsmartTicketModel extends Model
 
             # 记录日志
             if ($this->isAdmin){
-                active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','content'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
+                active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','{content}'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
 				//管理员回复工单短信添加到任务队列
 				add_task([
 					'type' => 'sms',
@@ -423,7 +423,7 @@ class IdcsmartTicketModel extends Model
 					],		
 				]);
             }else{
-                active_log(lang_plugins('ticket_log_client_reply_ticket', ['{client}'=>'client#'.get_client_id() .'#' .request()->client_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','content'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
+                active_log(lang_plugins('ticket_log_client_reply_ticket', ['{client}'=>'client#'.get_client_id() .'#' .request()->client_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','{content}'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
             }
 			
             $this->commit();

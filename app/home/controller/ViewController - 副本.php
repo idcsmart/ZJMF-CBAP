@@ -69,7 +69,12 @@ class ViewController extends HomeBaseController
 						Db::name('task')->where('id',54)->data($task_update)->update();
 	    
 	    exit('zzzz');*/
-		
+				$task_wait = $task_wait = Db::name('task')->where('id',5048)->find();
+		$task_data = json_decode($task_wait['task_data'],true);
+	    //echo "<pre>";	var_dump($task_data);exit;
+		$send_result = (new SmsLogic)->send($task_data);
+		echo "<pre>";var_dump($send_result);
+		exit('111');  
 		$task_wait = Db::name('task_wait')->where('id',3174)->select()->toArray();//取10条数据	
 		if($task_wait){
 			foreach($task_wait as $v){

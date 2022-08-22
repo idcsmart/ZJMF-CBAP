@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\common\model\ClientCreditModel;
 use app\admin\validate\ClientCreditValidate;
+use app\common\model\OrderTmpModel;
 
 /**
  * @title 用户余额管理
@@ -94,4 +95,29 @@ class ClientCreditController extends AdminBaseController
 
         return json($result);
 	}
+
+    /**
+     * 时间 2022-05-24
+     * @title 充值
+     * @desc 充值
+     * @author wyh
+     * @version v1
+     * @url /admin/v1/client/:id/recharge
+     * @method  post
+     * @param int client_id 1 用户ID
+     * @param float amount 1.00 金额
+     * @param string gateway WxPay 支付方式
+     */
+    public function recharge()
+    {
+        $param = $this->request->param();
+
+        $OrderTmpModel = new OrderTmpModel();
+
+        $OrderTmpModel->isAdmin = true;
+
+        $result = $OrderTmpModel->recharge($param);
+
+        return json($result);
+    }
 }	

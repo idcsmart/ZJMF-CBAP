@@ -161,11 +161,11 @@
       <!-- aside menu -->
       <t-menu :theme="formData.mode" :value="curValue" :collapsed="collapsed" :expanded="expanded" @expand="expanded = $event">
         <div v-for="(item,index) in navList" :key="index">
-          <t-menu-item :value="item.id" v-if="!item.child">
+          <t-menu-item :value="item.id" v-if="!item.child" @click="jumpHandler(item)">
             <template #icon>
               <t-icon :name="item.icon" />
             </template>
-            <span @click="jumpHandler(item.url)">{{item.name}}</span>
+            <span>{{item.name}}</span>
           </t-menu-item>
           <t-submenu :value="item.id" mode="popup" v-else>
             <template #icon>

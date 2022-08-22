@@ -100,7 +100,7 @@ class IdcsmartRenew extends Plugin
             return false;
         }
 
-        # 升降级订单,删除续费订单
+        # 当为升降级订单时,删除未支付续费订单
         if ($order['type'] == 'upgrade'){
             $renewOrderIds = $OrderModel->where('client_id',$order->client_id)
                 ->where('type','renew')

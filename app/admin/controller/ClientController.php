@@ -209,7 +209,7 @@ class ClientController extends AdminBaseController
         $ClientModel = new ClientModel();
         
         // 删除用户
-        $result = $ClientModel->deleteClient($param['id']);
+        $result = $ClientModel->deleteClient($param);
 
         return json($result);
 

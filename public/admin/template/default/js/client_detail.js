@@ -5,7 +5,7 @@
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
     new Vue({
-      data () {
+      data() {
         return {
           id: '', // 用户id
           data: [],
@@ -48,7 +48,7 @@
             country: '',
             address: '',
             company: '',
-            language: '',
+            language: 'zh-cn',
             notes: '',
             password: ''
           },
@@ -73,7 +73,7 @@
               }
             ],
             password: [
-              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8  + '6~32' + '，' + lang.verify14, type: 'warning' }
+              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '6~32' + '，' + lang.verify14, type: 'warning' }
             ],
           },
           visibleMoney: false,
@@ -158,11 +158,36 @@
             limit: 1000,
             orderby: 'id',
             sort: 'desc'
-          }
+          },
+          website_url: '',
+          authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth'))),
+          // 充值相关开始
+          // 是否显示充值弹窗
+          visibleRecharge: false,
+          // 充值弹窗数据
+          rechargeData: {
+            gateway: '',
+            amount: ''
+          },
+          // 充值弹窗提交验证
+          rechargeRules: {
+            amount: [
+              { required: true, message: lang.input + lang.money, type: 'error' },
+              {
+                pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'
+              },
+              {
+                validator: val => val > 0, message: lang.verify5, type: 'warning'
+              }
+            ],
+          },
+          // 支付方式列表
+          gatewayList: []
+          // 充值相关结束
         }
       },
       computed: {
-        inputLabel () {
+        inputLabel() {
           if (this.moneyData.type === 'recharge') {
             return this.currency_prefix
           } else {
@@ -170,7 +195,8 @@
           }
         }
       },
-      created () {
+      created() {
+        localStorage.setItem('curValue', 2)
         const query = location.href.split('?')[1].split('&')
         this.moneyData.id = this.id = Number(this.getQuery(query[0]))
         this.langList = JSON.parse(localStorage.getItem('common_set')).lang_home
@@ -178,25 +204,38 @@
         this.getCountry()
         // 获取用户列表
         this.getClintList()
+        this.getSystemOption()
+        // 获取支付方式列表
+        this.getGatewayList()
       },
       methods: {
+        // 获取后台配置的路径
+        async getSystemOption() {
+          try {
+            const res = await getSystemOpt()
+            this.website_url = res.data.data.website_url
+          } catch (error) {
+          }
+        },
         // 以用户登录
-        async loginByUser () {
+        async loginByUser() {
           try {
             const res = await loginByUserId(this.id)
             localStorage.setItem('jwt', res.data.data.jwt)
-            const url = '/reactmember/#/'
+            // const url = '/reactmember/#/'
+            const url = this.website_url
             const newPage = window.open('', '_blank')
             newPage.location = url
           } catch (error) {
+            console.log(error)
             this.$message.error(error.data.msg)
           }
         },
-        changeUser (id) {
+        changeUser(id) {
           this.id = id
           location.href = `client_detail.html?client_id=${this.id}`
         },
-        async getClintList () {
+        async getClintList() {
           try {
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
@@ -209,14 +248,14 @@
             console.log(error.data.msg)
           }
         },
-        getQuery (val) {
+        getQuery(val) {
           return val.split('=')[1]
         },
         // 删除用户
-        deleteUser () {
+        deleteUser() {
           this.delVisible = true
         },
-        async sureDelUser () {
+        async sureDelUser() {
           try {
             const res = await deleteClient(this.id)
             this.delVisible = false
@@ -230,11 +269,11 @@
           }
         },
         // 启用/停用
-        changeStatus () {
+        changeStatus() {
           this.statusVisble = true
           this.statusTip = this.data.status ? lang.sure_Close : lang.sure_Open
         },
-        async sureChange () {
+        async sureChange() {
           try {
             const params = {
               status: this.data.status === 1 ? 0 : 1
@@ -248,18 +287,61 @@
           }
         },
         // 充值/扣费
-        changeMoney (type) {
-          this.moneyData.type = type
+        changeMoney() {
+          this.moneyData.type = 'recharge'
           this.moneyData.amount = ''
           this.moneyData.notes = ''
-          if (type === 'recharge') {
-            this.diaTitle = lang.add_money
-          } else {
-            this.diaTitle = lang.sub_money
-          }
           this.visibleMoney = true
         },
-        async confirmMoney ({ validateResult, firstError }) {
+        // 充值相关开始
+        // 显示充值弹窗
+        showRecharge() {
+          // 初始化充值数据
+          this.rechargeData.gateway = this.gatewayList[0].name
+          this.rechargeData.amount = ''
+          this.visibleRecharge = true
+        },
+        // 取消充值
+        closeRechorge() {
+          this.visibleRecharge = false
+        },
+        // 充值提交
+        confirmRecharge({ validateResult, firstError }) {
+          if (validateResult === true) {
+            // 调用充值接口
+            const params = {
+              client_id: this.id,
+              amount: Number(this.rechargeData.amount),
+              gateway: this.rechargeData.gateway
+            }
+            recharge(params).then(res => {
+              if (res.data.status === 200) {
+                this.$message.success(res.data.msg)
+                // 关闭弹窗
+                this.visibleRecharge = false
+                // 刷新余额
+                this.getUserDetail()
+              }
+            }).catch(error => {
+              this.$message.error(error.data.msg)
+            })
+          } else {
+            this.$message.warning(firstError);
+          }
+        },
+        // 获取充值列表
+        getGatewayList() {
+          getPayList().then(res => {
+            if (res.data.status === 200) {
+              this.gatewayList = res.data.data.list
+            }
+          })
+        },
+
+
+        // 充值相关结束
+
+        async confirmMoney({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const res = await updateClientDetail(this.id, this.moneyData)
@@ -274,7 +356,7 @@
             this.$message.warning(firstError);
           }
         },
-        closeMoney () {
+        closeMoney() {
           this.visibleMoney = false
           this.moneyData.amount = ''
           this.moneyData.notes = ''
@@ -282,12 +364,12 @@
           this.$refs.moneyRef && this.$refs.moneyRef.reset()
         },
         // 变更记录
-        changeLog () {
+        changeLog() {
           this.visibleLog = true
           this.getChangeLog()
         },
         // 获取变更记录列表
-        async getChangeLog () {
+        async getChangeLog() {
           try {
             this.moneyLoading = true
             const res = await getMoneyDetail(this.id, this.moneyPage)
@@ -299,11 +381,11 @@
             this.$message.error(error.data.msg)
           }
         },
-        closeLog () {
+        closeLog() {
           this.visibleLog = false
         },
         // 提交修改用户信息
-        updateUserInfo () {
+        updateUserInfo() {
           this.$refs.userInfo.validate().then(async res => {
             if (res !== true) {
               this.$message.error(res.name[0].message)
@@ -323,13 +405,13 @@
           })
         },
         // 金额变更分页
-        changePage (e) {
+        changePage(e) {
           this.moneyPage.page = e.current
           this.moneyPage.limit = e.pageSize
           this.getChangeLog()
         },
         // 获取用户详情
-        async getUserDetail () {
+        async getUserDetail() {
           try {
             const res = await getClientDetail(this.id)
             const temp = res.data.data.client
@@ -347,14 +429,15 @@
           }
         },
         // 获取国家列表
-        async getCountry () {
+        async getCountry() {
           try {
             const res = await getCountry()
             this.country = res.data.data.list
           } catch (error) {
             this.$message.error(error.data.msg)
           }
-        }
+        },
+
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

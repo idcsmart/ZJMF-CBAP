@@ -87,20 +87,6 @@
 .client-detail .header-btn .com-transparent:first-child {
   margin-left: 0;
 }
-.client-detail .h-box {
-  position: relative;
-}
-.client-detail .h-box .user {
-  position: absolute;
-  width: 300px;
-  right: 0;
-  top: 0;
-  height: 50px;
-  line-height: 50px;
-}
-.client-detail .h-box .user .t-select {
-  width: 100%;
-}
 /* transaction */
 .transaction .t-table__tree-op-icon {
   display: none;
@@ -142,7 +128,7 @@
   color: var(--td-text-color-placeholder);
 }
 .client-order .child {
-  margin-left: -28px;
+  margin-left: -20px;
 }
 .client-order .host-name {
   color: #b1b1bc;
@@ -260,6 +246,7 @@
 }
 .create-order .price .t-form__controls-content .t-popup {
   width: 100%;
+  transform: translate(0, 0) !important;
 }
 .create-order .price .t-form__controls-content .t-popup__content {
   height: 300px;
@@ -302,7 +289,7 @@
   color: var(--td-text-color-placeholder);
 }
 .order .child {
-  margin-left: -28px;
+  margin-left: -20px;
 }
 .order .host-name {
   color: #b1b1bc;
@@ -345,4 +332,7 @@
 }
 .host-detail textarea {
   height: 70px;
+}
+.com-no-child {
+  margin-left: 5px !important;
 }

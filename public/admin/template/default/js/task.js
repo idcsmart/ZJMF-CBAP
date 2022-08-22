@@ -13,6 +13,7 @@
           visible: false,
           delVisible: false,
           hover: true,
+          urlPath: url,
           columns: [
             {
               colKey: 'id',
@@ -66,10 +67,10 @@
             keywords: ''
           },
           statusOpt: [
-            { value: 'Wait', label: window.lang.Wait },
-            { value: 'Exec', label: window.lang.Exec },
-            { value: 'Finish', label: window.lang.Finish },
-            { value: 'Failed', label: window.lang.Failed },
+            { value: 'Wait', label: lang.Wait },
+            { value: 'Exec', label: lang.Exec },
+            { value: 'Finish', label: lang.Finish },
+            { value: 'Failed', label: lang.failed },
           ],
           maxHeight: ''
         }

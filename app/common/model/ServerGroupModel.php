@@ -161,6 +161,8 @@ class ServerGroupModel extends Model
             return ['status'=>400, 'msg'=>lang('create_fail')];
         }
 
+        hook('after_server_group_create',['id'=>$serverGroup->id,'customfield'=>$param['customfield']??[]]);
+
         $result = [
             'status'=>200,
             'msg'=>lang('create_success'),
@@ -220,6 +222,9 @@ class ServerGroupModel extends Model
             $this->rollback();
             return ['status'=>400, 'msg'=>lang('update_fail')];
         }
+
+        hook('after_server_group_edit',['id'=>$serverGroup->id,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('update_success')];
     }
 
@@ -260,6 +265,9 @@ class ServerGroupModel extends Model
             $this->rollback();
             return ['status'=>400, 'msg'=>lang('delete_fail')];
         }
+
+        hook('after_server_group_delete',['id'=>$id]);
+
         return ['status'=>200, 'msg'=>lang('delete_success')];
     }
 

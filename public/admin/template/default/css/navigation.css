@@ -1,0 +1,52 @@
+.navigation_all {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--td-bg-color-container);
+    padding: 20px 50px;
+}
+
+.navigation_all {
+    width: 100%;
+    height: 100%;
+}
+
+.nav_radio_group {
+    width: 280px;
+    height: 40px !important;
+}
+
+.nav_radio_btn {
+    width: 140px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.new_menu_btn {
+    width: 230px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.navigation_main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-top: 13px;
+}
+
+.main_left {
+    width: 230px;
+    border: 1px solid black;
+}
+
+.main_right {
+    width: 100%;
+    margin-left: 20px;
+    border: 1px solid black;
+}

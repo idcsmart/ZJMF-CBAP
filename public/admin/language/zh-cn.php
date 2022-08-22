@@ -166,6 +166,10 @@ return [
     'auth_rule_product_server_config_option' => '选择接口获取配置',
     'auth_rule_product_config_option' => '商品配置页面',
     'auth_rule_product_config_option_price' => '修改配置计算价格',
+    'auth_rule_get_admin_menu' => '获取后台导航',
+    'auth_rule_get_home_menu' => '获取前台导航',
+    'auth_rule_save_admin_menu' => '保存后台导航',
+    'auth_rule_save_home_menu' => '保存前台导航',
 
     #权限
     'auth_user_management' => '用户管理',
@@ -175,8 +179,10 @@ return [
     'auth_user_details' => '用户详情',
     'auth_management' => '管理',
     'auth_delete' => '删除',
-    'auth_recharge_record' => '充值记录',
-    'auth_log' => '日志',
+    'auth_user_host' => '用户产品',
+    'auth_user_order' => '用户订单',
+    'auth_user_transaction' => '用户流水',
+    'auth_user_log' => '用户日志',
     'auth_business_management' => '业务管理',
     'auth_order_management' => '订单管理',
     'auth_marker_payment' => '标记支付',
@@ -205,11 +211,13 @@ return [
     'auth_email_notice' => '邮件通知',
     'auth_send_settings' => '发送设置',
     'auth_task' => '任务',
+    'auth_log' => '日志',
     'auth_system_log' => '系统日志',
     'auth_notice_log' => '通知日志',
     'auth_auto' => '自动化',
     'auth_plugin' => '插件',
     'auth_plugin_list' => '插件列表',
+    'auth_nav_management' => '导航管理',
 
     # 导航
     'nav_user_management' => '用户管理',
@@ -236,6 +244,7 @@ return [
     'nav_auto' => '自动化',
     'nav_plugin' => '插件',
     'nav_plugin_list' => '插件列表',
+    'nav_navigation' => '导航管理',
 
 
     # 日志
@@ -456,7 +465,7 @@ return [
     'configuration_website_name_cannot_exceed_255_chars' => '网站名称最多不能超过255个字符',
     'configuration_website_url' => '网站域名地址不能为空',
     'configuration_website_url_cannot_exceed_255_chars' => '网站域名地址最多不能超过255个字符',
-    'configuration_website_url_error' => '请输入有效的URL地址',
+    'configuration_website_url_error' => '请输入这样https://wwww.a.com的域名地址',
     'configuration_terms_service_url_cannot_exceed_255_chars' => '服务条款地址最多不能超过255个字符',
 	# 登录设置
     'configuration_log_register_phone' =>'手机是否支持注册',
@@ -471,7 +480,7 @@ return [
     'configuration_login_phone_verify_cannot_empty' => '手机号登录短信验证开关不能为空',
     'configuration_login_phone_verify' => '手机号登录短信验证开关值只能是1或0',
 	# 安全设置
-    'configuration_log_rcaptcha_client_register' =>'新用户注册启用图形验证码',
+    'configuration_log_captcha_client_register' =>'新用户注册启用图形验证码',
     'configuration_log_captcha_client_login' =>'用户登录启用图形验证码',
     'configuration_log_captcha_admin_login' =>'后台系统登录启用图形验证码',
     'configuration_log_captcha_client_login_error' =>'客户登录失败时验证码',
@@ -507,6 +516,7 @@ return [
 	'configuration_recharge_open_cannot_empty' => '启用充值开关不能为空',
 	'configuration_recharge_open' => '启用充值开关值只能是1或0',
 	'configuration_recharge_min_float' => '单笔最小金额必须大于零的数字',
+	'configuration_recharge_max_egt_recharge_min' => '单笔最大金额大于等于单笔最小金额',
 	# 定时任务设置
     'configuration_log_cron_due_suspend_swhitch' =>'产品暂停',
     'configuration_log_cron_due_unsuspend_swhitch' =>'产品解除暂停',
@@ -589,6 +599,8 @@ return [
     'plugin_uninstall_success' => '插件卸载成功',
     'plugin_uninstall_fail' => '插件卸载失败',
     'plugin_uninstall_pre_fail' => '插件预卸载失败',
+    'plugin_uninstall_cannot' => '默认插件不能卸载',
+    'plugin_disabled_cannot' => '默认插件不能禁用',
 
     # 商品与商品分组
     'product_group_is_not_exist' => '商品分组不存在',
@@ -807,4 +819,6 @@ return [
     'download_failed' => '下载压缩包失败',
     'upgrade_download_not_exist' => '当前不存在升级下载任务',
 
+    # 导航管理
+    'nav_is_not_exist' => '默认导航不存在',
 ];

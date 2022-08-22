@@ -36,7 +36,7 @@
           serverGroupList: [],
           rules: {},
           curList: [],
-          content: ''
+          content: '',
         }
       },
       watch: {
@@ -46,18 +46,21 @@
             this.curList = val === 'server' ? this.serverList : this.serverGroupList
           }
         },
-        'formData.rel_id': {
-          immediate: true,
-          handler (val) {
-            if (val) {
-              this.chooseId()
-            }
-          }
-        }
+        // 'formData.rel_id': {
+        //   immediate: true,
+        //   handler (val) {
+        //     if (val) {
+        //       this.chooseId()
+        //     }
+        //   }
+        // }
       },
       methods: {
+        chooseInterfaceId(e){
+          this.formData.rel_id = e
+        },
         // 选择接口id
-        async chooseId (e) {
+        async chooseId () {
           try {
             const params = { ...this.formData }
             delete params.auto_setup
@@ -73,12 +76,14 @@
         changeType (type) {
           this.formData.type = type
           this.formData.rel_id = ''
+          this.curList = []
         },
         async onSubmit () {
           try {
             const res = await editProductServer(this.id, this.formData)
             this.$message.success(res.data.msg)
             this.getUserDetail()
+           // location.reload()
           } catch (error) {
             this.$message.error(error.data.msg)
           }
@@ -90,6 +95,8 @@
             this.formData.auto_setup = temp.auto_setup
             this.formData.type = temp.type
             this.formData.rel_id = temp.rel_id
+            $('.config-box .content').html('')
+            this.chooseId()
             let inter = await getInterface(this.serverParams)
             this.serverList = inter.data.data.list
             this.total = inter.data.data.count

@@ -154,7 +154,7 @@ class MenuController extends AdminBaseController
     {
         // 接收参数
         $param = $this->request->param();
-        
+
         // 参数验证
         if (!$this->validate->scene('save')->check($param)){
             return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);

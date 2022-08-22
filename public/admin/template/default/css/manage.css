@@ -40,6 +40,9 @@
   cursor: pointer;
 }
 /* task */
+.task .t-form {
+  flex-wrap: nowrap;
+}
 .task .t-form .t-form__label {
   width: auto !important;
   padding-right: 10px !important;
@@ -59,4 +62,47 @@
 }
 .task .t-form .f-btn .t-button {
   margin-right: 20px;
+}
+.task .task-icon {
+  width: 14px;
+  height: 14px;
+}
+.task .task-description > div {
+  display: flex;
+  align-items: center;
+}
+.task .f-btn.t-form__item {
+  margin-right: 0 !important;
+}
+.task .f-btn .t-form__controls {
+  width: auto;
+}
+.notice-width {
+  max-width: 300px !important;
+}
+@media screen and (max-width: 1400px) {
+  .task .t-form .search .t-form__controls {
+    width: 200px;
+  }
+  .task .t-form .t-form__controls {
+    width: 200px;
+  }
+  .task .t-form .t-form__item {
+    margin-right: 20px !important;
+  }
+  .task .t-form .f-btn {
+    margin-left: 0;
+    margin-right: 0 !important;
+  }
+  .task .t-form .f-btn .t-form__controls {
+    width: auto;
+  }
+}
+@media screen and (max-width: 1100px) {
+  .task .t-form .search .t-form__controls {
+    width: 150px;
+  }
+  .task .t-form .t-form__controls {
+    width: 150px;
+  }
 }

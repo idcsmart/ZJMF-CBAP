@@ -192,6 +192,9 @@ class TransactionModel extends Model
 		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('create_fail')];
 		}
+
+		hook('after_transaction_create',['id'=>$transaction->id,'customfield'=>$param['customfield']??[]]);
+
     	return ['status' => 200, 'msg' => lang('create_success')];
     }
 
@@ -232,6 +235,9 @@ class TransactionModel extends Model
 		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('delete_fail')];
 		}
+
+        hook('after_transaction_delete',['id'=>$transaction->id]);
+
     	return ['status' => 200, 'msg' => lang('delete_success')];
     }
 }

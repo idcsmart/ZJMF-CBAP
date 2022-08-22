@@ -161,7 +161,7 @@ class AdminController extends AdminBaseController
     {
         $param = $this->request->param();
 
-        $result = (new AdminModel())->deleteAdmin(intval($param['id']));
+        $result = (new AdminModel())->deleteAdmin($param);
 
         return json($result);
     }
@@ -197,7 +197,9 @@ class AdminController extends AdminBaseController
      */
     public function logout()
     {
-        $result = (new AdminModel())->logout();
+        $param = $this->request->param();
+
+        $result = (new AdminModel())->logout($param);
 
         return json($result);
     }

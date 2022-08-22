@@ -24,6 +24,8 @@ class OrderTmpModel extends Model
         'create_time'       => 'int',
     ];
 
+    public $isAdmin=false;
+
     /**
      * 时间 2022-05-24
      * @title 支付
@@ -258,6 +260,7 @@ class OrderTmpModel extends Model
      * @desc 充值
      * @author wyh
      * @version v1
+     * @param int client_id 1 用户ID
      * @param float amount 1.00 金额
      * @param string gateway WxPay 支付方式
      * @return array
@@ -278,14 +281,33 @@ class OrderTmpModel extends Model
         if ($amount<0.01){
             return ['status'=>400,'msg'=>lang('recharge_amount_is_greater_than_0')];
         }
+        // 非后台
+        if (!$this->isAdmin){
+            $min = floatval(configuration('recharge_min'));
+            if ($amount<$min){
+                return ['status'=>400,'msg'=>lang('min_recharge_is_error',['{min}'=>amount_format($min)])];
+            }
 
-        $min = floatval(configuration('recharge_min'));
-        if ($amount<$min){
-            return ['status'=>400,'msg'=>lang('min_recharge_is_error',['{min}'=>amount_format($min)])];
+            $max = floatval(configuration('recharge_max'));
+            if ($amount>$max){
+                return ['status'=>400,'msg'=>lang('max_recharge_is_error',['{max}'=>amount_format($max)])];
+            }
         }
+
         # 支付接口
         if (!check_gateway($param['gateway'])){
             return ['status'=>400,'msg'=>lang('no_support_gateway')];
+        }
+
+        if ($this->isAdmin){
+            if (!isset($param['client_id']) || empty($param['client_id'])){
+                return ['status'=>400,'msg'=>lang('param_error')];
+            }
+            $ClientModel = new ClientModel();
+            $client = $ClientModel->find($param['client_id']);
+            if (empty($client)){
+                return ['status'=>400,'msg'=>lang('client_is_not_exist')];
+            }
         }
 
         $this->startTrans();
@@ -296,7 +318,7 @@ class OrderTmpModel extends Model
                 'type' => 'recharge',
                 'amount' => $param['amount'],
                 'gateway' => $param['gateway'],
-                'client_id' => get_client_id(),
+                'client_id' => $this->isAdmin?($param['client_id']??0):get_client_id(),
                 'items' => [
                     [
                         'amount' => $param['amount'],
@@ -307,10 +329,18 @@ class OrderTmpModel extends Model
             ];
             $OrderModel = new OrderModel();
             $orderId = $OrderModel->createOrderBase($data);
+
+            hook('after_order_create',['id'=>$orderId,'customfield'=>$param['customfield']??[]]);
+
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
             return ['status'=>400,'msg'=>$e->getMessage()];
+        }
+
+        # 后台直接标记支付
+        if ($this->isAdmin){
+            $OrderModel->orderPaid(['id'=>$orderId]);
         }
 
         return ['status'=>200,'msg'=>lang('recharge_success'),'data'=>['id'=>$orderId]];

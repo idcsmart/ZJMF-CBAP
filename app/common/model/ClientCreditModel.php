@@ -76,6 +76,9 @@ class ClientCreditModel extends Model
             $credits[$key]['amount'] = amount_format($credit['amount']); // 处理金额格式
             $credits[$key]['admin_name'] = $credit['admin_name'] ?? '';  // 处理为null时的管理员名称
             if($app=='home'){
+                if(in_array($credit['type'], ['Overpayment', 'Underpayment'])){
+                    $credits[$key]['type'] = 'Recharge';
+                }
                 unset($credits[$key]['admin_id']);
             }
     	}
@@ -130,6 +133,9 @@ class ClientCreditModel extends Model
             // 回滚事务
             return ['status' => 400, 'msg' => lang('client_credit_fail')];
         }
+
+        hook('after_client_credit_edit',['id'=>$param['id'],'customfield'=>$param['customfield']??[]]);
+
         return ['status' => 200, 'msg' => lang('client_credit_success')];
     }
 }

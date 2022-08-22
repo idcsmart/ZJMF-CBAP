@@ -185,6 +185,7 @@ class ClientModel extends Model
 	    		'phone_code' => $param['phone_code'] ?? 44,
 	    		'phone' => $param['phone'] ?? '',
 	    		'password' => idcsmart_password($param['password']), // 密码加密
+                'language' => configuration('lang_home')??'zh-cn',
                 'create_time' => time()
 	    	]);
 
@@ -197,6 +198,9 @@ class ClientModel extends Model
 		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('create_fail')];
 		}
+
+		hook('after_client_create',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
+
     	return ['status' => 200, 'msg' => lang('create_success'), 'data' => ['id' => $client->id]];
     }
 
@@ -347,6 +351,9 @@ class ClientModel extends Model
 		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('update_fail')];
 		}
+
+		hook('after_client_edit',['id'=>$param['id'],'customfield'=>$param['customfield']??[]]);
+
     	return ['status' => 200, 'msg' => lang('update_success')];
     }
 
@@ -360,8 +367,9 @@ class ClientModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function deleteClient($id)
+    public function deleteClient($param)
     {
+        $id = $param['id']??0;
         // 验证用户ID
     	$client = $this->find($id);
     	if (empty($client)){
@@ -396,6 +404,9 @@ class ClientModel extends Model
 		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('delete_fail')];
 		}
+
+        hook('after_client_delete',['id'=>$id]);
+
     	return ['status' => 200, 'msg' => lang('delete_success')];
     }
 
@@ -801,6 +812,36 @@ class ClientModel extends Model
     }
 
     /**
+     * 时间 2022-08-16
+     * @title 验证码修改密码
+     * @desc 验证码修改密码
+     * @author theworld
+     * @version v1
+     * @param string type phone 验证类型:phone手机,email邮箱 required
+     * @param string code 1234 验证码 required
+     * @param string password 123456 密码 required
+     * @param string re_password 1 重复密码 required
+     */
+    public function codeUpdatePassword($param)
+    {
+        if (!isset($param['type'])){
+            return ['status'=>400,'msg'=>lang('verify_type_is_required')];
+        }
+
+        if (!in_array($param['type'],['phone','email'])){
+            return ['status'=>400,'msg'=>lang('verify_type_only_phone_or_email')];
+        }
+
+        $param['id'] = get_client_id();
+        $type = $param['type'];
+        if ($type == 'phone'){
+            return $this->phonePasswordUpdate($param);
+        }else{
+            return $this->emailPasswordUpdate($param);
+        }
+    }
+
+    /**
      * 时间 2022-05-20
      * @title 登录
      * @desc 登录
@@ -927,7 +968,7 @@ class ClientModel extends Model
      * @author wyh
      * @version v1
      */
-    public function logout()
+    public function logout($param)
     {
         $clientId = get_client_id();
 
@@ -941,6 +982,8 @@ class ClientModel extends Model
         Cache::set('login_token_'.$jwt,null);
 
         active_log(lang('log_client_logout',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id); # 特殊类型
+
+        hook('after_client_logout',['id'=>$clientId,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('logout_success')];
 
@@ -1038,6 +1081,8 @@ class ClientModel extends Model
         $data = [
             'jwt' => create_jwt($info,$expired)
         ];
+
+        hook('after_client_login',['id'=>$client->id,'customfiled'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('login_success'),'data'=>$data];
     }
@@ -1158,6 +1203,8 @@ class ClientModel extends Model
             'jwt' => create_jwt($info,$expired)
         ];
 
+        hook('after_client_login',['id'=>$client->id,'customfiled'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('login_success'),'data'=>$data];
     }
 
@@ -1247,6 +1294,8 @@ class ClientModel extends Model
             'jwt' => create_jwt($info,$expired)
         ];
 
+        hook('after_client_login',['id'=>$client->id,'customfiled'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('login_success'),'data'=>$data];
     }
 
@@ -1315,7 +1364,7 @@ class ClientModel extends Model
             return ['status'=>400,'msg'=>lang('client_name_cannot_exceed_20_chars')];
         }
         # 验证码
-        if (empty($param['code'])){
+        if (!isset($param['code']) || empty($param['code'])){
             return ['status'=>400,'msg'=>lang('verification_code_error')];
         }
         $code = $this->getPhoneVerificationCode($param['account'],$param['phone_code'],'register');
@@ -1352,6 +1401,7 @@ class ClientModel extends Model
                 'last_login_time' => $time,
                 'last_login_ip' => get_client_ip(),
                 'last_action_time' => $time,
+                'language' => configuration('lang_home')??'zh-cn',
                 'create_time' => $time
             ]);
 
@@ -1398,7 +1448,7 @@ class ClientModel extends Model
             'jwt' => create_jwt($info,$expired)
         ];
 
-        hook('after_register',['id'=>$client->id]);
+        hook('after_client_register',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('register_success'),'data'=>$data];
 
@@ -1421,7 +1471,7 @@ class ClientModel extends Model
         }
         # 验证码
         if (configuration('code_client_email_register')){
-            if (empty($param['code'])){
+            if (!isset($param['code']) || empty($param['code'])){
                 return ['status'=>400,'msg'=>lang('verification_code_error')];
             }
             $code = $this->getEmailVerificationCode($param['account']);
@@ -1458,6 +1508,7 @@ class ClientModel extends Model
                 'last_login_time' => $time,
                 'last_login_ip' => get_client_ip(),
                 'last_action_time' => $time,
+                'language' => configuration('lang_home')??'zh-cn',
                 'create_time' => $time
             ]);
 
@@ -1503,7 +1554,7 @@ class ClientModel extends Model
             'jwt' => create_jwt($info,$expired)
         ];
 
-        hook('after_register',['id'=>$client->id]);
+        hook('after_client_register',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('register_success'),'data'=>$data];
     }
@@ -1576,6 +1627,8 @@ class ClientModel extends Model
             return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
         }
 
+        hook('after_client_password_reset',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('update_success')];
     }
 
@@ -1630,6 +1683,171 @@ class ClientModel extends Model
             $request = request();
             $request->client_id = $client->id;
             $request->client_name = $client['username'];
+            active_log(lang('change_password',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'client',$client->id);
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+            return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
+        }
+
+        hook('after_client_password_reset',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
+
+        return ['status'=>200,'msg'=>lang('update_success')];
+    }
+
+    # 手机重置密码
+    private function phonePasswordUpdate($param)
+    {
+        $client = $this->where('status', 1)->find($param['id']);
+        if(empty($client)){
+            return ['status'=>400,'msg'=>lang('fail_message')];
+        }
+
+        # 验证手机
+        if(empty($client['phone'])){
+            return ['status'=>400, 'msg'=>lang('user_not_bind_phone')];
+        }
+
+        # 验证码
+        if (empty($param['code'])){
+            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        }
+        $code = $this->getPhoneVerificationCode($client['account'],$client['phone_code'],'verify');
+        if (empty($code)){
+            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        }
+        if ($param['code'] != $code){
+            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        }
+
+        $this->startTrans();
+
+        try{
+            $client->save([
+                'update_time' => time(),
+                'password' => idcsmart_password($param['password'])
+            ]);
+
+            $this->clearPhoneVerificationCode($client['phone'],$client['phone_code'],'verify');
+
+            Cache::set('home_update_password_'.$client->id,time(),3600*24*365); # 365天未操作接口,就可以不退出
+
+            # 发送邮件短信
+            //客户更改密码发送邮件添加到任务队列
+            if($client['email']){
+                add_task([
+                    'type' => 'email',
+                    'description' => '客户更改密码成功,发送邮件',
+                    'task_data' => [
+                        'name'=>'client_change_password',//发送动作名称
+                        'email' => $client['email'],
+                        'client_id'=>$client['id'],//客户ID
+                        'template_param'=>[
+                            'client_password' => $param['password'],//新密码
+                        ],
+                    ],      
+                ]);
+            }
+            //客户更改密码发送短信添加到任务队列
+            if($client['phone']){
+                add_task([
+                    'type' => 'sms',
+                    'description' => '客户更改密码成功,发送短信',
+                    'task_data' => [
+                        'name'=>'client_change_password',//发送动作名称
+                        'phone_code' => $client['phone_code'],
+                        'phone' => $client['phone'],
+                        'client_id'=>$client['id'],//客户ID
+                        'template_param'=>[
+                            'client_password' => $param['password'],//新密码
+                        ],
+                    ],      
+                ]);
+            }
+
+            # 记录日志
+            active_log(lang('change_password',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'client',$client->id);
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+            return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
+        }
+
+        return ['status'=>200,'msg'=>lang('update_success')];
+    }
+
+    # 邮箱重置密码
+    private function emailPasswordUpdate($param)
+    {
+        $client = $this->where('status', 1)->find($param['id']);
+        if(empty($client)){
+            return ['status'=>400,'msg'=>lang('fail_message')];
+        }
+
+        if(empty($client['email'])){
+            return ['status'=>400, 'msg'=>lang('user_not_bind_email')];
+        }
+
+        # 验证码
+        if (empty($param['code'])){
+            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        }
+        $code = $this->getEmailVerificationCode($client['email'],'verify');
+        if (empty($code)){
+            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        }
+        if ($param['code'] != $code){
+            return ['status'=>400,'msg'=>lang('verification_code_error')];
+        }
+
+        $this->startTrans();
+
+        try{
+            $client->save([
+                'update_time' => time(),
+                'password' => idcsmart_password($param['password'])
+            ]);
+
+            $this->clearEmailVerificationCode($client['email'],'verify');
+
+            Cache::set('home_update_password_'.$client->id,time(),3600*24*365); # 365天未操作接口,就可以不退出
+
+            # 发送邮件短信
+            //客户更改密码发送邮件添加到任务队列
+            if($client['email']){
+                add_task([
+                    'type' => 'email',
+                    'description' => '客户更改密码成功,发送邮件',
+                    'task_data' => [
+                        'name'=>'client_change_password',//发送动作名称
+                        'email' => $client['email'],
+                        'client_id'=>$client['id'],//客户ID
+                        'template_param'=>[
+                            'client_password' => $param['password'],//新密码
+                        ],
+                    ],      
+                ]);
+            }
+            //客户更改密码发送短信添加到任务队列
+            if($client['phone']){
+                add_task([
+                    'type' => 'sms',
+                    'description' => '客户更改密码成功,发送短信',
+                    'task_data' => [
+                        'name'=>'client_change_password',//发送动作名称
+                        'phone_code' => $client['phone_code'],
+                        'phone' => $client['phone'],
+                        'client_id'=>$client['id'],//客户ID
+                        'template_param'=>[
+                            'client_password' => $param['password'],//新密码
+                        ],
+                    ],      
+                ]);
+            }
+
+            # 记录日志
             active_log(lang('change_password',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'client',$client->id);
 
             $this->commit();

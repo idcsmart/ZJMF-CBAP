@@ -26,7 +26,7 @@ class EmailLogic
      * @param string param.subject - 邮件标题 required
      * @param string param.message - 邮件内容 required
      * @param string param.attachments - 邮件附件
-     * @param string param.template_param - 参数替换
+     * @param array param.template_param - 参数替换
      */
     public function sendBase($param)
     {
@@ -64,6 +64,35 @@ class EmailLogic
     {
 		//读取发送动作
 		$index_setting = (new NoticeSettingModel())->indexSetting($param['name']);
+		//产品开通中
+		if($param['name']=='host_pending'){
+			if(empty($param['host_id'])){
+				return ['status'=>400, 'msg'=>lang('id_error')];
+			}
+			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			$index_product = Db::name('product')->find($index_host['product_id']);
+			if($index_product['creating_notice_mail_api']>0 && $index_product['creating_notice_mail_template']>0){
+				$plugin = Db::name('plugin')->field('id,name')->find($index_product['creating_notice_mail_api']);
+				$index_setting['email_enable'] = 1;
+				$index_setting['email_name'] = $plugin['name'];
+				$index_setting['email_template'] = $index_product['creating_notice_mail_template'];
+			}
+
+		}
+		//产品开通成功
+		if($param['name']=='host_active'){
+			if(empty($param['host_id'])){
+				return ['status'=>400, 'msg'=>lang('id_error')];
+			}
+			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			$index_product = Db::name('product')->find($index_host['product_id']);
+			if($index_product['created_notice_mail_api']>0 && $index_product['created_notice_mail_template']>0){
+				$plugin = Db::name('plugin')->field('id,name')->find($$index_product['created_notice_mail_api']);
+				$index_setting['email_enable'] = 1;
+				$index_setting['email_name'] = $plugin['name'];
+				$index_setting['email_template'] = $index_product['created_notice_mail_template'];
+			}
+		}
 		if(empty($index_setting['name'])){
 			return ['status'=>400, 'msg'=>lang('send_wrong_action_name')];//动作名称错误
 		}
@@ -81,7 +110,6 @@ class EmailLogic
 			return ['status'=>400, 'msg'=>lang('email_template_is_not_exist')];//邮件模板不存在
 		}			
 		
-		request()->notice_logic = 'admin';//不管前后台使用的短信发送都需要获取全部数据
 		
 		$template_param = $client = $order = $host = [];
 		//全局参数

@@ -168,3 +168,12 @@ function getRenewBatch (params) {
 function postRenewBatch (params) {
   return Axios.post(`/host/renew/batch`, params)
 }
+// 系统设置
+function getSystemOpt () {
+  return Axios.get('/configuration/system')
+}
+
+// 充值
+function recharge(params){
+  return Axios.post(`/client/${params.client_id}/recharge`,params)
+}

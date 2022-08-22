@@ -34,6 +34,7 @@ class LoginController extends HomeBaseController
      * @param string remember_password 1 记住密码(登录类型为密码登录password时需要传此参数,1是,0否)
      * @param string captcha 1234 图形验证码(开启登录图形验证码且为密码登录时或者同一ip地址登录失败3次后需要传此参数)
      * @param string token fd5adaf7267a5b2996cc113e45b38f05 图形验证码唯一识别码(开启登录图形验证码且为密码登录时或者同一ip地址登录失败3次后需要传此参数)
+     * @param object customfield {} 自定义字段,格式:{"field1":'test',"field2":'test2'}
      * @return string data.jwt - jwt:登录后放在请求头Authorization里,拼接成如下格式:Bearer+空格+yJ0eX.test.ste
      */
     public function login()
@@ -42,8 +43,11 @@ class LoginController extends HomeBaseController
 
         // 实例化模型类
         $ClientModel = new ClientModel();
+        # 客户登录前钩子
+        hook_one('before_client_login',['type'=>$param['type']??'','account'=>$param['account']??'','phone_code'=>$param['phone_code']??'',
+            'code'=>$param['code']??'','password'=>$param['password']??'','remember_password'=>$param['remember_password']??'',
+            'captcha'=>$param['captcha']??'','token'=>$param['token']??'','customfield'=>$param['customfield']??[]]);
 
-        // 修改用户
         $result = $ClientModel->login($param);
 
         return json($result);

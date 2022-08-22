@@ -71,7 +71,8 @@
           statusTip: '',
           maxHeight: '',
           curName: '',
-          installTip: ''
+          installTip: '',
+          authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth')))
         }
       },
       computed: {
@@ -109,6 +110,10 @@
         }
       },
       created () {
+        // 权限相关
+        if (!this.authList.includes('PluginController::pluginList')) {
+          return this.$message.error(lang.tip17 + ',' + lang.tip18)
+        }
         this.getAddonList()
       },
       methods: {

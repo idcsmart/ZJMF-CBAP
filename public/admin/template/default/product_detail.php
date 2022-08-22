@@ -105,13 +105,13 @@
               <t-col :xs="12" :xl="6" class="half">
                 <t-form-item :label="lang.email_interface" name="hidden">
                   <t-select v-model="formData.creating_notice_mail_api">
-                    <t-option v-for="item in emailInterList" :value="item.name" :label="item.title" :key="item.name">
+                    <t-option v-for="item in emailInterList" :value="item.id" :label="item.title" :key="item.name">
                     </t-option>
                   </t-select>
                 </t-form-item>
                 <t-form-item :label="lang.email_temp">
                   <t-select v-model="formData.creating_notice_mail_template">
-                    <t-option v-for="item in emailInterTemp" :value="item.id" :label="item.subject" :key="item.id">
+                    <t-option v-for="item in emailInterTemp" :value="item.id" :label="item.name" :key="item.id">
                     </t-option>
                   </t-select>
                 </t-form-item>
@@ -151,7 +151,7 @@
                 </t-form-item>
                 <t-form-item :label="lang.email_temp" name="">
                   <t-select v-model="formData.created_notice_mail_template">
-                    <t-option v-for="item in emailInterTemp" :value="item.id" :label="item.subject" :key="item.id">
+                    <t-option v-for="item in emailInterTemp" :value="item.id" :label="item.name" :key="item.id">
                     </t-option>
                   </t-select>
                 </t-form-item>

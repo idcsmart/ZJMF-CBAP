@@ -129,6 +129,16 @@
       watch: {
         'formData.id' (val) {
           val && this.getRelationList()
+        },
+        'formData.creating_notice_sms_api'(val){
+          if(!val){
+            this.formData.creating_notice_sms_api_template = ''
+          }
+        },
+        'formData.created_notice_sms_api'(val){
+          if(!val){
+            this.formData.created_notice_sms_api_template = ''
+          }
         }
       },
       computed: {
@@ -140,6 +150,7 @@
         changeSmsInterface(e){
           const name = this.smsInterList.filter(item=>item.id === e)[0]?.name
           this.creatingName = name
+          this.formData.creating_notice_sms_api_template = ''
         },
         async getRelationList () {
           try {
@@ -176,6 +187,7 @@
         changeCreated (id) {
           const name = this.smsInterList.find(item => item.id === id).name
           this.createdName = name
+          this.formData.created_notice_sms_api_template = ''
         },
         // 获取商品二级分组
         async getSecondGroup () {
@@ -193,7 +205,7 @@
           try {
             const res = await deleteClient(this.id)
             this.delVisible = false
-            location.href = '/client.html'
+            location.href = 'client.html'
           } catch (error) {
             this.delVisible = false
           }
@@ -244,11 +256,13 @@
             const res = await getProductDetail(this.id)
             const temp = res.data.data.product
             this.formData = temp
+            // 开通中
             this.formData.creating_notice_sms_api = temp.creating_notice_sms_api || ''
             this.formData.creating_notice_sms_api_template = temp.creating_notice_sms_api_template || '' 
             this.formData.creating_notice_mail_api = temp.creating_notice_mail_api || '' 
             this.formData.creating_notice_mail_template = temp.creating_notice_mail_template ||''
 
+            // 已开通
             this.formData.created_notice_sms_api = temp.created_notice_sms_api || ''
             this.formData.created_notice_sms_api_template = temp.created_notice_sms_api_template|| ''
             this.formData.created_notice_mail_api = temp.created_notice_mail_api|| ''
@@ -259,6 +273,13 @@
             temp1.forEach(item => {
               this.getSmsTemp(item.name)
             })
+            // 如果短信接口被禁用则显示为空
+            const smsArr = temp1.reduce((all,cur)=>{
+              all.push(cur.id)
+              return all
+            },[])
+            this.formData.creating_notice_sms_api = smsArr.includes(this.formData.creating_notice_sms_api) ? this.formData.creating_notice_sms_api : ''
+            this.formData.created_notice_sms_api = smsArr.includes(this.formData.created_notice_sms_api) ? this.formData.created_notice_sms_api : ''
             this.creatingName = temp1.filter(item => item.id === temp.creating_notice_sms_api)[0]?.name
             this.createdName = temp1.filter(item => item.id == temp.created_notice_sms_api)[0]?.name
           } catch (error) {

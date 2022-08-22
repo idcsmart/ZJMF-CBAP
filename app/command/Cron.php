@@ -9,7 +9,7 @@ use think\console\input\Argument;
 use think\console\input\Option;
 use think\console\Output;
 use app\common\model\ConfigurationModel;
-
+use app\common\model\SmsTemplateModel;
 class Cron extends Command
 {
     protected function configure()
@@ -48,7 +48,7 @@ class Cron extends Command
     }
 	// 每天执行一次
 	public function dayCron($config,$output){
-		if(date('Y-m-d',$config['cron_lock_day_last_time'])==date('Y-m-d')){
+		if(date('Y-m-d 01:00:00',$config['cron_lock_day_last_time'])==date('Y-m-d 01:00:00')){
 			return false;
 		}
 		$this->hostDue($config);//主机续费提示
@@ -68,46 +68,76 @@ class Cron extends Command
 		if((time()-$config['cron_lock_five_minute_last_time'])<5*60){
 			return false;
 		}
+		//更新短信模板状态
+		$sms_template=Db::name('sms_template')->field('sms_name')->whereIn('status','1')->group('sms_name')->select()->toArray();
+		if(!empty($sms_template)){
+			foreach($sms_template as $v){
+				(new SmsTemplateModel())->statusSmsTemplate(['name'=>$v['sms_name']]);
+			}
+		}
+		
+
 		$this->hostModule($config);// 主机暂停、删除
 		$output->writeln('自动暂停、删除结束:'.date('Y-m-d H:i:s'));
 		$this->configurationUpdate('cron_lock_five_minute_last_time',time());
 	}
 	//主机续费提醒	
 	public function hostDue($config){
-		$renewal_first_swhitch=$config['cron_due_renewal_first_swhitch'];
+        $time=time();
+        //第一次提醒
+        $renewal_first_swhitch=$config['cron_due_renewal_first_swhitch'];
 		$renewal_first_day=$config['cron_due_renewal_first_day'];
+        if($renewal_first_swhitch==1){
+	        $time_renewal_first = $time+$renewal_first_day*24*3600;     
+	        $time_renewal_first_start = strtotime(date('Y-m-d 00:00:00',$time_renewal_first));
+	        $time_renewal_first_end = strtotime(date('Y-m-d 23:59:59',$time_renewal_first));
+			$renewal_first_host=Db::name('host')
+			->field('id,client_id')
+			->whereIn('status','Active')
+			->where('due_time','>=',$time_renewal_first_start)
+			->where('due_time','<=',$time_renewal_first_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($renewal_first_host as $h){			
+				add_task([
+					'type' => 'email',
+					'description' => '#host#'.$h['id'].'#第一次客户续费提醒,发送邮件',
+					'task_data' => [
+						'name'=>'host_renewal_first',//发送动作名称
+						'host_id'=>$h['id'],//主机ID
+					],		
+				]);
+				add_task([
+					'type' => 'sms',
+					'description' => '#host#'.$h['id'].'#第一次客户续费提醒,发送短信',
+					'task_data' => [
+						'name'=>'host_renewal_first',//发送动作名称
+						'host_id'=>$h['id'],//主机ID
+					],		
+				]);							
+			}
+			unset($renewal_first_host);
+		}
+		//第二次提醒
 		$renewal_second_swhitch=$config['cron_due_renewal_second_swhitch'];
 		$renewal_second_day=$config['cron_due_renewal_second_day'];
-        $time=time();
-		$host=Db::name('host')->whereIn('status','Active,Suspended')->where('due_time','>',0)->select()->toArray();
-		foreach($host as $h){
-			
-			//第一次提醒
-			$end_time1 = $time+$renewal_first_day*24*3600;
-			if($renewal_first_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time1)){
+		if($renewal_second_swhitch==1){
+			$time_renewal_second = $time+$renewal_second_day*24*3600;     
+	        $time_renewal_second_start = strtotime(date('Y-m-d 00:00:00',$time_renewal_second));
+	        $time_renewal_second_end = strtotime(date('Y-m-d 23:59:59',$time_renewal_second));
+	        $renewal_second_host=Db::name('host')
+	        ->field('id,client_id')
+			->whereIn('status','Active')
+			->where('due_time','>=',$time_renewal_second_start)
+			->where('due_time','<=',$time_renewal_second_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($renewal_second_host as $h){				
 				add_task([
 					'type' => 'email',
-					'description' => '第一次客户续费提醒,发送邮件',
-					'task_data' => [
-						'name'=>'host_renewal_first',//发送动作名称
-						'host_id'=>$h['id'],//主机ID
-					],		
-				]);
-				add_task([
-					'type' => 'sms',
-					'description' => '第一次客户续费提醒,发送短信',
-					'task_data' => [
-						'name'=>'host_renewal_first',//发送动作名称
-						'host_id'=>$h['id'],//主机ID
-					],		
-				]);				
-			}
-			//第二次提醒
-			$end_time2 = $time+$renewal_second_day*24*3600;
-			if($renewal_second_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time2)){
-				add_task([
-					'type' => 'email',
-					'description' => '第二次客户续费提醒,发送邮件',
+					'description' => '#host#'.$h['id'].'#第二次客户续费提醒,发送邮件',
 					'task_data' => [
 						'name'=>'host_renewal_second',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
@@ -115,79 +145,108 @@ class Cron extends Command
 				]);
 				add_task([
 					'type' => 'sms',
-					'description' => '第二次客户续费提醒,发送短信',
+					'description' => '#host#'.$h['id'].'#第二次客户续费提醒,发送短信',
 					'task_data' => [
 						'name'=>'host_renewal_second',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
-				]);					
+				]);									
 			}
+			unset($renewal_second_host);
 		}
 	}	
 	//主机逾期提醒	
 	public function hostOverdue($config){
-		$overdue_first_swhitch=$config['cron_overdue_first_swhitch'];
+		$time=time();
+		//第一次提醒
+        $overdue_first_swhitch=$config['cron_overdue_first_swhitch'];
 		$overdue_first_day=$config['cron_overdue_first_day'];
+        if($overdue_first_swhitch==1){
+	        $time_overdue_first = $time-$overdue_first_day*24*3600;     
+	        $time_overdue_first_start = strtotime(date('Y-m-d 00:00:00',$time_overdue_first));
+	        $time_overdue_first_end = strtotime(date('Y-m-d 23:59:59',$time_overdue_first));
+			$overdue_first_host=Db::name('host')
+			->field('id,client_id')
+			->whereIn('status','Active,Suspended')
+			->where('due_time','>=',$time_overdue_first_start)
+			->where('due_time','<=',$time_overdue_first_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($overdue_first_host as $h){			
+				add_task([
+					'type' => 'email',
+					'description' => '#host#'.$h['id'].'#逾期付款第一次,发送邮件',
+					'task_data' => [
+						'name'=>'host_overdue_first',//发送动作名称
+						'host_id'=>$h['id'],//主机ID
+					],		
+				]);
+				add_task([
+					'type' => 'sms',
+					'description' => '#host#'.$h['id'].'#逾期付款第一次,发送短信',
+					'task_data' => [
+						'name'=>'host_overdue_first',//发送动作名称
+						'host_id'=>$h['id'],//主机ID
+					],		
+				]);							
+			}
+			unset($overdue_first_host);
+		}
+		//第二次提醒
 		$overdue_second_swhitch=$config['cron_overdue_second_swhitch'];
 		$overdue_second_day=$config['cron_overdue_second_day'];
+        if($overdue_second_swhitch==1){
+	        $time_overdue_second = $time-$overdue_second_day*24*3600;     
+	        $time_overdue_second_start = strtotime(date('Y-m-d 00:00:00',$time_overdue_second));
+	        $time_overdue_second_end = strtotime(date('Y-m-d 23:59:59',$time_overdue_second));
+			$overdue_second_host=Db::name('host')
+			->field('id,client_id')
+			->whereIn('status','Active,Suspended')
+			->where('due_time','>=',$time_overdue_second_start)
+			->where('due_time','<=',$time_overdue_second_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($overdue_second_host as $h){			
+				add_task([
+					'type' => 'email',
+					'description' => '#host#'.$h['id'].'#逾期付款第二次,发送邮件',
+					'task_data' => [
+						'name'=>'host_overdue_second',//发送动作名称
+						'host_id'=>$h['id'],//主机ID
+					],		
+				]);
+				add_task([
+					'type' => 'sms',
+					'description' => '#host#'.$h['id'].'#逾期付款第二次,发送短信',
+					'task_data' => [
+						'name'=>'host_overdue_second',//发送动作名称
+						'host_id'=>$h['id'],//主机ID
+					],		
+				]);							
+			}
+			unset($overdue_second_host);
+		}
+		//第三次提醒
 		$overdue_third_swhitch=$config['cron_overdue_third_swhitch'];
 		$overdue_third_day=$config['cron_overdue_third_day'];
-        $time=time();
-		$host=Db::name('host')
-		->whereIn('status','Active,Suspended')
-		->where('due_time','>',0)
-		->where('due_time','<=',$time)
-		->where('billing_cycle', '<>', 'free')
-        ->where('billing_cycle', '<>', 'onetime')
-		->select()->toArray();
-		foreach($host as $h){
-			
-			//第一次提醒
-			$end_time1 = $time-$overdue_first_day*24*3600;
-			if($overdue_first_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time1)){
+		if($overdue_third_swhitch==1){
+	        $time_overdue_third = $time-$overdue_third_day*24*3600;     
+	        $time_overdue_third_start = strtotime(date('Y-m-d 00:00:00',$time_overdue_third));
+	        $time_overdue_third_end = strtotime(date('Y-m-d 23:59:59',$time_overdue_third));
+			$overdue_third_host=Db::name('host')
+			->field('id,client_id')
+			->whereIn('status','Active,Suspended')
+			->where('due_time','>=',$time_overdue_third_start)
+			->where('due_time','<=',$time_overdue_third_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($overdue_third_host as $h){			
 				add_task([
 					'type' => 'email',
-					'description' => '逾期付款第一次,发送邮件',
-					'task_data' => [
-						'name'=>'host_overdue_first',//发送动作名称
-						'host_id'=>$h['id'],//主机ID
-					],		
-				]);
-				add_task([
-					'type' => 'sms',
-					'description' => '逾期付款第一次,发送短信',
-					'task_data' => [
-						'name'=>'host_overdue_first',//发送动作名称
-						'host_id'=>$h['id'],//主机ID
-					],		
-				]);				
-			}
-			//第二次提醒
-			$end_time2 = $time-$overdue_second_day*24*3600;
-			if($overdue_second_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time2)){
-				add_task([
-					'type' => 'email',
-					'description' => '逾期付款第二次,发送邮件',
-					'task_data' => [
-						'name'=>'host_overdue_second',//发送动作名称
-						'host_id'=>$h['id'],//主机ID
-					],		
-				]);
-				add_task([
-					'type' => 'sms',
-					'description' => '逾期付款第二次,发送短信',
-					'task_data' => [
-						'name'=>'host_overdue_second',//发送动作名称
-						'host_id'=>$h['id'],//主机ID
-					],		
-				]);					
-			}
-			//第三次提醒
-			$end_time3 = $time-$overdue_third_day*24*3600;
-			if($overdue_third_swhitch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time3)){
-				add_task([
-					'type' => 'email',
-					'description' => '逾期付款第三次,发送邮件',
+					'description' => '#host#'.$h['id'].'#逾期付款第三次,发送邮件',
 					'task_data' => [
 						'name'=>'host_overdue_third',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
@@ -195,30 +254,37 @@ class Cron extends Command
 				]);
 				add_task([
 					'type' => 'sms',
-					'description' => '逾期付款第三次,发送短信',
+					'description' => '#host#'.$h['id'].'#逾期付款第三次,发送短信',
 					'task_data' => [
 						'name'=>'host_overdue_third',//发送动作名称
 						'host_id'=>$h['id'],//主机ID
 					],		
-				]);					
+				]);						
 			}
+			unset($overdue_third_host);
 		}
+
 	}
 	//订单未付款通知
 	public function orderOverdue($config){
+		$time=time();
 		$order_overdue_swhitch=$config['cron_order_overdue_swhitch'];
-		$order_overdue=$config['cron_order_overdue_day'];
-        $time=time();
-		$order=Db::name('order')
-		->where('status','Unpaid')
-		->where('create_time','>',0)
-		->select()->toArray();
-		foreach($order as $o){
-			$end_time = $time-$order_overdue*24*3600;
-			if($order_overdue_swhitch==1 && date('Y-m-d',$o['create_time'])==date('Y-m-d',$end_time)){
+		$order_overdue=$config['cron_order_overdue_day'];      
+        if($order_overdue_swhitch==1){
+        	$time_order_overdue = $time-$order_overdue*24*3600;     
+	        $time_order_overdue_start = strtotime(date('Y-m-d 00:00:00',$time_order_overdue));
+	        $time_order_overdue_end = strtotime(date('Y-m-d 23:59:59',$time_order_overdue));
+
+	        $end_time = $time-$order_overdue*24*3600;
+			$order=Db::name('order')
+			->where('status','Unpaid')
+			->where('create_time','>=',$time_order_overdue_start)
+			->where('create_time','<=',$time_order_overdue_end)
+			->select()->toArray();
+			foreach($order as $o){
 				add_task([
 					'type' => 'email',
-					'description' => '订单未付款通知,发送邮件',
+					'description' => '#order'.$o['id'].'订单未付款通知,发送邮件',
 					'task_data' => [
 						'name'=>'order_overdue',//发送动作名称
 						'order_id'=>$o['id'],//订单ID
@@ -226,45 +292,68 @@ class Cron extends Command
 				]);
 				add_task([
 					'type' => 'sms',
-					'description' => '订单未付款通知,发送短信',
+					'description' => '#order'.$o['id'].'订单未付款通知,发送短信',
 					'task_data' => [
 						'name'=>'order_overdue',//发送动作名称
 						'order_id'=>$o['id'],//订单ID
 					],		
 				]);					
 			}
+			unset($order);
 		}
 	}
 	//主机暂停、删除
 	public function hostModule($config){
+		$time=time();
+		//暂停
 		$suspend_switch=$config['cron_due_suspend_swhitch'];
 		$suspend_day=$config['cron_due_suspend_day'];
-		$terminate_switch=$config['cron_due_terminate_swhitch'];
-		$terminate_day=$config['cron_due_terminate_day'];
-        $time=time();
-		$host=Db::name('host')->where('status','Active')->where('due_time','>',0)->select()->toArray();
-		foreach($host as $h){
-			$end_time_suspend = $time-$suspend_day*24*3600;
-			if($suspend_switch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time_suspend)){
+        if($suspend_switch==1){
+	        $time_suspend = $time-$suspend_day*24*3600;     
+	        $time_suspend_start = strtotime(date('Y-m-d 00:00:00',$time_suspend));
+	        $time_suspend_end = $time_suspend;       
+			$suspend_host=Db::name('host')->whereIn('status','Active')
+			->field('id,client_id')
+			->where('due_time','>=',$time_suspend_start)
+			->where('due_time','<=',$time_suspend_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($suspend_host as $h){			
 				add_task([
 					'type' => 'host_suspend',
-					'description' => '主机暂停',
+					'description' => '#host#'.$h['id'].'#主机暂停',
 					'task_data' => [
 						'host_id'=>$h['id'],//主机ID
 					],		
 				]);				
 			}
-			$end_time_terminate = $time-$terminate_day*24*3600;
-			if($terminate_switch==1 && date('Y-m-d',$h['due_time'])==date('Y-m-d',$end_time_terminate)){
+			unset($suspend_host);
+		}
+		//删除
+		$terminate_switch=$config['cron_due_terminate_swhitch'];
+		$terminate_day=$config['cron_due_terminate_day'];
+		if($terminate_switch==1){
+			$time_terminate = $time-$terminate_day*24*3600;
+			$time_terminate_start = strtotime(date('Y-m-d 00:00:00',$time_terminate));
+	        $time_terminate_end = $time_terminate;
+			$terminate_host=Db::name('host')->whereIn('status','Active,Suspended')
+			->field('id,client_id')
+			->where('due_time','>=',$time_terminate_start)
+			->where('due_time','<=',$time_terminate_end)
+			->where('billing_cycle', '<>', 'free')
+			->where('billing_cycle', '<>', 'onetime')
+			->select()->toArray();
+			foreach($terminate_host as $h){
 				add_task([
 					'type' => 'host_terminate',
-					'description' => '主机删除',
+					'description' => '#host#'.$h['id'].'#主机删除',
 					'task_data' => [
 						'host_id'=>$h['id'],//主机ID
 					],		
-				]);					
+				]);						
 			}
-		
+			unset($terminate_host);
 		}
 	}
 	

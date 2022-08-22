@@ -35,12 +35,12 @@
               width: 170,
               ellipsis: true
             },
-            {
-              colKey: 'hosts',
-              title: lang.product_id,
-              width: 300,
-              ellipsis: true
-            },
+            // {
+            //   colKey: 'hosts',
+            //   title: lang.product_id,
+            //   width: 300,
+            //   ellipsis: true
+            // },
             {
               colKey: 'transaction_number',
               title: lang.flow_number,

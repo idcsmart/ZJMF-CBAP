@@ -19,6 +19,7 @@ class IdcsmartTicketInternalModel extends Model
     protected $schema = [
         'id'                               => 'int',
         'ticket_id'                        => 'int',
+        'post_admin_id'                    => 'int',
         'ticket_num'                       => 'string',
         'num'                              => 'int',
         'admin_role_id'                    => 'int',
@@ -126,8 +127,9 @@ class IdcsmartTicketInternalModel extends Model
         }
 
         $ticketInternal = $this->alias('ti')
-            ->field('ti.id,ti.title,ti.content,ti.ticket_type_id,ti.status,ti.create_time,ti.attachment,a.name as admin_name,ti.last_reply_time,ti.client_id,ti.post_admin_id,ti.admin_id,ti.priority')
-            ->leftJoin('admin a','a.id=ti.admin_id')
+            ->field('ti.id,ti.title,ti.content,ti.ticket_type_id,ti.status,ti.create_time,ti.attachment,a.name as admin_name,ti.last_reply_time,ti.client_id,ti.post_admin_id,ti.admin_id,ti.priority,c.username as client_name')
+            ->leftJoin('admin a','a.id=ti.post_admin_id')
+            ->leftJoin('client c','c.id=ti.client_id')
             ->where('ti.id',$id)
             ->find();
         if (empty($ticketInternal)){
@@ -402,7 +404,7 @@ class IdcsmartTicketInternalModel extends Model
             ]);
 
             # 记录日志
-            active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>$ticketInternal->ticket_num,'content'=>$tickeInternaltReply->content]), 'addon_idcsmart_ticket_internal', $ticketInternal->id);
+            active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>$ticketInternal->ticket_num,'{content}'=>$tickeInternaltReply->content]), 'addon_idcsmart_ticket_internal', $ticketInternal->id);
 
             $this->commit();
         }catch (\Exception $e){

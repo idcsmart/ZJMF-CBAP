@@ -12,7 +12,7 @@ class CommonValidate extends Validate
         'action'        => 'require|in:login,register,verify,update,password_reset',
         'email'         => 'requireIf:action,login|requireIf:action,register|requireIf:action,update|requireIf:action,password_reset|email',
         'phone_code'    => 'requireIf:action,login|requireIf:action,register|requireIf:action,update|requireIf:action,password_reset',
-        'phone'         => 'requireIf:action,login|requireIf:action,register|requireIf:action,update|requireIf:action,password_reset|max:20|number',
+        'phone'         => 'requireIf:action,login|requireIf:action,register|requireIf:action,update|requireIf:action,password_reset|max:11|number',
     ];
 
     protected $message  =   [

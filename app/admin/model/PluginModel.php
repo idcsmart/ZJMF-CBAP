@@ -169,22 +169,26 @@ class PluginModel extends Model
             return ['status'=>400,'msg'=>lang('plugin_pre_install_fail')];
         }
 
-        # 修改为允许客户自定义hook
-        $reflect = new \ReflectionClass($class);
-        $methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
-        $methodsFinal = $reflect->getMethods(\ReflectionMethod::IS_FINAL);
-        $methodsFilter = [];
-        foreach ($methods as $method){
-            $methodsFilter[] = parse_name($method->name);
+        # 对于插件addon,修改为允许客户自定义hook
+        if ($module == 'addon'){
+            $reflect = new \ReflectionClass($class);
+            $methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
+            $methodsFinal = $reflect->getMethods(\ReflectionMethod::IS_FINAL);
+            $methodsFilter = [];
+            foreach ($methods as $method){
+                $methodsFilter[] = parse_name($method->name);
+            }
+            $methodsFinalFilter = [];
+            foreach ($methodsFinal as $methodFinal){
+                $methodsFinalFilter[] = parse_name($methodFinal->name);
+            }
+            $methods = array_diff($methodsFilter,$methodsFinalFilter);
+            # 排除
+            $methods = array_diff($methods,['install','uninstall','construct','get_view']);
+            $pluginHooks = $methods;
+        }else{
+            $pluginHooks = [];
         }
-        $methodsFinalFilter = [];
-        foreach ($methodsFinal as $methodFinal){
-            $methodsFinalFilter[] = parse_name($methodFinal->name);
-        }
-        $methods = array_diff($methodsFilter,$methodsFinalFilter);
-        # 排除
-        $methods = array_diff($methods,['install','uninstall','construct','get_view']);
-        $pluginHooks = $methods;
 
         # 仅支持系统存在的hook
         /*$methods = get_class_methods($plugin);
@@ -286,6 +290,8 @@ class PluginModel extends Model
             return ['status'=>400,'msg'=>lang('plugin_install_fail') . ':' . $e->getMessage()];
         }
 
+        hook('after_plugin_install',['name'=>$name,'customfield'=>$param['customfield']??[]]);
+
         return ['status'=>200,'msg'=>lang('plugin_install_success')];
     }
 
@@ -306,6 +312,9 @@ class PluginModel extends Model
 
         if (empty($plugin)){
             return ['status'=>400,'msg'=>lang('plugin_is_not_exist')];
+        }
+        if ($param['module']=='sms' && $param['name']=='Idcsmart'){
+            return ['status'=>400,'msg'=>lang('plugin_uninstall_cannot')];
         }
 
         $module = $param['module'];
@@ -340,23 +349,27 @@ class PluginModel extends Model
             active_log(lang('log_admin_uninstall_plugin',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{module}'=>lang('log_admin_plugin_'.$module),'{name}'=>$param['name']]),'plugin',$plugin->id);
 			if($module=="sms"){
 				
-				$sms_template = Db::name('sms_template')->where('sms_name',$plugin['name'])->field('template_id,type')->find();
+				$sms_template = Db::name('sms_template')->where('sms_name',$plugin['name'])->field('title,template_id,type')->select()->toArray();
 				$data['config'] = $Plugin->getConfig();
 				foreach($sms_template as $smstemplate){
 					if(!empty($smstemplate['template_id'])){
 						$cmd=($smstemplate['type']==0)?"deleteCnTemplate":"deleteGlobalTemplate";
 						$data['template_id']=$smstemplate['template_id'];
 						$Plugin->$cmd($data);
-					}				
+					}	
+                    
 				}				
 				Db::name('sms_template')->where('sms_name',strtolower($plugin['name']))->delete();//删除摸板
-				
+                Db::name('notice_setting')->where('sms_name',strtolower($plugin['name']))->update(['sms_name'=>'Idcsmart']);//更新发送设置
+				Db::name('notice_setting')->where('sms_global_name',strtolower($plugin['name']))->update(['sms_global_name'=>'Idcsmart']);//更新发送设置
 			}
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
             return ['status'=>400,'msg'=>lang('plugin_uninstall_fail') . ":" . $e->getMessage()];
         }
+
+        hook('after_plugin_uninstall',['name'=>$param['name']]);
 
         return ['status'=>200,'msg'=>lang('plugin_uninstall_success')];
     }
@@ -382,7 +395,9 @@ class PluginModel extends Model
         if (empty($plugin)){
             return ['status'=>400,'msg'=>lang('plugin_is_not_exist')];
         }
-
+        if ($param['module']=='sms' && $param['name']=='Idcsmart'){
+            return ['status'=>400,'msg'=>lang('plugin_disabled_cannot')];
+        }
         $status = intval($param['status']);
 
         if ($status == $plugin['status']){
@@ -559,9 +574,9 @@ class PluginModel extends Model
 
         $update = [];
 
-        if (!empty($config['module_name'])){
+        /*if (!empty($config['module_name'])){
             $update['title'] = $config['module_name'];
-        }
+        }*/
 
         $update['config'] = json_encode($config);
         $update['update_time'] = time();
@@ -598,7 +613,7 @@ class PluginModel extends Model
      */
     public function plugins($module)
     {
-        $plugins = $this->field('id,name,title,url')
+        $plugins = $this->field('id,name,title,url,config')
             ->where(function (Query $query)use($module){
                 $query->where('module',$module)
                     ->where('status',1);
@@ -611,10 +626,17 @@ class PluginModel extends Model
                 # 自定义图片路径
                 return $value;
             })
+            ->withAttr('title',function ($value,$data){
+                $conifg = json_decode($data['config'],true);
+                return (isset($conifg['module_name']) && !empty($conifg['module_name']))?$conifg['module_name']:$value;
+            })
             ->order('order','asc')
             ->order('id','asc')
             ->select()
             ->toArray();
+        foreach ($plugins as &$plugin){
+            unset($plugin['config']);
+        }
 		if($module == 'sms' || $module == 'mail'){
 			foreach ($plugins as $kk=>&$vv){
 				$class = get_plugin_class($vv['name'], $module);		

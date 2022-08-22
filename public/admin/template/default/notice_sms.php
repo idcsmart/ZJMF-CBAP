@@ -80,7 +80,7 @@
         </t-checkbox-group>
         <!-- select -->
         <t-select v-if="item.type==='select'" v-model="item.value" :placeholder="lang.select+item.title">
-          <t-option v-for="ele in item.options" :value="ele.value" :label="ele.label" :key="ele.value">
+          <t-option v-for="(value,key) in item.options" :value="value" :label="key" :key="key">
           </t-option>
         </t-select>
       </t-form-item>

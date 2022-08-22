@@ -100,6 +100,7 @@ class CommonController extends AdminBaseController
      * @version v1
      * @return string currency_code CNY 货币代码
      * @return string currency_prefix ￥ 货币符号
+     * @return string currency_suffix 元 后缀
      * @return array lang_admin - 后台语言列表
      * @return array lang_home - 前台语言列表
      */
@@ -108,6 +109,7 @@ class CommonController extends AdminBaseController
         $setting = [
             'currency_code',
             'currency_prefix',
+            'currency_suffix',
         ];
 		
 		$lang = [ 

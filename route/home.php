@@ -57,6 +57,7 @@ Route::group('console/v1',function (){
 	Route::put('account/phone', 'home/account/updatePhone'); // 修改手机
 	Route::put('account/email/old', 'home/account/verifyOldEmail'); // 验证原邮箱
 	Route::put('account/email', 'home/account/updateEmail'); // 修改邮箱
+    Route::put('account/password/code', 'home/account/codeUpdatePassword'); // 验证码修改密码
 	Route::put('account/password', 'home/account/updatePassword'); // 修改密码
     Route::get('credit', 'home/account/creditList'); // 余额变更记录列表
 
@@ -107,6 +108,7 @@ Route::group('console/v1',function (){
     ->middleware(\app\http\middleware\ParamFilter::class);
 
 
+Route::get('','home/view/index'); // 前台首页
 Route::get('[:view_html]','home/view/index')->ext('html'); // 前台模板
 Route::get('/page/[:plugin_id]/[:view_html]','home/view/plugin')->ext('html'); //插件模板
 Route::get('home/task','home/view/task'); // 测试

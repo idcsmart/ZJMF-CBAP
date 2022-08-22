@@ -88,6 +88,7 @@ return [
     'recharge_is_not_open' => '充值功能未开启',
     'recharge_amount_is_greater_than_0' => '最小充值金额大于等于0.01',
     'min_recharge_is_error' => '最小充值金额为{min}',
+    'max_recharge_is_error' => '最大充值金额为{max}',
     'recharge_success' => '充值成功',
     'client_recharge' => '用户充值',
     'recharge_order_cannot_use_credit' => '充值订单不可使用余额',
@@ -148,6 +149,8 @@ return [
     'please_verify_old_email' => '请验证原邮箱',
     'user_not_bind_phone' => '用户未绑定手机',
     'user_not_bind_email' => '用户未绑定邮箱',
+    'verify_type_is_required' => '请选择验证类型',
+    'verify_type_only_phone_or_email' => '验证类型只能为手机或邮箱',
 
     # 购物车
     'clear_cart_success' => '清空购物车成功',

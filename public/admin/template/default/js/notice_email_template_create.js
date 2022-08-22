@@ -32,7 +32,8 @@
       },
       methods: {
         setContent () {
-          this.formData.message = tinymce.editors['emailTemp'].getContent({ format: 'text' })
+          // this.formData.message = tinymce.editors['emailTemp'].getContent({ format: 'text' })
+          this.formData.message = tinymce.editors['emailTemp'].getContent()
         },
         submit () {
           this.setContent()
@@ -53,10 +54,12 @@
         initTemplate () {
           tinymce.init({
             selector: '#emailTemp',
-            language_url: '/tinymce/langs/zh_CN.js',
+            language_url: `${url}tinymce/langs/zh_CN.js`,
             language: 'zh_CN',
             min_height: 400,
-            width: '100%'
+            width: '100%',
+            plugins: 'code fullpage',
+            toolbar: "code",
           });
         },
         close () {

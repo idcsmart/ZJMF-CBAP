@@ -20,7 +20,7 @@
 </head>
 
 <body>
-  <div id="login">
+  <div id="login" v-cloak>
     <div class="login-container">
       <div class="title-container">
         <h1 class="title margin-no">{{lang.login}}</h1>
@@ -49,7 +49,7 @@
             <img :src="captcha" :alt="lang.captcha" class="captcha" @click="getCaptcha">
           </t-form-item>
           <t-form-item class="btn-container">
-            <t-button block size="large" type="submit">{{lang.login}}</t-button>
+            <t-button block size="large" type="submit" :loading="loading">{{lang.login}}</t-button>
           </t-form-item>
           <div class="check-container remember-pwd">
             <t-checkbox v-model="check">{{lang.rember_acount}}</t-checkbox>

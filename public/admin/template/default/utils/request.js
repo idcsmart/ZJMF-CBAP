@@ -45,6 +45,7 @@ Axios.interceptors.response.use(
           }
           break
         case 403:
+          location.href = 'http://' + str + '404.html'
           break
         case 404:
           location.href = 'http://' + str + '404.html'

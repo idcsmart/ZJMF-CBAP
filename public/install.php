@@ -51,16 +51,16 @@ class InstallSystem
         $error = 0;
         $envs = [];
         #监测-PHP版本
-        if (!version_compare(phpversion(), '7.4.0', '>=')) {
+        if (!version_compare(phpversion(), '7.2.5', '>=') || !version_compare(phpversion(), '7.4.0', '<')) {
             $error++;
             $env['status'] = 0;
         }else{
             $env['status'] = 1;
         }
         $env['name'] = 'PHP版本';
-        $env['suggest'] = '>7.4.x';
+        $env['suggest'] = '>=7.2.5, <7.4.0';
         $env['current'] = phpversion();
-        $env['worst'] = '7.4.0';
+        $env['worst'] = '7.2.5';
         $envs[] = $env;
 
         $modules = [];
