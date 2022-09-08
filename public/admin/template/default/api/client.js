@@ -28,7 +28,10 @@ function getClientDetail (id) {
 function loginByUserId (id) {
   return Axios.post(`/client/${id}/login`)
 }
-
+// 获取用户退款
+function getRefund (id) {
+  return Axios.get(`/refund/client/${id}/amount`)
+}
 // 用户余额管理-用户余额变更记录列表
 function getMoneyDetail (id, params) {
   return Axios.get(`/client/${id}/credit`, { params })

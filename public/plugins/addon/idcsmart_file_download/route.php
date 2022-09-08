@@ -47,7 +47,7 @@ Route::group('console/v1',function (){
     ->middleware(\app\http\middleware\CheckHome::class)
     ->middleware(\app\http\middleware\ParamFilter::class);
 # 后台
-Route::group('admin/v1',function (){
+Route::group(DIR_ADMIN . '/v1',function (){
     # 带上默认参数,可以使用继承控制器app\admin\controller\PluginBaseController的一些通用方法,也可以不追加这些参数(_plugin插件名称C风格,_controller控制器名称C风格,_action方法名称C风格)
     # 文件下载
     Route::get('file', "\\addon\\idcsmart_file_download\\controller\\AdminIndexController@idcsmartFileList")

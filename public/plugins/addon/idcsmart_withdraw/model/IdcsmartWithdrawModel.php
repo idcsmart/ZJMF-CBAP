@@ -4,6 +4,7 @@ namespace addon\idcsmart_withdraw\model;
 use think\db\Query;
 use think\facade\Cache;
 use think\Model;
+use app\common\model\ClientModel;
 
 /**
  * @title 提现模型
@@ -106,21 +107,18 @@ class IdcsmartWithdrawModel extends Model
                         'client_id' => $idcsmartWithdraw['client_id'],
                     ]);
                     if(!$result){
-                        throw new Exception(lang('fail_message'));           
+                        throw new \Exception(lang('fail_message'));           
                     }
                 }
-                $params = [
-                    'id' => $idcsmartWithdraw['id'], 
-                    'source' => $idcsmartWithdraw['source'], 
-                    'amount' => $idcsmartWithdraw['amount'], 
-                    'fee' => $idcsmartWithdraw['fee'],
-                    'method' => $idcsmartWithdraw['method'],
-                    'card_number' => $idcsmartWithdraw['card_number'],
-                    'account' => $idcsmartWithdraw['account'],
-                    'client_id' => $idcsmartWithdraw['client_id'],
-                    'create_time' => $idcsmartWithdraw['create_time'],
-                ];
-                hook('after_idcsmart_withdraw_pass', $params);
+            }
+
+            $client = ClientModel::find($idcsmartWithdraw['client_id']);
+            if($param['status']==1){
+                # 记录日志
+                active_log(lang_plugins('admin_pass_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{amount}'=>configuration("currency_prefix").$idcsmartWithdraw['amount'].configuration("currency_suffix")]), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id);
+            }else{
+                # 记录日志
+                active_log(lang_plugins('admin_reject_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{reason}'=>$param['reason'] ?? '']), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id);
             }
 
             $this->commit();
@@ -129,6 +127,21 @@ class IdcsmartWithdrawModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => lang_plugins('fail_message')];
         }
+        if($param['status']==1){
+            $params = [
+                'id' => $idcsmartWithdraw['id'], 
+                'source' => $idcsmartWithdraw['source'], 
+                'amount' => $idcsmartWithdraw['amount'], 
+                'fee' => $idcsmartWithdraw['fee'],
+                'method' => $idcsmartWithdraw['method'],
+                'card_number' => $idcsmartWithdraw['card_number'],
+                'name' => $idcsmartWithdraw['name'],
+                'account' => $idcsmartWithdraw['account'],
+                'client_id' => $idcsmartWithdraw['client_id'],
+                'create_time' => $idcsmartWithdraw['create_time'],
+            ];
+            hook('after_idcsmart_withdraw_pass', $params);
+        }
         return ['status' => 200, 'msg' => lang_plugins('success_message')];
     }
 
@@ -136,6 +149,11 @@ class IdcsmartWithdrawModel extends Model
     public function idcsmartWithdraw($param)
     {
         $clientId = get_client_id();
+
+        $client = ClientModel::find($clientId);
+        if(empty($client)){
+            return ['status' => 400, 'msg' => lang_plugins('fail_message')];
+        }
 
         $source = IdcsmartWithdrawSourceModel::select()->toArray();
         $source = array_column($source, 'plugin_name');
@@ -196,7 +214,9 @@ class IdcsmartWithdrawModel extends Model
                 
             }
         }
-
+        if($param['source']=='credit' && $param['amount']>$client['credit']){
+            return ['status'=>400, 'msg'=>lang_plugins('insufficient_balance')];
+        }
         $this->startTrans();
         try {
             if($idcsmartWithdrawRule['withdraw_fee_type']=='fixed'){
@@ -213,7 +233,7 @@ class IdcsmartWithdrawModel extends Model
                 }
             }
 
-            $this->create([
+            $idcsmartWithdraw = $this->create([
                 'source' => $param['source'],
                 'amount' => $param['amount'],
                 'method' => $param['method'],
@@ -226,6 +246,30 @@ class IdcsmartWithdrawModel extends Model
                 'create_time' => time()
             ]);
 
+            # 提现审核通过钩子
+            if($idcsmartWithdrawRule['process']=='auto'){
+                if($param['source']=='credit'){
+                    $result = update_credit([
+                        'type' => 'Withdraw',
+                        'amount' => -$param['amount'],
+                        'notes' => "Withdraw",
+                        'client_id' => $clientId,
+                    ]);
+                    if(!$result){
+                        throw new \Exception(lang('fail_message'));           
+                    }
+                }
+            }
+            if($param['source']=='credit'){
+                $source = lang_plugins('withdraw_source_credit');
+            }else{
+                $source = IdcsmartWithdrawSourceModel::where('plugin_name', $param['source'])->find();
+                $source = $source['plugin_title'] ?? '';
+            }
+
+            # 记录日志
+            active_log(lang_plugins('log_client_withdraw', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{source}'=>$source,'{amount}'=>configuration("currency_prefix").$param['amount'].configuration("currency_suffix")]), 'client', $client->id);
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -233,6 +277,33 @@ class IdcsmartWithdrawModel extends Model
             //return ['status' => 400, 'msg' => lang_plugins('fail_message')];
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
+        if($idcsmartWithdrawRule['process']=='auto'){
+            $params = [
+                'id' => $idcsmartWithdraw->id, 
+                'source' => $param['source'], 
+                'amount' => $param['amount'], 
+                'fee' => $fee,
+                'method' => $param['method'],
+                'card_number' => $param['card_number'] ?? '',
+                'name' => $param['name'] ?? '',
+                'account' => $param['account'] ?? '',
+                'client_id' => $clientId,
+                'create_time' => $idcsmartWithdraw->create_time,
+            ];
+            hook('after_idcsmart_withdraw_pass', $params);
+        }
+
         return ['status' => 200, 'msg' => lang_plugins('success_message')];
+    }
+
+    # 用户已提现金额
+    public function idcsmartWithdrawClient($id)
+    {
+        $client = ClientModel::find($id);
+        if(empty($client)){
+            return '0.00';
+        }
+        $amount = $this->where('status', 1)->where('client_id', $id)->sum('amount');
+        return amount_format($amount);
     }
 }

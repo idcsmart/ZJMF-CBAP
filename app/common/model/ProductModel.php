@@ -614,7 +614,7 @@ class ProductModel extends Model
             $ProductUpgradeProductModel->where('upgrade_product_id',$id)->delete();
 
             # 记录日志
-            active_log(lang('log_admin_delete_product',['admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$id.'#'.$product['name'].'#']),'product',$id);
+            active_log(lang('log_admin_delete_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$id.'#'.$product['name'].'#']),'product',$id);
 
             $this->commit();
         }catch (\Exception $e){
@@ -661,9 +661,9 @@ class ProductModel extends Model
 
             # 记录日志
             if ($hidden == 1){
-                active_log(lang('log_admin_hidden_product',['admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$product->id.'#'.$product['name'].'#']),'product',$product->id);
+                active_log(lang('log_admin_hidden_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$product->id.'#'.$product['name'].'#']),'product',$product->id);
             }else{
-                active_log(lang('log_admin_show_product',['admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$product->id.'#'.$product['name'].'#']),'product',$product->id);
+                active_log(lang('log_admin_show_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$product->id.'#'.$product['name'].'#']),'product',$product->id);
             }
 
             $this->commit();

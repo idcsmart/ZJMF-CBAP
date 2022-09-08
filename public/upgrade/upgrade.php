@@ -7,6 +7,9 @@ use think\Cache;
 define('IDCSMART_ROOT',dirname(dirname(__DIR__ )). '/'); # 网站根目录
 define('WEB_ROOT',dirname(__DIR__ ) . '/'); # 网站入口目录
 
+set_time_limit(0);
+ini_set('max_execution_time', 3600);
+
 class UpgradeSystem
 {
     public $upload_dir = IDCSMART_ROOT.'public/upgrade/';//客户升级包目录
@@ -75,8 +78,10 @@ class UpgradeSystem
         }else{
             return ['status'=>200];
         }
-        if(md5($file)!=$md5){
-            return ['status'=>400,'msg'=>"安装包MD5错误"];
+        if(md5_file($file)!=$md5){
+            unlink($file);
+            unlink($file.'.md5');
+            return ['status'=>400,'msg'=>"更新包MD5错误，请重新下载"];
         }else{
             return ['status'=>200];
         }
@@ -84,7 +89,6 @@ class UpgradeSystem
 
     public function upgradeStart()
     {
-        set_time_limit(0);
         $handler = opendir($this->upload_dir);
         while( ($filename = readdir($handler)) !== false ) {
             if ($filename == "." && $filename == "..")continue;
@@ -92,7 +96,7 @@ class UpgradeSystem
         }
         closedir($handler);
         if(empty($zips)){
-            return json_encode(['status'=>400,'msg'=>"没有可用的安装包"]);
+            return json_encode(['status'=>400,'msg'=>"没有可用的更新包"]);
         }
 
         $last_version = 0;
@@ -115,7 +119,7 @@ class UpgradeSystem
             }
         }
         if(empty($last_version)){
-            return json_encode(['status'=>400,'msg'=>"没有可升级的安装包"]);
+            return json_encode(['status'=>400,'msg'=>"没有可升级的更新包"]);
         }
         $this->setSession('upgrade_system_version', $last_version);
         $package_name = glob($this->upload_dir.$last_zip);
@@ -142,7 +146,11 @@ class UpgradeSystem
     {
         $progress_log = $this->progress_log;
         if(!file_exists($progress_log)){
-            return json_encode(['status' => 200 , 'msg' => '']);
+			$server_http=(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on')?'https://':'http://';
+			$arr = parse_url($_SERVER['HTTP_HOST']);
+			$domain = ($arr['host'].($arr['port'] ? (':'.$arr['port']) : ''))?:$arr['path'];
+			$url = $server_http.$domain.'/'.DIR_ADMIN;
+            return json_encode(['status' => 200 , 'msg' => '更新成功', 'data' => ['url' => $url]]);
         }
         //设置超时时间10s
         $timeout = [
@@ -248,6 +256,7 @@ class UpgradeSystem
                     chmod($this->upload_dir . $package_name,0777);
                     $this->deleteDir($this->upload_dir . $package_name );
                     unlink($this->upload_dir . $file_name );
+                    if(file_exists($this->upload_dir . $file_name . '.md5'))unlink($this->upload_dir . $file_name . '.md5');
                     unlink($this->upload_dir . $package_name. '.version' );
                     // 删除自定义前端文件,重命名新的前端admin文件为自定义后台路径
                     /*if ($admin_application != 'admin'){
@@ -377,8 +386,9 @@ class UpgradeSystem
                         }
                     }
                 }
+                sleep(10);
                 $progress_log['progress'] = "80%";
-                $progress_log['msg'] = 'SQL执行结束';
+                $progress_log['msg'] = 'PHP执行开始';
                 $progress_log['status'] = 200;
                 $this->updateProgress(json_encode($progress_log));
 
@@ -411,11 +421,16 @@ class UpgradeSystem
                     }
                 }
             }
-
+            sleep(10);
             $this->updateConfiguration('system_version', $last_version);
             $this->updateConfiguration('executed_update', 1);
             $progress_log['progress'] = "100%";
             $progress_log['msg'] = '升级完成';
+			$server_http=(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on')?'https://':'http://';
+			$arr = parse_url($_SERVER['HTTP_HOST']);
+			$domain = ($arr['host'].($arr['port'] ? (':'.$arr['port']) : ''))?:$arr['path'];
+			$url = $server_http.$domain.'/'.DIR_ADMIN;
+			$progress_log['data']['url'] = $url;
             $progress_log['status'] = 200;
             $this->updateProgress(json_encode($progress_log));
 // 升级成功,注销登录
@@ -462,6 +477,7 @@ class UpgradeSystem
         #删除压缩包
         if (!empty($file_name) && strpos($file_name,$check_version) !== false) {
             @unlink($this->upload_dir . $file_name);
+            @unlink($this->upload_dir . $file_name.'.md5');
         }
         #删除解压目录
         if (!empty($package_name) && strpos($package_name,$check_version) !== false) {
@@ -744,9 +760,13 @@ class UpgradeSystem
 $UpgradeSystem = new UpgradeSystem();
 
 $res = $UpgradeSystem->checkLogin(); 
+
 if($res['status']==400){
     echo json_encode($res);die;
 }
+
+$param = $_REQUEST;
+
 
 if($param['action']=='progress'){
     $res = $UpgradeSystem->getUpgradeProgress();

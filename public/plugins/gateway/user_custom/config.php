@@ -16,7 +16,7 @@ return [
     ],
     'seller_id'      => [//
         'title' => '基础信息',
-        'type'  => 'text',
+        'type'  => 'textarea',
         'value' => '',
         'tip'   => '填写基础信息',
     ],

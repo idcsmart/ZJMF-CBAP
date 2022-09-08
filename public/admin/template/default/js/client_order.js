@@ -32,6 +32,11 @@
             //   width: 130
             // },
             {
+              colKey: 'icon',
+              width: 16,
+              className: 'icon-width'
+            },
+            {
               colKey: 'product_names',
               title: lang.product_name,
               ellipsis: true,
@@ -95,7 +100,7 @@
                 pattern: /^-?\d+(\.\d{0,2})?$/, message: lang.verify10, type: 'warning'
               },
               {
-                validator: val => val*1 !== 0, message: lang.verify10, type: 'warning'
+                validator: val => val * 1 !== 0, message: lang.verify10, type: 'warning'
               }
             ],
             description: [

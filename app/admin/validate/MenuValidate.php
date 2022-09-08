@@ -43,7 +43,7 @@ class MenuValidate extends Validate
                 return false;
             }
             if($v['type']=='custom'){
-                if(!isset($v['url'])){
+                /*if(!isset($v['url'])){
                     return false;
                 }
                 if(!is_string($v['url'])){
@@ -51,7 +51,7 @@ class MenuValidate extends Validate
                 }
                 if(strlen($v['url'])>255){
                     return false;
-                }
+                }*/
             }else{
                 if(!isset($v['nav_id'])){
                     return false;

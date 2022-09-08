@@ -235,7 +235,9 @@ class PluginModel extends Model
 
             # 插入导航
             if (!array_key_exists('noNav',get_class_vars($class))){
-                $this->pluginInsertNav($module,$name);
+                $this->pluginInsertNav($module,$name,false);
+            }else{
+                $this->pluginInsertNav($module,$name,true);
             }
 
             # 插入权限
@@ -703,7 +705,7 @@ class PluginModel extends Model
     }
 
     # 插入插件导航
-    private function pluginInsertNav($module,$name)
+    private function pluginInsertNav($module,$name,$noNav=false)
     {
         # 非插件,不插入导航
         if (!in_array($module,['addon'])){
@@ -718,15 +720,17 @@ class PluginModel extends Model
         $maxOrder = $NavModel->max('order');
 
         $navPluginId = $NavModel->where('type','admin')->where('name','nav_plugin')->value('id')?:0;
-        $NavModel->create([
-            'type' => 'admin',
-            'name' => "nav_plugin_addon_{$name}",
-            'url' => "plugin/{$name}/index.html",
-            'parent_id' => $navPluginId,
-            'order' => $maxOrder+1,
-            'module' => $module,
-            'plugin' => parse_name($name,1)
-        ]);
+        if($noNav===false){
+            $NavModel->create([
+                'type' => 'admin',
+                'name' => "nav_plugin_addon_{$name}",
+                'url' => "plugin/{$name}/index.html",
+                'parent_id' => $navPluginId,
+                'order' => $maxOrder+1,
+                'module' => $module,
+                'plugin' => parse_name($name,1)
+            ]);
+        }
 
         # 后台导航文件存在,导航添加至插件之上,管理之下
         if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/sidebar.php")){

@@ -35,7 +35,7 @@ class UpgradeSystemLogic
             $handler = opendir($this->upload_dir);
             while( ($filename = readdir($handler)) !== false ) {
                 if ($filename == "." && $filename == "..")continue;
-                if (preg_match('/'.$lastVersion.'\.zip$/i', $filename))$isDownload = 1;
+                if (preg_match('/'.$lastVersion.'\.zip$/i', $filename) && file_exists($this->upload_dir.$filename.'.md5'))$isDownload = 1;
             }
         }
         $data = [
@@ -94,7 +94,7 @@ class UpgradeSystemLogic
         $handler = opendir($this->upload_dir);
         while( ($filename = readdir($handler)) !== false ) {
             if ($filename == "." && $filename == "..")continue;
-            if (preg_match('/'.$lastVersion.'\.zip$/i', $filename))$is_download = 1;
+            if (preg_match('/'.$lastVersion.'\.zip$/i', $filename) && file_exists($this->upload_dir.$filename.'.md5'))$is_download = 1;
         }
         if ($is_download)return ['status'=>200, 'msg'=>lang('package_has_downloaded')];
 
@@ -114,6 +114,7 @@ class UpgradeSystemLogic
         }
 
         //2、下载更新包
+        ini_set('max_execution_time', 3600);
         $downloadResult = $this->downloadZip($url);
         if ($downloadResult['status'] != 200){
             die;
@@ -271,11 +272,11 @@ class UpgradeSystemLogic
         #无验证数据不执行，防止服务器上面数据被错误删除
         if (empty($check_version))return false;
         #删除压缩包
-        if (!empty($file_name) && strpos($file_name,$check_version) !== false) {
+        if (!empty($file_name) && file_exists($this->upload_dir . $file_name) && strpos($file_name,$check_version) !== false) {
             @unlink($this->upload_dir . $file_name);
         }
         #删除解压目录
-        if (!empty($package_name) && strpos($package_name,$check_version) !== false) {
+        if (!empty($package_name) && file_exists($this->upload_dir . $package_name) && strpos($package_name,$check_version) !== false) {
             chmod($this->upload_dir . $package_name, 0777);
             $this->deleteDir($this->upload_dir . $package_name);
         }

@@ -390,7 +390,7 @@ class HostModel extends Model
                 $clientName = 'client#'.$client->id.'#'.$client->username.'#';
             }
             # 记录日志
-            active_log(lang('admin_delete_user_host', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{host}'=>'#'.$host->id.$host->name]), 'host', $host->id);
+            active_log(lang('admin_delete_user_host', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{host}'=>$host['name']]), 'host', $host->id);
 
             $order = OrderModel::find($host['order_id']);
             if(!empty($order) && $order['status']=='Unpaid'){

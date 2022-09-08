@@ -7,5 +7,5 @@ return [
     //同步跳转
     'redirect_url' => "{$domain}/gateway/epusdt/index/returnHandle",
     //支付完成跳转地址至系统首页
-    'url' => "{$domain}/reactmember",
+    'url' => "{$domain}",
 ];

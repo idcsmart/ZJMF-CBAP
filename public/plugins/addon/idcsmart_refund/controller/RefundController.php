@@ -124,4 +124,25 @@ class RefundController extends PluginAdminBaseController
 
         return json($result);
     }
+
+    /**
+     * 时间 2022-08-23
+     * @title 获取客户退款金额
+     * @desc 获取客户退款金额
+     * @author wyh
+     * @version v1
+     * @url /admin/v1/refund/client/:id/amount
+     * @method put
+     * @param int id - 客户ID required
+     */
+    public function clientRefundAmount()
+    {
+        $param = $this->request->param();
+
+        $IdcsmartRefundModel = new IdcsmartRefundModel();
+
+        $result = $IdcsmartRefundModel->clientRefundAmount($param);
+
+        return json($result);
+    }
 }

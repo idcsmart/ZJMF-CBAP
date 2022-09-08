@@ -1,10 +1,12 @@
 (function (window, undefined) {
     var old_onload = window.onload
     window.onload = function () {
+        location.href = 'finance.html'
         const template = document.getElementById('account')
         Vue.prototype.lang = window.lang
         new Vue({
             created() {
+
                 this.getCommon();
                 this.getGateway();
                 this.getAccount();
@@ -12,7 +14,12 @@
             },
             mounted() {
                 // 关闭loading
+                // document.getElementById('mainLoading').style.display = 'none';
+            },
+            updated() {
+                // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
+                document.getElementsByClassName('template')[0].style.display = 'block'
             },
             components: {
                 aliAsideMenu,

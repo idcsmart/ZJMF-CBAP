@@ -33,6 +33,11 @@
               ellipsis: true
             },
             {
+              colKey: 'icon',
+              width: 16,
+              className: 'icon-width'
+            },
+            {
               colKey: 'product_names',
               title: lang.product_name,
               ellipsis: true,

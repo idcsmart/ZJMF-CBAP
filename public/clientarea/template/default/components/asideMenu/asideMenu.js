@@ -4,7 +4,7 @@ const asideMenu = {
     <div class="menu-list-top">
         <div class="menu-item" :class="item.id === menuActiveId ? 'menu-active':''" v-for="item in menu1" :key="item.id" @click="toPage(item)">
             <img :src="item.icon" class="item-img">
-            <span class="item-text">{{item.text}}</span>
+            <span class="item-text">{{item.name}}</span>
         </div>
     </div>
     <div class="menu-list-bottom">
@@ -18,11 +18,7 @@ const asideMenu = {
         return {
             activeId: 1,
             menu1: [
-                // { icon: `${url}/img/common/menu1.png`, text: lang.menu_1, url: "", id: 1 },
-                // { icon: `${url}/img/common/menu2.png`, text: lang.menu_2, url: "./cloudList.html", id: 2 },
-                { icon: `${url}/img/common/menu3.png`, text: lang.menu_3, url: "./finance.html", id: 3 },
-                { icon: `${url}/img/common/menu4.png`, text: lang.menu_4, url: "./accountCommon.html", id: 4 },
-                // { icon: `${url}/img/common/menu5.png`, text: lang.menu_5, url: "", id: 5 },
+               
             ],
             menu2: [
                 // { icon: `${url}/img/common/menu6.png`, text: lang.menu_6, url: "", id: 6 },
@@ -35,13 +31,19 @@ const asideMenu = {
         }
     },
     created() {
-        console.log(location.href);
-
+        const menu = JSON.parse(localStorage.getItem('frontMenus'))
+        menu.map(item=>{
+            if(item.icon){
+                item.icon = `${url}img/common/${item.icon}.png`
+            }
+        })
+        this.menu1 = menu
+        console.log(this.menu1);
     },
     methods: {
         // 页面跳转
         toPage(e) {
-            location.href = e.url
+            location.href = './' + e.url
         },
     },
     props: {

@@ -10,11 +10,11 @@
           {{lang.more_plugins}}
         </t-button>
       </a>
-      <div class="com-search">
+      <!-- <div class="com-search">
         <t-input v-model="params.keywords" class="search-input" :placeholder="`${lang.please_search}${lang.plug_name}`" @keyup.enter.native="seacrh" :on-clear="clearKey" clearable>
         </t-input>
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
-      </div>
+      </div> -->
     </div>
     <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
       <template slot="sortIcon">

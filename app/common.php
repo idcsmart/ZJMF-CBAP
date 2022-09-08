@@ -708,6 +708,20 @@ function check_mobile($mobile)
  */
 function check_captcha($captcha,$token)
 {
+    /*$data = [
+        'captcha' => $captcha,
+        'token' => $token
+    ];
+
+    $captchaPlugin = configuration('captcha_plugin')??'TpCaptcha';
+
+    $result = plugin_reflection($captchaPlugin,$data,'captcha','verify');
+    if ($result['status']==200){
+        return true;
+    }else{
+        return false;
+    }*/
+
     if (Cache::get('captcha_'.$token) == $captcha){
         # 验证通过,删除验证码缓存
         Cache::delete('captcha_'. $token);
@@ -980,13 +994,19 @@ function get_system_hooks()
  * @param string plugin - 插件标识 required
  * @param string param  - 参数 required
  * @param string module - 模块
+ * @param string action - 方法
  * @return mixed
  */
-function plugin_reflection($plugin,$param,$module='gateway')
+function plugin_reflection($plugin,$param,$module='gateway',$action='handle')
 {
     $class = get_plugin_class($plugin,$module);
+
+    if (!class_exists($class)){
+        return '';
+    }
+
     # 实现默认方法:插件标识+Handle
-    $action = parse_name(parse_name($plugin) . '_handle',1);
+    $action = parse_name(parse_name($plugin) . '_' . $action,1);
 
     return app('app')->invoke([$class,$action],[$param]);
 }

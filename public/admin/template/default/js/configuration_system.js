@@ -34,7 +34,17 @@
             maintenance_mode_message: [
               { required: true, message: lang.input + lang.maintenance_mode_info, type: 'error' },
             ]
-          }
+          },
+          // 系统版本信息
+          systemData: {},
+          // 更新信息
+          updateContent: {},
+          isDown: false,
+          updateData: {
+            progress: '0.00%'
+          },
+          isShowProgress: false,
+          timer: null
         }
       },
       methods: {
@@ -60,10 +70,79 @@
             this.formData.lang_home_open = String(res.data.data.lang_home_open)
           } catch (error) {
           }
+        },
+        // 获取版本信息
+        async getVersion() {
+          try {
+            const res = await version()
+            this.systemData = res.data.data
+            if (this.systemData.is_download == 1) {
+              this.isDown = true
+            }
+            localStorage.setItem('systemData', JSON.stringify(this.systemData))
+          } catch (error) {
+
+          }
+        },
+        // 获取更新信息
+        getUpContent() {
+          upContent().then(res => {
+            if (res.data.status == 200) {
+              this.updateContent = res.data.data
+              localStorage.setItem('updateContent', JSON.stringify(this.updateContent))
+            }
+          })
+        },
+        // 跳转到升级页面
+        toUpdate() {
+          location.href = '/upgrade/update.html'
+          // location.href = 'update.html'
+        },
+        // 开始下载
+        beginDown() {
+          if (this.systemData.last_version == this.systemData.version) {
+            this.$message.warning("您的系统已经是最新版本了，无需升级！")
+            return false
+          }
+
+          this.isShowProgress = true
+          upDown().then(res => {
+
+            if (res.data.status === 200) {
+
+            }
+          }).catch((error) => {
+            this.$message.warning(error.data.msg)
+          })
+
+          // 轮询下载进度
+          if (this.timer) {
+            clearInterval(timer)
+          }
+          this.timer = setInterval(() => {
+            upProgress().then(res => {
+              if (res.data.status === 200) {
+                this.updateData = res.data.data
+                if (this.updateData.progress == '100.00%') {
+                  clearInterval(this.timer)
+                  this.isShowProgress = false
+                  this.isDown = true
+                }
+              }
+            }).catch(error => {
+              console.log(error.data.data);
+              if (error.data.data == '当前不存在升级下载任务') {
+                this.isShowProgress = false
+                clearInterval(this.timer)
+              }
+            })
+          }, 2000)
         }
       },
       created() {
         this.getSetting()
+        this.getVersion()
+        this.getUpContent()
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

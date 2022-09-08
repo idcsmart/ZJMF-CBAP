@@ -45,7 +45,16 @@ return [
     'this_day_withdrawals_have_been_exhausted' => '本日提现次数已用尽',
     'this_week_withdrawals_have_been_exhausted' => '本周提现次数已用尽',
     'this_month_withdrawals_have_been_exhausted' => '本月提现次数已用尽',
+    'insufficient_balance' => '余额不足',
 
     # 导航
     'nav_plugin_addon_idcsmart_withdraw' => '提现',
+
+    'log_client_withdraw' => '{client}申请提现，提现来源：{source}，提现金额：{amount}',
+    'admin_pass_client_withdraw' => '{admin}通过用户：{client}的提现申请，用户提现：{amount}',
+    'admin_reject_client_withdraw' => '{admin}驳回用户：{client}的提现申请，驳回原因：{reason}',
+    'admin_save_withdraw_source' => '{admin}保存可提现来源：{source}',
+    'admin_add_withdraw_source_rule' => '{admin}新增可提现来源规则：{source}',
+    'admin_edit_withdraw_source_rule' => '{admin}修改可提现来源规则：{source}',
+    'admin_delete_withdraw_source_rule' => '{admin}删除可提现来源规则：{source}',
 ];

@@ -143,7 +143,7 @@ class ClientModel extends Model
         if($app=='admin'){
             $client['consume'] = amount_format(TransactionModel::where('client_id', $id)->where('amount', '>', 0)->sum('amount')); // 消费
             $client['refund'] = amount_format(TransactionModel::where('client_id', $id)->where('amount', '<', 0)->sum('amount')); // 退款
-            $client['withdraw'] = amount_format(0.00); // 提现
+            $client['withdraw'] = amount_format(-ClientCreditModel::where('client_id', $id)->where('type', 'Withdraw')->sum('amount')); // 提现
             $client['host_num'] = HostModel::where('client_id', $id)->count();  // 产品数量
             $client['host_active_num'] = HostModel::where('status', 'Active')->where('client_id', $id)->count(); // 已激活产品数量
             $client['login_logs'] = SystemLogModel::field('ip,create_time login_time')->where('type', 'login')->where('user_type', 'client')->where('user_id', $id)->limit(5)->order('id', 'desc')->select()->toArray(); 

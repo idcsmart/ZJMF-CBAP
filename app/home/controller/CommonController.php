@@ -211,6 +211,7 @@ class CommonController extends HomeBaseController
      * @return string register_phone 1 手机号注册开关 1开启，0关闭
      * @return string recharge_open 1 启用充值:1启用,0否
      * @return string recharge_min 1 单笔最小金额
+     * @return string recharge_max 1 单笔最大金额
      * @return string currency_code CNY 货币代码
      * @return string currency_prefix ￥ 货币符号
      * @return string currency_suffix 元 货币后缀
@@ -238,7 +239,7 @@ class CommonController extends HomeBaseController
             'register_phone',
             'recharge_open',
             'recharge_min',
-            'recharge_min',
+            'recharge_max',
             'currency_code',
             'currency_prefix',
             'currency_suffix',

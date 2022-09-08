@@ -1,6 +1,6 @@
 {include file="header"}
-    <!-- 页面独有样式 -->
-    <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/account.css">
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/account.css">
 </head>
 
 <body>
@@ -14,7 +14,7 @@
     </div>
     <div id="account" class="template">
         <el-container>
-            <ali-aside-menu :menu-active-id="2"></ali-aside-menu>
+            <aside-menu :menu-active-id="4"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
@@ -30,7 +30,7 @@
                                             <span class="name-country">
                                                 <!-- <img src="/{$template_catalog}/template/{$themes}/img/ali/user.png">
                                              -->
-                                             <img v-show="imgShow" :src="curSrc">
+                                                <img v-show="imgShow" :src="curSrc">
                                             </span>
                                         </div>
                                     </div>
@@ -90,8 +90,7 @@
                                                         <div class="box-item-t">{{lang.account_label4}}</div>
                                                         <div class="box-item-b">
                                                             <el-select v-model="accountData.country" filterable>
-                                                                <el-option v-for="item in countryList" :key="item.name"
-                                                                    :value="item.name" :label="item.name_zh">
+                                                                <el-option v-for="item in countryList" :key="item.name" :value="item.name" :label="item.name_zh">
                                                                 </el-option>
                                                             </el-select>
                                                         </div>
@@ -129,8 +128,7 @@
                                                         <div class="box-item-t">{{lang.account_label6}}</div>
                                                         <div class="box-item-b">
                                                             <el-input :disabled="true" v-model="accountData.phone">
-                                                                <i class="el-icon-edit edit-icon" slot="suffix"
-                                                                    @click="showPhone"></i>
+                                                                <i class="el-icon-edit edit-icon" slot="suffix" @click="showPhone"></i>
                                                             </el-input>
                                                         </div>
                                                     </div>
@@ -140,8 +138,7 @@
                                                         <div class="box-item-t">{{lang.account_label7}}</div>
                                                         <div class="box-item-b">
                                                             <el-input :disabled="true" v-model="accountData.email">
-                                                                <i class="el-icon-edit edit-icon" slot="suffix"
-                                                                    @click="showEmail"></i>
+                                                                <i class="el-icon-edit edit-icon" slot="suffix" @click="showEmail"></i>
                                                             </el-input>
                                                         </div>
                                                     </div>
@@ -151,8 +148,7 @@
                                                         <div class="box-item-t">{{lang.account_label8}}</div>
                                                         <div class="box-item-b">
                                                             <el-input :disabled="true" type="password" value="********">
-                                                                <i class="el-icon-edit edit-icon" slot="suffix"
-                                                                    @click="showPass"></i>
+                                                                <i class="el-icon-edit edit-icon" slot="suffix" @click="showPass"></i>
                                                             </el-input>
                                                         </div>
                                                     </div>
@@ -178,25 +174,19 @@
                                 </el-tab-pane>
                                 <el-tab-pane :label="lang.account_menu2" name="2">
                                     <div class="searchbar com-search">
-                                        <el-input v-model="params.keywords" style="width: 3.2rem;margin-left: .2rem;"
-                                            :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange" clearable
-                                            @clear="getAccountList">
-                                            <i class="el-icon-search input-search" slot="suffix"
-                                                @Click="inputChange"></i>
+                                        <el-input v-model="params.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange" clearable @clear="getAccountList">
+                                            <i class="el-icon-search input-search" slot="suffix" @Click="inputChange"></i>
                                         </el-input>
                                     </div>
                                     <div class="content_table">
                                         <div class="tabledata">
-                                            <el-table v-loading="loading" :data="dataList"
-                                                style="width: 100%;margin-bottom: .2rem;">
+                                            <el-table v-loading="loading" :data="dataList" style="width: 100%;margin-bottom: .2rem;">
                                                 <el-table-column prop="id" label="ID" width="100" align="left">
                                                 </el-table-column>
-                                                <el-table-column prop="description" min-width="700"
-                                                    :show-overflow-tooltip="true" :label="lang.account_label9" align="left">
+                                                <el-table-column prop="description" min-width="700" :show-overflow-tooltip="true" :label="lang.account_label9" align="left">
 
                                                 </el-table-column>
-                                                <el-table-column prop="create_time" :label="lang.account_label10" min-width="200"
-                                                    align="left">
+                                                <el-table-column prop="create_time" :label="lang.account_label10" min-width="200" align="left">
                                                     <template slot-scope="scope">
                                                         <span>{{scope.row.create_time | formateTime}}</span>
                                                     </template>
@@ -206,8 +196,7 @@
                                                 </el-table-column>
 
                                             </el-table>
-                                            <pagination :page-data="params" @sizechange="sizeChange"
-                                                @currentchange="currentChange"></pagination>
+                                            <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange"></pagination>
                                         </div>
                                     </div>
 
@@ -217,8 +206,7 @@
                     </div>
                     <!-- 更改密码弹框 -->
                     <div class="edit-pass">
-                        <el-dialog width="6.8rem" :visible.sync="isShowPass" :show-close=false
-                            :close-on-click-modal=false>
+                        <el-dialog width="6.8rem" :visible.sync="isShowPass" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
                                 {{lang.account_title2}}
                             </div>
@@ -250,29 +238,23 @@
                     </div>
                     <!-- 验证码更改密码弹框 -->
                     <div class="edit-pass">
-                        <el-dialog width="6.8rem" :visible.sync="isShowCodePass" :show-close=false
-                            :close-on-click-modal=false>
+                        <el-dialog width="6.8rem" :visible.sync="isShowCodePass" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
-                            {{lang.account_title2}}
+                                {{lang.account_title2}}
                             </div>
                             <div class="login-top">
-                                <div class="login-email" :class="isEmailOrPhone? 'active':null"
-                                    @click="isEmailOrPhone = true">{{lang.account_label14}}
+                                <div class="login-email" :class="isEmailOrPhone? 'active':null" @click="isEmailOrPhone = true">{{lang.account_label14}}
                                 </div>
-                                <div class="login-phone" :class="!isEmailOrPhone? 'active':null"
-                                    @click="isEmailOrPhone = false">{{lang.account_label15}}
+                                <div class="login-phone" :class="!isEmailOrPhone? 'active':null" @click="isEmailOrPhone = false">{{lang.account_label15}}
                                 </div>
                             </div>
                             <div class="form-main">
                                 <div class="form-item">
                                     <el-input v-if="isEmailOrPhone" v-model="formData.email" :placeholder="lang.account_tips6">
                                     </el-input>
-                                    <el-input v-else class="input-with-select" v-model="formData.phone"
-                                        :placeholder="lang.account_tips7">
-                                        <el-select class="code-pass-select" filterable slot="prepend"
-                                            v-model="formData.countryCode">
-                                            <el-option v-for="item in countryList" :key="item.name"
-                                                :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code">
+                                    <el-input v-else class="input-with-select" v-model="formData.phone" :placeholder="lang.account_tips7">
+                                        <el-select class="code-pass-select" filterable slot="prepend" v-model="formData.countryCode">
+                                            <el-option v-for="item in countryList" :key="item.name" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code">
                                             </el-option>
                                         </el-select>
                                     </el-input>
@@ -281,15 +263,13 @@
                                     <!-- 邮箱验证码 -->
                                     <el-input v-if="isEmailOrPhone" v-model="formData.emailCode" :placeholder="lang.account_tips8">
                                     </el-input>
-                                    <count-down-button ref="codeEmailCodebtn" @click.native="sendEmailCode('code')"
-                                        v-if="isEmailOrPhone" my-class="code-btn"></count-down-button>
+                                    <count-down-button ref="codeEmailCodebtn" @click.native="sendEmailCode('code')" v-if="isEmailOrPhone" my-class="code-btn"></count-down-button>
                                     <!-- <el-button v-if="isEmailOrPhone" class="code-btn" type="primary">获取验证码</el-button> -->
 
                                     <!-- 手机验证码 -->
                                     <el-input v-if="!isEmailOrPhone" v-model="formData.phoneCode" :placeholder="lang.account_tips9">
                                     </el-input>
-                                    <count-down-button ref="codePhoneCodebtn" @click.native="sendPhoneCode('code')"
-                                        v-if="!isEmailOrPhone" my-class="code-btn"></count-down-button>
+                                    <count-down-button ref="codePhoneCodebtn" @click.native="sendPhoneCode('code')" v-if="!isEmailOrPhone" my-class="code-btn"></count-down-button>
                                     <!-- <el-button v-if="!isEmailOrPhone" class="code-btn" type="primary">获取验证码</el-button> -->
 
                                 </div>
@@ -315,23 +295,20 @@
                     </div>
                     <!-- 验证手机号弹框 -->
                     <div class="check-phone">
-                        <el-dialog width="6.8rem" :visible.sync="isShowPhone" :show-close=false
-                            :close-on-click-modal=false>
+                        <el-dialog width="6.8rem" :visible.sync="isShowPhone" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
                                 {{lang.account_title3}}
                             </div>
                             <div class="mian-form">
                                 <el-form :model="phoneData" label-position="top">
                                     <el-form-item :label="lang.account_label15">
-                                        <el-input :disabled="true" v-model="phoneData.phone"
-                                            :placeholder=" lang.account_tips10 +accountData.phone+ lang.account_tips11"></el-input>
+                                        <el-input :disabled="true" v-model="phoneData.phone" :placeholder=" lang.account_tips10 +accountData.phone+ lang.account_tips11"></el-input>
                                     </el-form-item>
                                     <el-form-item label="验证码">
                                         <div class="input-btn">
                                             <el-input v-model="phoneData.code">
                                             </el-input>
-                                            <count-down-button ref="phoneCodebtn" @click.native="sendPhoneCode('old')"
-                                                my-class="code-btn" slot="append"></count-down-button>
+                                            <count-down-button ref="phoneCodebtn" @click.native="sendPhoneCode('old')" my-class="code-btn" slot="append"></count-down-button>
                                         </div>
                                     </el-form-item>
                                     <el-form-item v-show="errText">
@@ -347,8 +324,7 @@
                     </div>
                     <!-- 修改手机号弹框 -->
                     <div class="check-phone">
-                        <el-dialog width="6.8rem" :visible.sync="isShowRePhone" :show-close=false
-                            :close-on-click-modal=false>
+                        <el-dialog width="6.8rem" :visible.sync="isShowRePhone" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
                                 {{accountData.phone?"更改手机号" : "绑定手机号"}}
                             </div>
@@ -356,11 +332,8 @@
                                 <el-form :model="rePhoneData" label-position="top">
                                     <el-form-item label="手机号">
                                         <el-input v-model="rePhoneData.phone" placeholder="请输入新手机号">
-                                            <el-select class="select-input" filterable slot="prepend"
-                                                v-model="rePhoneData.countryCode">
-                                                <el-option v-for="item in countryList" :key="item.name"
-                                                    :value="item.phone_code"
-                                                    :label="item.name_zh + '+' + item.phone_code"></el-option>
+                                            <el-select class="select-input" filterable slot="prepend" v-model="rePhoneData.countryCode">
+                                                <el-option v-for="item in countryList" :key="item.name" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code"></el-option>
                                             </el-select>
                                         </el-input>
                                     </el-form-item>
@@ -368,8 +341,7 @@
                                         <div class="input-btn">
                                             <el-input v-model="rePhoneData.code">
                                             </el-input>
-                                            <count-down-button ref="rePhoneCodebtn" @click.native="sendPhoneCode('new')"
-                                                my-class="code-btn" slot="append"></count-down-button>
+                                            <count-down-button ref="rePhoneCodebtn" @click.native="sendPhoneCode('new')" my-class="code-btn" slot="append"></count-down-button>
                                         </div>
                                     </el-form-item>
                                     <el-form-item v-show="errText">
@@ -385,23 +357,20 @@
                     </div>
                     <!-- 验证邮箱弹框 -->
                     <div class="check-phone">
-                        <el-dialog width="6.8rem" :visible.sync="isShowEmail" :show-close=false
-                            :close-on-click-modal=false>
+                        <el-dialog width="6.8rem" :visible.sync="isShowEmail" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
                                 验证邮箱
                             </div>
                             <div class="mian-form">
                                 <el-form :model="emailData" label-position="top">
                                     <el-form-item label="邮箱">
-                                        <el-input :disabled="true" v-model="emailData.email"
-                                            :placeholder="'使用邮箱'+accountData.email+'验证'"></el-input>
+                                        <el-input :disabled="true" v-model="emailData.email" :placeholder="'使用邮箱'+accountData.email+'验证'"></el-input>
                                     </el-form-item>
                                     <el-form-item label="验证码">
                                         <div class="input-btn">
                                             <el-input v-model="emailData.code">
                                             </el-input>
-                                            <count-down-button ref="emailCodebtn" @click.native="sendEmailCode('old')"
-                                                my-class="code-btn" slot="append"></count-down-button>
+                                            <count-down-button ref="emailCodebtn" @click.native="sendEmailCode('old')" my-class="code-btn" slot="append"></count-down-button>
                                         </div>
                                     </el-form-item>
                                     <el-form-item v-show="errText">
@@ -417,8 +386,7 @@
                     </div>
                     <!-- 修改邮箱弹框 -->
                     <div class="check-phone">
-                        <el-dialog width="6.8rem" :visible.sync="isShowReEmail" :show-close=false
-                            :close-on-click-modal=false>
+                        <el-dialog width="6.8rem" :visible.sync="isShowReEmail" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
                                 {{accountData.email?"更改邮箱" : "绑定邮箱"}}
                             </div>
@@ -431,8 +399,7 @@
                                         <div class="input-btn">
                                             <el-input v-model="reEmailData.code">
                                             </el-input>
-                                            <count-down-button ref="reEmailCodebtn" @click.native="sendEmailCode('new')"
-                                                my-class="code-btn" slot="append"></count-down-button>
+                                            <count-down-button ref="reEmailCodebtn" @click.native="sendEmailCode('new')" my-class="code-btn" slot="append"></count-down-button>
                                         </div>
                                     </el-form-item>
                                     <el-form-item v-show="errText">

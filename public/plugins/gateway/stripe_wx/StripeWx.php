@@ -36,7 +36,7 @@ class StripeWx extends Plugin
     public function StripeWxHandle($param)
     {
         if ($param['finance']['total']<4 || $param['finance']['total']>999999.99){
-            die('金额需大于4且小于999999.99');
+            return ['status'=>400,'msg'=>'金额需大于4且小于999999.99'];
         }
 
         $config = $this->config();

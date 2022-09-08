@@ -13,7 +13,7 @@ const lang_obj = {
   status: '状态',
   query: '查询',
   reset: '重置',
-  price: '单价',
+  unit_price: '单价',
   captcha: '验证码',
   total_price: '总价',
   task_status: '任务状态',
@@ -76,6 +76,7 @@ const lang_obj = {
   consume: '消费',
   Refund: '退款',
   withdraw: '提现',
+  Withdraw: '提现',
   host_num: '产品总数',
   isOpen: '是否启用',
   enable: '启用',
@@ -624,6 +625,24 @@ const lang_obj = {
   al_tip: "账户冻结金额不能大于账户解冻金额",
   unregistered: "未注册",
   register_success: "注册成功",
+  /* 磁盘配置 */
+  capacity_range: '容量范围',
+  disk_scale: '磁盘比例',
+  disk_list: '磁盘列表',
+  available_area: '可用区域',
+  min_precision: '最低精度',
+  disk_package: '磁盘套餐',
+  size_min: '最小容量',
+  size_max: '最大容量',
+  min_num: '带宽最小值',
+  max_num: '带宽最大值',
+  alone_bw: '独立带宽',
+  single_max: '单个实例上限',
+  to: '至',
+  bw_form: '从',
+  bw_to: '到',
+  disk_tip: '最小容量值不能大于等于最大容量值',
+  net_tip: '请先开启附加IP开关'
 }
 
 window.lang = lang_obj

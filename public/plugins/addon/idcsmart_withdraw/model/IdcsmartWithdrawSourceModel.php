@@ -53,6 +53,10 @@ class IdcsmartWithdrawSourceModel extends Model
                 $arr[] = ['plugin_name' => $value, 'plugin_title' => $addons[$value]];
             }
             $this->saveAll($arr);
+
+            # 记录日志
+            active_log(lang_plugins('admin_edit_withdraw_source_rule', ['{admin}'=>request()->admin_name,'{source}'=>implode(',', array_column($arr, 'plugin_title'))]), 'addon_idcsmart_withdraw_source');
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务

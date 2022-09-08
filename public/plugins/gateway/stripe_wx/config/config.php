@@ -7,5 +7,5 @@ return array(
     #
     'credit_pay_key'  => WEB_ROOT ."plugins/gateway/stripe_ali/CreditPay.key",
 
-    'url' => $domain . '/reactmember'
+    'url' => $domain
 );

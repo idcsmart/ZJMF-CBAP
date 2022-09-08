@@ -21,15 +21,15 @@ input::-webkit-inner-spin-button {
     width: 100vw;
     height: 100vh;
     background: #FFFFFF;
-    position: absolute;
-    z-index: 9999;
+    /* position: absolute;
+    z-index: 9999; */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .template {
-    /* display: none; */
+    display: none;
 }
 
 #mainLoading .ddr {

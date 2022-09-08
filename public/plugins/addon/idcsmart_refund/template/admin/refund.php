@@ -17,7 +17,7 @@
         </template>
       </t-input>
     </div>
-    <t-table row-key="id" :height="tableHeight" size="small" :pagination="pagination" :data="listData" :columns="columns" @page-change="onPageChange">
+    <t-table row-key="id" :max-height="tableHeight" size="small" :pagination="pagination" :data="listData" :columns="columns" @page-change="onPageChange">
       <template #index="slotProps">
         {{slotProps.rowIndex+1}}
       </template>

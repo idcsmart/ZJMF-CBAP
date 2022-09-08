@@ -62,6 +62,11 @@ function emailCode(params) {
 }
 
 //  全局搜索
-function globalSearch(params){
-  return Axios.get('/global_search',{params})
+function globalSearch(params) {
+  return Axios.get('/global_search', { params })
+}
+
+// 获取前台导航
+function getMenu() {
+  return Axios.get('/menu')
 }

@@ -12,7 +12,12 @@
             },
             mounted() {
                 // 关闭loading
+                // document.getElementById('mainLoading').style.display = 'none';
+            },
+            updated() {
+                // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
+                document.getElementsByClassName('template')[0].style.display = 'block'
             },
             data() {
                 return {

@@ -1,4 +1,3 @@
-
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
@@ -16,14 +15,16 @@
       </li>
     </ul>
     <div class="box">
-      <t-form :data="formData" :rules="rules" :label-width="80" ref="formValidatorStatus" label-align="top"
-       @submit="onSubmit">
+      <div class="box-title">
+        <span class="box-title-text">基础设置</span>
+        <div class="box-title-line"></div>
+      </div>
+      <t-form :data="formData" :rules="rules" :label-width="80" ref="formValidatorStatus" label-align="top" @submit="onSubmit">
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col :xs="12" :xl="3" :md="6">
             <t-form-item name="lang_admin" :label="lang.font_language">
               <t-select v-model="formData.lang_home">
-                <t-option v-for="item in homeArr"  :value="item.display_lang" :label="item.display_name"
-                :key="item.display_lang"></t-option>
+                <t-option v-for="item in homeArr" :value="item.display_lang" :label="item.display_name" :key="item.display_lang"></t-option>
               </t-select>
             </t-form-item>
           </t-col>
@@ -40,8 +41,7 @@
           <t-col :xs="12" :xl="3" :md="6">
             <t-form-item name="lang_admin" :label="lang.back_language">
               <t-select v-model="formData.lang_admin">
-                <t-option v-for="item in adminArr"  :value="item.display_lang" :label="item.display_name"
-                :key="item.display_lang"></t-option>
+                <t-option v-for="item in adminArr" :value="item.display_lang" :label="item.display_name" :key="item.display_lang"></t-option>
               </t-select>
             </t-form-item>
           </t-col>
@@ -77,6 +77,37 @@
           <!-- <t-button theme="default" variant="base">{{lang.close}}</t-button> -->
         </t-form-item>
       </t-form>
+
+      <div class="box-title system-msg-title">
+        <span class="box-title-text">系统信息 </span>
+        <div class="box-title-line"></div>
+      </div>
+      <div class="content-msg">
+        <div class="system-msg">
+          <div class="msg-item">
+            <div class="msg-item-l">最新版本:</div>
+            <div class="msg-item-r">{{systemData.last_version}}</div>
+          </div>
+          <div class="msg-item">
+            <div class="msg-item-l">当前版本:</div>
+            <div class="msg-item-r">{{systemData.version}}</div>
+          </div>
+        </div>
+        <div class="msg-footer">
+          <div class="footer-btn" v-if="!isShowProgress">
+            <t-button @click="beginDown" v-show="!isDown">立即更新</t-button>
+            <t-button @click="toUpdate" v-show="isDown">安装包已下载，立即升级</t-button>
+          </div>
+          <div class="footer-progress" v-else>
+            <div class="progress-text">
+              {{'下载中...(' + updateData.progress + ')'}}
+            </div>
+            <div class="progress">
+              <div :style="'width:'+ updateData.progress" class="down-progress-success"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </t-card>
 </div>

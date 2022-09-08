@@ -120,7 +120,6 @@
               <t-button theme="primary">{{lang.change_log}}</t-button>
               <span class="txt">{{lang.change_log}}</span>
             </div>
-
           </div>
           <t-row :gutter="{ xs: 0, xxl: 30 }" class="dis-box">
             <t-col :xs="12" :xl="3">
@@ -133,7 +132,7 @@
             </t-col>
             <t-col :xs="12" :xl="3">
               <p>{{lang.Refund}}</p>
-              <t-input disabled v-model="data.refund" />
+              <t-input disabled v-model="refundAmount" />
             </t-col>
             <t-col :xs="12" :xl="3">
               <p>{{lang.withdraw}}</p>

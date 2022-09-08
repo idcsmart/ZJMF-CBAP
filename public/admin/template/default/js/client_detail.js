@@ -160,6 +160,7 @@
             sort: 'desc'
           },
           website_url: '',
+          refundAmount: 0.00,
           authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth'))),
           // 充值相关开始
           // 是否显示充值弹窗
@@ -207,8 +208,17 @@
         this.getSystemOption()
         // 获取支付方式列表
         this.getGatewayList()
+        this.getRefundAmount()
       },
       methods: {
+         // 获取退款
+         async getRefundAmount (){
+          try {
+            const res = await getRefund(this.id)
+            this.refundAmount = res.data.data.amount
+          } catch (error) {
+          }
+        },
         // 获取后台配置的路径
         async getSystemOption() {
           try {

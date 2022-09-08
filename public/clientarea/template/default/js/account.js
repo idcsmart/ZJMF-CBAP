@@ -16,12 +16,12 @@
                 this.getCountry()
             },
             mounted() {
-                // 关闭loading
-                document.getElementById('mainLoading').style.display = 'none';
-                // document.getElementsByClassName('template')[0].style.display = 'block'
+
             },
             updated() {
-
+                // 关闭loading
+                document.getElementById('mainLoading').style.display = 'none';
+                document.getElementsByClassName('template')[0].style.display = 'block'
             },
             data() {
                 return {
@@ -119,7 +119,7 @@
                     getLog({ ...this.params, type: "system" }).then(res => {
                         if (res.data.status === 200) {
                             let list = res.data.data.list
-                 
+
                             this.dataList = list
                             this.params.total = res.data.data.count
                         }

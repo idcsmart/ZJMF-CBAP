@@ -51,11 +51,13 @@ class MenuController extends AdminBaseController
      * @return array system_nav - 系统默认导航
      * @return string system_nav[].id - 导航ID
      * @return string system_nav[].name - 名称
+     * @return string system_nav[].url - 网址
      * @return array plugin_nav - 插件默认导航
      * @return string plugin_nav[].title - 插件标题
      * @return array plugin_nav[].nav - 插件导航
-     * @return array plugin_nav[].nav[].id - 导航ID
-     * @return array plugin_nav[].nav[].name - 名称
+     * @return int plugin_nav[].nav[].id - 导航ID
+     * @return string plugin_nav[].nav[].name - 名称
+     * @return string plugin_nav[].nav[].url - 网址
      */
     public function getAdminMenu()
     {
@@ -106,11 +108,13 @@ class MenuController extends AdminBaseController
      * @return array system_nav - 系统默认导航
      * @return string system_nav[].id - 导航ID
      * @return string system_nav[].name - 名称
+     * @return string system_nav[].url - 网址
      * @return array plugin_nav - 插件默认导航
      * @return string plugin_nav[].title - 插件标题
      * @return array plugin_nav[].nav - 插件导航
-     * @return array plugin_nav[].nav[].id - 导航ID
-     * @return array plugin_nav[].nav[].name - 名称
+     * @return int plugin_nav[].nav[].id - 导航ID
+     * @return string plugin_nav[].nav[].name - 名称
+     * @return string plugin_nav[].nav[].url - 网址
      */
     public function getHomeMenu()
     {

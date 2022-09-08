@@ -42,7 +42,6 @@ class TaskWaitModel extends Model
      */
     public function createTaskWait($param)
     {
-        $this->startTrans();
 		try {
 			$time = time();
 			if($param['type']=='email' || $param['type']=='sms'){
@@ -70,11 +69,8 @@ class TaskWaitModel extends Model
 			}
             // 创建
 	    	$this->create($wait);
-	        $this->commit();
 			
 		} catch (\Exception $e) {
-		    // 回滚事务
-		    $this->rollback();
 		    return ['status' => 400, 'msg' => lang('fail_message')];
 		}
     	return ['status' => 200, 'msg' => lang('success_message')];

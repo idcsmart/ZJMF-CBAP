@@ -16,6 +16,7 @@ class ViewController extends HomeBaseController
 		$data = [
 			'title'=>'首页-智简魔方',		
 		];
+
 		$data['template_catalog'] = 'clientarea';
 		$data['themes'] = configuration('clientarea_theme');
 		$tplName = empty($param['view_html'])?'index':$param['view_html'];

@@ -152,6 +152,8 @@ class ProductGroupModel extends Model
             return ['status'=>400,'msg'=>lang('product_group_is_not_exist')];
         }
 
+        $old = $productGroup['name'];
+
         $this->startTrans();
 
         try{
@@ -161,7 +163,7 @@ class ProductGroupModel extends Model
             ]);
 
             # 记录日志
-            active_log(lang('log_admin_update_product_group',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{old}'=>$productGroup['name'],'{new}'=>$param['name']]),'product_group',$productGroup->id);
+            active_log(lang('log_admin_update_product_group',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{old}'=>$old,'{new}'=>$param['name']]),'product_group',$productGroup->id);
 
             $this->commit();
         }catch (\Exception $e){

@@ -3,6 +3,10 @@
 // [ 应用入口文件 ]
 namespace think;
 
+if (!file_exists(__DIR__ . '/../config.php')){
+    header("location:/install.html");die;
+}
+
 require __DIR__ . '/../config.php';
 require __DIR__ . '/../vendor/autoload.php';
 

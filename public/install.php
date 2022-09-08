@@ -32,7 +32,7 @@ class InstallSystem
                     }
                 }
                 return json_encode(['status' => 200]);
-            }catch (\Exception $e){
+            }catch (PDOException $e){
                 //return json_encode(['status' => 400, 'msg' => $e->getMessage()]);
                 return json_encode(['status' => 200]);
             }
@@ -159,6 +159,25 @@ class InstallSystem
         $module['name'] = '伪静态';
         $module['suggest'] = '开启';
         $module['worst'] = '开启';
+        $module['doc'] = 'Apache伪静态代码
+        <IfModule mod_rewrite.c>
+
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^(.*)$ index.php?s=$1 [QSA,PT,L]
+
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+</IfModule>
+Nginx伪静态代码
+location / {
+    if (!-e $request_filename){
+        rewrite  ^(.*)$  /index.php?s=$1  last;   break;
+    }
+}';
         $modules[] = $module;
 
         #监测-GD
@@ -238,7 +257,7 @@ class InstallSystem
             $module['current'] = '禁止上传';
             $module['status'] = 0;
         }else{
-            $size = ini_get('upload_max_size');
+            $size = ini_get('upload_max_filesize');
             $module['current'] = $size;
             $module['status'] = 1;
         }
@@ -363,7 +382,7 @@ class InstallSystem
             if (!isset($supportDdname)){
                 $dbObject->query("CREATE DATABASE `{$dbname}`");
             }
-        } catch (\Exception $e) {
+        } catch (PDOException $e) {
             return json_encode(['status' => 400, 'msg' => '数据库链接失败'.$e->getMessage()]);
         }
 
@@ -393,7 +412,9 @@ class InstallSystem
         #网站配置
         $site_name = $param['sitename'];
         $arr = parse_url($_SERVER['HTTP_HOST']);
+        $server_http=(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on')?'https://':'http://';
         $domain = ($arr['host'].($arr['port'] ? (':'.$arr['port']) : ''))?:$arr['path'];
+        $domain = $server_http.$domain;
 
         $admin_application = strtolower($this->randStr(8, 'CHAR'));
 
@@ -403,6 +424,17 @@ class InstallSystem
         $user_login = $param['username'];
         $user_pass  = $param['password'];
         $user_email = $param['email'];
+        if(!empty($user_email)){
+            $chars = "/^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$/";
+            if (strpos($user_email, '@') !== false && strpos($user_email, '.') !== false){
+                if (!preg_match($chars, $user_email)){
+                    return json_encode(['status' => 400, 'msg' => '邮箱格式错误！']);  
+                }
+            }else{
+                return json_encode(['status' => 400, 'msg' => '邮箱格式错误！']);  
+            }      
+        } 
+        
         if (empty($user_login)) return json_encode(['status' => 400, 'msg' => '管理员帐号不可以为空！']);
         if (empty($user_pass)) return json_encode(['status' => 400, 'msg' => '密码不可以为空！']);
         if (strlen($user_pass) < 6) return json_encode(['status' => 400, 'msg' => '密码长度最少6位！']);
@@ -428,7 +460,7 @@ class InstallSystem
         $this->setSession('install_sql', $sql);
         $this->setSession('install_error', 0);
         $this->setSession('install_site_info', [
-            'company_name' => $site_name,
+            'title' => $site_name,
             'domain' => $domain,
             'admin_application' => $admin_application,
         ]);
@@ -555,7 +587,7 @@ class InstallSystem
             $db->exec("INSERT INTO `{$config['prefix']}configuration` (`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('website_name','{$siteInfo['title']}',{$time},{$time},'网站名称')");
 
             $db->commit();
-        } catch (\Exception $e) {
+        } catch (PDOException $e) {
             $db->rollBack();
             return json_encode(['status' => 400, 'msg' => '网站创建失败！'. $e->getMessage()]);
         }
@@ -748,7 +780,7 @@ class InstallSystem
                     'error'   => 0,
                     'message' => $msg . ' 成功！'
                 ];
-            } catch (\Exception $e) {
+            } catch (PDOException $e) {
                 return [
                     'error'     => 1,
                     'message'   => $msg . ' 失败！',
@@ -763,7 +795,7 @@ class InstallSystem
                     'error'   => 0,
                     'message' => 'SQL执行成功!'
                 ];
-            } catch (\Exception $e) {
+            } catch (PDOException $e) {
                 return [
                     'error'     => 1,
                     'message'   => 'SQL执行失败！',

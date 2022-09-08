@@ -15,5 +15,5 @@ return [
     //取消支付地址
     'cancel_url' => "{$domain}/gateway/paypal/index/cancel_handle",
     //支付完成跳转地址至系统首页
-    'url' => "{$domain}/reactmember",
+    'url' => "{$domain}",
 ];

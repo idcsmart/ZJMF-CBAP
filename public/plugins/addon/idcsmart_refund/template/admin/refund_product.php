@@ -61,7 +61,7 @@
       <span>{{lang.custom_input}}</span>
       <t-switch size="large" v-model="customChecked" @change="changeCustom"></t-switch>
     </div>
-    <t-table id="customTable" row-key="id" height="40vh" size="small" :bordered="true" style="margin-top: 20px" :data="reasonTable" :columns="reasonColumns">
+    <t-table id="customTable" row-key="id" max-height="40vh" size="small" :bordered="true" style="margin-top: 20px" :data="reasonTable" :columns="reasonColumns">
       <template #index-column>
         <p>{{lang.order_index}}</p>
       </template>

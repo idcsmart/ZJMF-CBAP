@@ -673,4 +673,24 @@ class IdcsmartRefundModel extends Model
 
         return ['status'=>200,'msg'=>lang_plugins('success_message'),'data'=>['refund'=>$refund]];
     }
+    
+    # 获取客户退款金额
+    public function clientRefundAmount($param)
+    {
+        $clientId = $param['id']??0;
+
+        $ClientModel = new ClientModel();
+        $client = $ClientModel->find($clientId);
+        if (empty($client)){
+            return ['status'=>400,'msg'=>lang_plugins('client_is_not_exist')];
+        }
+
+        $amount = $this->where('client_id',$clientId)
+            ->where('status','Refund')
+            ->where('amount','>',0)
+            ->sum('amount');
+
+        return ['status'=>200,'msg'=>lang_plugins('success_message'),'data'=>['amount'=>bcsub($amount,0,2)]];
+
+    }
 }

@@ -111,7 +111,7 @@ class IdcsmartWithdrawRuleModel extends Model
         try {
             $adminId = get_admin_id();
 
-            $this->create([
+            $idcsmartWithdrawRule = $this->create([
                 'admin_id' => $adminId,
                 'source' => $param['source'],
                 'method' => implode(',', $param['method']),
@@ -127,6 +127,15 @@ class IdcsmartWithdrawRuleModel extends Model
                 'create_time' => time(),
                 'update_time' => time()
             ]);
+
+            if($param['source']=='credit'){
+                $source = lang_plugins('withdraw_source_credit');
+            }else{
+                $source = IdcsmartWithdrawSourceModel::where('plugin_name', $param['source'])->find();
+                $source = $source['plugin_title'] ?? '';
+            }
+            # 记录日志
+            active_log(lang_plugins('admin_add_withdraw_source_rule', ['{admin}'=>request()->admin_name,'{source}'=>$source]), 'addon_idcsmart_withdraw_rule', $idcsmartWithdrawRule->id);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -172,6 +181,15 @@ class IdcsmartWithdrawRuleModel extends Model
                 'update_time' => time()
             ], ['id' => $param['id']]);
 
+            if($idcsmartWithdrawRule['source']=='credit'){
+                $source = lang_plugins('withdraw_source_credit');
+            }else{
+                $source = IdcsmartWithdrawSourceModel::where('plugin_name', $idcsmartWithdrawRule['source'])->find();
+                $source = $source['plugin_title'] ?? '';
+            }
+            # 记录日志
+            active_log(lang_plugins('admin_edit_withdraw_source_rule', ['{admin}'=>request()->admin_name,'{source}'=>$source]), 'addon_idcsmart_withdraw_rule', $idcsmartWithdrawRule->id);
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -192,6 +210,15 @@ class IdcsmartWithdrawRuleModel extends Model
 
         $this->startTrans();
         try {
+            if($idcsmartWithdrawRule['source']=='credit'){
+                $source = lang_plugins('withdraw_source_credit');
+            }else{
+                $source = IdcsmartWithdrawSourceModel::where('plugin_name', $idcsmartWithdrawRule['source'])->find();
+                $source = $source['plugin_title'] ?? '';
+            }
+            # 记录日志
+            active_log(lang_plugins('admin_delete_withdraw_source_rule', ['{admin}'=>request()->admin_name,'{source}'=>$source]), 'addon_idcsmart_withdraw_rule', $idcsmartWithdrawRule->id);
+
             $this->destroy($id);
             $this->commit();
         } catch (\Exception $e) {

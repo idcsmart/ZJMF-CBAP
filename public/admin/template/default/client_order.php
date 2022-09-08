@@ -56,11 +56,16 @@
       <template #create_time="{row}">
         {{row.type ? moment(row.create_time * 1000).format('YYYY/MM/DD HH:mm') : ''}}
       </template>
+      <template #icon="{row}">
+        <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
+          <img :src="`${rootRul}img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
+        </t-tooltip>
+      </template>
       <template #product_names={row}>
         <template v-if="row.product_names">
-          <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
+          <!-- <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
             <img :src="`${rootRul}/img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
-          </t-tooltip>
+          </t-tooltip> -->
           <!-- <span v-if="row.type==='artificial'">{{lang.artificial}}</span> -->
           <span>{{row.product_names[0]}}</span>
           <span v-if="row.product_names.length>1">、{{row.product_names[1]}}</span>

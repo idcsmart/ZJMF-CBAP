@@ -358,4 +358,35 @@ class AdminIndexController extends PluginAdminBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2022-08-22
+     * @title 用户已提现金额
+     * @desc 用户已提现金额
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/withdraw/client/:id
+     * @method  GET
+     * @param int id - 用户ID
+     * @return string amount - 提现金额
+     */
+    public function idcsmartWithdrawClient()
+    {
+        // 接收参数
+        $param = $this->request->param();
+        
+        // 实例化模型类
+        $IdcsmartWithdrawSourceModel = new IdcsmartWithdrawSourceModel();
+
+        // 保存提现来源
+        $amount = $IdcsmartWithdrawModel->idcsmartWithdrawClient($param['id']);
+
+        $result = [
+            'status' => 200,
+            'msg' => lang_plugins('success_message'),
+            'data' => [
+                'amount' => $amount
+            ]
+        ];
+        return json($result);
+    }
 }

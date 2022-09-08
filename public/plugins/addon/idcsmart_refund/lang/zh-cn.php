@@ -7,6 +7,7 @@ return [
     'delete_success' => '删除成功',
     'delete_fail' => '删除失败',
     'cannot_repeat_opreate' => '不可重复操作',
+    'client_is_not_exist' => '客户不存在',
     'id_error' => 'ID错误',
     'refund_suspend' => '停用',
     'refund_pending' => '待审核',

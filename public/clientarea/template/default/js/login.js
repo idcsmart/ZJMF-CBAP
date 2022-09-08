@@ -37,6 +37,7 @@
       updated() {
         // 关闭loading
         document.getElementById('mainLoading').style.display = 'none';
+        document.getElementsByClassName('template')[0].style.display = 'block'
       },
       watch: {
       },
@@ -180,6 +181,7 @@
                   delCookie("isRemember")
                   delCookie("checked")
                 }
+                this.doGetMenu()
                 location.href = 'finance.html'
               }
             }).catch(err => {
@@ -304,6 +306,15 @@
           } catch (error) {
 
           }
+        },
+        // 获取前台导航
+        doGetMenu() {
+          getMenu().then(res => {
+            console.log(res);
+            if (res.data.status === 200) {
+              localStorage.setItem('frontMenus', JSON.stringify(res.data.data.menu))
+            }
+          })
         },
         toRead() {
           const url = this.commonData.terms_service_url

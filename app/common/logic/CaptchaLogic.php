@@ -23,6 +23,12 @@ class CaptchaLogic
      */
     public function captcha()
     {
+        /*$captchaPlugin = configuration('captcha_plugin')??'TpCaptcha';
+        $html = plugin_reflection($captchaPlugin,[],'captcha','describe');
+        echo $html;die;
+        return ['html'=>$html];*/
+
+
         $config = $this->getConfig();
 
         $Captcha = new Captcha(app('config'),app('session'));
@@ -63,6 +69,7 @@ class CaptchaLogic
         return $config;
     }
 
+    # 验证图形验证码,且不清除缓存
     public function checkCaptcha($param)
     {
         if (!isset($param['captcha']) || empty($param['captcha'])){

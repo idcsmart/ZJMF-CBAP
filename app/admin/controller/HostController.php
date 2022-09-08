@@ -135,8 +135,8 @@ class HostController extends AdminBaseController
      * @param float first_payment_amount - 订购金额 required
      * @param float renew_amount - 续费金额 required
      * @param string billing_cycle - 计费周期 required
-     * @param int active_time - 开通时间
-     * @param int due_time - 到期时间
+     * @param string active_time - 开通时间
+     * @param string due_time - 到期时间
      * @param string status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
      */
 	public function update()

@@ -50,7 +50,8 @@
             created_notice_mail_api: 0,
             created_notice_mail_template: 0,
             pay_type: 'recurring_prepayment',
-            upgrade: []
+            upgrade: [],
+            product_id: 30
           },
           checkOptions: [
             {
@@ -240,6 +241,7 @@
               params.created_notice_sms_api = params.created_notice_sms_api * 1
               params.created_notice_sms_api_template = params.created_notice_sms_api_template * 1
               params.created_notice_mail_template = params.created_notice_mail_template * 1
+              params.product_id = 30
               const res = await editProduct(params)
               this.$message.success(res.data.msg)
               this.getUserDetail()

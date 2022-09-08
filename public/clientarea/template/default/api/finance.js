@@ -67,7 +67,7 @@ function creditPay(params) {
   return Axios.post(`/credit`, params);
 }
 
-// 使用余额支付
-function onlinePay(params) {
-  return Axios.post(`/pay`, params);
-}
+// // 使用余额支付
+// function onlinePay(params) {
+//   return Axios.post(`/pay`, params);
+// }

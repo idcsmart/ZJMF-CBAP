@@ -349,7 +349,7 @@
         }
       },
       created() {
-        localStorage.setItem('curValue', 92)
+        localStorage.setItem('curValue', 253)
         const domHeight = template.scrollHeight;
         this.tableHeight = domHeight - 230;
         this.getUserOrderList();

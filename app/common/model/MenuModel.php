@@ -39,7 +39,7 @@ class MenuModel extends Model
      */
     public function getAdminMenu()
     {
-        $navs = NavModel::field('id,name')
+        $navs = NavModel::field('id,name,url')
             ->where('type', 'admin')
             ->where('plugin', '')
             ->select()
@@ -51,7 +51,7 @@ class MenuModel extends Model
             ->order('order','asc')
             ->select()
             ->toArray();
-        $pluginNavs = NavModel::field('id,name,module,plugin')
+        $pluginNavs = NavModel::field('id,name,url,module,plugin')
             ->where('type', 'admin')
             ->where('plugin', '<>', '')
             ->select()
@@ -60,7 +60,7 @@ class MenuModel extends Model
             foreach ($plugins as $k => $v) {
                 $plugins[$k]['navs'] = $plugins[$k]['navs'] ?? [];
                 if($value['plugin']==$v['name'] && $value['module']==$v['module']){
-                    $plugins[$k]['navs'][] = ['id' => $value['id'], 'name' => lang_plugins($value['name'])];
+                    $plugins[$k]['navs'][] = ['id' => $value['id'], 'name' => lang_plugins($value['name']), 'url' => $value['url']];
                 }
             }
         }
@@ -77,12 +77,26 @@ class MenuModel extends Model
             ->order('order','asc')
             ->select()
             ->toArray();
+        if(empty($menus)){
+            $menus = NavModel::field('id,name,url,icon,id nav_id,parent_id,module')
+                ->where('type', 'admin')
+                ->order('order','asc')
+                ->select()
+                ->toArray();
+            foreach ($menus as $key => $value) {
+                $menus[$key]['type'] = !empty($value['module']) ? 'plugin' : 'system';
+                $menus[$key]['language'] = '{}';
+                $menus[$key]['name'] = !empty($value['module']) ? lang_plugins($value['name']) : lang($value['name']);
+                unset($menus[$key]['module']);
+            }
+        }
         // 将数组转换成树形结构
         $tree = [];
         if (is_array($menus)) {
             $refer = [];
             foreach ($menus as $key => $data) {
                 $menus[$key]['language'] = json_decode($data['language'], true);
+                $menus[$key]['language'] = !empty($menus[$key]['language']) ? $menus[$key]['language'] : (object)[];
                 $refer[$data['id']] = &$menus[$key];
             }
             foreach ($menus as $key => $data) {
@@ -114,7 +128,7 @@ class MenuModel extends Model
      */
     public function getHomeMenu()
     {
-        $navs = NavModel::field('id,name')
+        $navs = NavModel::field('id,name,url')
             ->where('type', 'home')
             ->where('plugin', '')
             ->select()
@@ -126,7 +140,7 @@ class MenuModel extends Model
             ->order('order','asc')
             ->select()
             ->toArray();
-        $pluginNavs = NavModel::field('id,name,module,plugin')
+        $pluginNavs = NavModel::field('id,name,url,module,plugin')
             ->where('type', 'home')
             ->where('plugin', '<>', '')
             ->select()
@@ -135,7 +149,7 @@ class MenuModel extends Model
             foreach ($plugins as $k => $v) {
                 $plugins[$k]['navs'] = $plugins[$k]['navs'] ?? [];
                 if($value['plugin']==$v['name'] && $value['module']==$v['module']){
-                    $plugins[$k]['navs'][] = ['id' => $value['id'], 'name' => lang($value['name'])];
+                    $plugins[$k]['navs'][] = ['id' => $value['id'], 'name' => lang($value['name']), 'url' => $value['url']];
                 }
             }
         }
@@ -152,12 +166,26 @@ class MenuModel extends Model
             ->order('order','asc')
             ->select()
             ->toArray();
+        if(empty($menus)){
+            $menus = NavModel::field('id,name,url,icon,id nav_id,parent_id,module')
+                ->where('type', 'home')
+                ->order('order','asc')
+                ->select()
+                ->toArray();
+            foreach ($menus as $key => $value) {
+                $menus[$key]['type'] = !empty($value['module']) ? 'plugin' : 'system';
+                $menus[$key]['language'] = '{}';
+                $menus[$key]['name'] = !empty($value['module']) ? lang_plugins($value['name']) : lang($value['name']);
+                unset($menus[$key]['module']);
+            }
+        }
         // 将数组转换成树形结构
         $tree = [];
         if (is_array($menus)) {
             $refer = [];
             foreach ($menus as $key => $data) {
                 $menus[$key]['language'] = json_decode($data['language'], true);
+                $menus[$key]['language'] = !empty($menus[$key]['language']) ? $menus[$key]['language'] : (object)[];
                 $refer[$data['id']] = &$menus[$key];
             }
             foreach ($menus as $key => $data) {

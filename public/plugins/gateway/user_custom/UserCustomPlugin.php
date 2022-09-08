@@ -32,24 +32,12 @@ class UserCustomPlugin extends Plugin
         return true;//卸载成功返回true，失败false
     }
 
-    //实现的footer_start钩子方法
-//    public function userActionLog($param)
-
-//        public function run()
-//        {
-//
-//    }
-
     public function UserCustomHandle($param)
     {
         $config = Db::name('plugin')->where('name','UserCustom')->value('config');
         $config = json_decode($config,true);
         $message = $config['seller_id']??'';
-        $reData = array(
-            'type'=>'html',
-            'data'  =>  htmlspecialchars_decode($message, ENT_QUOTES),
-        );
-        return $reData;
+        return htmlspecialchars_decode($message, ENT_QUOTES);
     }
 
 }

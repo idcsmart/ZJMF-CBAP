@@ -39,7 +39,7 @@ return array(
     //Service name of the interface.No need to modify.
     'service'       => "create_forex_trade",
 
-    'url' => $domain . '/reactmember'
+    'url' => $domain
 
     //    'gatewayUrl'           => "https://openapi.alipay.com/gateway.do",
 );

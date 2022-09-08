@@ -12,7 +12,12 @@
             },
             mounted() {
                 // 关闭loading
+                // document.getElementById('mainLoading').style.display = 'none';
+            },
+            updated() {
+                // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
+                document.getElementsByClassName('template')[0].style.display = 'block'
             },
             data() {
                 return {
@@ -393,7 +398,7 @@
                     // 初始化弹窗数据
                     this.czData = {
                         amount: "",
-                        gateway: this.gatewayList ? this.gatewayList[0].name : "",
+                        gateway: this.gatewayList[0] ? this.gatewayList[0].name : "",
                     }
                     this.czDataOld = {
                         amount: "",
@@ -401,6 +406,7 @@
                     }
                     this.errText = ""
                     this.isShowCz = true
+                    this.payLoading1 = false
                     this.payHtml = ""
                 },
                 // 显示提现 dialog
@@ -459,7 +465,12 @@
                             if (res.data.status === 200) {
                                 this.$message.success("提现申请成功");
                                 this.isShowTx = false
+                                // 重新拉取余额记录
                                 this.getCreditList()
+                                // 重新拉取当前余额
+                                this.getAccount();
+                                // 重新拉取待退款金额
+                                this.getUnAmount();
                             }
                         }).catch(error => {
                             this.errText = error.data.msg
@@ -550,7 +561,12 @@
                             })
                         }
                     }).catch(error => {
+                        // 显示错误信息
                         this.errText = error.data.msg
+                        // 关闭loading
+                        this.payLoading1 = false
+                        // 第三方支付
+                        this.payHtml = ""
                     })
                 },
                 // 轮循支付状态
@@ -652,6 +668,7 @@
                 },
                 // 使用余额
                 useBalance() {
+                    this.getAccount()
                     if (this.balanceTimer) {
                         clearTimeout(this.balanceTimer)
                     }
@@ -675,9 +692,15 @@
                                         this.isShowPay = true
                                         this.zfSelectChange();
                                     }
-                                } else {
-                                    this.isShowPay = true
-                                    this.zfSelectChange();
+                                } else { // 取消使用余额
+                                    if (Number(this.balance) >= Number(orderRes.amount)) {
+                                        this.errText = ""
+                                        this.isShowPay = true
+                                    } else {
+                                        // 账户余额小于 订单金额 重新拉取第三方支付并显示
+                                        this.isShowPay = true
+                                        this.zfSelectChange();
+                                    }
                                 }
                             })
                         }).catch(error => {
@@ -722,7 +745,7 @@
                         gateway: this.zfData.gateway,
                         id: this.zfData.orderId
                     }
-                    onlinePay(params).then(res => { }).catch(error => { })
+                    pay(params).then(res => { }).catch(error => { })
                 },
                 // 返回两位小数
                 oninput(value) {
