@@ -1,7 +1,0 @@
-﻿集成时请注意：pls note when you integrate
-
-本文件log.txt 可以删除。
-This file log.txt can be deleted.
-
-log文件夹须保留。
-The log folder should be reserved

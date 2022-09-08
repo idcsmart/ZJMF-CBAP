@@ -12,6 +12,7 @@
                 pagination,
             },
             created() {
+                this.getCommon()
                 this.getAccount()
                 this.getCountry()
             },
@@ -157,7 +158,7 @@
                             this.accountData = res.data.data.account
                             this.userName = res.data.data.account.username
                             this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
-                            document.title = this.commonData.website_name + '-账户信息'
+
                             if (!this.accountData.language) {
                                 this.accountData.language = this.commonData.lang_home
                             }
@@ -704,7 +705,17 @@
                             })
                         }
                     }
-                }
+                },
+                // 获取通用配置
+                getCommon() {
+                    getCommon().then(res => {
+                        if (res.data.status === 200) {
+                            this.commonData = res.data.data
+                            localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
+                            document.title = this.commonData.website_name + '-账户信息'
+                        }
+                    })
+                },
             },
 
         }).$mount(template)

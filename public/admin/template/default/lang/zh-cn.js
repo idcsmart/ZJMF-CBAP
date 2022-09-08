@@ -258,7 +258,7 @@ const lang_obj = {
   original_refund: '原产品应退款金额',
   new_price: '新产品应付金额',
   upgrade_price: '升降级订单金额,前两者之差',
-  demote_range: '可降级范围',
+  demote_range: '可升降级范围',
   notice: '通知',
   product_notice: '商品开通通知',
   open_notice: '开通中',
@@ -314,6 +314,8 @@ const lang_obj = {
   install: '安装',
   not_install: '未安装',
   safe_setting: '安全设置',
+  captcha_setting: '验证码设置',
+  captcha_manage: '验证码接口管理',
   enable_code: '启用图形验证码',
   user_register: '新用户注册',
   user_login: '用户登录',
@@ -642,7 +644,10 @@ const lang_obj = {
   bw_form: '从',
   bw_to: '到',
   disk_tip: '最小容量值不能大于等于最大容量值',
-  net_tip: '请先开启附加IP开关'
+  net_tip: '请先开启附加IP开关',
+  choose: '选择',
+  correct_code: '正确验证码',
+  login_text: '业务管理系统'
 }
 
 window.lang = lang_obj

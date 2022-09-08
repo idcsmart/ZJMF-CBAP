@@ -1,6 +1,6 @@
 <?php
 
-define('APP_DEBUG', true); // 调试模式开关
+define('APP_DEBUG', false); // 调试模式开关
 
 define('DATABASE_HOSTNAME', '#hostname#'); // 数据库服务器地址
 define('DATABASE_NAME', '#database#'); // 数据库名

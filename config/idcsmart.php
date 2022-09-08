@@ -17,7 +17,7 @@ return [
     // 不操作,登录失效时间,单位秒(s)
     'auto_logout' => 7200,
     // 支持的插件类型
-    'plugin_module' => ['addon','gateway','sms','mail'],
+    'plugin_module' => ['addon','gateway','sms','mail','captcha'],
     // 模板钩子
     'template_hooks' => [
         'template_after_servicedetail_suspended',

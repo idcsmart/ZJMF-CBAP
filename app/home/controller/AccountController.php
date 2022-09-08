@@ -304,6 +304,8 @@ class AccountController extends HomeBaseController
      * @version v1
      * @url /admin/v1/credit
      * @method  GET
+     * @param string keywords - 关键字:记录ID,备注
+     * @param string type - 类型:人工Artificial,充值Recharge,应用至订单Applied,退款Refund,提现Withdraw
      * @param int page - 页数
      * @param int limit - 每页条数
      * @return array list - 记录

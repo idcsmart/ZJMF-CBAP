@@ -88,6 +88,8 @@
                     },
                     // 是否显示新增页面弹窗
                     visible: false,
+                    commonLang: JSON.parse(localStorage.getItem('common_set')).lang_home[0].display_lang
+
                 }
             },
             components: {
@@ -261,25 +263,6 @@
                             return false
                         }
                     }
-                    let isRelatedLevel2 = false
-                    // 判断目标停靠节点是否是二级导航
-                    // if ( e.relatedContext.element !== undefined) {
-                    //     const id = e.relatedContext.element.id
-                    //     this.menuList.forEach(item => {
-                    //         if ( item.id === id) {
-                    //             if(e.draggedContext.element.child && e.draggedContext.element.child.length > 0){
-                    //                 isRelatedLevel2 = false
-                    //             }
-                    //             isRelatedLevel2 = true
-                    //         }
-                    //     })
-                    //     // if (isRelatedLevel2) {
-                    //     //     if (e.draggedContext.element.child && e.draggedContext.element.child.length > 0) {
-                    //     //         isRelatedLevel2 = false
-                    //     //     }
-                    //     // }
-                    //     return isRelatedLevel2;
-                    // }
 
                     return true
                 },
@@ -430,10 +413,10 @@
                         console.log(this.formData);
                         a: for (let i = 0; i < this.menuList.length; i++) {
                             if (this.menuList[i].id === id) {
-                                if(!this.formData.isChecked){
+                                if (!this.formData.isChecked) {
                                     // this.formData.delete
                                     this.formData.language = {}
-                                } 
+                                }
                                 console.log(this.formData);
                                 this.menuList[i] = this.formData
                                 break a;

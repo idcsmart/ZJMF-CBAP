@@ -629,9 +629,7 @@ insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_ti
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_client_login','0',0,0,'客户登录图形验证码开关  1开启，0关闭');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_admin_login','0',0,0,'管理员登录图形验证码开关  1开启，0关闭');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_client_login_error','1',0,0,'客户登录失败图形验证码开关  1开启，0关闭');
-insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_width','200',0,0,'图形验证码宽度');
-insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_height','50',0,0,'图形验证码高度');
-insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_length','4',0,0,'图形验证码字符长度');
+insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('captcha_plugin','TpCaptcha',0,0,'当前使用的验证码插件');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('register_email','1',0,0,'邮箱注册开关 1开启，0关闭');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('register_phone','1',0,0,'手机号注册开关 1开启，0关闭');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('currency_code','CNY',0,0,'货币代码');
@@ -1087,7 +1085,7 @@ CREATE TABLE `idcsmart_nav` (
   `plugin` varchar(100) NOT NULL DEFAULT '' COMMENT '插件',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `parent_id` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='默认导航表';
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='默认导航表';
 
 /*Data for the table `idcsmart_nav` */
 
@@ -1117,8 +1115,9 @@ insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (24,'admin','nav_auto','cron.html','',21,25,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (25,'admin','nav_plugin','','control-platform',0,43,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (26,'admin','nav_plugin_list','plugin.html','',25,27,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','',0,2,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','',0,3,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','',0,1,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','',0,2,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (29,'admin','nav_navigation','navigation.html','',21,28,'','');
 
 /*Table structure for table `idcsmart_notice_setting` */
 
@@ -1261,6 +1260,7 @@ CREATE TABLE `idcsmart_plugin` (
   UNIQUE KEY `name` (`name`),
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='插件表';
+insert into `idcsmart_plugin` (`id`, `status`, `name`, `title`, `url`, `author`, `author_url`, `version`, `description`, `config`, `module`, `order`, `help_url`, `create_time`, `update_time`) values(1,'1','TpCaptcha','thinkphp图形验证','','智简魔方','','1.0','thinkphp图形验证','{\"module_name\":\"\\u56fe\\u5f62\\u9a8c\\u8bc1\",\"captcha_width\":\"250\",\"captcha_height\":\"61\",\"captcha_length\":\"5\",\"code_set\":\"1234567890ABCD\"}','captcha','0','','1662529067','1662539097');
 
 /*Table structure for table `idcsmart_plugin_hook` */
 

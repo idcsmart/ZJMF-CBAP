@@ -146,7 +146,11 @@
 
                             }
                         }).catch((error) => {
-                            this.$message.error(error.data.msg)
+                            this.activeId = 0
+                            this.isBegin = false
+                            clearInterval(this.timer)
+                            this.versionData.last_version_check = error.data.msg
+                            this.$message.error("安装失败！")
                         })
                     }, 2000)
                 },

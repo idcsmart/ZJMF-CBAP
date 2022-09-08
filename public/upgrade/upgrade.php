@@ -310,6 +310,10 @@ class UpgradeSystem
 
             $version = $this->configuration('system_version');
             if (empty($version)){
+                $progress_log['progress'] = "60%";
+                $progress_log['msg'] = '未获取到本系统版本号,请联系系统管理员';
+                $progress_log['status'] = 400;
+                $this->updateProgress(json_encode($progress_log));
                 return json_encode(['status'=>400,'msg'=>"未获取到本系统版本号,请联系系统管理员"]);
             }
 
@@ -324,6 +328,10 @@ class UpgradeSystem
             $file_name = IDCSMART_ROOT . "/public/upgrade/upgrade.log";
             $handle = fopen($file_name, 'r');
             if (!$handle){
+                $progress_log['progress'] = "60%";
+                $progress_log['msg'] = "未找到升级文件";
+                $progress_log['status'] = 400;
+                $this->updateProgress(json_encode($progress_log));
                 return json_encode(['status'=>400,'msg'=>"未找到".$file_name]);
             }
             $content = '';

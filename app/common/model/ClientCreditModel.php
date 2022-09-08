@@ -3,6 +3,7 @@ namespace app\common\model;
 
 use think\Model;
 use think\Db;
+use think\db\Query;
 
 /**
  * @title 用户余额管理模型
@@ -60,14 +61,25 @@ class ClientCreditModel extends Model
             $param['id'] = isset($param['id']) ? intval($param['id']) : 0;
         }
 
-        $count = $this->field('id')
-            ->where('client_id', $param['id'])
+        $where = function (Query $query) use($param) {
+            $query->where('cc.client_id', $param['id']);
+            if(isset($param['keywords']) && trim($param['keywords']) !== ''){
+                $query->where('cc.id|cc.notes', 'like', "%{$param['keywords']}%");
+            }
+            if(!empty($param['type'])){
+                $query->where('cc.type', $param['type']);
+            }
+        };
+
+        $count = $this->alias('cc')
+            ->field('cc.id')
+            ->where($where)
             ->count();
 
     	$credits = $this->alias('cc')
             ->field('cc.id,cc.type,cc.amount,cc.notes,cc.create_time,cc.admin_id,a.name admin_name')
             ->leftjoin('admin a', 'a.id=cc.admin_id')
-    		->where('cc.client_id', $param['id'])
+            ->where($where)
     		->limit($param['limit'])
     		->page($param['page'])
             ->order('create_time', 'desc')

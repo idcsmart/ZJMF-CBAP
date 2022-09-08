@@ -232,6 +232,8 @@
           try {
             const res = await loginByUserId(this.id)
             localStorage.setItem('jwt', res.data.data.jwt)
+            // 获取前台导航存入 locaStorage  frontMenus
+
             // const url = '/reactmember/#/'
             const url = this.website_url
             const newPage = window.open('', '_blank')

@@ -4,8 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>登录</title>
   <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/tdesign.min.css" />
   <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/reset.css" />
@@ -17,6 +16,7 @@
     const url = "/{$template_catalog}/template/{$themes}/"
   </script>
   <script src="/{$template_catalog}/template/{$themes}/js/common/lang.js"></script>
+  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 
 <body>
@@ -24,7 +24,7 @@
     <div class="login-container">
       <div class="title-container">
         <h1 class="title margin-no">{{lang.login}}</h1>
-        <h1 class="title">TDesign Starter</h1>
+        <h1 class="title">{{website_name + lang.login_text}}</h1>
       </div>
       <t-form ref="form" :data="formData" :rules="rules" label-width="0" class="item-container" @submit="onSubmit">
         <template>
@@ -36,18 +36,18 @@
             </t-input>
           </t-form-item>
           <t-form-item name="password">
-            <t-input v-model="formData.password" size="large" type="password" clearable key="password"
-              :placeholder="lang.input+lang.password">
+            <t-input v-model="formData.password" size="large" type="password" clearable key="password" :placeholder="lang.input+lang.password">
               <template #prefix-icon>
                 <t-icon name="lock-on" />
               </template>
             </t-input>
           </t-form-item>
-          <t-form-item name="captcha" v-if="captcha_admin_login==1">
+          <!-- <t-form-item name="captcha" v-if="captcha_admin_login==1">
             <t-input v-model="formData.captcha" size="large" :placeholder="lang.input+lang.captcha">
             </t-input>
             <img :src="captcha" :alt="lang.captcha" class="captcha" @click="getCaptcha">
-          </t-form-item>
+          </t-form-item> -->
+          <div id="admin-captcha"></div>
           <t-form-item class="btn-container">
             <t-button block size="large" type="submit" :loading="loading">{{lang.login}}</t-button>
           </t-form-item>

@@ -175,8 +175,8 @@ class ConfigurationController extends AdminBaseController
     }  
 	/**
      * 时间 2022-5-10
-     * @title 获取安全设置
-     * @desc 获取安全设置
+     * @title 获取验证码设置
+     * @desc 获取验证码设置
      * @url /admin/v1/configuration/security
      * @method  GET
      * @author xiong
@@ -185,9 +185,7 @@ class ConfigurationController extends AdminBaseController
      * @return  int captcha_client_login - 客户登录图形验证码开关:1开启0关闭
      * @return  int captcha_client_login_error - 客户登录失败图形验证码开关:1开启0关闭
      * @return  int captcha_admin_login - 管理员登录图形验证码开关:1开启0关闭
-     * @return  int captcha_width - 图形验证码宽度
-     * @return  int captcha_height - 图形验证码高度
-     * @return  int captcha_length - 图形验证码字符长度
+     * @return  string captcha_plugin - 验证码插件(从/admin/v1/captcha_list接口获取)
      * @return  int code_client_email_register - 邮箱注册数字验证码开关:1开启0关闭
      */
     public function securityList()
@@ -195,7 +193,7 @@ class ConfigurationController extends AdminBaseController
 		//实例化模型类
 		$ConfigurationModel = new ConfigurationModel();
 		
-		//获取安全设置
+		//获取验证码设置
 		$data=$ConfigurationModel->securityList();
         $result = [
             'status' => 200,
@@ -207,8 +205,8 @@ class ConfigurationController extends AdminBaseController
 
     /**
      * 时间 2022-5-10
-     * @title 保存安全设置
-     * @desc 保存安全设置
+     * @title 保存验证码设置
+     * @desc 保存验证码设置
      * @url /admin/v1/configuration/security
      * @method  PUT
      * @author xiong
@@ -217,9 +215,7 @@ class ConfigurationController extends AdminBaseController
      * @param  int captcha_client_login - 客户登录图形验证码开关:1开启0关闭
      * @param  int captcha_client_login_error - 客户登录失败图形验证码开关:1开启0关闭
      * @param  int captcha_admin_login - 管理员登录图形验证码开关:1开启0关闭
-     * @param  int captcha_width - 图形验证码宽度
-     * @param  int captcha_height - 图形验证码高度
-     * @param  int captcha_length - 图形验证码字符长度
+     * @param  string captcha_plugin - 验证码插件(从/admin/v1/captcha_list接口获取)
      * @param  int code_client_email_register - 邮箱注册数字验证码开关:1开启0关闭
      */
     public function securityUpdate()
@@ -235,7 +231,7 @@ class ConfigurationController extends AdminBaseController
 		//实例化模型类
 		$ConfigurationModel = new ConfigurationModel();
 		
-		//保存安全设置
+		//保存验证码设置
 		$result = $ConfigurationModel->securityUpdate($param);   
 		
         return json($result);
@@ -259,7 +255,7 @@ class ConfigurationController extends AdminBaseController
 		//实例化模型类
 		$ConfigurationModel = new ConfigurationModel();
 		
-		//获取安全设置
+		//获取验证码设置
 		$data=$ConfigurationModel->currencyList();
         $result = [
             'status' => 200,
@@ -296,7 +292,7 @@ class ConfigurationController extends AdminBaseController
 		//实例化模型类
 		$ConfigurationModel = new ConfigurationModel();
 		
-		//保存安全设置
+		//保存验证码设置
 		$result = $ConfigurationModel->currencyUpdate($param);   
 		
         return json($result);
@@ -389,7 +385,7 @@ class ConfigurationController extends AdminBaseController
 		//实例化模型类
 		$ConfigurationModel = new ConfigurationModel();
 		
-		//保存安全设置
+		//保存验证码设置
 		$result = $ConfigurationModel->cronUpdate($param);   
 		
         return json($result);

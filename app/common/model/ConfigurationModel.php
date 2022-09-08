@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 
+use app\admin\model\PluginModel;
 use think\Model;
 use think\Db;
 /**
@@ -34,9 +35,7 @@ class ConfigurationModel extends Model
             'captcha_client_login',
             'captcha_admin_login',
             'captcha_client_login_error',
-            'captcha_width',
-            'captcha_height',
-            'captcha_length',
+            'captcha_plugin',
             'code_client_email_register',
         ],
         'currency'=>[
@@ -262,8 +261,8 @@ class ConfigurationModel extends Model
     }
     /**
      * 时间 2022-5-10
-     * @title 获取安全设置
-     * @desc 获取安全设置
+     * @title 获取验证码设置
+     * @desc 获取验证码设置
      * @author xiong
      * @version v1
      * @return  int captcha_client_register - 客户注册图形验证码开关:1开启0关闭
@@ -284,7 +283,7 @@ class ConfigurationModel extends Model
                 if($v=="captcha_width" || $v=="captcha_height"){
                     $data[$v['setting']] = (float)$v['value'];
                 } else{
-                    $data[$v['setting']] = (int)$v['value'];
+                    $data[$v['setting']] = $v['value'];
                 }
             }
         }
@@ -292,27 +291,29 @@ class ConfigurationModel extends Model
     }
     /**
      * 时间 2022-05-10
-     * @title 保存安全设置
-     * @desc 保存安全设置
+     * @title 保存验证码设置
+     * @desc 保存验证码设置
      * @author xiong
      * @version v1
      * @param  int param.captcha_client_register - 客户注册图形验证码开关:1开启0关闭
      * @param  int param.captcha_client_login - 客户登录图形验证码开关:1开启0关闭
      * @param  int param.captcha_client_login_error - 客户登录失败图形验证码开关:1开启0关闭
      * @param  int param.captcha_admin_login - 管理员登录图形验证码开关:1开启0关闭
-     * @param  int param.captcha_width - 图形验证码宽度
-     * @param  int param.captcha_height - 图形验证码高度
-     * @param  int param.captcha_length - 图形验证码字符长度
+     * @param  string captcha_plugin - 验证码插件(从/admin/v1/captcha_list接口获取)
      * @param  int param.code_client_email_register - 邮箱注册数字验证码开关:1开启0关闭
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
     public function securityUpdate($param)
     {
-        foreach($param as $k=>$v){
-            if($k=="captcha_width" || $k=="captcha_height") $param[$k]=round($v,2);
-            else $param[$k] = intval($v);
+        if (!empty($param['captcha_plugin'])){
+            $PluginModel = new PluginModel();
+            $captchaPlugin = $PluginModel->where('name',$param['captcha_plugin'])->where('module','captcha')->where('status',1)->find();
+            if (empty($captchaPlugin)){
+                return ['status'=>400,'msg'=>lang('plugin_is_not_exist')];
+            }
         }
+
         # 日志
         $description = [];
         $systemList = $this->securityList();
@@ -335,8 +336,7 @@ class ConfigurationModel extends Model
         $this->startTrans();
         try {
             foreach($this->config['security'] as $v){
-                if($v=="captcha_width" || $v=="captcha_height") $param[$v]=round($param[$v],2);
-                else $param[$v] = intval($param[$v]);
+                $param[$v] = $v=='captcha_plugin'?$param[$v]:intval($param[$v]??0);
                 $list[]=[
                     'setting'=>$v,
                     'value'=>$param[$v],
@@ -350,7 +350,7 @@ class ConfigurationModel extends Model
         } catch (\Exception $e) {
             // 回滚事务
             $this->rollback();
-            return ['status' => 400, 'msg' => lang('update_fail')];
+            return ['status' => 400, 'msg' => lang('update_fail') . ':' . $e->getMessage()];
         }
         return ['status' => 200, 'msg' => lang('update_success')];
     }

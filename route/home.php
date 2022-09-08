@@ -18,7 +18,6 @@ Route::group('console/v1',function (){
     //公共接口
     Route::get('country', 'home/common/countryList'); // 国家列表
     Route::get('captcha', 'home/common/captcha'); // 图形验证码
-    Route::post('captcha', 'home/common/checkCaptcha'); // 验证图形验证码
     Route::get('gateway', 'home/common/gateway'); // 支付接口
     Route::get('common', 'home/common/common'); // 公共配置
     Route::post('phone/code', 'home/common/sendPhoneCode'); // 发送手机验证码

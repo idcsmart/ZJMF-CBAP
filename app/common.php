@@ -698,8 +698,25 @@ function check_mobile($mobile)
 }
 
 /**
+ * @title 获取图形验证码
+ * @desc 获取图形验证码
+ * @author wyh
+ * @version v1
+ * @param boolean is_admin false 是否后台
+ * @return string
+ */
+function get_captcha($is_admin=false)
+{
+    $captchaPlugin = configuration('captcha_plugin')??'TpCaptcha';
+
+    $html = plugin_reflection($captchaPlugin,[],'captcha',$is_admin?'describe_admin':'describe');
+
+    return $html;
+}
+
+/**
  * @title 验证图形验证码
- * @desc 验证图形验证码,通过时删除缓存
+ * @desc 验证图形验证码
  * @author wyh
  * @version v1
  * @param string captcha 12345 验证码
@@ -708,7 +725,7 @@ function check_mobile($mobile)
  */
 function check_captcha($captcha,$token)
 {
-    /*$data = [
+    $data = [
         'captcha' => $captcha,
         'token' => $token
     ];
@@ -716,19 +733,12 @@ function check_captcha($captcha,$token)
     $captchaPlugin = configuration('captcha_plugin')??'TpCaptcha';
 
     $result = plugin_reflection($captchaPlugin,$data,'captcha','verify');
+
     if ($result['status']==200){
         return true;
     }else{
         return false;
-    }*/
-
-    if (Cache::get('captcha_'.$token) == $captcha){
-        # 验证通过,删除验证码缓存
-        Cache::delete('captcha_'. $token);
-        return true;
     }
-
-    return false;
 }
 
 /**

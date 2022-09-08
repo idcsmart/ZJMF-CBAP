@@ -257,7 +257,6 @@
                             list = list.filter(item => {
                                 return item.type !== "Artificial"
                             })
-                            console.log(list);
                             this.dataList3 = list
                             this.params3.total = res.data.data.count
                         }
@@ -338,33 +337,18 @@
                 },
                 // 订单记录 搜索框事件
                 inputChange1() {
-                    // if (this.timerId1) {
-                    //     clearTimeout(this.timerId1)
-                    // }
-                    // this.timerId1 = setTimeout(() => {
                     this.params1.page = 1
                     this.getorderList()
-                    // }, 500)
                 },
                 // 交易记录 搜索框事件
                 inputChange2() {
-                    // if (this.timerId2) {
-                    //     clearTimeout(this.timerId2)
-                    // }
-                    // this.timerId2 = setTimeout(() => {
                     this.params2.page = 1
                     this.getTransactionList()
-                    // }, 500)
                 },
                 // 余额记录 搜索框事件
                 inputChange3() {
-                    // if (this.timerId3) {
-                    //     clearTimeout(this.timerId3)
-                    // }
-                    // this.timerId3 = setTimeout(() => {
                     this.params3.page = 1
                     this.getCreditList()
-                    // }, 500)
                 },
                 // 获取通用配置
                 getCommon() {
@@ -413,7 +397,7 @@
                 showTx() {
                     // 初始化提现弹窗数据
                     this.txData = {
-                        method: "alipay",
+                        method: "",
                         account: "",
                         card_number: "",
                         name: "",

@@ -70,9 +70,9 @@
                                 <t-form-item name="name" label="导航名称">
                                     <t-input v-model="formData.name"></t-input>
                                 </t-form-item>
-                                <t-checkbox v-model="formData.isChecked">多语言</t-checkbox>
+                                <t-checkbox v-model="formData.isChecked" v-show="language.length>1">多语言</t-checkbox>
                                 <div v-show="formData.isChecked">
-                                    <t-form-item name="language" v-for="item in language" :key="item.display_flag" :label="item.display_name">
+                                    <t-form-item name="language" v-for="item in language" v-show="item.display_lang != commonLang" :key="item.display_flag" :label="item.display_name">
                                         <t-input v-model="formData.language[item.display_lang]"></t-input>
                                     </t-form-item>
                                 </div>
@@ -155,9 +155,9 @@
                                 <t-form-item name="name" label="导航名称">
                                     <t-input v-model="formData.name"></t-input>
                                 </t-form-item>
-                                <t-checkbox v-model="formData.isChecked">多语言</t-checkbox>
+                                <t-checkbox v-model="formData.isChecked" v-show="language.length>1">多语言</t-checkbox>
                                 <div v-show="formData.isChecked">
-                                    <t-form-item name="language" v-for="item in language" :key="item.display_flag" :label="item.display_name">
+                                    <t-form-item name="language"  v-for="item in language" v-show="item.display_lang != commonLang" :key="item.display_flag" :label="item.display_name">
                                         <t-input v-model="formData.language[item.display_lang]"></t-input>
                                     </t-form-item>
                                 </div>
@@ -209,9 +209,9 @@
             <t-form-item name="name" label="导航名称">
                 <t-input v-model="newFormData.name"></t-input>
             </t-form-item>
-            <t-checkbox class="new_menu_checkbox" v-model="newFormData.isChecked">多语言</t-checkbox>
+            <t-checkbox class="new_menu_checkbox" v-model="newFormData.isChecked" v-show="language.length>1">多语言</t-checkbox>
             <div v-show="newFormData.isChecked">
-                <t-form-item name="language" v-for="item in language" :key="item.display_flag" :label="item.display_name">
+                <t-form-item name="language"  v-for="item in language" v-show="item.display_lang != commonLang" :key="item.display_flag" :label="item.display_name">
                     <t-input v-model="newFormData.language[item.display_lang]"></t-input>
                 </t-form-item>
             </div>

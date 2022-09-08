@@ -2,7 +2,6 @@
 
 namespace app\home\controller;
 
-use app\common\logic\CaptchaLogic;
 use app\common\logic\UploadLogic;
 use app\common\model\CountryModel;
 use app\common\logic\VerificationCodeLogic;
@@ -124,38 +123,17 @@ class CommonController extends HomeBaseController
      * @method  get
      * @author wyh
      * @version v1
-     * @return string captcha - 图形验证码,base64格式
-     * @return string token - 图形验证码唯一识别码
+     * @return string html - html文档
      */
     public function captcha()
     {
         $result = [
             'status' => 200,
             'msg' => lang('success_message'),
-            'data' => (new CaptchaLogic())->captcha()
+            'data' => [
+                'html' => get_captcha()
+            ]
         ];
-
-        return json($result);
-    }
-
-    /**
-     * 时间 2022-07-08
-     * @title 验证图形验证码
-     * @desc 验证图形验证码
-     * @url /console/v1/captcha
-     * @method  POST
-     * @author wyh
-     * @version v1
-     * @param string captcha - 图形验证码, required
-     * @param string token - 图形验证码唯一识别码 required
-     */
-    public function checkCaptcha()
-    {
-        $param = $this->request->param();
-
-        $CaptchaLogic = new CaptchaLogic();
-
-        $result = $CaptchaLogic->checkCaptcha($param);
 
         return json($result);
     }

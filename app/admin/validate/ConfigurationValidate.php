@@ -161,7 +161,7 @@ class ConfigurationValidate extends Validate
     protected $scene = [
         'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url'],
         'login_update' => ['register_email','register_phone','login_phone_verify'],
-        'security_update' => ['captcha_client_register','captcha_client_login','captcha_client_login_error','captcha_admin_login','captcha_width','captcha_height','captcha_length'],
+        'security_update' => ['captcha_client_register','captcha_client_login','captcha_client_login_error','captcha_admin_login'],
         'currency_update' => ['currency_code','currency_prefix','recharge_open','recharge_min','recharge_max'],
         'cron_update' => 
 	        [

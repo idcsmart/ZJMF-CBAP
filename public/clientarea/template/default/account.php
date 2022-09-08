@@ -14,7 +14,7 @@
     </div>
     <div id="account" class="template">
         <el-container>
-            <aside-menu :menu-active-id="4"></aside-menu>
+            <aside-menu :menu-active-id="2"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>

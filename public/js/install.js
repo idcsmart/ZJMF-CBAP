@@ -68,7 +68,9 @@
                             ellipsis: true
                         },
                     ],
-                    dbData: {},
+                    dbData: {
+                        hostname:'127.0.0.1'
+                    },
                     dbRules: {
                         hostname: [
                             { required: true, message: '请输入数据库地址 ', type: 'error' },

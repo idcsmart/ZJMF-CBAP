@@ -83,6 +83,7 @@ class ProductController extends AdminBaseController
      * @return int product.creating_notice_mail - 开通中邮件通知是否开启:1开启默认,0关闭
      * @return int product.creating_notice_mail_template - 开通中邮件通知模板,默认0
      * @return int product.created_notice_mail_template - 已开通邮件通知模板,默认0
+     * @return int product_id - 父商品ID
      */
     public function index()
     {

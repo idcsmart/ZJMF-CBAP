@@ -14,7 +14,7 @@
     </div>
     <div class="template" id="finance">
         <el-container>
-            <aside-menu :menu-active-id="3"></aside-menu>
+            <aside-menu :menu-active-id="1"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
@@ -202,6 +202,18 @@
                                     </el-tab-pane>
                                     <el-tab-pane label="余额记录" name="3">
                                         <div class="content_table">
+                                            <div class="content_searchbar">
+                                                <div class="left_tips">
+
+                                                </div>
+                                                <div class="searchbar com-search">
+                                                    <!-- <el-input suffix-icon="el-input__icon el-icon-search" @input="inputChange2" v-model="params2.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2"></el-input>
+                                                    </el-input> -->
+                                                    <el-input v-model="params3.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange3" clearable @clear="getCreditList">
+                                                        <i class="el-icon-search input-search" slot="suffix" @Click="inputChange3"></i>
+                                                    </el-input>
+                                                </div>
+                                            </div>
                                             <div class="tabledata">
                                                 <el-table v-loading="loading3" :data="dataList3" style="width: 100%;margin-bottom: .2rem;">
                                                     <el-table-column prop="id" label="ID" width="100" align="left">

@@ -11,10 +11,12 @@
             captcha_client_login: false,
             captcha_client_login_error: false,
             captcha_admin_login: false,
-            captcha_width: '',
-            captcha_height: '',
-            captcha_length: '',
+            captcha_plugin: '',
             code_client_email_register: false
+            // captcha_width: '',
+            // captcha_height: '',
+            // captcha_length: '',
+
           },
           rules: {
             lang_admin: [{ required: true }],
@@ -31,7 +33,11 @@
               { pattern: /^([5-9]\d{1}|100)$/, message: lang.input + '50-100' + lang.verify2, type: 'warning' }
             ],
           },
-          codeUrl: ''
+          codeUrl: '',
+          captchaList: [],
+          popupProps: {
+            overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` }),
+          },
         }
       },
       methods: {
@@ -73,25 +79,42 @@
             this.$message.warning(firstError);
           }
         },
+        // 获取安全设置
         async getSetting () {
           try {
             const res = await getSafeOpt()
             const temp = res.data.data
             Object.assign(this.formData, temp)
-            this.formData.captcha_client_register = Boolean(temp.captcha_client_register)
-            this.formData.captcha_client_login = Boolean(temp.captcha_client_login)
-            this.formData.captcha_client_login_error = String(temp.captcha_client_login_error)
-            this.formData.captcha_admin_login = Boolean(temp.captcha_admin_login)
-            console.log(temp.code_client_email_register)
-            this.formData.code_client_email_register = Boolean(temp.code_client_email_register)
-            this.getPreviewCode()
+            this.formData.captcha_client_register = Boolean(temp.captcha_client_register * 1)
+            this.formData.captcha_client_login = Boolean(temp.captcha_client_login * 1)
+            this.formData.captcha_client_login_error = String(temp.captcha_client_login_error * 1)
+            this.formData.captcha_admin_login = Boolean(temp.captcha_admin_login * 1)
+            this.formData.code_client_email_register = Boolean(temp.code_client_email_register * 1)
+            this.formData.captcha_plugin = temp.captcha_plugin === 0 ? '' : temp.captcha_plugin
+            // this.getPreviewCode()
           } catch (error) {
             console.log(error)
+          }
+        },
+        // 获取验证码列表
+        async getCaptcha () {
+          try {
+            const res = await getCaptchaList({
+              page: 1,
+              limit: 1000
+            })
+            this.captchaList = res.data.data.list
+            const temp = this.captchaList.filter(item => item.name === this.formData.captcha_plugin)
+            if (temp.length === 0) {
+              this.formData.captcha_plugin = ''
+            }
+          } catch (error) {
           }
         }
       },
       created () {
         this.getSetting()
+        this.getCaptcha()
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

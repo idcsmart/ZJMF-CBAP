@@ -3,7 +3,6 @@ namespace app\admin\controller;
 
 use app\admin\model\AdminModel;
 use app\admin\validate\AdminValidate;
-use app\common\logic\CaptchaLogic;
 
 /**
  * @title 后台开放类
@@ -26,6 +25,7 @@ class PublicController extends BaseController
      * @author wyh
      * @version v1
      * @return int captcha_admin_login - 管理员登录图形验证码开关:1开启,0关闭
+     * @return string website_name 智简魔方 网站名称
      */
     public function loginInfo()
     {
@@ -33,7 +33,8 @@ class PublicController extends BaseController
             'status'=>200,
             'msg'=>lang('success_message'),
             'data'=>[
-                'captcha_admin_login' => configuration('captcha_admin_login')
+                'captcha_admin_login' => configuration('captcha_admin_login'),
+                'website_name' => configuration('website_name')
             ]
         ];
 
@@ -81,15 +82,16 @@ class PublicController extends BaseController
      * @method  get
      * @author wyh
      * @version v1
-     * @return string captcha - 图形验证码,base64格式
-     * @return string token - 图形验证码唯一识别码
+     * @return string html - html文档
      */
     public function captcha()
     {
         $result = [
             'status' => 200,
             'msg'=> lang('success_message'),
-            'data' => (new CaptchaLogic())->captcha()
+            'data' => [
+                'html' => get_captcha(true)
+            ]
         ];
 
         return json($result);

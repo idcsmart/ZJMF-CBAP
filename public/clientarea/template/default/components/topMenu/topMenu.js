@@ -70,6 +70,7 @@ const topMenu = {
             }).then(() => {
                 //const res = await Axios.post('/logout')
                 Axios.post('/logout').then(res => {
+                    localStorage.removeItem("jwt")
                     setTimeout(() => {
                         location.href = 'login.html'
                     }, 300)

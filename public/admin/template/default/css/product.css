@@ -134,3 +134,8 @@
 .product-api .t-select {
   width: 200px;
 }
+@media screen and (max-width: 1440px) {
+  .product-detail .t-col:first-child {
+    margin-bottom: 40px;
+  }
+}

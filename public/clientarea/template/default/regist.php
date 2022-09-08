@@ -27,7 +27,7 @@
     <div class="template">
         <div id="regist">
             <!-- 验证码 -->
-            <captcha-dialog @close-dialog="isShowCaptcha = false" :is-show-captcha="isShowCaptcha" @get-captcha-data="getData"></captcha-dialog>
+            <captcha-dialog  ref="captcha" :is-show-captcha="isShowCaptcha" ></captcha-dialog>
             <div class="login-container">
                 <div class="container-back">
                     <div class="back-line1"></div>
@@ -124,6 +124,7 @@
     <script src="/{$template_catalog}/template/{$themes}/components/countDownButton/countDownButton.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/regist.js"></script>
     <script src="https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/captchaDialog/captchaDialog.js"></script>
 
 </body>

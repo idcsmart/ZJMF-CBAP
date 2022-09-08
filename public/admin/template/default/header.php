@@ -86,6 +86,29 @@
             </div>
           </div>
         </div>
+        <!-- 修改密码弹窗开始 -->
+        <t-dialog :visible.sync="editPassVisible" header="修改密码" :on-close="editPassClose" :footer="false" width="600">
+          <t-form :data="editPassFormData" ref="userDialog" @submit="onSubmit">
+
+            <t-form-item :label="lang.password" name="password" :rules="[
+              { required: true , message: lang.input + lang.password, type: 'error' },
+          { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '，' + lang.verify14 + '6~32', type: 'warning' }
+        ]">
+              <t-input :placeholder="lang.input+lang.password" type="password" v-model="editPassFormData.password" />
+            </t-form-item>
+            <t-form-item :label="lang.surePassword" name="repassword" :rules="[
+              { required: true, message: lang.input + lang.surePassword, type: 'error' },
+      { validator: checkPwd, trigger: 'blur' }
+    ]">
+              <t-input :placeholder="lang.input+lang.surePassword" type="password" v-model="editPassFormData.repassword" />
+            </t-form-item>
+            <div class="f-btn" style="text-align: right;">
+              <t-button theme="primary" type="submit">{{lang.hold}}</t-button>
+              <t-button theme="default" variant="base" @click="editPassClose">{{lang.cancel}}</t-button>
+            </div>
+          </t-form>
+        </t-dialog>
+        <!-- 修改密码弹窗结束 -->
         <!-- header operations -->
         <div class="operations-container">
           <t-tooltip placement="bottom" :content="lang.help_document">
@@ -106,7 +129,13 @@
           </t-dropdown>
           <t-dropdown :min-column-width="125" trigger="click" class="user-btn" size="small">
             <template #dropdown>
-              <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
+              <t-dropdown-item style="height: 25px;" class="operations-dropdown-container-item" @click="editPassVisible = true">
+                <template>
+                  <t-icon name="lock-off"></t-icon>
+                  修改密码
+                </template>
+              </t-dropdown-item>
+              <t-dropdown-item  class="operations-dropdown-container-item" @click="handleLogout">
                 <template>
                   <t-icon name="poweroff"></t-icon>
                   退出登录

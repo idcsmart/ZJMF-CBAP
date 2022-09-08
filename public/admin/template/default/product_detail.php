@@ -21,7 +21,7 @@
     </ul>
     <div class="box">
       <t-form :data="formData" :rules="rules" ref="userInfo">
-        <t-row :gutter="{ xs: 0, xxl: 100 }">
+        <t-row :gutter="{ xs: 0, sm: 20, md: 40, lg: 60, xl: 80, xxl: 100 }">
           <!-- 个人中心左侧 -->
           <t-col :xs="12" :xl="6">
             <p class="com-tit"><span>{{ lang.basic_info }}</span></p>
@@ -51,15 +51,15 @@
             <t-form-item :label="lang.product_descript" name="description" class="textarea">
               <t-textarea :placeholder="lang.input+lang.product_descript" v-model="formData.description" />
             </t-form-item>
-            <!-- <p class="com-tit connect"><span>{{ lang.connect }}</span></p>
-                    <div class="item">
-                      <t-form-item :label="lang.connect_goods" name="address">
-                        <t-select v-model="formData.type">
-                          <t-option value="server" label="server" key="server"></t-option>
-                          <t-option value="server_group" label="server_group" key="server_group"></t-option>
-                        </t-select>
-                      </t-form-item>
-                    </div> -->
+            <p class="com-tit connect"><span>{{ lang.connect }}</span></p>
+            <div class="item">
+              <t-form-item :label="lang.connect_goods" name="address">
+                <t-select v-model="formData.product_id" clearable>
+                  <t-option v-for="item in relationList" :key="item.id" :value="item.id" :label="item.name">
+                  </t-option>
+                </t-select>
+              </t-form-item>
+            </div>
             <p class="com-tit connect"><span>{{ lang.upAndDown }}</span></p>
             <div class="item">
               <t-form-item :label="lang.demote_range" name="language">
@@ -157,7 +157,7 @@
                 </t-form-item>
               </t-col>
             </t-row>
-            <p class="com-tit free" style="margin-top: 10px;"><span>{{lang.cost}}</span></p>
+            <p class="com-tit free" style="margin-top: 70px;"><span>{{lang.cost}}</span></p>
             <!-- 费用类型 -->
             <t-row :gutter="{ xs: 0, xxl: 30 }" class="dis-box">
               <t-col :xs="12" :xl="6">

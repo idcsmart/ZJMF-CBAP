@@ -13,7 +13,7 @@ class PluginController extends AdminBaseController
     /**
      * 时间 2022-5-16
      * @title 获取支付/短信/邮件/插件列表
-     * @desc 获取支付/短信/邮件/插件列表:module=gateway表示支付接口列表,addon插件列表,sms短信接口列表,mail邮件接口列表
+     * @desc 获取支付/短信/邮件/插件列表:module=gateway表示支付接口列表,addon插件列表,sms短信接口列表,mail邮件接口列表,captcha验证码接口列表
      * @url /admin/v1/plugin/:module
      * @method  GET
      * @author wyh

@@ -159,13 +159,14 @@ class ProductModel extends Model
      * @return int created_notice_mail_api - 已开通邮件通知接口
      * @return int created_notice_mail_template - 已开通邮件通知模板,默认0
      * @return array upgrade - 可升降级商品ID,数组
+     * @return int product_id - 父商品ID
      */
     public function indexProduct($id)
     {
         $product = $this->field('id,name,product_group_id,description,hidden,stock_control,qty,
         creating_notice_sms,creating_notice_sms_api,creating_notice_sms_api_template,created_notice_sms,
         created_notice_sms_api,created_notice_sms_api_template,creating_notice_mail,creating_notice_mail_api,creating_notice_mail_template,
-        created_notice_mail,created_notice_mail_api,created_notice_mail_template,pay_type,auto_setup,type,rel_id')
+        created_notice_mail,created_notice_mail_api,created_notice_mail_template,pay_type,auto_setup,type,rel_id,product_id')
             ->find($id);
 
         if (!empty($product->description)){

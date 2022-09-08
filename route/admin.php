@@ -34,6 +34,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::put('admin/:id', 'admin/admin/update'); # 修改管理员
     Route::delete('admin/:id', 'admin/admin/delete'); # 删除管理员
     Route::put('admin/:id/status', 'admin/admin/status'); # 管理员状态切换
+    Route::put('admin/password/update', 'admin/admin/updatePassword'); # 修改管理员密码
 
 	# 管理员分组管理
     Route::get('admin/role', 'admin/adminRole/adminRoleList'); # 管理员分组列表
@@ -165,6 +166,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('gateway', 'admin/common/gateway'); # 支付接口
     Route::get('sms', 'admin/common/sms'); # 短信接口
     Route::get('email', 'admin/common/email'); # 邮件接口
+    Route::get('captcha_list', 'admin/common/captchaList'); # 验证码接口
     Route::get('common', 'admin/common/common'); # 公共配置
     Route::get('country', 'admin/common/countryList'); # 国家列表
     Route::get('auth', 'admin/common/authList'); # 权限列表 

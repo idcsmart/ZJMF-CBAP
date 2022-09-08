@@ -204,15 +204,15 @@ class AdminModel extends Model
             return ['status'=>400,'msg'=>lang('admin_role_is_not_exist')];
         }
         # 修改密码 强制退出登录
-		if(!empty($param['password'])){
-			if (!idcsmart_password_compare($param['password'],$admin['password'])){
-				Cache::set('admin_update_password_'.$param['id'],time(),3600*24*7); # 7天未操作接口,就可以不退出
-			}
+        if(!empty($param['password'])){
+            if (!idcsmart_password_compare($param['password'],$admin['password'])){
+                Cache::set('admin_update_password_'.$param['id'],time(),3600*24*7); # 7天未操作接口,就可以不退出
+            }
         }
 
         $oldRoleId = AdminRoleLinkModel::where('admin_id',intval($param['id']))->value('admin_role_id');
-		if ($oldRoleId!=$param['role_id'] && $param['id']==1){
-		    return ['status'=>400,'msg'=>lang('supper_admin_cannot_update_role')];
+        if ($oldRoleId!=$param['role_id'] && $param['id']==1){
+            return ['status'=>400,'msg'=>lang('supper_admin_cannot_update_role')];
         }
 
         # 日志详情
@@ -220,10 +220,10 @@ class AdminModel extends Model
         if ($admin['name'] != $param['name']){
             $description .= lang('log_update_admin_description',['{field}'=>lang('admin_name'),'{content}'=>$param['name']]) .',';
         }
-		if(!empty($param['password'])){
-			if ($admin['password'] != idcsmart_password($param['password'])){
-				$description .= lang('log_update_admin_description',['{field}'=>lang('admin_password'),'{content}'=>$param['password']]) .',';
-			}
+        if(!empty($param['password'])){
+            if ($admin['password'] != idcsmart_password($param['password'])){
+                $description .= lang('log_update_admin_description',['{field}'=>lang('admin_password'),'{content}'=>$param['password']]) .',';
+            }
         }
         if ($admin['email'] != $param['email']){
             $description .= lang('log_update_admin_description',['{field}'=>lang('admin_email'),'{content}'=>$param['email']]) .',';
@@ -240,16 +240,16 @@ class AdminModel extends Model
 
         $this->startTrans();
         try{
-			$update=[
+            $update=[
                 'name' => $param['name'],
                 'email' => $param['email']?:'',
                 'nickname' => $param['nickname']?:'',
                 'status' => isset($param['status'])?intval($param['status']):1,
                 'update_time' => time(),
             ];
-			if(!empty($param['password'])){
-				$update['password']=idcsmart_password($param['password']);
-			}
+            if(!empty($param['password'])){
+                $update['password']=idcsmart_password($param['password']);
+            }
             $this->update($update,['id'=>intval($param['id'])]);
 
             # 删除原关联
@@ -517,4 +517,50 @@ class AdminModel extends Model
 
     }
 
+    /**
+     * 时间 2022-9-7
+     * @title 修改管理员密码
+     * @desc 修改管理员密码
+     * @author wyh
+     * @version v1
+     * @param string param.password 123456 密码 required
+     * @param string param.repassword 123456 重复密码 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function updateAdminPassword($param)
+    {
+        $admin = $this->find(get_admin_id());
+        if (empty($admin)){
+            return ['status'=>400,'msg'=>lang('admin_is_not_exist')];
+        }
+
+        # 修改密码 强制退出登录
+        if (!idcsmart_password_compare($param['password'],$admin['password'])){
+            Cache::set('admin_update_password_'.get_admin_id(),time(),3600*24*7); # 7天未操作接口,就可以不退出
+        }else{
+            return ['status'=>400,'msg'=>lang('admin_password_is_same')];
+        }
+
+        # 日志详情
+        $description = '';
+        if ($admin['password'] != idcsmart_password($param['password'])){
+            $description .= lang('log_update_admin_description',['{field}'=>lang('admin_password'),'{content}'=>$param['password']]) .',';
+        }
+
+        $this->startTrans();
+        try{
+            $update['password']=idcsmart_password($param['password']);
+            $this->update($update,['id'=>get_admin_id()]);
+            # 记录日志
+            active_log(lang('log_update_admin',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{name}'=>request()->admin_name,'{description}'=>$description]),'admin',$admin->id);
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+            return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
+        }
+
+        return ['status'=>401,'msg'=>lang('update_success')];
+    }
 }

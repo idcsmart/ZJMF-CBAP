@@ -2,11 +2,27 @@
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
 <div id="content" class="configuration-security" v-cloak>
-
   <t-card class="list-card-container">
-    <!-- <p class="com-h-tit">{{lang.safe_setting}}</p> -->
+    <ul class="common-tab">
+      <li class="active">
+        <a href="javascript:;">{{lang.captcha_setting}}</a>
+      </li>
+      <li>
+        <a :href="`captcha.html`">{{lang.captcha_manage}}</a>
+      </li>
+    </ul>
     <div class="box">
       <t-form :data="formData" :label-width="80" label-align="top" :rules="rules" ref="formValidatorStatus" @submit="onSubmit">
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+          <t-col>
+            <t-form-item :label="lang.choose + lang.code + lang.interface" class="code">
+              <t-select v-model="formData.captcha_plugin" :placeholder="lang.select+lang.code + lang.interface" :popup-props="popupProps">
+                <t-option v-for="item in captchaList" :value="item.name" :label="item.title" :key="item.name">
+                </t-option>
+              </t-select>
+            </t-form-item>
+          </t-col>
+        </t-row>
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col>
             <t-form-item :label="lang.enable_code" class="code">
@@ -42,29 +58,32 @@
             </div>
           </t-col>
         </t-row>
-        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
-          <t-col :xs="12" :xl="6" class="f-item">
-            <div class="item">
-              <t-form-item name="captcha_width" :label="lang.image_width">
-                <t-input v-model="formData.captcha_width" :placeholder="lang.input+lang.image_width" @change="getCode">
-                </t-input>
-              </t-form-item>
-              <t-form-item name="captcha_length" :label="lang.image_num">
-                <t-input v-model="formData.captcha_length" :placeholder="lang.input+lang.image_width" @change="getCode">
-                </t-input>
-              </t-form-item>
-            </div>
-            <div class="item">
-              <t-form-item name="captcha_height" :label="lang.image_heigt">
-                <t-input v-model="formData.captcha_height" :placeholder="lang.input+lang.image_width" @change="getCode">
-                </t-input>
-              </t-form-item>
-              <t-form-item :label="lang.image_preview">
-                <img :src="codeUrl" alt="" class="codeUrl">
-              </t-form-item>
-            </div>
-          </t-col>
-        </t-row>
+        <!-- <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+                  <t-col :xs="12" :xl="6" class="f-item">
+                    <div class="item">
+                      <t-form-item name="captcha_width" :label="lang.image_width">
+                        <t-input v-model="formData.captcha_width" :placeholder="lang.input+lang.image_width"
+                          @change="getCode">
+                        </t-input>
+                      </t-form-item>
+                      <t-form-item name="captcha_length" :label="lang.image_num">
+                        <t-input v-model="formData.captcha_length" :placeholder="lang.input+lang.image_width"
+                          @change="getCode">
+                        </t-input>
+                      </t-form-item>
+                    </div>
+                    <div class="item">
+                      <t-form-item name="captcha_height" :label="lang.image_heigt">
+                        <t-input v-model="formData.captcha_height" :placeholder="lang.input+lang.image_width"
+                          @change="getCode">
+                        </t-input>
+                      </t-form-item>
+                      <t-form-item :label="lang.image_preview">
+                        <img :src="codeUrl" alt="" class="codeUrl">
+                      </t-form-item>
+                    </div>
+                  </t-col>
+                </t-row> -->
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col>
             <t-divider></t-divider>

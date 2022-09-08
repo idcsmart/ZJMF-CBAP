@@ -51,8 +51,9 @@
             created_notice_mail_template: 0,
             pay_type: 'recurring_prepayment',
             upgrade: [],
-            product_id: 30
+            product_id: ''
           },
+          connectList: [],
           checkOptions: [
             {
               value: 1,
@@ -156,6 +157,7 @@
         async getRelationList () {
           try {
             const res = await getProduct()
+            this.connectList = res.data.data.list
             this.relationList = res.data.data.list.filter(item=>item.id !== this.id * 1)
           } catch (error) {
           }
@@ -241,7 +243,6 @@
               params.created_notice_sms_api = params.created_notice_sms_api * 1
               params.created_notice_sms_api_template = params.created_notice_sms_api_template * 1
               params.created_notice_mail_template = params.created_notice_mail_template * 1
-              params.product_id = 30
               const res = await editProduct(params)
               this.$message.success(res.data.msg)
               this.getUserDetail()
@@ -258,6 +259,7 @@
             const res = await getProductDetail(this.id)
             const temp = res.data.data.product
             this.formData = temp
+            this.formData.product_id = temp.product_id || ''
             // 开通中
             this.formData.creating_notice_sms_api = temp.creating_notice_sms_api || ''
             this.formData.creating_notice_sms_api_template = temp.creating_notice_sms_api_template || '' 

@@ -4,7 +4,7 @@
 namespace think;
 
 if (!file_exists(__DIR__ . '/../config.php')){
-    header("location:/install.html");die;
+    header("location:/install/index.html");die;
 }
 
 require __DIR__ . '/../config.php';

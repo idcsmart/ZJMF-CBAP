@@ -40,7 +40,7 @@
       </t-select>
     </div>
     <div class="box scrollbar">
-      <t-row :gutter="{ xs: 0, xxl: 100 }">
+      <t-row :gutter="{ xs: 0, sm: 20, md: 40, lg: 60, xl: 80, xxl: 100 }">
         <!-- 个人中心左侧 -->
         <t-col :xs="12" :xl="6">
           <p class="com-tit"><span>{{ lang.basic_info }}</span></p>
@@ -57,7 +57,7 @@
                   <t-option v-for="item in country" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code" :key="item.name">
                   </t-option>
                 </t-select>
-                <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" />
+                <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" style="width: calc(100% - 100px);"/>
               </t-form-item>
             </div>
             <div class="item">
@@ -213,12 +213,12 @@
     </t-form>
   </t-dialog>
   <!-- 充值/扣费弹窗 -->
-  <t-dialog :header="diaTitle" :visible.sync="visibleMoney" :footer="false" @close="closeMoney">
+  <t-dialog :header="lang.force_change + lang.money" :visible.sync="visibleMoney" :footer="false" @close="closeMoney">
     <t-form :data="moneyData" :rules="moneyRules" ref="moneyRef" :label-width="80" @submit="confirmMoney" v-if="visibleMoney">
       <t-form-item :label="lang.type" name="amount">
         <t-select v-model="moneyData.type" :placeholder="lang.select+lang.type">
-          <t-option value="recharge" :label="lang.Recharge" key="recharge"></t-option>
-          <t-option value="deduction" :label="lang.deduction" key="deduction"></t-option>
+          <t-option value="recharge" :label="lang.add_money" key="recharge"></t-option>
+          <t-option value="deduction" :label="lang.sub_money" key="deduction"></t-option>
         </t-select>
       </t-form-item>
       <t-form-item :label="lang.money" name="amount">

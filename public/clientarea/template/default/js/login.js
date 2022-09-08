@@ -1,3 +1,16 @@
+
+// 验证码通过
+function captchaCheckSuccsss(bol, captcha, token) {
+  if (bol) {
+    // 验证码验证通过
+    getData(captcha, token)
+  }
+};
+// 取消验证码验证
+function captchaCheckCancel() {
+  captchaCancel()
+};
+
 (function (window, undefined) {
   var old_onload = window.onload
   window.onload = function () {
@@ -31,8 +44,16 @@
         }
       },
       created() {
+        if (localStorage.getItem('jwt')) {
+          location.href = 'index.html'
+          return
+        }
         this.getCountryList();
         this.getCommonSetting()
+      },
+      mounted() {
+        window.captchaCancel = this.captchaCancel
+        window.getData = this.getData
       },
       updated() {
         // 关闭loading
@@ -42,10 +63,11 @@
       watch: {
       },
       methods: {
-        getData(e) {
-          console.log(e);
-          this.token = e.token
-          this.captcha = e.captchaCode
+        // 验证码验证成功后的回调
+        getData(captchaCode, token) {
+          console.log(captchaCode, token);
+          this.token = token
+          this.captcha = captchaCode
           this.isShowCaptcha = false
           this.doLogin()
         },
@@ -319,6 +341,10 @@
         toRead() {
           const url = this.commonData.terms_service_url
           location.href = url
+        },
+        // 验证码 关闭
+        captchaCancel() {
+          this.isShowCaptcha = false
         }
       }
     }).$mount(login)

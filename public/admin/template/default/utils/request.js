@@ -43,6 +43,7 @@ Axios.interceptors.response.use(
           return Promise.reject(response)
         case 401: // 未授权:2个小时未操作自动退出登录
           if (location.href.indexOf('login.html') === -1) {
+            localStorage.removeItem('backJwt')
             location.href = 'http://' + str + 'login.html'
           }
           break
@@ -50,7 +51,9 @@ Axios.interceptors.response.use(
           location.href = 'http://' + str + '404.html'
           break
         case 404:
-          location.href = 'http://' + str + '404.html'
+          if (location.href.indexOf('404.html') === -1) {
+            location.href = 'http://' + str + '404.html'
+          }
           break
         case 405:
           location.href = 'login.html'

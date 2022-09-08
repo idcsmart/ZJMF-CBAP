@@ -23,6 +23,9 @@ class  AppInit
         # 支付接口路由
         Route::any('gateway/[:_plugin]/[:_controller]/[:_action]', "\\app\\event\\controller\\GatewayController@index");
 
+        # 验证码接口路由
+        Route::any('captcha/[:_plugin]/[:_controller]/[:_action]', "\\app\\event\\controller\\CaptchaController@index");
+
         # 插件后台路由(官方默认路由需要登录才能访问)
         Route::any(DIR_ADMIN.'/addon', "\\app\\event\\controller\\AddonController@index")
             ->middleware(\app\http\middleware\CheckAdmin::class); // 参数 ?_plugin=client_care&_controller=client_care&_action=index

@@ -204,5 +204,29 @@ class AdminController extends AdminBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2022-9-7
+     * @title 修改管理员密码
+     * @desc 修改管理员密码
+     * @url /admin/v1/admin/password/update
+     * @method  put
+     * @author wyh
+     * @version v1
+     * @param string password 123456 密码 required
+     * @param string repassword 123456 重复密码 required
+     */
+    public function updatePassword()
+    {
+        $param = $this->request->param();
+        //参数验证
+        if (!$this->validate->scene('password')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        $result = (new AdminModel())->updateAdminPassword($param);
+
+        return json($result);
+    }
+
 }
 

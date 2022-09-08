@@ -1,3 +1,14 @@
+// 验证码通过
+function captchaCheckSuccsss(bol, captcha, token) {
+    if (bol) {
+        // 验证码验证通过
+        getData(captcha, token)
+    }
+};
+// 取消验证码验证
+function captchaCheckCancel() {
+    captchaCancel()
+};
 (function (window, undefined) {
     var old_onload = window.onload
     window.onload = function () {
@@ -11,6 +22,7 @@
             data() {
                 return {
                     isShowCaptcha: false, //登录是否需要验证码
+
                     isEmailOrPhone: true,  // true:电子邮件 false:手机号
                     isPassOrCode: true,  // true:密码登录 false:验证码登录
                     errorText: "",
@@ -36,6 +48,10 @@
                 this.getCountryList()
                 this.getCommonSetting()
             },
+            mounted() {
+                window.captchaCancel = this.captchaCancel
+                window.getData = this.getData
+            },
             updated() {
                 // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
@@ -45,12 +61,16 @@
 
             },
             methods: {
-                getData(e) {
-                    console.log(e);
-                    this.token = e.token
-                    this.captcha = e.captchaCode
+                getData(captchaCode, token) {
+                    this.token = token
+                    this.captcha = captchaCode
                     this.isShowCaptcha = false
-                    this.doRegist()
+                    if (this.isEmailOrPhone) {
+                        this.sendEmailCode()
+                    } else {
+                        this.sendPhoneCode()
+                    }
+                    // this.doRegist()
                 },
                 async getCaptcha() {
                     try {
@@ -75,7 +95,7 @@
                         if (this.commonData.register_email == 1) {
                             this.isEmailOrPhone = true
                         }
-                        document.title = this.commonData.website_name + '-忘记密码'
+                        document.title = this.commonData.website_name + '-注册'
                         localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
                     } catch (error) {
 
@@ -116,8 +136,6 @@
                                 }
                             }
                         }
-
-
                     }
 
                     // 手机号码登录 验证
@@ -255,9 +273,8 @@
                                 this.isShowCaptcha = true
                                 this.$refs.captcha.doGetCaptcha()
                             } else {
-                                this.errorText = err.data.msg
+                                this.errorText = error.data.msg
                             }
-
                             // this.$message.error(error.data.msg);
                         })
                     }
@@ -305,6 +322,10 @@
                 },
                 toLogin() {
                     location.href = 'login.html'
+                },
+                // 验证码 关闭
+                captchaCancel() {
+                    this.isShowCaptcha = false
                 }
 
             }

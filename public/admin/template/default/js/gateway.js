@@ -117,7 +117,7 @@
           }
         },
         addUser () {
-
+          window.open('https://market.idcsmart.com/shop')
         },
         // 配置
         handleConfig (row) {

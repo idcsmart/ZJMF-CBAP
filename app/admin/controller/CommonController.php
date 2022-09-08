@@ -90,6 +90,32 @@ class CommonController extends AdminBaseController
         ];
         return json($result);
     }
+
+    /**
+     * 时间 2022-9-7
+     * @title 验证码接口
+     * @desc 验证码接口
+     * @url /admin/v1/captcha_list
+     * @method  GET
+     * @author wyh
+     * @version v1
+     * @return array list - 邮件接口
+     * @return int list[].id - ID
+     * @return int list[].title - 名称
+     * @return int list[].name - 标识
+     * @return int count - 总数
+     */
+    public function captchaList()
+    {
+        $result = [
+            'status'=>200,
+            'msg'=>lang('success_message'),
+            'data' =>(new PluginModel())->plugins('captcha')
+        ];
+        return json($result);
+    }
+
+
     /**
      * 时间 2022-5-19
      * @title 公共配置
@@ -101,6 +127,7 @@ class CommonController extends AdminBaseController
      * @return string currency_code CNY 货币代码
      * @return string currency_prefix ￥ 货币符号
      * @return string currency_suffix 元 后缀
+     * @return string website_name 智简魔方 网站名称
      * @return array lang_admin - 后台语言列表
      * @return array lang_home - 前台语言列表
      */
@@ -110,6 +137,7 @@ class CommonController extends AdminBaseController
             'currency_code',
             'currency_prefix',
             'currency_suffix',
+            'website_name',
         ];
 		
 		$lang = [ 

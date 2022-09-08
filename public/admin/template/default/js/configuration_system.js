@@ -140,7 +140,7 @@
         }
       },
       created() {
-        this.getSetting()
+        this.getSetting() 
         this.getVersion()
         this.getUpContent()
       },
