@@ -1,0 +1,37 @@
+<?php 
+
+return [
+	'please_enter_disk_ratio' => '请输入磁盘比例',
+	'disk_ratio_can_only_be_between_1_100000' => '磁盘比例只能在1-100000之间',
+	'please_enter_package_name' => '请输入套餐名称',
+	'package_name_cannot_exceed_100_chars' => '套餐名称最多不能超过100个字符',
+	'id_error' => 'ID错误',
+    'param_error' => '参数错误',
+	'success_message' => '请求成功',
+    'fail_message' => '请求失败',
+    'create_success' => '创建成功',
+    'create_fail' => '创建失败',
+    'delete_success' => '删除成功',
+    'delete_fail' => '删除失败',
+    'update_success' => '修改成功',
+    'update_fail' => '修改失败',
+    'package_product_id_error' => '商品ID错误',
+    'please_enter_package_description' => '请输入描述',
+    'package_description_cannot_exceed_1000_chars' => '描述最多不能超过1000个字符',
+    'package_data_center_id_error' => '数据中心ID错误',
+    'package_size_min_format_error' => '容量范围最小值只能为大于等于0的整数',
+    'package_size_max_format_error' => '容量范围最大值只能为大于等于0的整数,并且大于等于容量范围最小值',
+    'package_precision_format_error' => '最低精度只能为大于0的整数',
+    'package_price_format_error' => '单价只能为大于等于0的数字',
+    'package_product_is_not_exist' => '商品不存在',
+    'package_product_is_not_associated_module_disk' => '商品未关联魔方云磁盘模块接口',
+    'package_is_not_exist' => '套餐不存在',
+    'package_cloud_disk_id_is_empty' => '未填写魔方云磁盘ID',
+    'package_cloud_id_is_empty' => '未填写魔方云ID',
+    'package_not_be_related_host' => '未关联实例',
+    'package_order_format_error' => '排序只能为大于等于0的整数',
+    'disk_package_change_description'=>'套餐变更, 原套餐: {old_package}, 新套餐: {new_package}',
+    'disk_size_change_description'=>'容量变更, 原容量: {old_size}, 新容量: {new_size}',
+];
+
+

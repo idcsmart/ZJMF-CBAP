@@ -714,7 +714,7 @@ location / {
             $password.= $tmp;
         }
         if($is_numer <> 1 || $is_abc <> 1 || empty($password) ){
-            $password = rand_str($len,$format);
+            $password = $this->randStr($len,$format);
         }
         return $password;
     }

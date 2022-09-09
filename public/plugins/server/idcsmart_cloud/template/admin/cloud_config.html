@@ -1,0 +1,718 @@
+<link rel="stylesheet" href="/plugins/server/idcsmart_cloud/template/admin/css/cloud_config.css">
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<div class="cloud-config" v-cloak>
+  <div class="t-card">
+    <t-tabs v-model="tabs">
+      <t-tab-panel value="basic" :label="lang.basic_config">
+        <div class="box">
+          <!-- 型号分组 -->
+          <div class="cal-group-box">
+            <p class="com-tit"><span>{{ lang.calc_model }}</span></p>
+            <p class="small-tit">{{lang.model_group}}</p>
+            <div class="com-icon" @click="addGroup" v-if="calGroupList.length === 0">
+              <t-icon name="add"></t-icon>
+            </div>
+            <div class="model-group" v-else>
+              <div class="item" v-for="(item,index) in calGroupList">
+                <t-input-number v-model="item.order" class="com-inp" theme="normal"
+                  :placeholder="lang.input + lang.sort" :disabled="!item.status">
+                </t-input-number>
+                <t-input v-model="item.name" class="com-inp" :placeholder="lang.input + lang.nickname"
+                  :disabled="!item.status">
+                </t-input>
+                <t-input v-model="item.description" class="com-inp" :placeholder="lang.input + lang.description"
+                  :disabled="!item.status">
+                </t-input>
+                <div class="btn">
+                  <!-- 编辑状态 -->
+                  <template v-if="item.status">
+                    <div class="com-icon" @click="saveGroup(item,index)">
+                      <t-icon name="check"></t-icon>
+                    </div>
+                    <div class="com-icon" @click="closeEdit(index)">
+                      <t-icon name="close"></t-icon>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="com-icon" @click="openEdit(index)">
+                      <t-icon name="edit"></t-icon>
+                    </div>
+                    <div class="com-icon" @click="comDel('calGroup',item)">
+                      <t-icon name="remove"></t-icon>
+                    </div>
+                  </template>
+                  <div class="com-icon" v-if="index === calGroupList.length-1" @click="addGroup">
+                    <t-icon name="add"></t-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 计算型号 -->
+          <div class="cal-box">
+            <div class="com-create">
+              <p @click="addCal">{{lang.create}}</p>
+            </div>
+            <!-- 计算型号循环表格 -->
+            <t-row :gutter="{ xs: 0, xxl: 40 }">
+              <t-col :xs="12" :xl="6" v-for="item in filterCalList" :key="item.id">
+                <div class="com-top">
+                  <span>{{item.data[0].group_name}}</span>
+                  <span class="page">
+                    <t-icon name="chevron-left" @click="prev(item.id)"></t-icon>
+                    <span>{{item.params.page}}/{{Math.ceil(item.total/3)}}</span>
+                    <t-icon name="chevron-right" @click="next(item.id)"></t-icon>
+                  </span>
+                </div>
+                <t-table row-key="id" :data="item.data" size="medium" :columns="calColumns" :hover="hover"
+                  :loading="item.loading" :table-layout="tableLayout ? 'auto' : 'fixed'"
+                  display-type="fixed-width" :hide-sort-tips="true" bordered>
+                  <template #order="{row}">
+                    <div class="com-order">
+                      <template>
+                        <t-input v-if="row.status" v-model="row.order"></t-input>
+                        <span v-else>{{row.order}}</span>
+                      </template>
+                      <template>
+                        <t-icon name="edit-1" v-if="!row.status" @click="eidtCalOrder(row)"></t-icon>
+                        <t-icon name="save" v-else @click="saveCalOrder(row)"></t-icon>
+                      </template>
+                    </div>
+                  </template>
+                  <template #area="{row}">
+                    <span v-for="(i,ind) in row.data_center">
+                      {{i.country+i.city}}
+                      <span v-if="row.data_center.length > 1 && ind !== row.data_center.length -1">、</span>
+                    </span>
+                  </template>
+                  <template #price="{row}">
+                    <span>{{currency_prefix+row.price}}</span>
+                  </template>
+                  <template #op="{row}">
+                    <div class="com-opt">
+                      <t-icon name="edit-1" @click="editCal(row)"></t-icon>
+                      <t-icon name="delete" @click="comDel('cal',row)"></t-icon>
+                    </div>
+                  </template>
+                </t-table>
+              </t-col>
+            </t-row>
+          </div>
+          <!-- 数据中心 -->
+          <div class="data-box">
+            <p class="com-tit"><span>{{ lang.data_center }}</span></p>
+            <div class="com-create">
+              <p @click="addData">{{lang.create}}</p>
+            </div>
+            <div class="com-top">
+              <span>{{lang.data_list}}</span>
+              <i></i>
+            </div>
+            <t-table row-key="id" :data="dataList" size="medium" :columns="dataColumns" :hover="hover"
+              :loading="dataLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+              :hide-sort-tips="true" bordered>
+              <template slot="sortIcon">
+                <t-icon name="caret-down-small"></t-icon>
+              </template>
+              <template #order="{row}">
+                <div class="com-order">
+                  <template>
+                    <t-input v-if="row.status" v-model="row.order"></t-input>
+                    <span v-else>{{row.order}}</span>
+                  </template>
+                  <template>
+                    <t-icon name="edit-1" v-if="!row.status" @click="eidtDataOrder(row)"></t-icon>
+                    <t-icon name="save" v-else @click="saveDataOrder(row)"></t-icon>
+                  </template>
+                </div>
+              </template>
+              <template #server_name="{row}">
+                <span v-for="(i,ind) in row.server">
+                  {{i.server_name}}
+                  <span v-if="row.server.length > 1 && ind !== row.server.length -1">、</span>
+                </span>
+              </template>
+              <template #op="{row}">
+                <div class="com-opt">
+                  <t-icon name="edit-1" @click="editData(row)"></t-icon>
+                  <t-icon name="delete" @click="comDel('data',row)"></t-icon>
+                </div>
+              </template>
+            </t-table>
+          </div>
+
+          <!-- 带宽规则 -->
+          <div class="bw-box">
+            <p class="com-tit"><span>{{ lang.bw_rules }}</span></p>
+            <!-- 带宽规则管理 -->
+            <p class="small-tit">{{lang.bw_type_manage}}</p>
+            <div class="com-icon" @click="addBwType" v-if="bwTypeList.length === 0">
+              <t-icon name="add"></t-icon>
+            </div>
+            <div v-else>
+              <div class="item" v-for="(item,index) in bwTypeList">
+                <t-input-number v-model="item.order" class="com-inp" theme="normal"
+                  :placeholder="lang.input + lang.sort" :disabled="!item.status">
+                </t-input-number>
+                <t-input v-model="item.name" class="com-inp" :placeholder="lang.input + lang.nickname"
+                  :disabled="!item.status">
+                </t-input>
+                <t-input v-model="item.description" class="com-inp" :placeholder="lang.input + lang.description"
+                  :disabled="!item.status">
+                </t-input>
+                <div class="btn">
+                  <!-- 编辑状态 -->
+                  <template v-if="item.status">
+                    <div class="com-icon" @click="saveBwType(item,index)">
+                      <t-icon name="check"></t-icon>
+                    </div>
+                    <div class="com-icon" @click="closeEditBwType(index)">
+                      <t-icon name="close"></t-icon>
+                    </div>
+                  </template>
+                  <!-- 正常状态 -->
+                  <template v-else>
+                    <div class="com-icon" @click="openEditBwType(index)">
+                      <t-icon name="edit"></t-icon>
+                    </div>
+                    <div class="com-icon" @click="comDel('bwType',item)">
+                      <t-icon name="remove"></t-icon>
+                    </div>
+                  </template>
+                  <div class="com-icon" v-if="index === bwTypeList.length-1" @click="addBwType">
+                    <t-icon name="add"></t-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 带宽列表 -->
+            <div class="com-create">
+              <p @click="addBw">{{lang.create}}</p>
+            </div>
+            <div class="com-top">
+              <span>{{lang.bw_list}}</span>
+              <i></i>
+            </div>
+            <t-table row-key="id" :data="bwList" size="medium" :columns="bwColumns" :hover="hover"
+              :loading="bwLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+              :hide-sort-tips="true" bordered>
+              <template slot="sortIcon">
+                <t-icon name="caret-down-small"></t-icon>
+              </template>
+              <template #area="{row}">
+                <span v-for="(i,ind) in row.data_center">
+                  {{i.country+i.city+i.area}}
+                  <span v-if="row.data_center.length > 1 && ind !== row.data_center.length -1">、</span>
+                </span>
+              </template>
+              <template #price="{row}">
+                <span>{{currency_prefix+row.price}}</span>
+              </template>
+              <template #op="{row}">
+                <div class="com-opt">
+                  <t-icon name="edit-1" @click="editBw(row)"></t-icon>
+                  <t-icon name="delete" @click="comDel('bw',row)"></t-icon>
+                </div>
+              </template>
+            </t-table>
+          </div>
+
+          <!-- 销售套餐 -->
+          <div class="package-box">
+            <p class="com-tit"><span>{{ lang.sale_package }}</span></p>
+            <div class="com-create">
+              <p @click="addPackage">{{lang.create}}</p>
+            </div>
+            <div class="com-top">
+              <span>{{lang.package_list}}</span>
+              <i></i>
+            </div>
+            <t-table row-key="id" :data="packageList" size="medium" :columns="packageColumns" :hover="hover"
+              :loading="packageLoading" :table-layout="tableLayout ? 'auto' : 'fixed'"
+              display-type="fixed-width" :hide-sort-tips="true" bordered>
+              <template #area="{row}">
+                <span v-for="(i,ind) in row.data_center">
+                  {{i.country+i.city+i.area}}
+                  <span v-if="row.data_center.length > 1 && ind !== row.data_center.length -1">、</span>
+                </span>
+              </template>
+              <template #bw="{row}">
+                {{row.bw_type_name+row.bw}}Mbps
+              </template>
+              <template #price="{row}">
+                <span>{{currency_prefix+row.price}}</span>
+              </template>
+              <template #op="{row}">
+                <div class="com-opt">
+                  <t-icon name="edit-1" @click="editPackage(row)"></t-icon>
+                  <t-icon name="delete" @click="comDel('package',row)"></t-icon>
+                </div>
+              </template>
+            </t-table>
+          </div>
+
+          <!-- 周期 -->
+          <div class="duration-box">
+            <p class="com-tit"><span>{{ lang.cycle }}</span></p>
+            <t-table row-key="id" :data="durationList" size="medium" :columns="durationColumns" :hover="hover"
+              :loading="durationLoading" :table-layout="tableLayout ? 'auto' : 'fixed'"
+              display-type="fixed-width" :hide-sort-tips="true" bordered>
+              <template slot="sortIcon">
+                <t-icon name="caret-down-small"></t-icon>
+              </template>
+              <template #cal_ratio="{row}">
+                <t-input v-model="row.cal_ratio" v-if="row.status" autofocus></t-input>
+                <span v-else>{{row.cal_ratio}}</span>
+              </template>
+              <template #bw_ratio="{row}">
+                <t-input v-model="row.bw_ratio" v-if="row.status"></t-input>
+                <span v-else>{{row.bw_ratio}}</span>
+              </template>
+              <template #op="{row}">
+                <div class="com-opt">
+                  <t-icon name="edit-1" @click="editDuration(row)" v-if="!row.status"></t-icon>
+                  <t-icon name="save" @click="saveDuration(row)" v-else></t-icon>
+                </div>
+              </template>
+            </t-table>
+          </div>
+          <!-- 其他设置 -->
+          <div class="config-box">
+            <p class="com-tit"><span>{{ lang.other_setting }}</span></p>
+            <t-form v-if="otherConfig" :data="otherConfig" @submit="submitConfig">
+              <div class="c-item">
+                <p class="small-tit">{{lang.enable_backup_price}}</p>
+                <div class="content">
+                  <t-form-item :label="lang.enable">
+                    <t-switch size="medium" :custom-value="[1,0]" v-model="otherConfig.backup_enable">
+                    </t-switch>
+                  </t-form-item>
+                  <!-- <t-form-item :label="lang.free_num">
+                    <t-input :placeholder="lang.input + lang.free_num" />
+                  </t-form-item> -->
+                  <t-form-item :label="lang.price">
+                    <t-input :placeholder="lang.input + lang.price" v-model="otherConfig.backup_price" />
+                  </t-form-item>
+                  <t-form-item :label="lang.parameter">
+                    <t-input :placeholder="lang.input + lang.parameter" v-model="otherConfig.backup_param" />
+                  </t-form-item>
+                </div>
+              </div>
+              <div class="c-item">
+                <p class="small-tit">{{lang.panel_price}}</p>
+                <div class="content">
+                  <t-form-item :label="lang.enable">
+                    <t-switch size="medium" :custom-value="[1,0]" v-model="otherConfig.panel_enable">
+                    </t-switch>
+                  </t-form-item>
+                  <t-form-item :label="lang.price">
+                    <t-input :placeholder="lang.input + lang.price" v-model="otherConfig.panel_price" />
+                  </t-form-item>
+                  <t-form-item :label="lang.parameter">
+                    <t-input :placeholder="lang.input + lang.parameter" v-model="otherConfig.panel_param" />
+                  </t-form-item>
+                </div>
+              </div>
+              <div class="c-item">
+                <p class="small-tit">{{lang.snapshot_price}}</p>
+                <div class="content">
+                  <t-form-item :label="lang.enable">
+                    <t-switch size="medium" :custom-value="[1,0]" v-model="otherConfig.snap_enable">
+                    </t-switch>
+                  </t-form-item>
+                  <t-form-item :label="lang.free_num">
+                    <t-input :placeholder="lang.input + lang.free_num" v-model="otherConfig.snap_free_num" />
+                  </t-form-item>
+                  <t-form-item :label="lang.price">
+                    <t-input :placeholder="lang.input + lang.price" v-model="otherConfig.snap_price" />
+                  </t-form-item>
+                  <!-- <t-form-item :label="lang.parameter">
+                    <t-input :placeholder="lang.input + lang.parameter" />
+                  </t-form-item> -->
+                </div>
+              </div>
+              <div class="c-item">
+                <p class="small-tit">{{lang.host_name_rules}}</p>
+                <div class="content">
+                  <!-- <t-form-item label="">
+                    <t-input :placeholder="lang.input" />
+                  </t-form-item> -->
+                  <t-form-item label="">
+                    <t-select v-model="otherConfig.hostname_rule">
+                      <t-option key="1" :label="lang.host_rules1" :value="1">{{lang.host_rules1}}</t-option>
+                      <t-option key="2" :label="lang.host_rules2" :value="2">{{lang.host_rules2}}</t-option>
+                      <t-option key="3" :label="lang.host_rules3" :value="3">{{lang.host_rules3}}</t-option>
+                    </t-select>
+                  </t-form-item>
+                </div>
+              </div>
+              <t-form-item>
+                <t-button theme="primary" type="submit">{{lang.hold}}</t-button>
+              </t-form-item>
+            </t-form>
+
+
+          </div>
+
+        </div>
+      </t-tab-panel>
+      <t-tab-panel value="os" :label="lang.opt_system">
+        <div class="box os-tab">
+          <!-- 操作系统分组 -->
+          <div class="image-group">
+            <p class="com-tit"><span>{{ lang.opt_system }}</span></p>
+            <p class="small-tit">{{lang.image_group}}</p>
+            <div class="com-icon" @click="addImageGroup" v-if="imageGroupList.length === 0">
+              <t-icon name="add"></t-icon>
+            </div>
+            <div class="model-group" v-else>
+              <div class="item" v-for="(item,index) in imageGroupList">
+                <t-input-number v-model="item.order" class="com-inp" theme="normal"
+                  :placeholder="lang.input + lang.sort" :disabled="!item.status">
+                </t-input-number>
+                <t-input v-model="item.name" class="com-inp" :placeholder="lang.input + lang.nickname"
+                  :disabled="!item.status">
+                </t-input>
+                <t-input v-model="item.description" class="com-inp" :placeholder="lang.input + lang.description"
+                  :disabled="!item.status">
+                </t-input>
+                <t-switch size="medium" v-model="item.enable" :custom-value="[1,0]" :disabled="!item.status">
+                </t-switch>
+                <div class="btn">
+                  <!-- 编辑状态 -->
+                  <template v-if="item.status">
+                    <div class="com-icon" @click="saveImageGroup(item,index)">
+                      <t-icon name="check"></t-icon>
+                    </div>
+                    <div class="com-icon" @click="closeImageEdit(index)">
+                      <t-icon name="close"></t-icon>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="com-icon" @click="openImageEdit(index)">
+                      <t-icon name="edit"></t-icon>
+                    </div>
+                    <div class="com-icon" @click="deleteImageGroup(item)">
+                      <t-icon name="remove"></t-icon>
+                    </div>
+                  </template>
+                  <div class="com-icon" v-if="index === imageGroupList.length-1" @click="addImageGroup">
+                    <t-icon name="add"></t-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- 镜像列表 -->
+            <div class="image-box" v-for="item in officialList" :key="item.id">
+              <p class="image-tit">
+                {{calcName(item.id)}}
+                <span>({{item.data?.length}})</span>
+              </p>
+              <div class="com-top" v-if="imageGroupList">
+                <span>
+                  {{calcName(item.id)}}
+                  <span>({{item.data?.length}})</span>
+                </span>
+              </div>
+              <t-table row-key="id" :data="item.data" size="medium" :columns="applyColumns" :hover="hover"
+                :loading="item.loading" table-layout="auto" :hide-sort-tips="true" bordered>
+                <template #title-slot-area>
+                  <span v-for="item in applyArea" class="area-tit" :key="item.id">
+                    {{item.country + item.city + item.area}}
+                  </span>
+                </template>
+                <template #name="{row}">
+                  <div class="os-name-box">
+                    <t-tooltip :content="row.name" theme="light" :show-arrow="false">
+                      <span class="os-name">{{row.name}}</span>
+                    </t-tooltip>
+                    <div class="com-enable-switch" :class="{active: row.enable}"
+                      @click="changeEnable(row.id,row)">
+                      <span class="line"></span>
+                      <span class="circle"></span>
+                    </div>
+                  </div>
+                </template>
+                <template #area="{row}">
+                  <div class="area-box">
+                    <span v-for="item in row.data_center" :key="item.module_idcsmart_cloud_data_center_id"
+                      class="area-body">
+                      <template>
+                        <t-icon v-if="existLoading" name="loading" style="color:#999;"></t-icon>
+                        <t-icon v-else :name="item.is_exist ? 'check' : 'close'" :class="{exist: item.is_exist}"
+                          class="area-status"></t-icon>
+                      </template>
+                      <div class="com-enable-switch" :class="{active: item.enable}" v-if="item.is_exist"
+                        @click="changeEnable(row.id,item,row.module_idcsmart_cloud_image_group_id)">
+                        <span class="line"></span>
+                        <span class="circle"></span>
+                      </div>
+                      <!-- <t-switch :custom-value="[1,0]" v-model="item.enable" class="area-enable"></t-switch> -->
+                    </span>
+                  </div>
+                </template>
+                <template #op="{row}">
+                  <div class="opt">
+                    <t-switch :custom-value="[1,0]" v-model="row.charge" @click.native="changeSwitch(row)">
+                    </t-switch>
+                    <t-input class="price" :disabled="!row.charge" v-model="row.price" @focus="focusEidt(row)"
+                      @blur="savePrice(row)">
+                    </t-input>
+                    <t-icon name="check" v-if="row.status" @click="savePrice(row)"></t-icon>
+                  </div>
+                </template>
+              </t-table>
+            </div>
+          </div>
+          <!-- 应用镜像 -->
+          <div class="apply-image">
+            <p class="com-tit"><span>{{ lang.apply_image }}</span></p>
+            <div class="com-top">
+              <span>
+                {{lang.apply_image_list}}
+                <span>({{applyList.length}})</span>
+              </span>
+            </div>
+            <t-table row-key="id" :data="applyList" size="medium" :columns="applyColumns" :hover="hover"
+              :loading="applyLoading" table-layout="auto" :hide-sort-tips="true" bordered>
+              <template #title-slot-area>
+                <span v-for="item in applyArea" class="area-tit" :key="item.id">
+                  {{item.country + item.city + item.area}}
+                </span>
+              </template>
+              <template #name="{row}">
+                <div class="os-name-box">
+                  <t-tooltip :content="row.name" theme="light" :show-arrow="false">
+                    <span class="os-name">{{row.name}}</span>
+                  </t-tooltip>
+                  <div class="com-enable-switch" :class="{active: row.enable}"
+                    @click="changeEnable(row.id,row)">
+                    <span class="line"></span>
+                    <span class="circle"></span>
+                  </div>
+                </div>
+              </template>
+              <template #area="{row}">
+                <div class="area-box">
+                  <span v-for="item in row.data_center" :key="item.module_idcsmart_cloud_data_center_id"
+                    class="area-body">
+                    <template>
+                      <t-icon v-if="existLoading" name="loading" style="color:#999;"></t-icon>
+                      <t-icon v-else :name="item.is_exist ? 'check' : 'close'" :class="{exist: item.is_exist}"
+                        class="area-status"></t-icon>
+                    </template>
+                    <div class="com-enable-switch" :class="{active: item.enable}" v-if="item.is_exist"
+                      @click="changeEnable(row.id,item)">
+                      <span class="line"></span>
+                      <span class="circle"></span>
+                    </div>
+                    <!-- <t-switch :custom-value="[1,0]" v-model="item.enable" class="area-enable"></t-switch> -->
+                  </span>
+                </div>
+              </template>
+              <template #op="{row}">
+                <div class="opt">
+                  <t-switch :custom-value="[1,0]" v-model="row.charge" @click.native="changeSwitch(row)">
+                  </t-switch>
+                  <t-input class="price" :disabled="!row.charge" v-model="row.price" @focus="focusEidt(row)"
+                    @blur="savePrice(row)">
+                  </t-input>
+                  <t-icon name="check" v-if="row.status" @click="savePrice(row)"></t-icon>
+                </div>
+              </template>
+            </t-table>
+          </div>
+        </div>
+      </t-tab-panel>
+    </t-tabs>
+  </div>
+  <!-- 新增/修改计算型号弹窗 -->
+  <t-dialog :header="dataTitle" :visible.sync="calModel" :footer="false" width="635" @close="closeCal">
+    <t-form :data="calForm" ref="calForm" @submit="submitCal" :rules="calRules" class="cal-form"
+      v-if="calModel">
+      <t-form-item :label="lang.nickname" name="name">
+        <t-input v-model="calForm.name" :placeholder="lang.input+lang.nickname"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.group" name="module_idcsmart_cloud_cal_group_id">
+        <t-select v-model="calForm.module_idcsmart_cloud_cal_group_id" :placeholder="lang.select+lang.group">
+          <t-option v-for="item in calGroupList" :key="item.id" :value="item.id" :label="item.name"></t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item label="CPU" name="cpu" class="cal-item">
+        <t-input v-model="calForm.cpu" :placeholder="lang.input+'CPU'"></t-input>
+        <span>{{lang.cores}}</span>
+      </t-form-item>
+      <t-form-item :label="lang.memory" name="memory" class="cal-item">
+        <t-input v-model="calForm.memory" :placeholder="lang.input+ lang.memory"></t-input>
+        <span>MB</span>
+      </t-form-item>
+      <t-form-item :label="lang.disk" name="disk_size" class="cal-item">
+        <t-input v-model="calForm.disk_size" :placeholder="lang.input+ lang.disk"></t-input>
+        <span>GB</span>
+      </t-form-item>
+      <t-form-item :label="lang.description" name="description">
+        <t-textarea v-model="calForm.description" :placeholder="lang.input+ lang.description"></t-textarea>
+      </t-form-item>
+      <t-form-item :label="lang.price" name="price">
+        <t-input v-model="calForm.price" :placeholder="lang.input+ lang.price"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.other_param" name="other_param">
+        <t-textarea v-model="calForm.other_param" :placeholder="lang.input+ lang.other_param"></t-textarea>
+      </t-form-item>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit">{{lang.hold}}
+        </t-button>
+        <t-button theme="default" variant="base" @click="closeCal">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 新增/修改数据中心弹窗 -->
+  <t-dialog :header="dataTitle" :visible.sync="dataModel" :footer="false" width="635" @close="closeData">
+    <t-form :data="dataForm" ref="dataForm" @submit="submitData" :rules="dataRules" class="data-form"
+      v-if="dataModel">
+      <t-form-item :label="lang.country" name="country">
+        <t-input v-model="dataForm.country" :placeholder="lang.input+lang.country"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.country_code" name="country_code">
+        <t-input v-model="dataForm.country_code" :placeholder="lang.input+lang.country_code"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.region" name="city">
+        <t-input v-model="dataForm.city" :placeholder="lang.input+lang.region"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.area" name="area">
+        <t-input v-model="dataForm.area" :placeholder="lang.input+ lang.area"></t-input>
+      </t-form-item>
+      <template v-for="(item,index) in dataForm.server">
+        <t-form-item :label="lang.interface" :name="`server[${index}].server_id`">
+          <t-select v-model="item.server_id" :placeholder="lang.select+lang.interface">
+            <t-option v-for="op in filterInterface" :value="op.id" :label="op.name" :key="op.id"
+              :disabled="op.disabled">
+            </t-option>
+          </t-select>
+          <div class="com-icon" @click="deleteInterface(index)" v-if="dataForm.server.length !== 1">
+            <t-icon name="remove"></t-icon>
+          </div>
+          <div class="com-icon" @click="addInterface(index)" v-if="index === dataForm.server.length - 1">
+            <t-icon name="add"></t-icon>
+          </div>
+        </t-form-item>
+        <t-form-item :label="lang.server_param" :name="`server[${index}].server_param`">
+          <t-textarea v-model="item.server_param"></t-textarea>
+        </t-form-item>
+      </template>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit">{{lang.hold}}
+        </t-button>
+        <t-button theme="default" variant="base" @click="closeData">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 新增/修改带宽弹窗 -->
+  <t-dialog :header="dataTitle" :visible.sync="bwModel" :footer="false" width="635" @close="closeBw">
+    <t-form :data="bwForm" ref="bwForm" @submit="submitBw" :rules="bwRules" class="bw-form" v-if="bwModel">
+      <t-form-item :label="lang.bw_type" name="module_idcsmart_cloud_bw_type_id">
+        <t-select v-model="bwForm.module_idcsmart_cloud_bw_type_id" :placeholder="lang.select+lang.bw_type">
+          <t-option v-for="item in bwTypeList" :key="item.id" :value="item.id" :label="item.name"></t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="lang.area" name="data_center_id">
+        <t-select v-model="bwForm.data_center_id" :placeholder="lang.select+lang.area" multiple>
+          <t-option v-for="item in dataList" :value="item.id" :label="item.country + item.city + item.area"
+            :key="item.id">
+          </t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="lang.bw" name="bw" class="bw-item">
+        <t-input v-model="bwForm.bw" :placeholder="lang.input+lang.bw"></t-input>
+        <span class="tip">Mbps</span>
+      </t-form-item>
+      <t-form-item label=" " name="in_bw_enable" class="in-bw">
+        <t-checkbox v-model="bwForm.in_bw_enable">{{lang.independent_in_bw}}</t-checkbox>
+      </t-form-item>
+      <t-form-item label=" " name="in_bw" v-if="bwForm.in_bw_enable">
+        <t-input v-model="bwForm.in_bw" :placeholder="lang.input+lang.in_bw"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.cloud_flow" name="flow">
+        <t-input-group separate>
+          <t-input v-model="bwForm.flow" :placeholder="lang.input+lang.cloud_flow" class="flow"></t-input>
+          <span class="gb">GB</span>
+          <t-select v-model="bwForm.flow_type" class="flow-type">
+            <t-option key="in" value="in" :label="lang.in"></t-option>
+            <t-option key="out" value="out" :label="lang.out"></t-option>
+            <t-option key="all" value="all" :label="lang.in_out"></t-option>
+          </t-select>
+        </t-input-group>
+      </t-form-item>
+      <t-form-item :label="lang.price" name="price">
+        <t-input v-model="bwForm.price" :placeholder="lang.input+lang.price"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.show_describe" name="description">
+        <t-textarea v-model="bwForm.description" :placeholder="lang.input+lang.show_describe">
+        </t-textarea>
+      </t-form-item>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit">{{lang.hold}}
+        </t-button>
+        <t-button theme="default" variant="base" @click="closeBw">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 新增/修改套餐弹窗 -->
+  <t-dialog :header="dataTitle" :visible.sync="packageModel" :footer="false" width="635" @close="closePackage">
+    <t-form :data="packageForm" ref="packageForm" @submit="submitPackage" :rules="packageRules" class="bw-form"
+      v-if="packageModel">
+      <t-form-item :label="lang.package + lang.nickname" name="name">
+        <t-input v-model="packageForm.name" :placeholder="lang.select+lang.package + lang.nickname"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.calc" name="cal_id">
+        <t-select v-model="packageForm.cal_id" :placeholder="lang.select+lang.calc"
+          :multiple="optType==='add' ? true : false">
+          <t-option v-for="item in allCalList" :key="item.id" :value="item.id" :label="item.name"></t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="lang.area" name="data_center_id">
+        <t-select v-model="packageForm.data_center_id" :placeholder="lang.select+lang.area" multiple
+          @change="choosePackage">
+          <t-option v-for="item in dataList" :value="item.id" :label="item.country + item.city + item.area"
+            :key="item.id">
+          </t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="lang.bw" name="bw_id">
+        <t-select v-model="packageForm.bw_id" :placeholder="lang.select+lang.bw"
+          :disabled="optType === 'add' && packageForm.data_center_id.length===0"
+          :multiple="optType==='add' ? true : false">
+          <t-option v-for="item in selectBwList" :value="item.id" :label="item.bw_type_name" :key="item.id">
+          </t-option>
+        </t-select>
+      </t-form-item>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit">{{lang.hold}}
+        </t-button>
+        <t-button theme="default" variant="base" @click="closePackage">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 删除提示框 -->
+  <t-dialog theme="warning" :header="lang.sureDelete" :close-btn="false" :visible.sync="delVisible">
+    <template slot="footer">
+      <t-button theme="primary" @click="sureDelete">{{lang.sure}}</t-button>
+      <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
+    </template>
+  </t-dialog>
+</div>
+<script src="/plugins/server/idcsmart_cloud/template/admin/api/cloud_config.js"></script>
+
+
+<script src="/plugins/server/idcsmart_cloud/template/admin/js/cloud_config.js"></script>
+
+<!-- <script type="text/javascript">
+  (function () {
+    var time = new Date().getTime()
+    var e = document.getElementsByTagName("script")[0];
+    var d = document.createElement("script");
+    d.src = "/plugins/server/idcsmart_cloud/template/admin/js/cloud_config.js?_t=" + time + "";
+    e.parentNode.insertBefore(d, e);
+  })();
+</script> -->

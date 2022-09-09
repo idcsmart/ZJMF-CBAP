@@ -12,7 +12,7 @@
                 pagination,
             },
             created() {
-                this.getCommon()
+                this.getCommonData()
                 this.getAccount()
                 this.getCountry()
             },
@@ -707,7 +707,7 @@
                     }
                 },
                 // 获取通用配置
-                getCommon() {
+                getCommonData() {
                     getCommon().then(res => {
                         if (res.data.status === 200) {
                             this.commonData = res.data.data

@@ -182,7 +182,7 @@
         // 停用/启用
         changeStatus (row) {
           if (row.name === 'TpCaptcha') {
-            return 
+            return
           }
           this.delId = row.name
           this.curStatus = row.status
@@ -212,7 +212,7 @@
         // 删除
         deletePay (row) {
           if (row.name === 'TpCaptcha') {
-            return 
+            return
           }
           this.delVisible = true
           this.delId = row.name

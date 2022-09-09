@@ -199,3 +199,13 @@ function version () {
 function upContent () {
   return Axios.get(`/system/upgrade_content`)
 }
+
+// 更新下载
+function upDown () {
+  return Axios.get(`/system/upgrade_download`)
+}
+
+// 获取更新下载进度
+function upProgress () {
+  return Axios.get(`/system/upgrade_download_progress`)
+}

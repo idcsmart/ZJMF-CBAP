@@ -1,0 +1,357 @@
+.cloud-config {
+  padding: 24px;
+  /* com-top */
+  /* data-box */
+  /* config-box */
+}
+.cloud-config .t-textarea__inner {
+  background-color: transparent;
+}
+.cloud-config .t-card {
+  border: 1px solid var(--td-component-border);
+}
+.cloud-config .t-tabs__nav-item:hover,
+.cloud-config .t-tabs__nav-item-wrapper:hover {
+  background: #fff !important;
+}
+.cloud-config .t-tabs__nav-item.t-is-active {
+  text-shadow: none;
+  font-weight: bold;
+}
+.cloud-config .t-tabs__nav-item.t-is-active .t-tabs__nav-item-text-wrapper {
+  color: var(--td-brand-color-8);
+}
+.cloud-config .t-tabs__bar.t-is-top {
+  bottom: 1px;
+}
+.cloud-config .t-tabs__nav-item:not(.t-is-disabled):not(.t-is-active):hover .t-tabs__nav-item-wrapper {
+  background: #fff;
+}
+.cloud-config .t-tabs__nav-item-text-wrapper {
+  color: var(--td-text-color-primary);
+}
+.cloud-config .t-tabs__nav-container.t-is-bottom:after,
+.cloud-config .t-tabs__nav-container.t-is-top:after {
+  background-color: var(--td-component-border);
+}
+.cloud-config .box {
+  padding: 30px;
+  padding-top: 0;
+}
+.cloud-config .com-tit {
+  font-size: 16px;
+  color: #333;
+  margin-top: 30px;
+}
+.cloud-config .item {
+  display: flex;
+}
+.cloud-config .com-inp {
+  width: 320px;
+  height: 32px;
+  margin-right: 20px;
+}
+.cloud-config .btn {
+  display: flex;
+  margin-left: -10px;
+}
+.cloud-config .com-icon {
+  width: 32px;
+  height: 32px;
+  color: #282828;
+  display: flex;
+  margin-right: 10px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--td-border-level-2-color);
+}
+.cloud-config .com-icon:last-child {
+  margin-right: 0;
+}
+.cloud-config .item {
+  margin-bottom: 20px;
+}
+.cloud-config .com-top {
+  line-height: 30px;
+  display: flex;
+  justify-content: space-between;
+  background: #E7E7E7;
+  padding: 0 12px 0 24px;
+  font-size: 14px;
+  color: #333;
+}
+.cloud-config .com-top .page {
+  display: flex;
+  align-items: center;
+}
+.cloud-config .com-top .page .t-icon {
+  cursor: pointer;
+}
+.cloud-config .t-table td,
+.cloud-config .t-table th {
+  padding-left: 25px;
+}
+.cloud-config .com-create {
+  text-align: right;
+}
+.cloud-config .com-create p {
+  line-height: 32px;
+  padding: 0 14px;
+  border-radius: 4px;
+  margin: 0;
+  background: rgba(0, 82, 217, 0.2);
+  font-size: 16px;
+  color: #0052D9;
+  display: inline-block;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.cloud-config .com-opt .t-icon {
+  color: var(--td-brand-color) !important;
+  font-size: 18px;
+  cursor: pointer;
+}
+.cloud-config .com-opt .t-icon:first-child {
+  margin-right: 15px;
+}
+.cloud-config .data-box .com-tit {
+  margin-bottom: 0;
+}
+.cloud-config .data-box .com-create {
+  margin: 6px 0 11px 0;
+}
+.cloud-config .data-box .com-create p {
+  margin-bottom: 0;
+}
+.cloud-config .small-tit {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.4);
+}
+.cloud-config .config-box .content {
+  display: flex;
+}
+.cloud-config .config-box .t-button {
+  margin-top: 30px;
+}
+.cloud-config .config-box .t-form__item {
+  margin-right: 30px;
+  margin-bottom: 40px;
+}
+.cloud-config .config-box .t-form__label {
+  width: auto !important;
+  padding-right: 10px !important;
+}
+.cloud-config .config-box .t-form__controls {
+  margin-left: 0 !important;
+}
+.cloud-config .config-box .small-tit {
+  margin: 0 0 10px 0;
+  line-height: 1;
+}
+.cloud-config .config-box .t-input {
+  width: 260px;
+}
+.cloud-config .config-box .t-select {
+  width: 320px;
+}
+.data-form .t-select__wrap {
+  width: auto;
+  flex: 1;
+}
+.data-form .com-icon {
+  margin-right: 0;
+  margin-left: 8px;
+}
+.bw-form .bw-item .t-input__wrap {
+  flex: 1;
+}
+.bw-form .bw-item .tip {
+  margin-left: 10px;
+}
+.bw-form .in-bw {
+  margin-top: -15px;
+  margin-bottom: 0;
+}
+.bw-form .t-select__wrap,
+.bw-form .t-input__wrap {
+  flex: 1;
+}
+.bw-form .flow {
+  width: 200px;
+}
+.bw-form .flow-type {
+  width: 216px;
+}
+.bw-form .gb {
+  line-height: 32px;
+  margin: 0 10px;
+}
+.bw-form .t-input-group--separate {
+  width: 100%;
+}
+/* package-box */
+.package-box .com-tit {
+  margin-bottom: 6px;
+}
+/* cal-form */
+.cal-form .cal-item .t-input__wrap {
+  flex: 1;
+  margin-right: 10px;
+}
+/* duration-box */
+.duration-box .com-opt .t-icon {
+  margin-right: 0 !important;
+}
+/* cal-box */
+.cal-box .t-row {
+  width: auto;
+}
+.cal-box .t-table {
+  margin-bottom: 40px;
+}
+/* image-group */
+.image-group .item {
+  display: flex;
+  align-items: center;
+}
+.image-group .btn {
+  margin-left: 0;
+}
+.image-group .t-switch {
+  margin-left: -10px;
+  margin-right: 20px;
+}
+.image-group .image-box .image-tit {
+  margin: 30px 0 10px;
+  line-height: 1;
+}
+.image-group .t-table__th-name,
+.image-group .t-table__th-op {
+  min-width: 100px;
+}
+/* com-order */
+.com-order {
+  display: flex;
+  align-items: center;
+}
+.com-order .t-input__wrap {
+  width: auto;
+}
+.com-order .t-input {
+  width: 40px;
+  padding: 0 5px;
+}
+.com-order .t-icon {
+  cursor: pointer;
+  color: var(--td-brand-color);
+  margin-left: 10px;
+}
+/* apply-image */
+.os-tab .t-table .t-table__th-area {
+  padding: 0 !important;
+  width: auto;
+  white-space: nowrap;
+}
+.os-tab .t-table .t-table__th-area .t-table__th-cell-inner {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.os-tab .t-table .t-table__th-area .t-table__th-cell-inner .area-tit {
+  padding: 12px;
+  flex: 1;
+  min-width: 40px;
+  word-break: break-all;
+  position: relative;
+  border-right: 1px solid #ccc;
+}
+.os-tab .t-table .t-table__th-area .t-table__th-cell-inner .area-tit:last-child {
+  border: none;
+}
+.os-tab .t-table .t-table__th-area .t-table__th-cell-inner .area-tit:last-child::after {
+  width: 0;
+}
+.os-tab .t-table__body td:nth-child(3) {
+  padding: 0 !important;
+}
+.os-tab .area-box {
+  display: flex;
+}
+.os-tab .area-box .area-body {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  padding: 20px 12px;
+  min-width: 40px;
+  border-right: 1px solid #ccc;
+}
+.os-tab .area-box .area-body:last-child {
+  border: none;
+}
+.os-tab .area-box .area-body:last-child::after {
+  width: 0;
+}
+.os-tab .area-box .area-status {
+  color: #FF2F2F;
+}
+.os-tab .area-box .area-status.exist {
+  color: #52C39D;
+}
+.os-tab .os-name-box {
+  display: flex;
+  align-items: center;
+}
+.os-tab .os-name {
+  width: 120px;
+  overflow: hidden;
+  display: inline-block;
+  text-overflow: ellipsis;
+  word-wrap: normal;
+  white-space: nowrap;
+}
+.os-tab .opt {
+  display: flex;
+  align-items: center;
+}
+.os-tab .opt .price {
+  width: 90px;
+}
+.os-tab .opt .t-icon {
+  color: var(--td-brand-color-active);
+  cursor: pointer;
+  position: relative;
+  left: -20px;
+  z-index: 20;
+}
+.os-tab .opt .t-switch {
+  margin-right: 10px;
+}
+.com-enable-switch {
+  position: relative;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.com-enable-switch.active .circle {
+  left: auto;
+  right: 0;
+  background: #0052D9;
+}
+.com-enable-switch .line {
+  width: 22px;
+  height: 6px;
+  background: #C5C5C5;
+  display: block;
+  border-radius: 10px;
+}
+.com-enable-switch .circle {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #E7E7E7;
+  display: block;
+  position: absolute;
+  top: 50%;
+  margin-top: -7px;
+  left: 0;
+}
