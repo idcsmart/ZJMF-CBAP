@@ -21,10 +21,10 @@ function read_dir($dir = '', $files = []){
         while(($file = readdir($handle)) !== false){
             if($file != "." && $file != ".."){
                 if(!is_dir("$dir/$file")){
-                    $files[]="$dir/$file";                  
+                    $files[]="$dir/$file";
                 }else{
                     $files = read_dir("$dir/$file", $files);
-                }                   
+                }
             }
         }
         closedir($handle);
@@ -172,7 +172,7 @@ function add_hook($hook,$fun)
 * @version v1
 * @param string $cmd - 调用API名称 require
 * @param array $data - 传入的参数
-* @return array 
+* @return array
 */
 function local_api($cmd,$data=[]){
 	list($project,$module,$action) = explode("_",$cmd);
@@ -187,7 +187,7 @@ function local_api($cmd,$data=[]){
 	if (!class_exists($class)) {
 		return ['status' => 400, 'msg' => lang('fail_message')];
 	}
-	request()->local_api_data = $data;	
+	request()->local_api_data = $data;
 	$cls = new $class( app() );
 	$cls_methods = get_class_methods($cls);
 	if(!in_array($action,$cls_methods)){
@@ -238,21 +238,21 @@ function plugin_api($addon,$controller,$action,$param=[])
 * @author xiong
 * @version v1
 * @param string app admin 应用名称,只有admin和home这两个值
-* @return array 
-* @return string [].display_name - 语言名称 
-* @return string [].display_flag - 国家代码  
-* @return string [].display_lang - 语言标识  
+* @return array
+* @return string [].display_name - 语言名称
+* @return string [].display_flag - 国家代码
+* @return string [].display_lang - 语言标识
 */
 function lang_list($app = 'admin')
 {
 	if($app == 'admin') $app = DIR_ADMIN;
 	if($app == 'home') $app = 'clientarea';
-	$path= public_path() .'/'. $app .'/language'; 
+	$path= public_path() .'/'. $app .'/language';
 	if(!file_exists($path))	return [];
 	$handler = opendir($path);//当前目录中的文件夹下的文件夹
 	$lang_data_now_all = [];
 	while (($filename = readdir($handler)) !== false) {
-	   if ($filename != "." && $filename != ".." ) { 
+	   if ($filename != "." && $filename != ".." ) {
 			if(strpos($filename,".php")===false) continue;
 			$_LANG=include $path."/".$filename;
 			if(empty($_LANG['display_name'])) continue;
@@ -265,7 +265,7 @@ function lang_list($app = 'admin')
 		}
 	}
 	closedir($handler);
-    return $lang_data_now_all;	
+    return $lang_data_now_all;
 }
 /**
 * @title 获取语言
@@ -274,7 +274,7 @@ function lang_list($app = 'admin')
 * @version v1
 * @param string name - 名称
 * @param array param - 要替换语言中的参数
-* @return string 
+* @return string
 */
 function lang($name = '', $param = [])
 {
@@ -292,7 +292,7 @@ function lang($name = '', $param = [])
 			$language = str_replace($k, $v , $language);
 		}
 		return $language;
-	}	
+	}
 }
 
 /**
@@ -435,7 +435,7 @@ function curl($url, $data = [], $timeout = 30, $request = 'POST', $header = [])
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
     }
     $content = curl_exec($curl);
-    $error = curl_error($curl);	
+    $error = curl_error($curl);
     $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 	curl_close($curl);
 	return ['http_code'=>$http_code, 'error'=>$error , 'content' => $content];
@@ -452,15 +452,21 @@ function curl($url, $data = [], $timeout = 30, $request = 'POST', $header = [])
  */
 function idcsmart_password($pw, $authCode = '')
 {
-    if (is_null($pw)){
-        return '';
+    error_reporting(0);
+    if (defined('IS_ZKEYS') && IS_ZKEYS){
+        $result = md5(htmlspecialchars($pw));
+    }else{
+        if (is_null($pw)){
+            return '';
+        }
+
+        if (empty($authCode)) {
+            $authCode = AUTHCODE;
+        }
+
+        $result = "###" . md5(md5($authCode . $pw));
     }
 
-    if (empty($authCode)) {
-        $authCode = AUTHCODE;
-    }
-
-    $result = "###" . md5(md5($authCode . $pw));
     return $result;
 }
 
@@ -803,11 +809,11 @@ function hide_str($str, $replacement = '*', $start = 1, $length = 3)
         $str2 = mb_substr($str, intval($start+$length), NULL, 'utf-8');
     } else {
         $str1 = mb_substr($str, 0, 1, 'utf-8');
-        $str2 = mb_substr($str, $len-1, 1, 'utf-8');    
-        $length = $len - 2;        
+        $str2 = mb_substr($str, $len-1, 1, 'utf-8');
+        $length = $len - 2;
     }
     $newStr = $str1;
-    for ($i = 0; $i < $length; $i++) { 
+    for ($i = 0; $i < $length; $i++) {
         $newStr .= $replacement;
     }
     $newStr .= $str2;
@@ -851,7 +857,7 @@ function active_log($description, $type = '', $relId = 0)
 {
     // 实例化模型类
     $SystemLogModel = new SystemLogModel();
-    
+
     $param = [
         'description' => $description,
         'type' => $type,
@@ -1133,14 +1139,14 @@ function is_image($filename)
  * @author xiong
  * @version v1
  * @param string param.type - 名称,sms短信发送,email邮件发送,host_create开通主机,host_suspend暂停主机,host_unsuspend解除暂停主机,host_terminate删除主机,执行在插件中的任务 required
- * @param int param.rel_id - 相关id 
+ * @param int param.rel_id - 相关id
  * @param string param.description - 描述 required
  * @param array param.task_data - 任务要执行的数据 required
  */
 function add_task($param)
 {
 	return (new TaskWaitModel())->createTaskWait($param);
-	
+
 }
 /**
  * @title 创建动作
@@ -1156,7 +1162,7 @@ function add_task($param)
  * @param string param.sms_global_template[].title  - 国际短信模板标题 required
  * @param string param.sms_global_template[].content  - 国际短信模板内容 required
  * @param string param.email_name  - 邮件接口名称（可以为空，默认SMTP接口）
- * @param string param.email_template[].name  - 邮件模板名称 required 
+ * @param string param.email_template[].name  - 邮件模板名称 required
  * @param string param.email_template[].title  - 邮件模板标题 required
  * @param string param.email_template[].content  - 邮件模板内容 required
  * @return mixed

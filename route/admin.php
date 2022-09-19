@@ -25,7 +25,9 @@ Route::post('v1/doc', 'admin/doc/create'); #生成开发文档
 
 Route::group(DIR_ADMIN.'/v1',function (){
     Route::post('logout', 'admin/admin/logout'); #注销
-	Route::get('index', 'admin/index/index');
+	Route::get('index', 'admin/index/index'); # 首页
+    Route::get('index/online_admin', 'admin/index/onlineAdmin'); # 在线管理员列表
+    Route::get('index/visit_client', 'admin/index/visitClient'); # 最近访问用户列表
 
 	# 管理员管理
     Route::get('admin', 'admin/admin/adminList'); # 管理员列表

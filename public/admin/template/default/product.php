@@ -108,13 +108,13 @@
       <span>{{lang.tip8}}</span>
     </template>
     <template slot="body">
-      <t-form :data="moveProductForm" :rules="rules" ref="groupDialog" @submit="moveProduct">
+      <t-form :data="moveProductForm" :rules="rules" ref="groupDialog" @submit="moveProduct" v-if="delHasPro">
         <t-form-item :label="lang.product_name" name="fail">
           <t-input disabled v-model="concat_shop"></t-input>
         </t-form-item>
         <t-form-item :label="lang.choose_group" name="target_product_group_id">
           <t-select v-model="moveProductForm.target_product_group_id" :placeholder="lang.select +lang.product_group" :popup-props="popupProps">
-            <t-option-group v-for="(list, index) in tempGroup" :key="index" :label="typeof list.name === 'object' ? list.group.label : list.name" divider>
+            <t-option-group v-for="(list, index) in tempGroup" :key="list.key" :label="typeof list.name === 'object' ? list.group.label : list.name" divider>
               <t-option v-for="item in list.children" :value="item.id" :label="item.name" :key="item.id">
                 {{ item.name }}
               </t-option>

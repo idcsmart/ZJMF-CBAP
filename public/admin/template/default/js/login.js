@@ -107,7 +107,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
             })
             localStorage.setItem('backAuth', JSON.stringify(authTemp))
             this.$message.success(res.data.msg)
-            localStorage.setItem('curValue', 1158)
+            localStorage.setItem('curValue', 1622)
             // 获取导航
             const menus = await getMenus()
             localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))

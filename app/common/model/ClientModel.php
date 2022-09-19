@@ -265,31 +265,31 @@ class ClientModel extends Model
             # 日志详情
             $description = [];
             if ($client['username'] != $param['username']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_username'), '{old}'=>$client['username'], '{new}'=>$param['username']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_username').$client['username'], '{new}'=>$param['username']]);
             }
             if ($client['email'] != $param['email']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_email'), '{old}'=>$client['email'], '{new}'=>$param['email']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_email').$client['email'], '{new}'=>$param['email']]);
             }
             if ($client['phone_code'] != $param['phone_code']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_phone_code'), '{old}'=>$client['phone_code'], '{new}'=>$param['phone_code']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_phone_code').$client['phone_code'], '{new}'=>$param['phone_code']]);
             }
             if ($client['phone'] != $param['phone']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_phone'), '{old}'=>$client['phone'], '{new}'=>$param['phone']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_phone').$client['phone'], '{new}'=>$param['phone']]);
             }
             if ($client['company'] != $param['company']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_company'), '{old}'=>$client['company'], '{new}'=>$param['company']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_company').$client['company'], '{new}'=>$param['company']]);
             }
             if ($client['country'] != $param['country']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_country'), '{old}'=>$client['country'], '{new}'=>$param['country']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_country').$client['country'], '{new}'=>$param['country']]);
             }
             if ($client['address'] != $param['address']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_address'), '{old}'=>$client['address'], '{new}'=>$param['address']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_address').$client['address'], '{new}'=>$param['address']]);
             }
             if ($client['language'] != $param['language']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_language'), '{old}'=>$client['language'], '{new}'=>$param['language']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_language').$client['language'], '{new}'=>$param['language']]);
             }
             if ($client['notes'] != $param['notes']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_notes'), '{old}'=>$client['notes'], '{new}'=>$param['notes']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_notes').$client['notes'], '{new}'=>$param['notes']]);
             }
             if(!empty($param['password'])){
                 $description[] = lang('log_change_password');
@@ -299,22 +299,22 @@ class ClientModel extends Model
             # 日志详情
             $description = [];
             if ($client['username'] != $param['username']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_username'), '{old}'=>$client['username'], '{new}'=>$param['username']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_username').$client['username'], '{new}'=>$param['username']]);
             }
             if ($client['company'] != $param['company']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_company'), '{old}'=>$client['company'], '{new}'=>$param['company']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_company').$client['company'], '{new}'=>$param['company']]);
             }
             if ($client['country'] != $param['country']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_country'), '{old}'=>$client['country'], '{new}'=>$param['country']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_country').$client['country'], '{new}'=>$param['country']]);
             }
             if ($client['address'] != $param['address']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_address'), '{old}'=>$client['address'], '{new}'=>$param['address']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_address').$client['address'], '{new}'=>$param['address']]);
             }
             if ($client['language'] != $param['language']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_language'), '{old}'=>$client['language'], '{new}'=>$param['language']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_language').$client['language'], '{new}'=>$param['language']]);
             }
             if ($client['client_notes'] != $param['client_notes']){
-                $description[] = lang('old_to_new',['{field}'=>lang('client_notes'), '{old}'=>$client['client_notes'], '{new}'=>$param['client_notes']]);
+                $description[] = lang('old_to_new',['{old}'=>lang('client_notes').$client['client_notes'], '{new}'=>$param['client_notes']]);
             }
             $description = implode(',', $description);
         }
@@ -1931,5 +1931,61 @@ class ClientModel extends Model
         }
 
         return true;
+    }
+
+
+    /**
+     * 时间 2022-09-16
+     * @title 最近访问用户列表
+     * @desc 最近访问用户列表
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/index/visit_client
+     * @method  GET
+     * @param int page - 页数
+     * @param int limit - 每页条数
+     * @return array list - 用户列表
+     * @return int list[].id - ID
+     * @return int list[].username - 姓名
+     * @return int list[].email - 邮箱
+     * @return int list[].phone_code - 国际电话区号
+     * @return int list[].phone - 手机号
+     * @return int list[].company - 公司
+     * @return int list[].visit_time - 访问时间
+     * @return int count - 用户总数
+     */
+    public function visitClientList($param)
+    {
+
+        $clients = $this->field('id,username,email,phone_code,phone,company,last_action_time')
+            ->where('status', 1)
+            ->limit($param['limit'])
+            ->page($param['page'])
+            ->order('last_action_time', 'desc')
+            ->select()
+            ->toArray();
+
+        $count = $this->field('id')
+            ->where('status', 1)
+            ->count();
+
+        $time = time();
+        foreach ($clients as $key => $value) {
+            $visitTime = $time - $value['last_action_time'];
+            if($visitTime>365*24*3600){
+                $clients[$key]['visit_time'] = lang('one_year_ago');
+            }else{
+                $day = floor($visitTime/(24*3600));
+                $visitTime = $visitTime%(24*3600);
+                $hour = floor($visitTime/3600);
+                $visitTime = $visitTime%60;
+                $minute = floor($visitTime/60);
+                $clients[$key]['visit_time'] = ($day>0 ? $day.lang('day') : '').($hour>0 ? $hour.lang('hour') : '').($minute>0 ? $minute.lang('minute') : '');
+                $clients[$key]['visit_time'] = !empty($clients[$key]['visit_time']) ? $clients[$key]['visit_time'].lang('ago') : $minute.lang('minute').lang('ago');
+            }
+            unset($clients[$key]['last_action_time']);
+        }
+
+        return ['list'=>$clients, 'count'=>$count];
     }
 }

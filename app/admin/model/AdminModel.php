@@ -563,4 +563,41 @@ class AdminModel extends Model
 
         return ['status'=>401,'msg'=>lang('update_success')];
     }
+
+    /**
+     * 时间 2022-09-16
+     * @title 在线管理员列表
+     * @desc 在线管理员列表
+     * @author theworld
+     * @version v1
+     * @param int page - 页数
+     * @param int limit - 每页条数
+     * @return array list - 管理员列表
+     * @return int list[].id - ID
+     * @return int list[].nickname - 名称
+     * @return int list[].name - 用户名
+     * @return int list[].email - 邮箱
+     * @return int count - 管理员总数
+     */
+    public function onlineAdminList($param)
+    {
+        # 最近一小时在线
+        $where = function (Query $query) use($param) {
+            $query->where('last_action_time', '>=', time() - 3600);
+        };
+
+        $admins = $this->field('id,nickname,name,email')
+            ->where($where)
+            ->limit($param['limit'])
+            ->page($param['page'])
+            ->order('last_action_time', 'desc')
+            ->select()
+            ->toArray();
+
+        $count = $this->field('id')
+            ->where($where)
+            ->count();
+
+        return ['list'=>$admins, 'count'=>$count];
+    }
 }

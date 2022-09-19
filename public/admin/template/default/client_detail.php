@@ -172,7 +172,7 @@
         <p class="com-tit"><span>{{lang.login_record}}</span></p>
         <t-table row-key="1" :data="data.login_logs" size="medium" :bordered="true" :columns="logColumns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'">
           <template #login_time="{row}">
-            {{ moment(data.register_time * 1000).format('YYYY-MM-DD HH:mm:ss') }}
+            {{ moment(row.login_time * 1000).format('YYYY-MM-DD HH:mm:ss') }}
           </template>
         </t-table>
         <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="logSizeOptions" :on-change="changePage" />

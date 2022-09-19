@@ -11,6 +11,7 @@
                 payDialog,
             },
             mounted() {
+                window.addEventListener('scroll', this.computeScroll)
                 // 关闭loading
                 // document.getElementById('mainLoading').style.display = 'none';
             },
@@ -18,6 +19,9 @@
                 // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
                 document.getElementsByClassName('template')[0].style.display = 'block'
+            },
+            destroyed() {
+                window.removeEventListener('scroll', this.computeScroll);
             },
             data() {
                 return {
@@ -33,7 +37,7 @@
                     gatewayList: [],
                     // 错误提示信息
                     errText: "",
-                    // 待审核金额
+                    // 待退款金额
                     unAmount: 0,
                     commonData: {},
                     // 货币前缀
@@ -171,7 +175,11 @@
                     payLoading: false,
                     isShowimg: true,
                     payLoading1: false,
-                    isShowimg1: true
+                    isShowimg1: true,
+                    isShowBackTop: false,
+                    scrollY: 0,
+                    isEnd: false,
+                    isShowMore: false
                 };
             },
             created() {
@@ -762,6 +770,164 @@
                     str = str.replace(/^\D*([0-9]\d*\.?\d{0,2})?.*$/, "$1"); // 小数点后只能输 2 位
                     return str;
 
+                },
+                // 监测滚动
+                computeScroll() {
+                    const body = document.getElementById('finance')
+                    // 获取距离顶部的距离
+                    let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+                    // 获取窗口的高度
+                    let browserHeight = window.outerHeight;
+                    // 滚动条高度
+                    const scrollHeight = body.scrollHeight;
+                    let scroll = scrollTop - this.scrollY
+                    this.scrollY = scrollTop
+                    // 判断返回顶部按钮是否显示
+                    if (scrollTop > browserHeight) {
+                        if (scroll < 0) {
+                            this.isShowBackTop = true
+                        } else {
+                            this.isShowBackTop = false
+                        }
+                    } else {
+                        this.isShowBackTop = false
+                    }
+
+                    // 判断是否到达底部
+                    if ((browserHeight + scrollTop) >= scrollHeight) {
+                        // 判断是否加载数据
+                        if (this.activeIndex == 1) {
+                            // 订单记录
+                            // 判断是否最后一页
+                            // 是：显示到底了
+                            // 不是：则加载下一页 显示加载中
+                            const params = this.params1
+                            // 计算总页数
+                            let allPage = params.total % params.limit == 0 ? (params.total / params.limit) : (Math.floor(params.total / params.limit) + 1)
+
+                            if (params.page == allPage) {
+                                // 已经是最后一页了
+                                this.isEnd = true
+                            } else {
+                                // 显示加载中
+                                this.isShowMore = true
+                                // 页数加一
+                                this.params1.page = this.params1.page + 1
+                                // 获取订单记录 push到列表中
+                                // 关闭加载中
+                                orderList(this.params1).then((res) => {
+                                    if (res.data.status === 200) {
+                                        this.params1.total = res.data.data.count;
+                                        let list = res.data.data.list;
+
+                                        list.map(item => {
+                                            let product_name = ""
+                                            // 商品名称 含两个以上的 只取前两个拼接然后拼接上商品名称的个数
+                                            if (item.product_names.length > 2) {
+                                                product_name = item.product_names[0] + "、" + item.product_names[1] + " " + '等' + item.product_names.length + '个商品'
+                                            } else {
+                                                item.product_names.map(n => {
+                                                    product_name += n + "、"
+                                                })
+                                                product_name = product_name.slice(0, -1)
+                                            }
+                                            item.product_name = product_name
+
+                                            // 判断有无子数据
+                                            if (item.order_item_count > 1) {
+                                                // item.children = []
+                                                item.hasChildren = true
+                                            }
+                                            this.dataList1.push(item);
+                                        })
+                                    }
+                                    this.isShowMore = false
+                                });
+                            }
+                        }
+                        if (this.activeIndex == 2) {
+                            // 交易记录
+                            // 判断是否最后一页
+                            // 是：显示到底了
+                            // 不是：则加载下一页 显示加载中
+                            const params = this.params2
+                            // 计算总页数
+                            let allPage = params.total % params.limit == 0 ? (params.total / params.limit) : (Math.floor(params.total / params.limit) + 1)
+
+                            if (params.page == allPage) {
+                                // 已经是最后一页了
+                                this.isEnd = true
+                            } else {
+                                // 显示加载中
+                                this.isShowMore = true
+                                // 页数加一
+                                this.params2.page = this.params2.page + 1
+                                // 获取交易记录 push到列表中
+                                // 关闭加载中
+
+                                transactionList(this.params2).then(res => {
+                                    if (res.data.status === 200) {
+                                        let list = res.data.data.list
+                                        if (list) {
+                                            list.map(item => {
+                                                if (item.order_id == 0) {
+                                                    item.order_id = "--"
+                                                }
+                                                this.dataList2.push(item)
+                                            })
+                                        }
+                                        this.params2.total = res.data.data.count
+                                    }
+                                    this.isShowMore = false
+                                })
+                            }
+                        }
+                        if (this.activeIndex == 3) {
+                            // 余额记录
+                            // 判断是否最后一页
+                            // 是：显示到底了
+                            // 不是：则加载下一页 显示加载中
+                            const params = this.params3
+                            // 计算总页数
+                            let allPage = params.total % params.limit == 0 ? (params.total / params.limit) : (Math.floor(params.total / params.limit) + 1)
+
+                            if (params.page == allPage) {
+                                // 已经是最后一页了
+                                this.isEnd = true
+                            } else {
+                                // 显示加载中
+                                this.isShowMore = true
+                                // 页数加一
+                                this.params3.page = this.params3.page + 1
+                                // 获取交易记录 push到列表中
+                                // 关闭加载中
+
+                                creditList(this.params3).then(res => {
+                                    if (res.data.status === 200) {
+                                        let list = res.data.data.list
+                                        // 过滤人工订单 不显示
+                                        list = list.filter(item => {
+                                            return item.type !== "Artificial"
+                                        })
+
+                                        list.map(item => {
+                                            this.dataList3.push(item)
+                                        })
+
+                                        this.params3.total = res.data.data.count
+                                    }
+                                    this.isShowMore = false
+                                })
+                            }
+                        }
+                    } else {
+                        this.isEnd = false
+                        this.isShowMore = false
+                    }
+                },
+                // 返回顶部
+                goBackTop() {
+                    document.documentElement.scrollTop = document.body.scrollTop = 0;
                 }
             },
         }).$mount(finance);

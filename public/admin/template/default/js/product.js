@@ -57,7 +57,7 @@
           params: {
             keywords: '',
             page: 1,
-            limit: 100,
+            limit: 200,
             orderby: 'id',
             sort: 'desc'
           },
@@ -154,9 +154,9 @@
       watch: {
         concat_shop (val) {
           if (val) {
-            const temp = this.data
-            temp.forEach(item => {
+            let temp = JSON.parse(JSON.stringify(this.data)).map(item => {
               item.children = item.children.filter(el => el.id !== this.moveProductForm.id)
+              return item
             })
             this.tempGroup = temp
             this.delHasPro = true
@@ -172,6 +172,7 @@
         closeMove () {
           this.delHasPro = false
           this.concat_shop = ''
+          this.tempGroup = []
         },
         // 编辑
         editHandler (row) {
@@ -273,7 +274,18 @@
             this.$message.warning(firstError);
           }
         },
-        // 拖动移动
+        // 拖动二级分组
+        async movePorductGroup () {
+          try {
+            const res = await draySecondGroup(this.secondGroupForm)
+            this.$message.success(res.data.msg)
+            this.delHasPro = false
+            this.getProductList()
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
+        },
+        // 拖动商品至其他二级分组
         async movePorductHandel () {
           try {
             const res = await dragProductGroup(this.dragForm)
@@ -335,7 +347,7 @@
               this.secondGroupForm.first_product_group_id = current.id
               this.secondGroupForm.pre_product_group_id = target.id
               this.secondGroupForm.pre_first_product_group_id = target.parent_id
-              this.movePorductHandel()
+              this.movePorductGroup()
             }
             // 移动商品到其他二级分组
             if ((current.key.indexOf('t') !== -1) && (target.key.indexOf('t') !== -1)) {

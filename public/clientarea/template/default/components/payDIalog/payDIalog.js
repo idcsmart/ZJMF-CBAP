@@ -13,21 +13,21 @@ const payDialog = {
     </div>
     `,
     methods: {
-        // 支付 dialog guanbi
-        isShow:false,
+        // 支付 dialog 关闭
+        isShow: false,
         zfClose() {
             console.log("支付dialog关闭");
         },
     },
-    props:{
-        isShowZf:{
-            type:Boolean,
+    props: {
+        isShowZf: {
+            type: Boolean,
         },
-        orderId:{
-            type:Number
+        orderId: {
+            type: Number
         },
-        amount:{
-            type:Number
+        amount: {
+            type: Number
         }
     }
 }

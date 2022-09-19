@@ -49,7 +49,7 @@
                                         <t-option v-for="item in menuType" :key="item.id" :label="item.label" :value="item.value" />
                                     </t-select>
                                 </t-form-item>
-                                <t-form-item v-show="formData.type !== 'custom'" name="url" label="目标页面">
+                                <t-form-item v-show="formData.type !== 'custom'" name="url" label="选择页面">
                                     <!-- 系统页面 -->
                                     <t-select v-if="formData.type == 'system'" v-model="formData.url" @change="urlSelectChange">
                                         <t-option v-for="item in selectList" :key="item.id" :value="item.url" :label="item.name" />
@@ -61,7 +61,7 @@
                                         </t-option-group>
                                     </t-select>
                                 </t-form-item>
-                                <t-form-item v-show="formData.type === 'custom'" name="url" label="目标页面">
+                                <t-form-item v-show="formData.type === 'custom'" name="url" label="选择页面">
                                     <t-input v-model="formData.url"></t-input>
                                 </t-form-item>
                                 <t-form-item name="icon" label="导航图标代码">
@@ -134,7 +134,7 @@
                                         <t-option v-for="item in menuType" :key="item.id" :label="item.label" :value="item.value" />
                                     </t-select>
                                 </t-form-item>
-                                <t-form-item v-show="formData.type !== 'custom'" name="url" label="目标页面">
+                                <t-form-item v-show="formData.type !== 'custom'" name="url" label="选择页面">
                                     <!-- 系统页面 -->
                                     <t-select v-if="formData.type == 'system'" v-model="formData.url" @change="urlSelectChange">
                                         <t-option v-for="item in selectList" :key="item.id" :value="item.url" :label="item.name" />
@@ -146,7 +146,7 @@
                                         </t-option-group>
                                     </t-select>
                                 </t-form-item>
-                                <t-form-item v-show="formData.type === 'custom'" name="url" label="目标页面">
+                                <t-form-item v-show="formData.type === 'custom'" name="url" label="选择页面">
                                     <t-input v-model="formData.url"></t-input>
                                 </t-form-item>
                                 <t-form-item name="icon" label="导航图标代码">
@@ -185,22 +185,22 @@
                     <t-option v-for="item in menuType" :key="item.id" :label="item.label" :value="item.value" />
                 </t-select>
             </t-form-item>
-            <t-form-item v-show="newFormData.type !== 'custom'" name="url" label="目标页面">
+            <t-form-item v-show="newFormData.type !== 'custom'" name="url" label="选择页面">
                 <!-- <t-select v-model="newFormData.url" @change="newUrlSelectChange">
                     <t-option v-for="item in selectList" :key="item.id" :value="item.url" :label="item.name" />
                 </t-select> -->
                 <!-- 系统页面 -->
-                <t-select v-if="newFormData.type == 'system'" v-model="newFormData.url" @change="urlSelectChange">
+                <t-select v-if="newFormData.type == 'system'" v-model="newFormData.url" @change="newUrlSelectChange">
                     <t-option v-for="item in selectList" :key="item.id" :value="item.url" :label="item.name" />
                 </t-select>
                 <!-- 插件 -->
-                <t-select v-if="newFormData.type == 'plugin'" v-model="newFormData.url" @change="urlSelectChange">
+                <t-select v-if="newFormData.type == 'plugin'" v-model="newFormData.url" @change="newUrlSelectChange">
                     <t-option-group v-for="(list,index) in selectList" :key="index" :label="list.title" divider>
                         <t-option v-for="item in list.navs" :value="item.url" :key="item.id" :label="item.name"></t-option>
                     </t-option-group>
                 </t-select>
             </t-form-item>
-            <t-form-item v-show="newFormData.type === 'custom'" name="url" label="目标页面">
+            <t-form-item v-show="newFormData.type === 'custom'" name="url" label="选择页面">
                 <t-input v-model="newFormData.url"></t-input>
             </t-form-item>
             <t-form-item name="icon" label="导航图标代码">

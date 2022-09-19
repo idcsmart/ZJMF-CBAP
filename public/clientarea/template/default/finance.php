@@ -14,7 +14,7 @@
     </div>
     <div class="template" id="finance">
         <el-container>
-            <aside-menu :menu-active-id="1"></aside-menu>
+            <aside-menu></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
@@ -25,7 +25,7 @@
                             <div class="top-r" v-if="activeIndex == 3">
                                 <div class="item-balance">
                                     <div class="money">
-                                        {{ commonData.currency_prefix + balance + commonData.currency_suffix}}
+                                        {{ commonData.currency_prefix + balance }}
                                         <el-button class="btn-cz" @click="showCz">充值</el-button>
                                         <el-button class="btn-tx" @click="showTx">提现</el-button>
                                     </div>
@@ -33,7 +33,7 @@
                                 </div>
                                 <div class="item-unbalance">
                                     <div class="money">
-                                        {{ commonData.currency_prefix + unAmount +commonData.currency_suffix}}
+                                        {{ commonData.currency_prefix + unAmount}}
                                     </div>
                                     <div class="text">待退款金额</div>
                                 </div>
@@ -52,8 +52,6 @@
                                                     </div>
                                                 </div>
                                                 <div class="searchbar com-search">
-                                                    <!-- <el-input suffix-icon="el-input__icon el-icon-search" @input="inputChange1" v-model="params1.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2"></el-input>
-                                                    </el-input> -->
                                                     <el-input v-model="params1.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange1" clearable @clear="getorderList">
                                                         <i class="el-icon-search input-search" slot="suffix" @Click="inputChange1"></i>
                                                     </el-input>
@@ -88,10 +86,6 @@
                                                     </el-table-column>
                                                     <el-table-column prop="status" label="状态" width="150">
                                                         <template slot-scope="scope">
-                                                            <!-- <el-tag
-                                                                :class="scope.row.status=='Unpaid'?'Unpaid':scope.row.status=='Paid'?'Paid':''">
-                                                                {{scope.row.status=='Unpaid'?'未付款':scope.row.status=='Paid'?'已付款':''}}
-                                                            </el-tag> -->
                                                             <el-tag v-if="scope.row.status" :class="scope.row.status=='Unpaid'?'Unpaid':scope.row.status=='Paid'?'Paid':''">
                                                                 {{scope.row.status=='Unpaid'?'未付款':scope.row.status=='Paid'?'已付款':''}}
                                                             </el-tag>
@@ -105,18 +99,6 @@
                                                             <div v-if="scope.row.status">
                                                                 <!-- 已支付 -->
                                                                 <div v-if="scope.row.status === 'Paid'">
-                                                                    <!-- <div v-if="scope.row.credit > 0 ">
-                                                                    <el-popover placement="top" trigger="hover" popper-class="tooltip">
-                                                                        <i class="el-icon-s-finance" style="color: #F99600;font-size: 0.35rem;"></i>
-                                                                        <span style="color: #F99600;"> {{currency_prefix
-                                                                            + scope.row.credit +
-                                                                            currency_code}}</span>
-                                                                        <span slot="reference" class='gateway-pay'>余额</span>
-                                                                    </el-popover>
-                                                                    <span>{{scope.row.amount === scope.row.credit ?
-                                                                        '':"+" + scope.row.gateway}}</span>
-                                                                </div>
-                                                                <span v-else>{{scope.row.gateway}}</span> -->
                                                                     <!-- 使用余额 -->
                                                                     <div v-if="scope.row.credit > 0">
                                                                         <!-- 全部使用余额 -->
@@ -148,6 +130,75 @@
                                                 </el-table>
                                                 <pagination :page-data="params1" @sizechange="sizeChange1" @currentchange="currentChange1"></pagination>
                                             </div>
+
+
+                                            <!-- 移动端显示表格开始 -->
+                                            <div class="mobel">
+                                                <div class="mob-searchbar mob-com-search">
+                                                    <el-input class="mob-search-input" v-model="params1.keywords" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange1" clearable @clear="getorderList">
+                                                        <i class="el-icon-search input-search" slot="suffix" @Click="inputChange1"></i>
+                                                    </el-input>
+                                                </div>
+                                                <div class="mob-tabledata">
+                                                    <div class="mob-tabledata-item" v-for="item in dataList1" :key="item.id">
+                                                        <div class="mob-item-row mob-item-row1">
+                                                            <span>{{item.id}}</span>
+                                                            <span>
+                                                                <el-tag v-if="item.status" :class="item.status=='Unpaid'?'Unpaid':item.status=='Paid'?'Paid':''">
+                                                                    {{item.status=='Unpaid'?'未付款':item.status=='Paid'?'已付款':''}}
+                                                                </el-tag>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row2">
+                                                            <span class="mob-item-row2-name" :title="item.product_name">
+                                                                <span class="dot" :class="item.type"></span>
+                                                                <span class="row2-name-text">{{item.product_name}}</span>
+                                                            </span>
+                                                            <span>
+                                                                <span>{{ commonData.currency_prefix + item.amount}}</span>
+                                                                <span v-if="item.billing_cycle">/{{item.billing_cycle}}</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row3">
+                                                            <span>{{item.create_time | formateTime}}</span>
+                                                            <div v-if="item.status">
+                                                                <!-- 已支付 -->
+                                                                <div v-if="item.status === 'Paid'">
+                                                                    <!-- 使用余额 -->
+                                                                    <div v-if="item.credit > 0">
+                                                                        <!-- 全部使用余额 -->
+                                                                        <div v-if="item.credit == item.amount">
+                                                                            <span>余额</span>
+                                                                        </div>
+                                                                        <!-- 部分使用余额 -->
+                                                                        <div v-else>
+                                                                            <el-popover placement="top" trigger="hover" popper-class="tooltip">
+                                                                                <i class="el-icon-s-finance" style="color: #F99600;font-size: 0.35rem;"></i>
+                                                                                <span style="color: #F99600;"> {{commonData.currency_prefix
+                                                                            + item.credit +
+                                                                            commonData.currency_suffix}}</span>
+                                                                                <span slot="reference" class='gateway-pay'>余额</span>
+                                                                            </el-popover>
+                                                                            <span> + {{item.gateway}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- 未使用余额 -->
+                                                                    <span v-else>{{item.gateway}}</span>
+                                                                </div>
+                                                                <!-- 未支付 -->
+                                                                <a v-else class='gateway-pay' @click="showPayDialog(item)">去支付</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="bottom-text">
+
+                                                    <span v-show="isEnd">已经到底啦~</span>
+                                                    <span v-loading=isShowMore></span>
+                                                </div>
+                                                <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
+                                            </div>
+
                                         </div>
                                     </el-tab-pane>
                                     <el-tab-pane label="交易记录" name="2">
@@ -160,8 +211,6 @@
                                                     </div>
                                                 </div>
                                                 <div class="searchbar com-search">
-                                                    <!-- <el-input suffix-icon="el-input__icon el-icon-search" @input="inputChange2" v-model="params2.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2"></el-input>
-                                                    </el-input> -->
                                                     <el-input v-model="params2.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange2" clearable @clear="getTransactionList">
                                                         <i class="el-icon-search input-search" slot="suffix" @Click="inputChange2"></i>
                                                     </el-input>
@@ -198,6 +247,51 @@
                                                 </el-table>
                                                 <pagination :page-data="params2" @sizechange="sizeChange2" @currentchange="currentChange2"></pagination>
                                             </div>
+
+                                            <!-- 移动端显示表格开始 -->
+                                            <div class="mobel">
+                                                <div class="mob-searchbar mob-com-search">
+                                                    <el-input class="mob-search-input" v-model="params2.keywords" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange2" clearable @clear="getTransactionList">
+                                                        <i class="el-icon-search input-search" slot="suffix" @Click="inputChange2"></i>
+                                                    </el-input>
+                                                </div>
+                                                <div class="mob-tabledata">
+                                                    <div class="mob-tabledata-item" v-for="item in dataList2" :key="item.id">
+                                                        <div class="mob-item-row mob-item-row1">
+                                                            <span>{{item.id}}</span>
+                                                            <span>
+                                                                {{item.transaction_number}}
+                                                            </span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row2">
+                                                            <span class="mob-item-row2-name" :title="item.product_name">
+                                                                <span class="dot" :class="item.type"></span>
+                                                                <span class="row2-name-text">
+                                                                    <a v-if="item.order_id !== '--'" class="orderid_a" @click="rowClick(item.order_id)">{{item.order_id}}</a>
+                                                                    <span v-else>{{item.order_id}}</span>
+                                                                </span>
+                                                            </span>
+                                                            <span>
+                                                                <span>{{ commonData.currency_prefix + item.amount}}</span>
+                                                                <!-- <span v-if="item.billing_cycle">/{{item.billing_cycle}}</span> -->
+                                                            </span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row3">
+                                                            <span>{{item.create_time | formateTime}}</span>
+                                                            <div>
+                                                                {{item.gateway}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="bottom-text">
+                                                    <span v-show="isEnd">已经到底啦~</span>
+                                                    <span v-loading=isShowMore></span>
+                                                </div>
+                                                <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
+                                            </div>
+
+
                                         </div>
                                     </el-tab-pane>
                                     <el-tab-pane label="余额记录" name="3">
@@ -239,6 +333,49 @@
                                                 </el-table>
                                                 <pagination :page-data="params3" @sizechange="sizeChange3" @currentchange="currentChange3"></pagination>
                                             </div>
+
+                                            <!-- 移动端显示表格开始 -->
+                                            <div class="mobel">
+                                                <div class="mob-searchbar mob-com-search">
+                                                    <el-input class="mob-search-input" v-model="params3.keywords" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange3" clearable @clear="getCreditList">
+                                                        <i class="el-icon-search input-search" slot="suffix" @Click="inputChange3"></i>
+                                                    </el-input>
+                                                </div>
+                                                <div class="mob-tabledata">
+                                                    <div class="mob-tabledata-item" v-for="item in dataList3" :key="item.id">
+                                                        <div class="mob-item-row mob-item-row1">
+                                                            <span>{{item.id}}</span>
+                                                            <span>
+                                                                <span class="balance-tag" :class="item.type">{{balanceType[item.type].text}}</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row2">
+                                                            <span class="mob-item-row2-name">
+                                                                <span>{{ commonData.currency_prefix + item.amount}}</span>
+                                                            </span>
+                                                            <span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row-notes">
+                                                            <span>{{item.notes}}</span>
+                                                        </div>
+                                                        <div class="mob-item-row mob-item-row3">
+                                                            <span>{{item.create_time | formateTime}}</span>
+                                                            <div>
+                                                                {{item.gateway}}
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="bottom-text">
+                                                    <span v-show="isEnd">已经到底啦~</span>
+                                                    <span v-loading=isShowMore></span>
+                                                </div>
+                                                <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
+                                            </div>
+
+
                                         </div>
                                     </el-tab-pane>
                                 </el-tabs>
@@ -260,10 +397,6 @@
                                             scope.row.product_name?scope.row.product_name:'--'
                                             }}
                                         </span>
-                                        <!-- <span>{{scope.row.items?null
-                                            :
-                                            scope.row.host_name ? '(' + scope.row.host_name + ')' : null
-                                            }}</span> -->
                                     </template>
                                 </el-table-column>
                                 <el-table-column prop="create_time" label="时间" width="250" align="left">
@@ -298,6 +431,55 @@
                                 </el-table-column>
                             </el-table>
                         </div>
+                        <!-- 移动端开始 -->
+                        <div class="mobel">
+                            <div class="mob-tabledata order-detail-table">
+                                <div class="mob-tabledata-item" v-for="item in dataList4" :key="item.id">
+                                    <div class="mob-item-row mob-item-row1">
+                                        <span></span>
+                                        <span>
+                                            <el-tag v-if="item.status" :class="item.status=='Unpaid'?'Unpaid':item.status=='Paid'?'Paid':''">
+                                                {{item.status=='Unpaid'?'未付款':item.status=='Paid'?'已付款':''}}
+                                            </el-tag>
+                                        </span>
+                                    </div>
+                                    <div class="mob-item-row mob-item-row2">
+
+                                        <span class="mob-item-row2-name">
+                                            <span class="dot" :class="item.type"></span>
+                                            <span>{{ item.product_name?item.product_name:'--'}}</span>
+                                        </span>
+                                        <span>
+                                            {{item.amount? commonData.currency_prefix + item.amount + commonData.currency_suffix :
+                                            null}}
+                                            {{ item.billing_cycle&&item.amount? '/' + item.billing_cycle
+                                            : null}}
+                                        </span> 
+                                    </div>
+                                    <div class="mob-item-row mob-item-row-child">
+                                        <div class="child-row" v-for="child in item.items" :key="child.id">
+                                            <span class="child-row-name">{{ child.product_name?child.product_name:'--'}}</span>
+                                            <span>
+                                                {{child.amount? commonData.currency_prefix + child.amount + commonData.currency_suffix :
+                                            null}}
+                                                {{ child.billing_cycle&&child.amount? '/' + child.billing_cycle
+                                            : null}}
+                                            </span>
+                                            <span>{{child.host_status?status[child.host_status]:null}}
+                                                {{child.host_status||child.status ? null : '--'}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mob-item-row mob-item-row3">
+                                        <span>{{item.create_time | formateTime}}</span>
+                                        <div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <!-- 申请提现 dialog -->
                     <div class="tx-dialog">

@@ -229,7 +229,7 @@ class Event
         foreach ($listeners as $key => $listener) {
             $result[$key] = $this->dispatch($listener, $params);
 
-            if (false === $result[$key] || (!is_null($result[$key]) && $once)) {
+            if (/*false === $result[$key] || */(!is_null($result[$key]) && $once)) {
                 break;
             }
         }

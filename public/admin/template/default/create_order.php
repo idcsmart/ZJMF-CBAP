@@ -68,7 +68,7 @@
                 <div class="pro-item" v-for="(item,index) in formData.products" :key="item.key">
                   <div class="p-tit">
                     <span>{{item.product_name || lang.choose_shop}}</span>
-                    <t-icon name="close" size="24px" @click="deltePro(index)">
+                    <t-icon name="close" size="24px" @click="deltePro(index)" v-if="index !== 0">
                     </t-icon>
                   </div>
                   <t-form-item :label="lang.choose_shop" class="price item">

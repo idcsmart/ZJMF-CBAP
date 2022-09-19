@@ -52,7 +52,7 @@ return [
     'log_out_automatically_after_2_hours_without_operation' => '2个小时未操作自动退出登录',
     'login_captcha' => '请输入图形验证码',
     'login_captcha_token' => '请输入图形验证码唯一识别码',
-    'login_captcha_error' => '图形验证码错误',
+    'login_captcha_error' => '行为验证码错误,请查看配置是否正确',
     'login_phone_code_require' => '请选择国家区号',
     'login_phone_code_error' => '国家区号错误',
     'login_phone_require' => '请输入手机号',
@@ -180,6 +180,7 @@ return [
     'auth_management' => '管理',
     'auth_delete' => '删除',
     'auth_user_host' => '用户产品',
+    'auth_recharge_record' => '充值记录',
     'auth_user_order' => '用户订单',
     'auth_user_transaction' => '用户流水',
     'auth_user_log' => '用户日志',
@@ -249,7 +250,6 @@ return [
 
     # 日志
     'admin_modify_user_profile' => '{admin}将{client}的{description}',
-    'old_to_new' => '{field}{old}改为{new}',
     'admin_delete_user_host' => '{admin}将{client}的{host}删除',
     'admin_adjust_user_order_price' => '{admin}将{client}的{order}的价格{old}改为{new}',
     'admin_mark_user_order_payment_status' => '{admin}将{client}的{order}标记为已付款',
@@ -822,4 +822,11 @@ return [
 
     # 导航管理
     'nav_is_not_exist' => '默认导航不存在',
+
+    # 首页管理
+    'one_year_ago' => '一年前',
+    'day' => '天',
+    'hour' => '小时',
+    'minute' => '分钟',
+    'ago' => '前',
 ];

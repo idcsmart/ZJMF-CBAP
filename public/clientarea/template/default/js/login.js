@@ -69,7 +69,20 @@ function captchaCheckCancel() {
           this.token = token
           this.captcha = captchaCode
           this.isShowCaptcha = false
-          this.doLogin()
+          // 判断是否密码登录 是执行登录
+          // 否则判断发送手机验证码还是邮箱验证码
+          if (this.isPassOrCode) {
+            this.doLogin()
+          } else {
+            if (this.isEmailOrPhone) {
+              // 发送邮箱验证码
+              this.sendEmailCode()
+            } else {
+              // 发送手机验证码
+              this.sendPhoneCode()
+            }
+          }
+
         },
         // 登录
         doLogin() {
@@ -266,9 +279,14 @@ function captchaCheckCancel() {
                 // 执行倒计时
                 this.$refs.emailCodebtn.countDown()
               }
-            }).catch(error => {
-              this.errorText = error.data.msg
-              // this.$message.error(error.data.msg);
+            }).catch(err => {
+              if (err.data.msg === "请输入图形验证码" || err.data.msg === "图形验证码错误") {
+                this.isShowCaptcha = true
+                this.$refs.captcha.doGetCaptcha()
+              } else {
+                this.errorText = err.data.msg
+                // this.$message.error(err.data.msg);
+              }
             })
           }
         },
@@ -302,9 +320,14 @@ function captchaCheckCancel() {
                 // 执行倒计时
                 this.$refs.phoneCodebtn.countDown()
               }
-            }).catch(error => {
-              this.errorText = error.data.msg
-              // this.$message.error(error.data.msg);
+            }).catch(err => {
+              if (err.data.msg === "请输入图形验证码" || err.data.msg === "图形验证码错误") {
+                this.isShowCaptcha = true
+                this.$refs.captcha.doGetCaptcha()
+              } else {
+                this.errorText = err.data.msg
+                // this.$message.error(err.data.msg);
+              }
             })
           }
         },

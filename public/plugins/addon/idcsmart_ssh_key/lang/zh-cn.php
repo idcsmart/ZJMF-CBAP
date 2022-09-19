@@ -21,4 +21,7 @@ return [
     'log_client_add_ssh_key' => '{client}添加SSH密钥，密钥名称：{name}',
     'log_client_edit_ssh_key' => '{client}修改SSH密钥，密钥名称：{name}',
     'log_client_delete_ssh_key' => '{client}删除SSH密钥，密钥名称：{name}',
+
+    # 导航
+    'nav_plugin_addon_idcsmart_ssh_key' => 'SSH密钥',
 ];

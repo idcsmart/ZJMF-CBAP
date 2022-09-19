@@ -831,7 +831,7 @@ class OrderModel extends Model
                 'rel_id' => 0,
                 'data' => json_encode($param['config_options']),
                 'amount' => $amount,
-                'price' => $host['first_payment_amount'],
+                'price' => ($host['first_payment_amount']+$param['price_difference'])>0 ? ($host['first_payment_amount']+$param['price_difference']) : 0,
                 'billing_cycle_name' => $host['billing_cycle_name'],
                 'billing_cycle_time' => $host['billing_cycle_time'],
                 'status' => $amount>0 ? 'Unpaid' : 'Pending',
@@ -857,7 +857,11 @@ class OrderModel extends Model
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
 
             if($amount<=0){
-                
+                HostModel::update([
+                    'first_payment_amount' => $upgrade['price'],
+                    'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['price'] : 0,
+                ],['id' => $host['id']]);
+
                 $ModuleLogic = new ModuleLogic();
                 $host = HostModel::find($host['id']);
                 $ModuleLogic->changePackage($host, $param['config_options']);

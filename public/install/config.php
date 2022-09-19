@@ -12,3 +12,5 @@ define('DATABASE_CHARSET', '#charset#'); // 数据库编码
 define('DIR_ADMIN', '#admin_application#'); // 后台目录
 
 define('AUTHCODE', '#authcode#'); //系统唯一身份验证字符
+
+define('IS_ZKEYS', false); //是否zkeys迁移系统

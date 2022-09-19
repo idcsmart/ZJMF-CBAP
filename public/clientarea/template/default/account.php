@@ -63,8 +63,7 @@
                                                         <div class="box-item-t">{{lang.account_label2}}</div>
                                                         <div class="box-item-b">
                                                             <el-select v-model="accountData.language">
-                                                                <el-option value="zh-cn" label="中文"></el-option>
-                                                                <el-option value="en-us" label="英文"></el-option>
+                                                                <el-option v-for="item in commonData.lang_list" :key="item.display_flag" :value="item.display_lang" :label="item.display_name"></el-option>
                                                             </el-select>
                                                         </div>
                                                     </div>
@@ -172,6 +171,7 @@
                                         </div>
                                     </div>
                                 </el-tab-pane>
+                                <!-- 操作日志开始 -->
                                 <el-tab-pane :label="lang.account_menu2" name="2">
                                     <div class="searchbar com-search">
                                         <el-input v-model="params.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange" clearable @clear="getAccountList">
@@ -198,6 +198,41 @@
                                             </el-table>
                                             <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange"></pagination>
                                         </div>
+                                    </div>
+
+                                    <!-- 移动端显示表格开始 -->
+                                    <div class="mobel">
+                                        <div class="mob-searchbar mob-com-search">
+                                            <el-input class="mob-search-input" v-model="params.keywords" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange" clearable @clear="getAccountList">
+                                                <i class="el-icon-search input-search" slot="suffix" @Click="inputChange"></i>
+                                            </el-input>
+                                        </div>
+                                        <div class="mob-tabledata">
+                                            <div class="mob-tabledata-item" v-for="item in dataList" :key="item.id">
+                                                <div class="mob-item-row mob-item-row1">
+                                                    <span>{{item.id}}</span>
+                                                    <span>
+                                                        {{item.ip}}
+                                                    </span>
+                                                </div>
+                                                <div class="mob-item-row mob-item-row2">
+                                                    <span class="mob-item-row2-name" :title="item.description">
+                                                        {{item.description}}
+                                                    </span>
+                                                </div>
+                                                <div class="mob-item-row mob-item-row3">
+                                                    <span>{{item.create_time | formateTime}}</span>
+                                                    <div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bottom-text">
+                                            <span v-show="isEnd">已经到底啦~</span>
+                                            <span v-loading=isShowMore></span>
+                                        </div>
+                                        <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
                                     </div>
 
                                 </el-tab-pane>

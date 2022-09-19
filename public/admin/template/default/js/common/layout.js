@@ -101,12 +101,11 @@
       },
       created() {
         this.getSystemConfig()
-
       },
       methods: {
         async getSystemConfig() {
           try {
-            const res = await Axios.get('/configuration/system')
+            const res = await getCommon()
             document.title = res.data.data.website_name
           } catch (error) {
             console.log(error)

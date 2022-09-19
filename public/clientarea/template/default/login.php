@@ -32,7 +32,7 @@
     <div class="template">
         <div id="login" v-cloak>
             <!-- 验证码 -->
-            <captcha-dialog :is-show-captcha="isShowCaptcha" ref="captcha" ></captcha-dialog>
+            <captcha-dialog :is-show-captcha="isShowCaptcha" ref="captcha"></captcha-dialog>
             <div class="login-container">
                 <div class="container-back">
                     <div class="back-line1"></div>
@@ -90,7 +90,6 @@
                                     </el-input>
                                     <count-down-button ref="phoneCodebtn" @click.native="sendPhoneCode" v-if="!isEmailOrPhone" my-class="code-btn"></count-down-button>
                                     <!-- <el-button v-if="!isEmailOrPhone" class="code-btn" type="primary">获取验证码</el-button> -->
-
                                 </div>
                                 <div class="form-item rember-item">
                                     <el-checkbox v-model="formData.isRemember">{{lang.login_remember}}</el-checkbox>
@@ -105,9 +104,9 @@
                                 </div>
                                 <div class="form-item read-item">
                                     <el-checkbox v-model="checked">
-                                        {{lang.login_read}}
-                                    </el-checkbox><a @click="toRead">{{lang.login_list}}</a>
+                                    </el-checkbox>{{lang.login_read}}<a @click="toRead">{{lang.login_list}}</a>
                                 </div>
+                                
                                 <div class="form-item line-item" v-if="commonData.login_phone_verify == 1">
                                     <el-divider><span class="text">or</span></el-divider>
                                 </div>

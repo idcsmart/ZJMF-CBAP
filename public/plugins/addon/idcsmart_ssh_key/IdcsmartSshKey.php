@@ -15,6 +15,8 @@ class IdcsmartSshKey extends Plugin
 {
     #public function idcsmartSshKeyidcsmartauthorize(){}
 
+    public $noNav;
+
     # 插件基本信息
     public $info = array(
         'name'        => 'IdcsmartSshKey', //插件英文名,作为插件唯一标识,改成你的插件英文就行了

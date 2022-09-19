@@ -95,8 +95,8 @@
                                 </div>
                                 <div class="form-item read-item">
                                     <el-checkbox v-model="checked">
-                                        {{lang.login_read}}
-                                    </el-checkbox><a @click="toRead">{{lang.login_list}}</a>
+
+                                    </el-checkbox>{{lang.login_read}}<a @click="toRead">{{lang.login_list}}</a>
                                 </div>
                                 <div class="read-item" v-if="errorText.length !== 0">
                                     <el-alert :title="errorText" type="error" show-icon :closable="false">

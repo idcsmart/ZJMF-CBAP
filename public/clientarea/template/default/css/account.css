@@ -38,7 +38,8 @@
     line-height: .32rem;
     color: #1E2736;
 }
-.name-country{
+
+.name-country {
     display: flex;
     align-items: center;
 }
@@ -176,7 +177,7 @@
     width: auto;
 }
 
-.el-input__suffix{
+.el-input__suffix {
     display: flex;
     align-items: center;
 }
@@ -208,7 +209,7 @@ th {
 }
 
 /* 验证码修改密码 */
-.login-top{
+.login-top {
     display: flex;
     flex-direction: row;
     margin-top: .3rem;
@@ -221,7 +222,7 @@ th {
     cursor: pointer;
 }
 
-.login-phone{
+.login-phone {
     margin-left: .4rem;
 }
 
@@ -239,8 +240,8 @@ th {
 .form-item {
     margin-top: .3rem;
 }
- 
-.input-with-select  .el-input-group__prepend{
+
+.input-with-select .el-input-group__prepend {
     background: #FFFFFF;
     width: 64px;
 }
@@ -298,16 +299,207 @@ th {
     font-size: .16rem;
 }
 
-.code-pass-select{
+.code-pass-select {
     width: auto;
 }
 
-.el-message-box__btns > .el-button{
+.el-message-box__btns>.el-button {
     display: inline-block;
     margin-left: 10px;
 }
 
-.el-message-box__btns{
+.el-message-box__btns {
     display: flex;
     flex-direction: row-reverse;
+}
+
+.mobel {
+    display: none;
+}
+
+@media screen and (max-width: 750px) {
+    .main-card-title {
+        font-size: .48rem;
+    }
+
+    .name-text {
+        font-size: .4rem;
+    }
+
+    .basic-title,
+    .account-title {
+        font-size: .36rem;
+        font-family: PingFang SC;
+        font-weight: 800;
+        line-height: .36rem;
+        color: #0058FF;
+        border-left: none;
+        padding-left: 0;
+    }
+
+    .box-item-t {
+        font-size: .28rem;
+        line-height: .28rem;
+    }
+
+    .el-row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .el-col {
+        width: 100%;
+    }
+
+    .box-item-b>.el-input,
+    .el-select {
+        width: 100%;
+        margin-bottom: .4rem;
+    }
+
+    .el-input__inner {
+        font-size: .32rem;
+    }
+
+    .btn-save {
+        width: calc(100% - .6rem);
+        margin: 0 auto;
+        height: .8rem;
+        font-size: .34rem;
+    }
+
+    .code-btn {
+        width: auto;
+        height: .8rem;
+        font-size: .32rem;
+    }
+
+    /* 弹窗底部按钮 */
+    .dialog-footer {
+        flex-direction: column;
+    }
+
+    .dialog-footer .btn-ok,
+    .dialog-footer .btn-no {
+        width: 100%;
+        height: .8rem;
+        font-size: .34rem;
+    }
+
+    .dialog-footer .btn-no {
+        margin-left: 0;
+        margin-top: .2rem;
+    }
+
+    .el-form-item__label {
+        font-size: .32rem;
+    }
+
+    .edit-icon {
+        font-size: .4rem;
+    }
+
+    .dialog-title {
+        font-size: .36rem;
+    }
+
+    .forget-pass {
+        font-size: .28rem;
+        line-height: .28rem;
+    }
+
+    /* 账户信息操作日志 */
+    .content_table {
+        display: none;
+    }
+
+    .com-search {
+        display: none;
+    }
+
+    .mobel {
+        display: block;
+    }
+
+    .content_searchbar .left_tips .tips_item {
+        margin-right: .1rem;
+    }
+
+    .searchbar {
+        display: none;
+    }
+
+    .tabledata {
+        display: none;
+    }
+
+    .mob-searchbar {
+        margin-top: .53rem;
+    }
+
+    .mob-search-input {
+        height: .8rem;
+        background: rgba(134, 146, 176, 0.1);
+        border-radius: 3px 3px 0px 0px;
+    }
+
+    .mob-search-input>input {
+        height: .8rem;
+        background: rgba(134, 146, 176, 0.1);
+        border-radius: 3px 3px 0px 0px;
+    }
+
+    /* 表格开始 */
+    .mob-tabledata {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #D7D8DB;
+        border-radius: 0px 0px 3px 3px;
+    }
+
+    .mob-tabledata-item {
+        /* height: 2.32rem; */
+        height: auto;
+        border-bottom: 1px solid #D7D8DB;
+        display: flex;
+        flex-direction: column;
+        padding: 0 .3rem;
+    }
+
+    .mob-item-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: .2rem;
+    }
+
+    .mob-item-row1,
+    .mob-item-row3,
+    .mob-item-row-notes {
+        font-size: .26rem;
+        color: #8692B0;
+    }
+
+    .mob-item-row2-name {
+        font-size: .32rem;
+    }
+
+    .mob-item-row3 {
+        margin-bottom: .4rem;
+    }
+
+    .back-top-img {
+        width: 0.88rem;
+        position: fixed;
+        right: .3rem;
+        bottom: 1.17rem;
+    }
+
+    .bottom-text {
+        font-size: .26rem;
+        line-height: .26rem;
+        color: #8692B0;
+        margin: .4rem 0;
+        display: flex;
+        justify-content: center;
+    }
 }

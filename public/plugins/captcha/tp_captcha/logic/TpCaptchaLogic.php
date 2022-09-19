@@ -18,7 +18,7 @@ class TpCaptchaLogic
             'imageW' => $config['captcha_width'],
             'imageH' => $config['captcha_height'],
             'length' => $config['captcha_length'],
-            'codeSet' => $config['code_set']??"1234567890",
+            'codeSet' => $config['code_set'] ?? "1234567890",
         ];
 
         $response = $Captcha->create($captchaConfig);
@@ -148,6 +148,96 @@ class TpCaptchaLogic
             ";
         } else {
             $html = "
+            <style>
+                .captcha-content{
+                    width:5.66rem;
+                    height:1.96rem;
+                    background:#fff;
+                    opacity: 1;
+                    position: fixed;
+                    left: 50%;
+                    top: 50%;
+                    margin-top: -1.58rem;
+                    transform:translateX(-3.6rem);
+                    padding:.6rem .8rem;
+                    border-radius 5px;
+                }
+                .captcha-footer{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content:flex-end;
+                    margin-top: .4rem;
+                }
+                #check-btn{
+                    width: 1.12rem;
+                    height: .46rem;
+                    background: #0058FF;
+                    color: #fff;
+                    font-size: .16rem;
+                    border:none;
+                    border-radius: .03rem;
+                    cursor: pointer;
+                }
+                #cancel-btn{
+                    width: 1.12rem;
+                    height: .46rem;
+                    margin-left: .12rem;
+                    background: #E7E7E7;
+                    color: #1E2736;
+                    font-size:.16rem;
+                    border: none;
+                    border-radius: .03rem;
+                    cursor: pointer;
+                }
+                #captcha-input{
+                    width: 4.45rem;
+                    height: .40rem;
+                    margin-right: .1rem;
+                }
+                #captcha-img{
+                    cursor: pointer;
+                    height:.46rem;
+                    width:1.11rem;
+                }
+                .captcha-title{
+                    font-size: .24rem;
+                    line-height: .24rem;
+                }
+                @media screen and (max-width: 750px) {
+                    .captcha-content{
+                        height:3.5rem;
+                    }
+                    .captcha-footer{
+                        display:flex;
+                        flex-direction:column;
+                    }
+                    #check-btn,#cancel-btn{
+                        width:100%;
+                        height:.8rem;
+                        font-size:.34rem
+                    }
+                    #check-btn{}
+                    #cancel-btn{
+                        margin-left: 0;
+                        margin-top:.2rem;
+                    }
+                    #captcha-img{
+                        cursor: pointer;
+                        height:.8rem;
+                        width:1.93rem;
+                    }
+                    #captcha-input{
+                        width: 100%;
+                        height: .8rem;
+                        margin-right: .1rem;
+                        font-size:.28rem;
+                    }
+                    .captcha-title{
+                        font-size: .36rem;
+                        line-height: .36rem;
+                    }
+                }
+            </style>
             <div id='captcha-outer' style='
                 background: rgba(123,123,123,0.6);
                 position: fixed;
@@ -158,21 +248,19 @@ class TpCaptchaLogic
                 z-index: 20;
                 filter: alpha(opacity=60);
             '>
-                <div style='width:5.66rem;height:1.96rem;background:#fff;opacity: 1;position: fixed;left: 50%;
-                top: 50%;margin-top: -1.58rem;margin-left: -3.13rem;padding:.6rem .8rem;border-radius 5px;'>
+                <div class='captcha-content' style=''>
                     <div style=\"width: 100%;display: flex;flex-direction: column;\">
-                    <div class=\"captcha-title\" style=\"font-size: .24rem;line-height: .24rem;\">图形验证</div>
+                    <div class=\"captcha-title\">图形验证</div>
                     <div class=\"captcha-main\" style=\"display: flex;flex-direction: row;margin-top: .31rem;\">
-                        <input id='captcha-input' type=\"text\" placeholder=\"请输入验证码\" style=\"width: 4.45rem;height: .40rem;margin-right: .1rem;\">
-                        <img style=\"cursor: pointer;height:.46rem;width:1.11rem;\" id=\"captcha-img\" src=\"" . $base64 . "\">
+                        <input id='captcha-input' type=\"text\" placeholder=\"请输入验证码\">
+                        <img id=\"captcha-img\" src=\"" . $base64 . "\">
                     </div>
                         <p id=\"captcha-error-text\" style='color: red;font-size:.16rem'><p/>
                     </div>
-                    <div class=\"captcha-footer\" style=\"display: flex; flex-direction: row-reverse;margin-top: .4rem;\">
-                        <button style=\"width: 1.12rem;height: .46rem;margin-left: .12rem;background: #E7E7E7;color: #1E2736;font-size:
-                            .16rem;border: none;border-radius: .03rem;cursor: pointer;\" id=\"cancel-btn\">取消</button>
-                        <button style=\"width: 1.12rem;height: .46rem;background: #0058FF;color: #fff;font-size: .16rem;border:
-                            none;border-radius: .03rem;cursor: pointer;\" id=\"check-btn\">验证</button>
+                    <div class=\"captcha-footer\">
+                        <button calss='captcha-ok' id=\"check-btn\">验证</button>
+                        <button calss='captcha-no' id=\"cancel-btn\">取消</button>
+                        
                     </div>
                 </div>
             </div>

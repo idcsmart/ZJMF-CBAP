@@ -92,6 +92,11 @@ class NavModel extends Model
      */
     public function deletePluginNav($param)
     {
+        $navId = $this->where('module', $param['module'])->where('plugin', $param['plugin'])->column('id');
+        if(!empty($navId)){
+            $MenuModel = new MenuModel();
+            $MenuModel->whereIn('nav_id', $navId)->delete();
+        }
         $this->where('module', $param['module'])->where('plugin', $param['plugin'])->delete();
         return ['status' => 200, 'msg' => lang('create_success')];
     }

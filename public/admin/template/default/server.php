@@ -18,12 +18,14 @@
         {{row.host_num}}({{row.host_active_num}})
       </template>
       <template #name="{row}">
-        <t-icon v-if="row.linkStatus === 200" name="check-circle-filled" style="color:#00a870;"></t-icon>
-        <template v-else>
-          <t-tooltip :content="row.fail_reason" theme="light" :show-arrow="false" :disabled="!row.fail_reason">
-            <t-icon name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
-          </t-tooltip>
-        </template>
+        <span @click="getSingleStatus(row.id)" style="cursor: pointer;">
+          <t-icon v-if="row.linkStatus === 200" name="check-circle-filled" style="color:#00a870;"></t-icon>
+          <template v-else>
+            <t-tooltip :content="row.fail_reason" theme="light" :show-arrow="false" :disabled="!row.fail_reason">
+              <t-icon name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
+            </t-tooltip>
+          </template>
+        </span>
         {{row.name}}
       </template>
       <template #link="{row}">

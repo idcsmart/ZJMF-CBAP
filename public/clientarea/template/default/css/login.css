@@ -200,7 +200,7 @@
 
 .login-btn {
     width: 100%;
-    height: .46rem;
+    height: 46px;
     background: #0058FF;
 }
 
@@ -224,6 +224,83 @@
 
 .type-btn {
     width: 100%;
-    height: 0.46rem;
+    height: 46px;
     font-size: .16rem;
+}
+
+@media screen and (max-width: 750px) {
+    .login-container {
+        height: calc(100vh - 1.2rem);
+        width: 100vw;
+        background: #F2F2FE;
+        padding: .6rem 0;
+    }
+
+    .container-back {
+        display: none;
+    }
+
+    .container-before {
+        width: 100%;
+        height: 100%;
+        margin: 0rem .3rem;
+        position: unset;
+        z-index: 0;
+    }
+
+    .login {
+        padding-top: 1.17rem;
+        padding-left: .3rem;
+        padding-right: .3rem;
+        font-size: .26rem;
+        line-height: .3rem;
+    }
+
+    .login-text-title {
+        font-size: .4rem;
+    }
+
+    .login-text-regist {
+        margin-top: .1rem;
+        font-size: .28rem;
+    }
+
+    .login-form {
+        margin-top: 1.21rem;
+    }
+
+    .form-main {
+        margin-top: .6rem;
+    }
+
+    .login-email,
+    .login-phone {
+        height: .34rem;
+        width: 100%;
+        text-align: center;
+        color: #666B80;
+        cursor: pointer;
+        padding-bottom: .13rem;
+    }
+
+
+    .el-checkbox__label {
+        font-size: .26rem;
+    }
+
+
+    .read-item {
+        line-height: .3rem;
+    }
+
+    .login-btn {
+        font-size: .34rem;
+        height: .8rem;
+    }
+
+    .type-btn {
+        border: none;
+        color: #0058FF;
+        font-size: .34rem;
+    }
 }

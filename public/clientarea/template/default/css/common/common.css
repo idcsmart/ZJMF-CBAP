@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+/* 提示弹窗 */
+.el-message-box {
+    width: 5.2rem;
+}
+
 /* 取消number类型输入框的加减按钮 */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -130,12 +135,16 @@ tbody .el-table__row {
     display: flex;
     flex-direction: row;
     align-items: center;
-    margin-left: .46rem;
+    /* margin-left: .46rem; */
 }
+
 .header-left .el-input input {
     width: 4rem;
 }
 
+.menu-img {
+    display: none;
+}
 
 
 .header-left .el-input input {
@@ -406,4 +415,122 @@ tr>td {
 
 th {
     padding-left: 20px !important;
+}
+
+
+@media screen and (max-width: 750px) {
+    .el-main {
+        padding-top: 0.66rem;
+        padding-left: .3rem;
+        padding-right: .3rem;
+    }
+
+    /* 左侧菜单 */
+    .el-aside {
+        display: none;
+    }
+
+    /* 顶部展示 */
+    .el-header {
+        height: 1rem !important;
+    }
+
+    .menu-img {
+        display: inline-block;
+        cursor: pointer;
+        height: .56rem;
+    }
+
+    .header-right {
+        margin-right: 0px;
+    }
+
+    .right-item img {
+        width: .56rem;
+        height: .56rem;
+    }
+
+    /* 左侧弹窗菜单 */
+    .drawer-menu {
+        background: #1E41C9;
+        font-size: .32rem;
+    }
+
+    .drawer-menu-top {
+        width: 3.8rem;
+        height: 50px;
+        display: flex;
+        align-items: center;
+    }
+
+    .drawer-menu-logo {
+        width: 2rem;
+        margin: 0 auto;
+    }
+
+    .drawer-menu-list-top {
+        margin-top: .86rem;
+        color: #FFFFFF;
+    }
+
+    .drawer-menu-list-top>.drawer-menu-active {
+        border-left: 3px solid #FFFF;
+        opacity: 1;
+        margin-left: 0.04rem;
+    }
+
+    .drawer-menu-item {
+        padding-left: .41rem;
+        margin-left: 0.07rem;
+        margin-bottom: .5rem;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: #FFFFFF;
+        opacity: 0.6;
+    }
+
+    .drawer-item-img {
+        height: .38rem;
+    }
+
+    .drawer-item-text {
+        line-height: 20px;
+        margin-left: .41rem;
+    }
+
+    .el-input__inner {
+        height: .8rem;
+        font-size: .3rem;
+    }
+
+    .dialog-title {
+        font-size: .32rem;
+    }
+
+    .el-tabs__item {
+        font-size: .34rem;
+        margin-bottom: .15rem;
+        margin-top: .51rem;
+    }
+
+    .el-icon-search {
+        font-size: .4rem;
+    }
+
+    .el-button {
+        font-size: .34rem;
+    }
+
+    .right-item {
+        margin-left: .3rem;
+    }
+
+    .el-divider__text {
+        font-size: .28rem;
+    }
+
+    /* .el-input .el-input__clear {
+        font-size: .4rem;
+    } */
 }

@@ -45,7 +45,7 @@ return [
     'log_out_automatically_after_2_hours_without_operation' => '2个小时未操作自动退出登录',
     'login_captcha' => '请输入图形验证码',
     'login_captcha_token' => '请输入图形验证码唯一识别码',
-    'login_captcha_error' => '图形验证码错误',
+    'login_captcha_error' => '行为验证码错误,请查看配置是否正确',
 
     # 前台登录注册修改密码
     'login_type_is_required' => '请传入登录类型',

@@ -175,6 +175,7 @@ class Task extends Command
 	public function hook($data){
 		try {
 			$result_hook = hook('task_run',$data);
+			$result_hook = array_values(array_filter($result_hook ?? []));
 			if($result_hook[0]){
 				$result['status']=$result_hook[0];
 			}else{

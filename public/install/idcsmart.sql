@@ -1115,9 +1115,9 @@ insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (24,'admin','nav_auto','cron.html','',21,25,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (25,'admin','nav_plugin','','control-platform',0,43,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (26,'admin','nav_plugin_list','plugin.html','',25,27,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','',0,1,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','',0,2,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (29,'admin','nav_navigation','navigation.html','',21,28,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','menu3',0,1,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','menu4',0,2,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (29,'admin','nav_navigation','navigation.html','',11,28,'','');
 
 /*Table structure for table `idcsmart_notice_setting` */
 

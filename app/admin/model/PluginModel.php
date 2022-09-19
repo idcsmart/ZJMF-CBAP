@@ -2,6 +2,7 @@
 namespace app\admin\model;
 
 use app\common\model\NavModel;
+use app\common\model\MenuModel;
 use think\db\Query;
 use think\Model;
 use think\Validate;
@@ -721,7 +722,7 @@ class PluginModel extends Model
 
         $navPluginId = $NavModel->where('type','admin')->where('name','nav_plugin')->value('id')?:0;
         if($noNav===false){
-            $NavModel->create([
+            $nav = $NavModel->create([
                 'type' => 'admin',
                 'name' => "nav_plugin_addon_{$name}",
                 'url' => "plugin/{$name}/index.html",
@@ -730,6 +731,26 @@ class PluginModel extends Model
                 'module' => $module,
                 'plugin' => parse_name($name,1)
             ]);
+
+            $navPluginListId = $NavModel->where('type','admin')->where('name','nav_plugin_list')->value('id')?:0;
+
+            if(!empty($navPluginListId)){
+                $MenuModel = new MenuModel();
+                $menuPluginListParentId = $MenuModel->where('type','admin')->where('nav_id', $navPluginListId)->value('parent_id')?:0;
+                if(!empty($menuPluginListParentId)){
+                    $maxOrder = $NavModel->max('order');
+                    $MenuModel->create([
+                        'type' => 'admin',
+                        'menu_type' => 'plugin',
+                        'name' => lang_plugins("nav_plugin_addon_{$name}"),
+                        'language' => '',
+                        'nav_id' => $nav->id,
+                        'parent_id' => $menuPluginListParentId,
+                        'order' => $maxOrder+1,
+                        'create_time' => time(),
+                    ]);
+                }
+            }
         }
 
         # 后台导航文件存在,导航添加至插件之上,管理之下
@@ -757,8 +778,8 @@ class PluginModel extends Model
         ]);*/
 
         # 前台导航文件存在
-        if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/sidebar_home.php")){
-            $navs = require WEB_ROOT . "plugins/{$module}/{$name}/sidebar_home.php";
+        if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/sidebar_clientarea.php")){
+            $navs = require WEB_ROOT . "plugins/{$module}/{$name}/sidebar_clientarea.php";
             if (!empty($navs[0])){
                 $NavModel = new NavModel();
                 foreach ($navs as $nav){

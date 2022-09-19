@@ -188,13 +188,22 @@
                             let num = 0
                             systemList.map(item => {
                                 if (!item.url) {
-                                    item.url = num
+                                    item.url = 'menu' + num
                                     num += 1
                                 }
                             })
                             this.systemList = systemList
                             // 插件默认导航
-                            this.pluginList = res.data.data.plugin_nav
+                            const pluginList = res.data.data.plugin_nav
+                            pluginList.map(item => {
+                                item.navs.map(n => {
+                                    if (!n.url) {
+                                        n.url = 'menu' + num
+                                        num += 1
+                                    }
+                                })
+                            })
+                            this.pluginList = pluginList
                             // 语言列表
                             this.language = res.data.data.language
                             this.language.forEach(item => {
@@ -507,6 +516,7 @@
                         // 给一个唯一id
                         this.newFormData.id = id
                         const newPage = { ...this.newFormData, child: [] }
+                        console.log("新增数据", newPage);
                         this.menuList.push(newPage)
                         this.visible = false
                     } else {
@@ -562,8 +572,10 @@
                             }
                         })
                     }
+                    console.log(this.newFormData.type);
                     // 页面类型为插件
                     if (this.newFormData.type == 'plugin') {
+                        console.log("新增页面插件");
                         this.selectList.forEach(list => {
                             list.navs.forEach(item => {
                                 if (item.url === url) {

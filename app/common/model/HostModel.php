@@ -918,8 +918,13 @@ class HostModel extends Model
             $host = $this->find($upgrade['host_id']);
             $ModuleLogic->changeProduct($host, json_decode($upgrade['data'], true));
         }else if($upgrade['type']=='config_option'){
-            $ModuleLogic = new ModuleLogic();
             $host = $this->find($upgrade['host_id']);
+            $this->update([
+                'first_payment_amount' => $upgrade['price'],
+                'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['price'] : 0,
+            ],['id' => $upgrade['host_id']]);
+            $ModuleLogic = new ModuleLogic();
+            //$host = $this->find($upgrade['host_id']);
             $ModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
         }
 
