@@ -76,7 +76,6 @@ class AdminModel extends Model
             ->toArray();
 
         $count = $this->alias('a')
-            ->field('a.id,a.nickname,a.name,a.email,a.status,group_concat(ar.name) as roles')
             ->leftjoin('admin_role_link arl','a.id=arl.admin_id')
             ->leftjoin('admin_role ar','arl.admin_role_id=ar.id')
             ->where($where)

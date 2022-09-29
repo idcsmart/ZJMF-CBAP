@@ -65,6 +65,16 @@ class ConfigurationValidate extends Validate
 		# 主题设置
 		'admin_theme' => 'require',
 		'clientarea_theme' => 'require',
+
+        # 实名设置
+        'certification_open' => 'require|in:0,1',
+        'certification_approval' => 'require|in:0,1',
+        'certification_notice' => 'require|in:0,1',
+        'certification_update_client_name' => 'require|in:0,1',
+        'certification_upload' => 'require|in:0,1',
+        'certification_update_client_phone' => 'require|in:0,1',
+        'certification_uncertified_suspended_host' => 'require|in:0,1',
+
     ];
 
     protected $message  =  [
@@ -157,6 +167,15 @@ class ConfigurationValidate extends Validate
 		# 主题设置
 		'admin_theme.require' => 'configuration_theme_admin_theme_cannot_empty',
 		'clientarea_theme.require' => 'configuration_theme_clientarea_theme_cannot_empty',
+
+        # 实名设置
+		'certification_open.require' => 'configuration_certification_open_require',
+		'certification_approval.require' => 'configuration_certification_approval_require',
+		'certification_notice.require' => 'configuration_certification_notice_require',
+		'certification_update_client_name.require' => 'configuration_certification_update_client_name_require',
+        'certification_upload.require' => 'configuration_certification_upload_require',
+		'certification_update_client_phone.require' => 'configuration_certification_update_client_phone_require',
+		'certification_uncertified_suspended_host.require' => 'configuration_certification_uncertified_suspended_host_require',
     ];
     protected $scene = [
         'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url'],
@@ -187,5 +206,14 @@ class ConfigurationValidate extends Validate
 			'cron_order_overdue_day',
 			],
 		'theme_update' => ['admin_theme', 'clientarea_theme'],
+		'certification_update' => [
+		    'certification_open',
+            'certification_approval',
+            'certification_notice',
+            'certification_update_client_name',
+            'certification_update_client_phone',
+            'certification_uncertified_suspended_host',
+            'certification_upload'
+        ],
     ];
 }

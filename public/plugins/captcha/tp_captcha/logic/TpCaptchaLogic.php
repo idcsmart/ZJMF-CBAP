@@ -91,13 +91,13 @@ class TpCaptchaLogic
 
                 <script>
                 
-                    let timer = setTimeout(() => { doRightNow() }, 500)
-                    let tokenTag = '" . $token . "'
-                    let inputTimer = null;
+                    var captchaTimer = setTimeout(() => { doRightNow() }, 500)
+                    var tokenTag = '" . $token . "'
+                    var inputTimer = null;
 
                     // 开始时触发的事件 给各个按钮绑定点击事件
                     function doRightNow(){
-                        clearInterval(timer);
+                        clearInterval(captchaTimer);
                         document.getElementById(\"captcha-img\").onclick = function () { getCaptcha() }
                         $('#captcha-input').bind('input',function(e){ captchaInput(e) })
                     }
@@ -146,12 +146,12 @@ class TpCaptchaLogic
                     }
                 </script>
             ";
-        } else {
+        }
+        else {
             $html = "
             <style>
                 .captcha-content{
                     width:5.66rem;
-                    height:1.96rem;
                     background:#fff;
                     opacity: 1;
                     position: fixed;
@@ -204,9 +204,7 @@ class TpCaptchaLogic
                     line-height: .24rem;
                 }
                 @media screen and (max-width: 750px) {
-                    .captcha-content{
-                        height:3.5rem;
-                    }
+
                     .captcha-footer{
                         display:flex;
                         flex-direction:column;
@@ -265,13 +263,13 @@ class TpCaptchaLogic
                 </div>
             </div>
 
-
+        <script src='https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js'></script>
         <script>
-            let timer = setTimeout(() => { doRightNow() }, 500)
-            let tokenTag = '" . $token . "'
+            var captchaTimer = setTimeout(() => { doRightNow() }, 500)
+            var tokenTag = '" . $token . "'
             function getCaptcha(){       
                 $.ajax({
-                    url:'captcha/tp_captcha/index/refresh',
+                    url:'/captcha/tp_captcha/index/refresh', 
                     success:function(result){
                         $('#captcha-img').prop('src',result.base64)
                         // captchaTag = result.captcha
@@ -282,7 +280,7 @@ class TpCaptchaLogic
 
             // 开始时触发的事件 给各个按钮绑定点击事件
             function doRightNow(){
-                clearInterval(timer);
+                clearInterval(captchaTimer);
                 document.getElementById(\"check-btn\").onclick = function () { check() };
                 document.getElementById(\"cancel-btn\").onclick = function () { cancel() }
                 document.getElementById(\"captcha-img\").onclick = function () { getCaptcha() }
@@ -294,7 +292,7 @@ class TpCaptchaLogic
                 const inputValue = $('#captcha-input').val().replace(/\s/g,'')
                 // 调用验证验证码接口 进行后台验证
                 $.ajax({
-                    url:'captcha/tp_captcha/index/verify',
+                    url:'/captcha/tp_captcha/index/verify',
                     method:'post',
                     data:{
                         'captcha':inputValue,
@@ -335,6 +333,7 @@ class TpCaptchaLogic
     # 验证
     public function verify($param)
     {
+
         $token = $param['token'] ?? '';
 
         $captcha = $param['captcha'] ?? '';

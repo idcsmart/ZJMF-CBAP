@@ -20,9 +20,8 @@
                 <el-main>
                     <!-- 自己的东西 -->
                     <div class="main-card">
-                        在这里写
-                        <!-- 验证码 -->
-                        <captcha-dialog @get-captcha-data="getData"></captcha-dialog>
+                    <div class="main-card-title">{{lang.ticket_title}}</div>
+                        在这里写 {{commonData.currency_suffix}}
                         <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange">
                         </pagination>
                     </div>
@@ -34,5 +33,5 @@
     <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/template.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
-    <script src="/{$template_catalog}/template/{$themes}/components/captchaDialog/captchaDialog.js"></script>
+    <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
     {include file="footer"}

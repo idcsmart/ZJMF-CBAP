@@ -70,3 +70,60 @@ function globalSearch(params) {
 function getMenu() {
   return Axios.get('/menu')
 }
+
+/* 停用相关 */
+// 获取停用页面
+function refundPage(params) {
+  return Axios.get(`/refund`, { params })
+}
+// 申请停用
+function refund(params) {
+  return Axios.post(`/refund`, params)
+}
+// 取消停用
+function cancel(params) {
+  return Axios.put(`/refund/${params.id}/cancel`, params)
+}
+// 获取产品停用信息
+function refundMsg(params) {
+  return Axios.get(`/refund/host/${params.id}/refund`, { params })
+}
+
+// 账户详情
+function account() {
+  return Axios.get(`/account`)
+}
+// 支付方式
+function gatewayList() {
+  return Axios.get(`/gateway`)
+}
+// 支付
+function pay(params) {
+  return Axios.post(`/pay`, params)
+}
+// 支付状态
+function getPayStatus(id) {
+  return Axios.get(`/pay/${id}/status`)
+}
+
+// 使用/取消余额
+function creditPay(params) {
+  return Axios.post(`/credit`, params);
+}
+// 订单详情
+function orderDetails(id) {
+  return Axios.get(`/order/${id}`);
+}
+/* 续费相关 */
+// 续费页面
+function renewPage(params) {
+  return Axios.get(`/host/${params.id}/renew`, { params })
+}
+// 续费提交
+function renew(params) {
+  return Axios.post(`/host/${params.id}/renew`, params)
+}
+// 商品列表
+function productList(params) {
+  return Axios.get(`/product`, { params })
+}

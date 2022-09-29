@@ -16,6 +16,13 @@
           currency_prefix: JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥',
           columns: [
             {
+              colKey: 'row-select',
+              type: 'multiple',
+              className: 'demo-multiple-select-cell',
+              checkProps: ({ row }) => ({ disabled: row.status !== 'Active' }),
+              width: 30
+            },
+            {
               colKey: 'id',
               title: 'ID',
               width: 120,
@@ -89,23 +96,148 @@
           popupProps: {
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
           },
+          /* 批量续费 */
+          renewVisible: false,
+          checkId: [],
+          selectedRowKeys: [],
+          renewColumns: [
+            {
+              colKey: 'id',
+              title: 'ID',
+              width: 60,
+              sortType: 'all'
+            },
+            {
+              colKey: 'product_name',
+              title: lang.products_name,
+              width: 300,
+              ellipsis: true
+            },
+            {
+              colKey: 'billing_cycles',
+              title: lang.cycle,
+              width: 120,
+              ellipsis: true
+            },
+            {
+              colKey: 'renew_amount',
+              title: lang.money,
+              width: 100,
+              ellipsis: true
+            },
+          ],
+          renewList: [],
+          renewLoading: false,
+          currency_prefix: JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥',
+          pay: false,
+          submitLoading: false
         }
       },
       mounted () {
-        this.maxHeight = document.getElementById('content').clientHeight - 200
+        this.maxHeight = document.getElementById('content').clientHeight - 260
         let timer = null
         window.onresize = () => {
           if (timer) {
             return
           }
           timer = setTimeout(() => {
-            this.maxHeight = document.getElementById('content').clientHeight - 200
+            this.maxHeight = document.getElementById('content').clientHeight - 260
             clearTimeout(timer)
             timer = null
           }, 300)
         }
       },
+      computed: {
+        renewTotal () {
+          return this.renewList.reduce((all, cur) => {
+            all += Number(cur.renew_amount)
+            return all
+          }, 0)
+        }
+      },
       methods: {
+        /* 批量续费 */
+        async batchRenew () {
+          this.renewForm = []
+          if (this.checkId.length === 0) {
+            return this.$message.error(lang.select)
+          }
+          this.renewVisible = true
+          try {
+            this.renewLoading = true
+            const params = {
+              client_id: this.id,
+              ids: this.checkId
+            }
+            const res = await getRenewBatch(params)
+            this.renewList = res.data.data.list.map(item => {
+              item.curCycle = item.billing_cycles[0]?.billing_cycle
+              item.renew_amount = item.billing_cycles.length > 0 ? item.billing_cycles[0].price : 0.00
+              return item
+            })
+            this.renewLoading = false
+          } catch (error) {
+            this.renewLoading = false
+          }
+        },
+        rehandleSelectChange (value, { selectedRowData }) {
+          this.checkId = value
+          this.selectedRowKeys = selectedRowData;
+        },
+        // 提交批量续费
+        async submitRenew () {
+          try {
+            const params = {
+              ids: [],
+              client_id: this.id,
+              billing_cycles: {},
+              amount_custom: {},
+              pay: this.pay
+            }
+            let temp = JSON.parse(JSON.stringify(this.renewList))
+            temp = temp.filter(item => item.billing_cycles.length > 0)
+            temp.forEach(item => {
+              params.ids.push(item.id)
+              params.billing_cycles[item.id] = item.curCycle
+              params.amount_custom[item.id] = item.renew_amount
+            });
+            this.submitLoading = true
+            const res = await postRenewBatch(params)
+            this.$message.success(res.data.msg)
+            this.submitLoading = false
+            this.renewVisible = false
+            this.getHostList()
+          } catch (error) {
+            this.submitLoading = false
+            console.log(error)
+            this.$message.error(error.data.msg)
+          }
+        },
+        changeCycle (row) {
+          row.renew_amount = row.billing_cycles.filter(item => item.billing_cycle === row.curCycle)[0].price
+        },
+        changeUser (id) {
+          this.id = id
+          location.href = `client_host.html?client_id=${this.id}`
+        },
+        async getClintList () {
+          try {
+            const res = await getClientList(this.clinetParams)
+            this.clientList = res.data.data.list
+            this.clientTotal = res.data.data.count
+            if (this.clientList.length < this.clientTotal) {
+              this.clinetParams.limit = this.clientTotal
+              this.getClintList()
+            }
+          } catch (error) {
+            console.log(error.data.msg)
+          }
+        },
+        cancelRenew () {
+          this.selectedRowKeys = []
+          this.checkId = []
+        },
+        /* -----批量续费end-------- */
         changeUser (id) {
           this.id = id
           location.href = `client_host.html?client_id=${this.id}`

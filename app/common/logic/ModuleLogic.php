@@ -315,15 +315,16 @@ class ModuleLogic
 	 * @return  string data.description - 订单子项描述
 	 * @return  string data.content - 购物车配置显示,支持模板
 	 */
-	public function cartCalculatePrice($ProductModel, $params = [])
+	public function cartCalculatePrice($ProductModel, $params = [], $qty=1)
 	{
 		$result = [];
 
 		$module = $ProductModel->getModule();
+
 		if($ImportModule = $this->importModule($module)){
 			if(method_exists($ImportModule, 'cartCalculatePrice')){
 				// 获取模块通用参数
-				$result = call_user_func([$ImportModule, 'cartCalculatePrice'], ['product'=>$ProductModel, 'custom'=>$params]);
+				$result = call_user_func([$ImportModule, 'cartCalculatePrice'], ['product'=>$ProductModel, 'custom'=>$params, 'qty'=>$qty]);
 				// TODO 是否判断返回/格式化
 				// if(!isset($result['status']) || !isset($result['data']['price']) || !isset($result['data']['billing_cycle']) || !isset($result['data']['duration']) || !isset($result['data']['description']) || !isset($result['data']['content'])){
 					

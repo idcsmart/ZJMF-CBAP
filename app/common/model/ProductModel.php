@@ -97,6 +97,68 @@ class ProductModel extends Model
         };
 
         $products = $this->alias('p')
+            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,s.module,ss.module module1,
+            pg.name as product_group_name_second,pg.id as product_group_id_second,
+            pgf.name as product_group_name_first,pgf.id as product_group_id_first')
+            ->leftjoin('product_group pg','p.product_group_id=pg.id')
+            ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
+            ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
+            ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
+            ->leftjoin('server ss','ss.server_group_id=sg.id')
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud'])
+            ->where($where)
+            ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
+            ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
+            ->order($param['orderby'], (isset($param['sort']) && !empty($param['sort']))?$param['sort']:"desc")
+            ->order('p.order','desc')
+            ->select()
+            ->toArray();
+
+        foreach ($products as $key => $value) {
+            if($app=='home'){
+                unset($products[$key]['stock_control'], $products[$key]['qty'], $products[$key]['hidden'], $products[$key]['product_group_name_second'], $products[$key]['product_group_id_second'], $products[$key]['product_group_name_first'], $products[$key]['product_group_id_first']);
+            }
+        }
+
+        $count = $this->alias('p')
+            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,
+            pg.name as product_group_name_second,pg.id as product_group_id_second,
+            pgf.name as product_group_name_first,pgf.id as product_group_id_first')
+            ->leftjoin('product_group pg','p.product_group_id=pg.id')
+            ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
+            ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
+            ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
+            ->leftjoin('server ss','ss.server_group_id=sg.id')
+            ->where($where)
+            ->count();
+
+        return ['list'=>$products,'count'=>$count];
+    }
+
+    public function productList1($param)
+    {
+        // 获取当前应用
+        $app = app('http')->getName();
+
+        if (!isset($param['orderby']) || !in_array($param['orderby'],['id','name','description'])){
+            $param['orderby'] = 'p.id';
+        }else{
+            $param['orderby'] = 'p.'.$param['orderby'];
+        }
+
+        $where = function (Query $query) use($param, $app) {
+            if(!empty($param['keywords'])){
+                $query->where('p.id|p.name|p.description', 'like', "%{$param['keywords']}%");
+            }
+            if(!empty($param['id'])){
+                $query->where('p.product_group_id', $param['id']);
+            }
+            if($app=='home'){
+                $query->where('p.hidden', 0);
+            }
+        };
+
+        $products = $this->alias('p')
             ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,
             pg.name as product_group_name_second,pg.id as product_group_id_second,
             pgf.name as product_group_name_first,pgf.id as product_group_id_first')
@@ -117,9 +179,6 @@ class ProductModel extends Model
         }
 
         $count = $this->alias('p')
-            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,
-            pg.name as product_group_name_second,pg.id as product_group_id_second,
-            pgf.name as product_group_name_first,pgf.id as product_group_id_first')
             ->leftjoin('product_group pg','p.product_group_id=pg.id')
             ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
             ->where($where)
@@ -937,7 +996,7 @@ class ProductModel extends Model
         $param['config_options'] = $param['config_options'] ?? [];
         
         $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options']);
+        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
 
         if($result['status']!=200){
             return $result;

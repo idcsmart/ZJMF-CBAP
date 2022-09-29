@@ -146,7 +146,7 @@ class CartModel extends Model
         $param['config_options'] = $param['config_options'] ?? [];
         
         $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options']);
+        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
 
         if($result['status']!=200){
             return $result;

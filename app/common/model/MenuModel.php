@@ -149,7 +149,7 @@ class MenuModel extends Model
             foreach ($plugins as $k => $v) {
                 $plugins[$k]['navs'] = $plugins[$k]['navs'] ?? [];
                 if($value['plugin']==$v['name'] && $value['module']==$v['module']){
-                    $plugins[$k]['navs'][] = ['id' => $value['id'], 'name' => lang($value['name']), 'url' => $value['url']];
+                    $plugins[$k]['navs'][] = ['id' => $value['id'], 'name' => lang_plugins($value['name']), 'url' => $value['url']];
                 }
             }
         }

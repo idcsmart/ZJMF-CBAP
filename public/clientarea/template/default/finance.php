@@ -25,11 +25,13 @@
                             <div class="top-r" v-if="activeIndex == 3">
                                 <div class="item-balance">
                                     <div class="money">
-                                        {{ commonData.currency_prefix + balance }}
-                                        <el-button class="btn-cz" @click="showCz">充值</el-button>
-                                        <el-button class="btn-tx" @click="showTx">提现</el-button>
+                                        <div class="money-num">
+                                            {{ commonData.currency_prefix + balance }}
+                                            <div class="text">当前余额</div>
+                                        </div>
+                                        <div class="btn-cz" @click="showCz">充值</div>
+                                        <div class="btn-tx" v-if="false" @click="showTx">提现</div>
                                     </div>
-                                    <div class="text">当前余额</div>
                                 </div>
                                 <div class="item-unbalance">
                                     <div class="money">
@@ -114,7 +116,7 @@
                                                                             commonData.currency_suffix}}</span>
                                                                                 <span slot="reference" class='gateway-pay'>余额</span>
                                                                             </el-popover>
-                                                                            <span> + {{scope.row.gateway}}</span>
+                                                                            <span>{{scope.row.gateway ? '+'+scope.row.gateway:''}}</span>
                                                                         </div>
                                                                     </div>
                                                                     <!-- 未使用余额 -->
@@ -140,7 +142,7 @@
                                                     </el-input>
                                                 </div>
                                                 <div class="mob-tabledata">
-                                                    <div class="mob-tabledata-item" v-for="item in dataList1" :key="item.id">
+                                                    <div class="mob-tabledata-item" v-for="item in dataList1" :key="item.id" @click="showItem(item)">
                                                         <div class="mob-item-row mob-item-row1">
                                                             <span>{{item.id}}</span>
                                                             <span>
@@ -159,6 +161,23 @@
                                                                 <span v-if="item.billing_cycle">/{{item.billing_cycle}}</span>
                                                             </span>
                                                         </div>
+
+                                                        <div class="mob-item-row mob-item-row-child">
+
+                                                            <div class="child-row" v-for="child in item.data" :key="child.id">
+
+                                                                <span class="child-row-name">{{ child.product_name?child.product_name:'--'}}</span>
+                                                                <span>
+                                                                    {{child.amount? commonData.currency_prefix + child.amount + commonData.currency_suffix :
+                                                                    null}}
+                                                                    {{ child.billing_cycle&&child.amount? '/' + child.billing_cycle
+                                                                    : null}}
+                                                                </span>
+                                                                <span>{{child.host_status?status[child.host_status]:null}}
+                                                                    {{child.host_status||child.status ? null : '--'}}</span>
+                                                            </div>
+                                                        </div>
+
                                                         <div class="mob-item-row mob-item-row3">
                                                             <span>{{item.create_time | formateTime}}</span>
                                                             <div v-if="item.status">
@@ -296,7 +315,7 @@
                                     </el-tab-pane>
                                     <el-tab-pane label="余额记录" name="3">
                                         <div class="content_table">
-                                            <div class="content_searchbar">
+                                            <div class="content_searchbar balance-searchbar">
                                                 <div class="left_tips">
 
                                                 </div>
@@ -454,7 +473,7 @@
                                             null}}
                                             {{ item.billing_cycle&&item.amount? '/' + item.billing_cycle
                                             : null}}
-                                        </span> 
+                                        </span>
                                     </div>
                                     <div class="mob-item-row mob-item-row-child">
                                         <div class="child-row" v-for="child in item.items" :key="child.id">
@@ -492,7 +511,7 @@
                                     <el-form-item label="提现方式">
                                         <el-select v-model="txData.method">
 
-                                            <el-option v-for="item in ruleData.method" :label="item=='alipay'?'支付宝':'银行卡'" :value="item"></el-option>
+                                            <el-option v-for="item in ruleData.method" :key="item" :label="item=='alipay'?'支付宝':'银行卡'" :value="item"></el-option>
                                             <!-- <el-option label="银行卡" value="bank"></el-option> -->
                                         </el-select>
                                     </el-form-item>
@@ -563,30 +582,30 @@
                             </div>
                             <div class="dialog-form">
                                 <el-row>
-                                    <el-col :span="4">支付方式</el-col>
-                                    <el-col :span="20">
+                                    <el-col :span="5">支付方式</el-col>
+                                    <el-col :span="19">
                                         <el-select @change="zfSelectChange" v-model="zfData.gateway">
                                             <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
                                         </el-select>
                                     </el-col>
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="4"><span>&nbsp;</span></el-col>
-                                    <el-col :span="20">
+                                    <el-col :span="5"><span>&nbsp;</span></el-col>
+                                    <el-col :span="19">
                                         <el-checkbox v-model="zfData.checked" @change="useBalance">使用余额</el-checkbox>
                                     </el-col>
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="4">订单金额</el-col>
-                                    <el-col :span="20">
+                                    <el-col :span="5">订单金额</el-col>
+                                    <el-col :span="19">
                                         <div>{{ commonData.currency_prefix }}
                                             {{ Number(zfData.amount).toFixed(2)}} {{ commonData.currency_suffix }}
                                         </div>
                                     </el-col>
                                 </el-row>
                                 <el-row>
-                                    <el-col :span="4">支付金额</el-col>
-                                    <el-col :span="20">
+                                    <el-col :span="5">支付金额</el-col>
+                                    <el-col :span="19">
                                         <div class="true-money">{{ currency_prefix}}
                                             {{
                                                 zfData.checked?(zfData.amount-balance <=0 ? 0:
@@ -596,8 +615,8 @@
                                     </el-col>
                                 </el-row>
                                 <el-row v-show="!isShowPay">
-                                    <el-col :span="4"><span>&nbsp;</span></el-col>
-                                    <el-col :span="20">
+                                    <el-col :span="5"><span>&nbsp;</span></el-col>
+                                    <el-col :span="19">
                                         <div class="true-money">
                                             -{{ currency_prefix }}
                                             {{zfData.checked?zfData.amount>=balance?Number(balance).toFixed(2):Number(zfData.amount).toFixed(2):null}}
@@ -628,6 +647,7 @@
                             </div>
                         </el-dialog>
                     </div>
+
                 </el-main>
             </el-container>
         </el-container>
@@ -637,5 +657,5 @@
     <script src="/{$template_catalog}/template/{$themes}/js/finance.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
-    <script src="/{$template_catalog}/template/{$themes}/components/payDIalog/payDIalog.js"></script>
+
     {include file="footer"}

@@ -10,7 +10,7 @@ class ApiValidate extends Validate
 {
 	protected $rule = [
         'id'        => 'require|integer|gt:0',
-        'name'      => 'require|chsAlphaNum|max:10',
+        'name'      => 'require|max:10',
         'status'    => 'require|in:0,1',
         'ip'        => 'requireIf:status,1|checkIp:thinkphp',
     ];
@@ -20,7 +20,6 @@ class ApiValidate extends Validate
         'id.integer'        => 'id_error',
         'id.gt'             => 'id_error',
         'name.require'      => 'please_enter_api_name', 
-        'name.chsAlphaNum'  => 'api_name_cannot_exceed_10_chars',
         'name.max'          => 'api_name_cannot_exceed_10_chars',
         'status.require'    => 'please_select_api_status',
         'status.in'         => 'api_status_error', 

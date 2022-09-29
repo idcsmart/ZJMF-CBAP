@@ -3,6 +3,7 @@
     padding: 0;
 }
 
+
 /* 提示弹窗 */
 .el-message-box {
     width: 5.2rem;
@@ -23,11 +24,19 @@ input::-webkit-inner-spin-button {
     display: none;
 } */
 #mainLoading {
-    width: 100vw;
+    /* width: 100vw;
     height: 100vh;
     background: #FFFFFF;
-    /* position: absolute;
-    z-index: 9999; */
+    display: flex;
+    align-items: center;
+    justify-content: center; */
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999;
+    background: #FFF;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,8 +114,10 @@ tbody .el-table__row {
 
 /* header部分开始 */
 .el-header {
-    position: sticky;
-    position: -webkit-sticky;
+    /* position: sticky;
+    position: -webkit-sticky; */
+    position: fixed;
+    width: calc(100% - 160px);
     top: 0;
     height: 40px !important;
     background: #FFFFFF;
@@ -208,7 +219,7 @@ tbody .el-table__row {
 
 /* 主体部分开始 */
 .el-main {
-    padding-top: .43rem;
+    padding-top: .83rem;
     padding-left: 2.1rem;
     padding-right: 1.02rem;
 
@@ -282,7 +293,16 @@ tbody .el-table__row {
 /* 换页相关开始 */
 .main-card {
     height: 100%;
-    font-size: 14px;
+    font-size: .14rem;
+    font-family: PingFang SC;
+    font-weight: 400;
+    line-height: 1.5715;
+    color: #171725;
+    word-break: break-all;
+}
+
+.myPage {
+    margin-bottom: .26rem;
 }
 
 .myPage .el-pagination {
@@ -291,7 +311,7 @@ tbody .el-table__row {
 }
 
 .el-pagination .page-total {
-    margin: 0 auto 0 40px;
+    margin: 0 auto 0 22px;
     font-size: 12px !important;
     font-family: PingFang SC;
     font-weight: 400;
@@ -305,6 +325,10 @@ tbody .el-table__row {
     border: 1px solid #E6E7EB;
     margin-right: 8px;
     border-radius: 3px;
+}
+
+.el-pager .number:last-child {
+    margin-right: 0;
 }
 
 /* .el-input__inner {
@@ -338,6 +362,33 @@ tbody .el-table__row {
 .menu-list-bottom {
     margin-top: .86rem;
     color: #FFFFFF;
+}
+
+.father-item {
+    margin-bottom: .12rem !important;
+}
+
+.child-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.child-menu .child-item-text {
+    padding-left: .5rem;
+    margin-bottom: .12rem;
+    margin-left: 0.15rem;
+    opacity: .6 ;
+    cursor: pointer;
+    border-left: 3px solid #1E41C9;
+}
+
+.child-item-text:last-child {
+    margin-bottom: .24rem;
+}
+
+.child-active {
+    opacity: 1 !important;
+    border-left: 3px solid #FFFF !important;
 }
 
 .menu-list-top>.menu-active,
@@ -417,12 +468,114 @@ th {
     padding-left: 20px !important;
 }
 
+.com-search .el-input__suffix {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+
+/* 支付弹窗开始 */
+.zf-dialog .el-dialog__body {
+    padding: .3rem .8rem;
+    font-size: .16rem;
+}
+
+.zf-dialog .dialog-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.zf-dialog .el-row {
+    display: flex;
+    align-items: center;
+    margin-top: .3rem;
+}
+
+.zf-dialog .form-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.zf-dialog .form-footer>.btn-ok {
+    background: #0058FF;
+    border-radius: 3px;
+    color: rgba(255, 255, 255, 0.9000);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zf-dialog .form-footer>.btn-no {
+    background: #E7E7E7;
+    border-radius: 3px;
+    color: #1E2736;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zf-dialog .true-money {
+    color: #FFA800;
+}
+
+.zf-dialog .pay-html {
+    display: flex;
+    justify-content: center;
+}
+
+.zf-dialog .pay-html>img {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.zf-dialog .el-select {
+    width: 100%;
+}
+
+
+
+
+.buy-product-btn {
+    width: 0.6rem;
+    height: 90%;
+    background: #0058FF;
+    opacity: 1;
+    border-radius: 3px;
+    color: #FFF;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 0.08rem;
+    font-size: .14rem;
+    font-weight: bold;
+    font-family: PingFang SC;
+    margin-left: .1rem;
+    align-self: center;
+}
+
+.product-select {}
+
+
+
+
+
+
+
+
+/* 支付弹窗结束 */
 
 @media screen and (max-width: 750px) {
     .el-main {
-        padding-top: 0.66rem;
+        padding-top: 1.66rem;
         padding-left: .3rem;
         padding-right: .3rem;
+    }
+
+    .el-header {
+        width: 100%;
     }
 
     /* 左侧菜单 */
@@ -533,4 +686,12 @@ th {
     /* .el-input .el-input__clear {
         font-size: .4rem;
     } */
+    .select-input .el-input--suffix {
+        width: 1.86rem;
+    }
+
+    .el-message-box__message {
+        font-size: .32rem;
+    }
+
 }

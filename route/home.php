@@ -98,6 +98,16 @@ Route::group('console/v1',function (){
     // 公共接口
     Route::get('global_search', 'home/common/globalSearch'); # 全局搜索
 
+    // 实名认证
+    Route::get('certification/info', 'home/certification/certificationInfo'); # 实名认证基础信息
+    Route::get('certification/plugin', 'home/certification/certificationPlugin'); # 实名认证接口
+    Route::get('certification/custom_fields', 'home/certification/certificationCustomfields'); # 获取实名认证自定义字段
+    Route::post('certification/person', 'home/certification/certificationPerson'); # 个人认证
+    Route::post('certification/company', 'home/certification/certificationCompany'); # 企业认证
+    Route::post('certification/convert', 'home/certification/certificationConvert'); # 个人转企业认证
+    Route::get('certification/auth', 'home/certification/certificationAuth'); # 实名认证验证页面
+    Route::get('certification/status', 'home/certification/certificationStatus'); # 实名认证验证页面
+
 })->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,
         'Access-Control-Allow-Credentials'   => 'true',
@@ -109,5 +119,5 @@ Route::group('console/v1',function (){
 
 Route::get('','home/view/index'); // 前台首页
 Route::get('[:view_html]','home/view/index')->ext('html'); // 前台模板
-Route::get('/page/[:plugin_id]/[:view_html]','home/view/plugin')->ext('html'); //插件模板
+Route::get('/plugin/[:plugin_id]/[:view_html]','home/view/plugin')->ext('html'); //插件模板
 Route::get('home/task','home/view/task'); // 测试

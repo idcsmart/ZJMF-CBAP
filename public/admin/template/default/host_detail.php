@@ -61,6 +61,8 @@
           </t-col>
           <t-col :xs="12" :xl="6">
             <p class="com-tit"><span>{{lang.financial_info}}</span></p>
+            <!-- 续费 -->
+            <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="curStatus === 'Active' || curStatus === 'Suspended'">{{lang.renew}}</t-button>
             <div class="item">
               <t-form-item :label="lang.buy_amount" name="first_payment_amount">
                 <t-input v-model="formData.first_payment_amount" :placeholder="lang.input+lang.buy_amount">
@@ -75,11 +77,14 @@
                   </t-option>
                 </t-select>
               </t-form-item> -->
-              <t-form-item :label="lang.billing_cycle">
+              <t-form-item :label="lang.billing_way">
                 <t-select v-model="formData.billing_cycle" :popup-props="popupProps">
                   <t-option v-for="item in cycleList" :value="item.value" :label="item.label" :key="item.value">
                   </t-option>
                 </t-select>
+              </t-form-item>
+              <t-form-item :label="lang.billing_cycle">
+                <t-input v-model="formData.billing_cycle_name" disabled></t-input>
               </t-form-item>
               <t-form-item :label="lang.open_time" name="active_time" :rules="[{ validator: checkTime}]">
                 <t-date-picker mode="date" format="YYYY-MM-DD HH:mm:ss" enable-time-picker v-model="formData.active_time" @change="changeActive" />
@@ -117,6 +122,30 @@
         <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
       </div>
     </template>
+  </t-dialog>
+  <!-- 续费弹窗 -->
+  <t-dialog :header="lang.renew" :visible.sync="renewVisible" class="renew-dialog" :footer="false">
+    <div class="swiper" v-if="renewList.length >0 ">
+      <div class="l-btn" @click="subIndex">
+        <t-icon name="chevron-left"></t-icon>
+      </div>
+      <div class="m-box">
+        <div class="swiper-item" v-for="(item,index) in renewList" :key="item.id" :class="{card: item.id === showId[0] || item.id === showId[1] || item.id === showId[2], active: item.id === curId}" @click="checkCur(item)">
+          <p class="cycle">{{item.billing_cycle}}</p>
+          <p class="price"><span>{{currency_prefix}}</span>{{item.price}}</p>
+        </div>
+      </div>
+      <div class="r-btn" @click="addIndex">
+        <t-icon name="chevron-right"></t-icon>
+      </div>
+    </div>
+    <div class="com-f-btn">
+      <div class="total">{{lang.total}}：<span class="price"><span class="symbol">{{currency_prefix}}</span>{{curRenew.price}}</span></div>
+      <div>
+        <t-checkbox v-model="pay">{{lang.mark_Paid}}</t-checkbox>
+      </div>
+      <t-button theme="primary" @click="submitRenew" :loading="submitLoading">{{lang.sure_renew}}</t-button>
+    </div>
   </t-dialog>
 </div>
 <!-- =======页面独有======= -->

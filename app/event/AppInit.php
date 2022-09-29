@@ -26,6 +26,10 @@ class  AppInit
         # 验证码接口路由
         Route::any('captcha/[:_plugin]/[:_controller]/[:_action]', "\\app\\event\\controller\\CaptchaController@index");
 
+        # 实名认证接口路由
+        Route::any('certification/[:_plugin]/[:_controller]/[:_action]', "\\app\\event\\controller\\CertificationController@index");
+            #->middleware(\app\http\middleware\CheckHome::class);
+
         # 插件后台路由(官方默认路由需要登录才能访问)
         Route::any(DIR_ADMIN.'/addon', "\\app\\event\\controller\\AddonController@index")
             ->middleware(\app\http\middleware\CheckAdmin::class); // 参数 ?_plugin=client_care&_controller=client_care&_action=index

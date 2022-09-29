@@ -59,6 +59,11 @@ const topMenu = {
                 <div v-if="isShowMore" class="right-item">
                     <img src="${url}/img/common/cart.png">
                 </div>
+
+                <span class="buy-product-btn" @click="toOrder">订购</span>
+                <el-select class="product-select" v-model="selectValue" placeholder="请选择商品">
+                    <el-option v-for="item in produclData" :key="item.id" :value="item.id" :label="item.name"></el-option>
+                </el-select>
             </div>
         </el-header>
         </div>
@@ -72,7 +77,9 @@ const topMenu = {
             isShowMenu: false,
             logo: `/upload/logo.png`,
             menu1: [],
-            menuActiveId: 0
+            menuActiveId: 0,
+            produclData: [],
+            selectValue: ''
         }
     },
     props: {
@@ -84,6 +91,8 @@ const topMenu = {
     created() {
         this.doGetMenu()
         this.setActiveMenu()
+        // 获取商品列表
+        this.getProductList()
     },
     methods: {
         // 退出登录
@@ -177,15 +186,52 @@ const topMenu = {
         // 判断当前菜单激活
         setActiveMenu() {
             const url = location.href
+            let isTrue = true
             this.menu1.forEach(item => {
+                // 当前url下存在和导航菜单对应的路径
                 if (url.indexOf(item.url) != -1) {
                     this.menuActiveId = item.id
+                    isTrue = false
                 }
             });
+            if (isTrue) {
+                // 不存在对应的 读取本地存储的 导航id\
+                this.menuActiveId = localStorage.getItem('frontMenusActiveId')
+            }
         },
         // 页面跳转
         toPage(e) {
-            location.href = './' + e.url
+            location.href = '/' + e.url
         },
+        // 获取商品列表
+        getProductList() {
+            const params = {
+                limit: 1000
+            }
+            productList(params).then(res => {
+                if (res.data.status === 200) {
+                    this.produclData = res.data.data.list
+                }
+            })
+        },
+        // 单项商品点击
+        itemClick(item) {
+            console.log(item);
+        },
+        toOrder() {
+            console.log(this.selectValue);
+            const id = this.selectValue
+            this.produclData.map(item => {
+                if (item.id == id) {
+                    if (item.module == 'common_cloud' || item.module1 == 'common_cloud') {
+                        location.href = `/order.html?id=${item.id}`
+                    }
+
+                    if (item.module1 == 'idcsmart_common' || item.module == 'idcsmart_common') {
+                        location.href = `/common_product.html?id=${item.id}`
+                    }
+                }
+            })
+        }
     },
 }

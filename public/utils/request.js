@@ -4,7 +4,7 @@ const hostUrl = location.pathname.split('/')[1]
 const baseURL = `/jecwdklp/v1`
 const Axios = axios.create({
   baseURL,
-  timeout: 6000
+  timeout: 12000
 })
 Axios.defaults.withCredentials = true
 

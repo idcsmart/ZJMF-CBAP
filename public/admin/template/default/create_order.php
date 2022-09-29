@@ -146,7 +146,7 @@
               </t-col>
               <t-col :xs="12" :xl="6" class="config-show">
                 <t-card bordered shadow>
-                  <p class="com-tit"><span>{{ lang.order_detail }}</span></p>
+                  <p class="com-tit"><span>{{ lang.create_order_detail }}</span></p>
                   <div class="box"></div>
                   <t-divider></t-divider>
 

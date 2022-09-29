@@ -38,7 +38,11 @@
         </t-option>
       </t-select>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight" :hide-sort-tips="true" @sort-change="sortChange">
+    <t-button @click="batchRenew" class="add" style="margin-bottom: 20px ;">
+      {{lang.batch_renew}}
+    </t-button>
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" 
+    :max-height="maxHeight" :hide-sort-tips="true" @sort-change="sortChange" @select-change="rehandleSelectChange" :selected-row-keys="checkId">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -80,6 +84,35 @@
         <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
       </div>
     </template>
+  </t-dialog>
+  <!-- 批量续费弹窗 -->
+  <t-dialog :header="lang.batch_renew" :close-btn="false" :visible.sync="renewVisible" :footer="false"
+  placement="center"  @close="cancelRenew" class="renew-dialog">
+    <t-table row-key="1" :data="renewList" size="medium" :columns="renewColumns" :hover="hover" :table-layout="tableLayout ? 'auto' : 'fixed'" :loading="renewLoading" :max-height="maxHeight">
+      <template slot="sortIcon">
+        <t-icon name="caret-down-small"></t-icon>
+      </template>
+      <template #product_name="{row}">
+        {{row.product_name}}({{row.name}})
+      </template>
+      <template #billing_cycles="{row}">
+        <t-select v-model="row.curCycle" :popup-props="popupProps" v-if="row.billing_cycles.length > 0" @change="changeCycle(row)">
+          <t-option v-for="(item,index) in row.billing_cycles" :value="item.billing_cycle" :key="index" :label="item.billing_cycle"></t-option>
+        </t-select>
+        <span v-else class="no-renew">{{lang.renew_tip}}</span>
+      </template>
+      <template #renew_amount="{row}">
+        {{currency_prefix}}&nbsp;{{row.renew_amount}}
+      </template>
+    </t-table>
+
+    <div class="com-f-btn">
+      <div class="total">{{lang.total}}：<span class="price"><span class="symbol">{{currency_prefix}}</span>{{renewTotal}}</span></div>
+      <div>
+        <t-checkbox v-model="pay">{{lang.mark_Paid}}</t-checkbox>
+      </div>
+      <t-button theme="primary" @click="submitRenew" :loading="submitLoading">{{lang.sure_renew}}</t-button>
+    </div>
   </t-dialog>
 </div>
 <script src="/{$template_catalog}/template/{$themes}/api/client.js"></script>

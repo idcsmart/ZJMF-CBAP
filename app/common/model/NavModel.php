@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 
+use app\admin\model\PluginModel;
 use think\Model;
 use think\Db;
 
@@ -58,10 +59,15 @@ class NavModel extends Model
 
         $maxOrder = $this->max('order');
 
+        $PluginModel = new PluginModel();
+        $pluginId = $PluginModel->where('name',parse_name($name,1))->value('id');
+
+        $url = $type=='admin'?$name:$pluginId;
+
         $object = $this->create([
             'type' => $type,
             'name' => $nav['name']??'',
-            'url'  => (isset($nav['url']) && !empty($nav['url']) && is_string($nav['url']))?"plugin/{$name}/".$nav['url'].'.html':'',
+            'url'  => (isset($nav['url']) && !empty($nav['url']) && is_string($nav['url']))?"plugin/{$url}/".$nav['url'].'.html':'',
             'icon' => $nav['icon']??'',
             'parent_id' => $parentId,
             'order'  => $maxOrder+1,

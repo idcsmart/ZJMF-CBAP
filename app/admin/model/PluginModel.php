@@ -112,6 +112,7 @@ class PluginModel extends Model
             }
 			if($module=="sms"){
 				$methods = get_class_methods($class)?:[];
+                $type = [];
 				if(in_array('sendGlobalSms',$methods)){
 					$type[] = 1;
 				}
@@ -119,7 +120,17 @@ class PluginModel extends Model
 					$type[] = 0;
 				}
 				$vv['sms_type'] = $type;
-			}
+			}elseif ($module=='certification'){
+                $methods = get_class_methods($class)?:[];
+                $type = [];
+                if (in_array('personal',$methods)){
+                    $type[] = 'personal';
+                }
+                if (in_array('company',$methods)){
+                    $type[] = 'company';
+                }
+                $vv['certification_type'] = $type;
+            }
 			
             unset($vv['module']);
         }
@@ -547,7 +558,7 @@ class PluginModel extends Model
             # 对type类型为checkbox,select,radio的进行判断
             if (in_array($value['type'],['checkbox','select','radio'])){
                 if (!empty($value['options']) && is_array($value['options'])){
-                    if (!in_array($config[$key],array_keys($value['options']))){
+                    if (!isset($config[$key]) || !in_array($config[$key],array_keys($value['options']))){
                         return ['status'=>400,'msg'=>lang('range_of_values',['{key}'=>$key,'{value}'=>implode(',',array_keys($value['options']))])];
                     }
                 }
@@ -640,7 +651,7 @@ class PluginModel extends Model
         foreach ($plugins as &$plugin){
             unset($plugin['config']);
         }
-		if($module == 'sms' || $module == 'mail'){
+		if($module == 'sms' || $module == 'mail' || $module=='certification'){
 			foreach ($plugins as $kk=>&$vv){
 				$class = get_plugin_class($vv['name'], $module);		
 				if (!class_exists($class)) { # 实例化插件失败,不显示
@@ -656,7 +667,17 @@ class PluginModel extends Model
 						$type[] = 0;
 					}
 					$vv['sms_type'] = $type;
-				}
+				}elseif ($module=='certification'){
+                    $methods = get_class_methods($class)?:[];
+                    $type = [];
+                    if (in_array($vv['name']. 'Person',$methods)){
+                        $type[] = 'person';
+                    }
+                    if (in_array($vv['name'] . 'Company',$methods)){
+                        $type[] = 'company';
+                    }
+                    $vv['certification_type'] = $type;
+                }
 				unset($vv['url']);
 			}
         }
@@ -743,7 +764,7 @@ class PluginModel extends Model
                         'type' => 'admin',
                         'menu_type' => 'plugin',
                         'name' => lang_plugins("nav_plugin_addon_{$name}"),
-                        'language' => '',
+                        'language' => json_encode([]),
                         'nav_id' => $nav->id,
                         'parent_id' => $menuPluginListParentId,
                         'order' => $maxOrder+1,

@@ -77,6 +77,15 @@ class ConfigurationModel extends Model
             'admin_theme',
             'clientarea_theme',
         ],
+        'certification' => [
+            'certification_open',
+            'certification_approval',
+            'certification_notice',
+            'certification_update_client_name',
+            'certification_upload',
+            'certification_update_client_phone',
+            'certification_uncertified_suspended_host',
+        ],
     ];
     /**
      * 时间 2022-5-10
@@ -737,6 +746,67 @@ class ConfigurationModel extends Model
                 ];
             }
             $this->saveAll($list);
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+
+    /**
+     * 时间 2022-09-23
+     * @title 获取实名设置
+     * @desc 获取实名设置
+     * @author wyh
+     * @version v1
+     * @return int certification_open - 实名认证是否开启:1开启默认,0关
+     * @return int certification_approval - 是否人工复审:1开启默认，0关
+     * @return int certification_notice - 审批通过后,是否通知客户:1通知默认,0否
+     * @return int certification_update_client_name - 是否自动更新姓名:1是,0否默认
+     * @return int certification_upload - 是否需要上传证件照:1是,0否默认
+     * @return int certification_update_client_phone - 手机一致性:1是,0否默认
+     * @return int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认
+     */
+    public function certificationList()
+    {
+        $configuration = $this->index();
+        $data = [];
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['certification'])){
+                $data[$v['setting']] = (string)$v['value'];
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * 时间 2022-08-12
+     * @title 保存主题设置
+     * @desc 保存主题设置
+     * @author theworld
+     * @version v1
+     * @param int certification_open - 实名认证是否开启:1开启默认,0关 required
+     * @param int certification_approval - 是否人工复审:1开启默认，0关 required
+     * @param int certification_notice - 审批通过后,是否通知客户:1通知默认,0否 required
+     * @param int certification_update_client_name - 是否自动更新姓名:1是,0否默认 required
+     * @param int certification_upload - 是否需要上传证件照:1是,0否默认 required
+     * @param int certification_update_client_phone - 手机一致性:1是,0否默认 required
+     * @param int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认 required
+     */
+    public function certificationUpdate($param)
+    {
+        $this->startTrans();
+        try {
+            foreach($this->config['certification'] as $v){
+                $list[] = [
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务

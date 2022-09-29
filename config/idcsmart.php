@@ -17,7 +17,7 @@ return [
     // 不操作,登录失效时间,单位秒(s)
     'auto_logout' => 7200,
     // 支持的插件类型
-    'plugin_module' => ['addon','gateway','sms','mail','captcha'],
+    'plugin_module' => ['addon','gateway','sms','mail','captcha','certification'],
     // 模板钩子
     'template_hooks' => [
         'template_after_servicedetail_suspended',
@@ -54,6 +54,7 @@ return [
         'gateway' => WEB_ROOT . 'plugins/gateway/',
         'addon' => WEB_ROOT . 'plugins/addon/',
         'captcha' => WEB_ROOT . 'plugins/captcha/',
+        'certification' => WEB_ROOT . 'plugins/certification/',
         'sms' => WEB_ROOT . 'plugins/sms/',
         'mail' => WEB_ROOT . 'plugins/mail/',
         'server' => WEB_ROOT . 'plugins/server/',
@@ -120,4 +121,8 @@ return [
 		'order_recharge', 			 		 // 充值成功通知
 
 	],
+
+    // 实名认证图片保存路径
+    'certification'             => IDCSMART_ROOT . 'public/upload/common/certification/',
+    'certification_url'         => '/upload/common/certification/',
 ];

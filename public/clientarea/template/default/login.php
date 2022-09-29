@@ -68,7 +68,7 @@
                             <div class="form-main">
                                 <div class="form-item">
                                     <el-input v-if="isEmailOrPhone" v-model="formData.email" placeholder="请输入邮箱"></el-input>
-                                    <el-input v-else class="input-with-select" v-model="formData.phone" placeholder="请输入手机号码">
+                                    <el-input v-else class="input-with-select select-input" v-model="formData.phone" placeholder="请输入手机号码">
                                         <el-select filterable slot="prepend" v-model="formData.countryCode">
                                             <el-option v-for="item in countryList" :key="item.name" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code"></el-option>
                                         </el-select>

@@ -452,5 +452,71 @@ class ConfigurationController extends AdminBaseController
         
         return json($result);
     }
+
+    /**
+     * 时间 2022-09-23
+     * @title 获取实名设置
+     * @desc 获取实名设置
+     * @url /admin/v1/configuration/certification
+     * @method  GET
+     * @author wyh
+     * @version v1
+     * @return int certification_open - 实名认证是否开启:1开启默认,0关
+     * @return int certification_approval - 是否人工复审:1开启默认，0关
+     * @return int certification_notice - 审批通过后,是否通知客户:1通知默认,0否
+     * @return int certification_update_client_name - 是否自动更新姓名:1是,0否默认
+     * @return int certification_upload - 是否需要上传证件照:1是,0否默认
+     * @return int certification_update_client_phone - 手机一致性:1是,0否默认
+     * @return int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认
+     */
+    public function certificationList()
+    {
+        //实例化模型类
+        $ConfigurationModel = new ConfigurationModel();
+
+        //获取主题设置
+        $data = $ConfigurationModel->certificationList();
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => $data,
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-08-12
+     * @title 保存实名设置
+     * @desc 保存实名设置
+     * @url /admin/v1/configuration/certification
+     * @method  PUT
+     * @author theworld
+     * @version v1
+     * @param int certification_open - 实名认证是否开启:1开启默认,0关 required
+     * @param int certification_approval - 是否人工复审:1开启默认，0关 required
+     * @param int certification_notice - 审批通过后,是否通知客户:1通知默认,0否 required
+     * @param int certification_update_client_name - 是否自动更新姓名:1是,0否默认 required
+     * @param int certification_upload - 是否需要上传证件照:1是,0否默认 required
+     * @param int certification_update_client_phone - 手机一致性:1是,0否默认 required
+     * @param int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认 required
+     */
+    public function certificationUpdate()
+    {
+        //接收参数
+        $param = $this->request->param();
+
+        //参数验证
+        if (!$this->validate->scene('certification_update')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        //实例化模型类
+        $ConfigurationModel = new ConfigurationModel();
+
+        //保存主题设置
+        $result = $ConfigurationModel->certificationUpdate($param);
+
+        return json($result);
+    }
 }
 

@@ -303,6 +303,183 @@
     align-items: center;
 }
 
-.el-input--prefix .el-input__inner{
+.el-input--prefix .el-input__inner {
     padding-left: .2rem;
+}
+
+.recharge-btn-ok,
+.recharge-btn-old {
+    display: block;
+}
+
+.mob-footer-btn {
+    display: none;
+}
+
+@media screen and (max-width: 750px) {
+    .el-main {
+        padding-top: .4rem;
+    }
+
+    .banner-img {
+        width: 100%;
+    }
+
+    .ali-text {
+        position: absolute;
+        top: .62rem;
+        left: .33rem;
+        display: flex;
+        flex-direction: row;
+        font-size: .54rem;
+
+    }
+
+    .banner-search {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        bottom: .8rem;
+        left: .33rem;
+    }
+
+
+
+    .banner-search {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        bottom: .5rem;
+        left: .58rem;
+    }
+
+    .ali-tip-text {
+        font-size: .22rem;
+        margin-top: .13rem;
+        color: #171725;
+    }
+
+    .banner-input {
+        width: 5.38rem;
+        height: .56rem;
+    }
+
+
+    .banner-input>.el-input__inner {
+        width: 5.38rem;
+        height: .56rem;
+        text-align: left;
+    }
+
+
+
+    .input-btn {
+        width: 1.34rem;
+        height: .55rem;
+        font-size: .23rem;
+    }
+
+    .el-input__suffix {
+        right: 0;
+    }
+
+    .ali-main-card {
+        padding-left: .3rem;
+        padding-right: .3rem;
+    }
+
+    .card-title {
+        margin-top: 0;
+        font-size: .4rem;
+    }
+
+    .card-recharge {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-choice {
+        flex-wrap: wrap;
+    }
+
+    .banner {
+        width: 100%;
+    }
+
+    .recharge-text {
+        font-size: .32rem;
+    }
+
+    .recharge-input {
+        width: 100%;
+        height: .8rem;
+        margin-left: 0;
+        margin-top: .2rem;
+    }
+
+    .recharge-btn-ok,
+    .recharge-btn-old {
+        display: none;
+    }
+
+    .card-choice {
+        margin-top: .3rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .choice-item {
+
+        width: 3.35rem;
+        height: 1.11rem;
+        border: 1px solid #D8DFEE;
+        opacity: 1;
+        margin-left: 0 !important;
+        margin-bottom: .2rem;
+    }
+
+    .el-input--prefix .el-input__inner {
+        padding-left: .4rem;
+    }
+
+    .recharge-input .el-input__prefix {
+        font-size: .3rem;
+    }
+
+    .mob-footer-btn {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.55rem;
+    }
+
+    .mob-recharge-btn-ok,
+    .mob-recharge-btn-old {
+        width: 3.35rem;
+        height: .8rem;
+        font-size: .34rem;
+        opacity: 1;
+        border-radius: 3px;
+    }
+
+    .mob-recharge-btn-ok {
+        border: 1px solid #0058FF;
+        color: #0058FF;
+        background: #FFFFFF;
+    }
+
+    .mob-recharge-btn-old {
+        background: #0058FF;
+        color: #FFFFFF;
+    }
+
+    .cz-dialog .dialog-title{
+        font-size: .32rem;
+    }
+    .cz-dialog .el-form-item__label{
+        font-size: .32rem;
+    }
+    .dialog-form .el-input__inner{
+        height: .8rem;
+    }
 }

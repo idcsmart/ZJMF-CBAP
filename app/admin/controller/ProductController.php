@@ -52,7 +52,7 @@ class ProductController extends AdminBaseController
         $result = [
             'status'=>200,
             'msg'=>lang('success_message'),
-            'data' =>(new ProductModel())->productList($param)
+            'data' =>(new ProductModel())->productList1($param)
         ];
         return json($result);
     }

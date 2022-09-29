@@ -617,7 +617,7 @@ location / {
             $data['admin_url'] = $server_http.$domain.'/'.$this->getSession('install_db_config')['admin_application'];
             $data['admin_name'] = $this->getSession('install_admin_info')['name'];
             $data['admin_pass'] = $this->getSession('install_admin_info')['password'];
-
+            deleteDir(IDCSMART_ROOT.'public/install');
             return json_encode(['status' => 200, 'msg' => '安装完成！','data'=>$data]);
         } else {
             return json_encode(['status' => 200, 'msg' => '非法安装！']);
@@ -944,6 +944,39 @@ location / {
         $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
         curl_close($curl);
         return ['http_code'=>$http_code, 'error'=>$error , 'content' => $content];
+    }
+
+    /*
+     * 递归删除目录
+     */
+    private function deleteDir($path,$out=[]) {
+
+        if (is_dir($path)) {
+            //扫描一个目录内的所有目录和文件并返回数组
+            $dirs = scandir($path);
+
+            foreach ($dirs as $dir) {
+                if (!in_array($dir,$out)){
+                    //排除目录中的当前目录(.)和上一级目录(..)
+                    if ($dir != '.' && $dir != '..') {
+                        //如果是目录则递归子目录，继续操作
+                        $sonDir = $path.'/'.$dir;
+                        if (is_dir($sonDir)) {
+                            //递归删除
+                            $this->deleteDir($sonDir);
+
+                            //目录内的子目录和文件删除后删除空目录
+                            @rmdir($sonDir);
+                        } else {
+
+                            //如果是文件直接删除
+                            @unlink($sonDir);
+                        }
+                    }
+                }
+            }
+            @rmdir($path);
+        }
     }
 
 }

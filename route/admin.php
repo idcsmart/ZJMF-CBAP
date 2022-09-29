@@ -110,6 +110,8 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::put('configuration/cron', 'admin/Configuration/cronUpdate'); # 保存定时任务
     Route::get('configuration/theme', 'admin/Configuration/themeList'); # 获取主题设置
     Route::put('configuration/theme', 'admin/Configuration/themeUpdate'); # 保存主题设置
+    Route::get('configuration/certification', 'admin/Configuration/certificationList'); # 获取主题设置
+    Route::put('configuration/certification', 'admin/Configuration/certificationUpdate'); # 保存主题设置
 	
 	# 邮件模板管理
     Route::get('notice/email/template', 'admin/NoticeEmail/emailTemplateList'); # 获取邮件模板
@@ -201,6 +203,12 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('menu/home', 'admin/menu/getHomeMenu'); # 新建接口分组
     Route::put('menu/admin', 'admin/menu/saveAdminMenu'); # 修改接口分组
     Route::put('menu/home', 'admin/menu/saveHomeMenu'); # 删除接口分组
+
+    # 实名认证
+    Route::get('certification', 'admin/certification/certificationList'); # 实名认证列表
+    Route::put('certification/:id/approve', 'admin/certification/approve'); # 实名认证通过
+    Route::put('certification/:id/reject', 'admin/certification/reject'); # 实名认证驳回
+    Route::get('certification/:id', 'admin/certification/index'); # 实名认证详情
 
 })  
     ->allowCrossDomain([

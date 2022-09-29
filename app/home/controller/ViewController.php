@@ -45,6 +45,9 @@ class ViewController extends HomeBaseController
 		    exit('not found template1');
 		}
 		$tpl = '../public/plugins/addon/'.$name.'/template/clientarea/';
+
+        $data['template_catalog'] = 'clientarea';
+        $data['themes'] = configuration('clientarea_theme');
 		
 		if(file_exists($tpl.$tplName.".php")){
 			$content=$this->view('header',$data);

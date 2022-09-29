@@ -1261,7 +1261,6 @@ CREATE TABLE `idcsmart_plugin` (
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='插件表';
 insert into `idcsmart_plugin` (`id`, `status`, `name`, `title`, `url`, `author`, `author_url`, `version`, `description`, `config`, `module`, `order`, `help_url`, `create_time`, `update_time`) values(1,'1','TpCaptcha','thinkphp图形验证','','智简魔方','','1.0','thinkphp图形验证','{\"module_name\":\"\\u56fe\\u5f62\\u9a8c\\u8bc1\",\"captcha_width\":\"250\",\"captcha_height\":\"61\",\"captcha_length\":\"5\",\"code_set\":\"1234567890ABCD\"}','captcha','0','','1662529067','1662539097');
-
 /*Table structure for table `idcsmart_plugin_hook` */
 
 DROP TABLE IF EXISTS `idcsmart_plugin_hook`;
@@ -1585,6 +1584,7 @@ CREATE TABLE `idcsmart_upgrade` (
   KEY `host_id` (`host_id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='升降级表';
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

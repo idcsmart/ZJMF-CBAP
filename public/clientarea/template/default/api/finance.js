@@ -34,7 +34,7 @@ function withdraw(params) {
 
 // 提现规则详情
 function withdrawRule(params){
-  return Axios.get(`/withdraw/rule`, {params})
+  return Axios.get(`/withdraw/rule/credit`, {params})
 }
 
 // 充值

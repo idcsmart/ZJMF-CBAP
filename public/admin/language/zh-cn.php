@@ -246,6 +246,7 @@ return [
     'nav_plugin' => '插件',
     'nav_plugin_list' => '插件列表',
     'nav_navigation' => '导航管理',
+    'nav_real_name_approval' => '实名认证',
 
 
     # 日志
@@ -562,6 +563,15 @@ return [
     'configuration_theme_clientarea_theme_cannot_empty' => '会员中心主题不能为空',
     'configuration_theme_clientarea_theme_cannot_error' => '会员中心主题错误',
 
+    # 实名设置
+    'configuration_certification_open_require' => '实名认证是否开启必填',
+    'configuration_certification_approval_require' => '人工复审必填',
+    'configuration_certification_notice_require' => '审批通过后,是否通知客户必填',
+    'configuration_certification_update_client_name_require' => '是否自动更新姓名必填',
+    'configuration_certification_upload_require' => '是否需要上传证件照必填',
+    'configuration_certification_update_client_phone_require' => '手机一致性必填',
+    'configuration_certification_uncertified_suspended_host_require' => '未认证暂停产品必填',
+
 
     # 管理员与管理员分组
     'super_admin_cannot_delete' => '超级管理员不可删除',
@@ -829,4 +839,35 @@ return [
     'hour' => '小时',
     'minute' => '分钟',
     'ago' => '前',
+
+    # 实名认证
+    'certification_is_not_open' => '实名认证尚未开启',
+    'certification_approve' => '实名认证已通过',
+    'certification_reject' => '实名认证已驳回',
+    'certification_person_completed' => '账号已完成个人认证',
+    'certification_person_uncompleted' => '账号未完成个人认证',
+    'certification_plugin_name_require' => '请选择实名接口',
+    'certification_card_name_require' => '姓名必须',
+    'certification_card_name_max' => '姓名不超过255个字符',
+    'certification_card_type_require' => '证件类型必须',
+    'certification_card_type_in' => '证件类型为0或1',
+    'certification_card_number_require' => '证件号必须',
+    'certification_card_number_max' => '证件号不超过255个字符',
+    'certification_company_require' => '公司名称必须',
+    'certification_company_max' => '公司名称不超过255个字符',
+    'certification_company_organ_code_require' => '公司代码必须',
+    'certification_company_organ_code_max' => '公司代码不超过255个字符',
+    'certification_company_completed' => '账号已完成企业认证',
+    'certification_company_pending' => '企业认证待审核,不可提交',
+    'certification_company_post' => '企业认证已提交资料,不可提交',
+    'certification_card_number_other_client_used' => '身份证号已被他人使用',
+    'certification_must' => '必须',
+    'certification_upload' => '必须上传',
+    'certification_file_allow' => '文件名只允许数字，字母，还有汉字',
+    'certification_customfields_select_options' => '{title}在{options}之中',
+    'certification_phone_consistency' => '用户注册手机号需与实名手机号一致',
+    'certification_img_one' => '请上传身份证号正面照',
+    'certification_img_two' => '请上传身份证号反面照',
+    'certification_img_three' => '请上传营业执照',
+    'certification_info_post_again' => '请重新提交实名资料',
 ];

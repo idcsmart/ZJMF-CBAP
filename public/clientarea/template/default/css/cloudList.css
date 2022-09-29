@@ -6,8 +6,31 @@
 }
 
 .main-card-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.title-text {
     font-size: 28px;
-    line-height: 28px;
+}
+
+.add-btn {
+    width: .6rem;
+    height: .24rem;
+    border: 1px solid #0058FF;
+    opacity: 1;
+    border-radius: 3px;
+    color: rgba(0, 88, 255, 1);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: .08rem;
+    font-size: .14rem;
+    font-weight: bold;
+    font-family: PingFang SC;
 }
 
 .main-card-menu {
@@ -16,6 +39,8 @@
     display: flex;
     flex-direction: row;
     margin-top: .4rem;
+
+
 }
 
 .main-card-menu .active {
@@ -36,14 +61,37 @@
 .main-card-search {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     margin-top: .4rem;
+    margin-right: .4rem;
+}
+
+.search-btn {
+    width: .8rem;
+    height: .4rem;
+    background: #0058FF;
+    opacity: 1;
+    border-radius: 3px;
+    font-size: .16rem;
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .main-card-table {
-    margin-top: .2rem;
+    margin-top: .4rem;
     border: 1px solid #E6E7EB;
 }
 
+.column-id {
+    cursor: pointer;
+}
+
+.column-id:hover {
+    border-bottom: 1px solid black;
+}
 
 .area {
     height: 20px;
@@ -83,13 +131,27 @@
     align-items: center;
 }
 
+.power-status img {
+    width: .28rem;
+}
+
 .power-status .status-text {
     color: #1E2736;
     margin-left: 7px;
 }
 
+.os {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .os-img {
     width: 28px;
+}
+
+.os-text {
+    margin-left: .08rem;
 }
 
 .status {

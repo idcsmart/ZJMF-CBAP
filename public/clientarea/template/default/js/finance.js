@@ -8,7 +8,6 @@
                 asideMenu,
                 topMenu,
                 pagination,
-                payDialog,
             },
             mounted() {
                 window.addEventListener('scroll', this.computeScroll)
@@ -17,8 +16,8 @@
             },
             updated() {
                 // 关闭loading
-                document.getElementById('mainLoading').style.display = 'none';
-                document.getElementsByClassName('template')[0].style.display = 'block'
+                // document.getElementById('mainLoading').style.display = 'none';
+                // document.getElementsByClassName('template')[0].style.display = 'block'
             },
             destroyed() {
                 window.removeEventListener('scroll', this.computeScroll);
@@ -228,6 +227,7 @@
                                     // item.children = []
                                     item.hasChildren = true
                                 }
+                                item.data = []
                             })
 
                             this.dataList1 = list;
@@ -506,7 +506,7 @@
                         isPass = false
                     }
                     if (!data.amount) {
-                        this.errText = "请输入充值金额"
+
                         isPass = false
                     }
                     if (isPass) {
@@ -615,23 +615,35 @@
                     if (this.timer) {  // 清除定时器
                         clearInterval(this.timer)
                     }
-                    this.errText = ""
-                    // 默认不使用余额
-                    this.zfData.checked = false
-                    // 重置支付倒计时5分钟
-                    this.time = 300000
-                    // 获取余额
-                    this.getAccount()
-                    // 获取订单金额 和 订到id
-                    this.zfData.orderId = Number(row.id)
-                    this.zfData.amount = Number(row.amount)
-                    // 展示支付 dialog
-                    this.isShowZf = true
-                    // 默认拉取第一种支付方式
-                    this.zfData.gateway = this.gatewayList[0].name
-                    this.zfSelectChange()
-                    // 轮询支付
-                    this.pollingStatus(this.zfData.orderId)
+                    const params = {
+                        id: row.id,
+                        use: 0
+                    }
+                    creditPay(params).then(res => {
+
+
+                        this.errText = ""
+                        // 默认不使用余额
+                        this.zfData.checked = false
+                        // 重置支付倒计时5分钟
+                        this.time = 300000
+                        // 获取余额
+                        this.getAccount()
+                        // 获取订单金额 和 订单id
+                        this.zfData.orderId = Number(row.id)
+                        this.zfData.amount = Number(row.amount)
+                        // 展示支付 dialog
+                        this.isShowZf = true
+                        // 默认拉取第一种支付方式
+                        this.zfData.gateway = this.gatewayList[0].name
+                        this.zfSelectChange()
+                        // 轮询支付
+                        this.pollingStatus(this.zfData.orderId)
+
+                    }).catch(error => { })
+
+
+
                 },
                 // 支付方式切换
                 zfSelectChange() {
@@ -705,12 +717,9 @@
                 },
                 // 获取提现规则
                 getWithdrawRule() {
-                    const params = {
-                        source: "credit"
-                    }
-                    withdrawRule(params).then(res => {
+                    withdrawRule().then(res => {
                         if (res.data.status === 200) {
-                            this.ruleData = res.data.data.rule
+                            this.ruleData = res.data.data
                         }
                     })
                 },
@@ -773,6 +782,11 @@
                 },
                 // 监测滚动
                 computeScroll() {
+                    let sizeWidth = document.documentElement.clientWidth;  // 初始宽宽度
+                    if (sizeWidth > 750) {
+                        return false
+                    }
+
                     const body = document.getElementById('finance')
                     // 获取距离顶部的距离
                     let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
@@ -832,7 +846,7 @@
                                                 product_name = product_name.slice(0, -1)
                                             }
                                             item.product_name = product_name
-
+                                            item.data = []
                                             // 判断有无子数据
                                             if (item.order_item_count > 1) {
                                                 // item.children = []
@@ -928,6 +942,27 @@
                 // 返回顶部
                 goBackTop() {
                     document.documentElement.scrollTop = document.body.scrollTop = 0;
+                },
+                // 移动端item展开
+                showItem(item) {
+                    if (item.hasChildren) {
+                        // console.log(item);
+                        const id = item.id;
+                        orderDetails(id).then(res => {
+                            if (res.data.status === 200) {
+                                let resData = res.data.data.order.items
+                                this.dataList1.map(n => {
+                                    if (n.id === item.id) {
+                                        // n.id = 1
+                                        n.data = resData
+                                    }
+                                })
+
+
+                            }
+                            console.log(this.dataList1);
+                        })
+                    }
                 }
             },
         }).$mount(finance);

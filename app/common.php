@@ -10,6 +10,7 @@ use app\common\model\ClientModel;
 use think\facade\Event;
 use app\common\model\TaskWaitModel;
 use app\common\model\NoticeSettingModel;
+use app\common\model\CertificationLogModel;
 
 
 function read_dir($dir = '', $files = []){
@@ -453,7 +454,7 @@ function curl($url, $data = [], $timeout = 30, $request = 'POST', $header = [])
 function idcsmart_password($pw, $authCode = '')
 {
     error_reporting(0);
-    if (defined('IS_ZKEYS') && IS_ZKEYS){
+    if (defined('IS_ZKEYS') && IS_ZKEYS){ # 兼容zkeys迁移密码
         $result = md5(htmlspecialchars($pw));
     }else{
         if (is_null($pw)){
@@ -1024,6 +1025,12 @@ function plugin_reflection($plugin,$param,$module='gateway',$action='handle')
     # 实现默认方法:插件标识+Handle
     $action = parse_name(parse_name($plugin) . '_' . $action,1);
 
+    $methods = get_class_methods($class);
+
+    if (!in_array($action,$methods)){
+        return '';
+    }
+
     return app('app')->invoke([$class,$action],[$param]);
 }
 
@@ -1243,4 +1250,73 @@ function get_files($path)
     }
     closedir($handler);
     return $arr;
+}
+
+/**
+ * @title 实名认证接口
+ * @desc 实名认证接口
+ * @author wyh
+ * @version v1
+ * @return array list - 支付接口
+ * @return int list[].id - ID
+ * @return string list[].title - 名称
+ * @return string list[].name - 标识
+ * @return string list[].url - 图片:base64格式
+ * @return int count - 总数
+ */
+function certification_list()
+{
+    $PluginModel = new PluginModel();
+
+    $certification = $PluginModel->plugins('certification');
+
+    return $certification;
+}
+
+/**
+ * @title 检查客户是否实名认证
+ * @desc 检查客户是否实名认证
+ * @author wyh
+ * @version v1
+ * @param int client_id - 客户ID required
+ */
+function check_certification($client_id)
+{
+    $CertificationLogModel = new CertificationLogModel();
+
+    return $CertificationLogModel->checkCertification($client_id);
+}
+
+/**
+ * @title 更新个人实名认证信息
+ * @desc 更新个人实名认证信息
+ * @author wyh
+ * @version v1
+ * @param int status - 状态:1已认证，2未通过，3待审核，4已提交资料
+ * @param string auth_fail - 失败原因
+ * @param int certify_id - 认证证书
+ * @param int refresh - 此字段解决一些插件如支付宝实名认证时，验证页面除了通过，即status=1时才刷新页面；其他的都不刷新验证页面。默认刷新1，0不刷新
+ */
+function update_certification_person($param)
+{
+    $CertificationLogModel = new CertificationLogModel();
+
+    return $CertificationLogModel->updateCertificationPerson($param);
+}
+
+/**
+ * @title 更新企业实名认证信息
+ * @desc 更新企业实名认证信息
+ * @author wyh
+ * @version v1
+ * @param int status - 状态:1已认证，2未通过，3待审核，4已提交资料
+ * @param string auth_fail - 失败原因
+ * @param int certify_id - 认证证书
+ * @param int refresh - 此字段解决一些插件如支付宝实名认证时，验证页面除了通过，即status=1时才刷新页面；其他的都不刷新验证页面。默认刷新1，0不刷新
+ */
+function update_certification_company($param)
+{
+    $CertificationLogModel = new CertificationLogModel();
+
+    return $CertificationLogModel->updateCertificationCompany($param);
 }

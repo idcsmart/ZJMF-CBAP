@@ -8,20 +8,23 @@
                 asideMenu,
                 topMenu,
                 pagination,
-                captchaDialog
+            },
+            created() {
+                this.getCommonData()
             },
             mounted() {
-                // 关闭loading
-                // document.getElementById('mainLoading').style.display = 'none';
+
             },
             updated() {
-                // 关闭loading
-                document.getElementById('mainLoading').style.display = 'none';
-                document.getElementsByClassName('template')[0].style.display = 'block'
+                // // 关闭loading
+                // document.getElementById('mainLoading').style.display = 'none';
+                // document.getElementsByClassName('template')[0].style.display = 'block'
+            },
+            destroyed() {
+
             },
             data() {
                 return {
-                    isShowCaptcha: false, //是否显示验证码弹窗
                     params: {
                         page: 1,
                         limit: 20,
@@ -31,26 +34,44 @@
                         sort: 'desc',
                         keywords: '',
                     },
+                    commonData: {},
+                }
+            },
+            filters: {
+                formateTime(time) {
+                    if (time && time !== 0) {
+                        return formateDate(time * 1000)
+                    } else {
+                        return "--"
+                    }
                 }
             },
             methods: {
-                // 切换分页
+
+                // 每页展示数改变
                 sizeChange(e) {
                     this.params.limit = e
-                    console.log(this.params);
+                    this.params.page = 1
+                    // 获取列表
                 },
+                // 当前页改变
                 currentChange(e) {
                     this.params.page = e
-                    console.log(this.params);
+
                 },
-                // 验证码弹窗 验证成功后返回的数据
-                getData(e){
-                    console.log(e);
+
+                // 获取通用配置
+                getCommonData() {
+                    getCommon().then(res => {
+                        if (res.data.status === 200) {
+                            this.commonData = res.data.data
+                            localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
+                            document.title = this.commonData.website_name + '-工单系统'
+                        }
+                    })
                 }
             },
-            created() {
 
-            },
         }).$mount(template)
         typeof old_onload == 'function' && old_onload()
     };

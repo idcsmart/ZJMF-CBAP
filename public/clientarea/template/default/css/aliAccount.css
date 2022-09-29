@@ -54,17 +54,131 @@ th {
     padding-right: .1rem;
     cursor: pointer;
 }
-.el-input__suffix{
+
+.el-input__suffix {
     display: flex;
     align-items: center;
 }
 
-.el-message-box__btns > .el-button{
+.el-message-box__btns>.el-button {
     display: inline-block;
     margin-left: 10px;
 }
 
-.el-message-box__btns{
+.el-message-box__btns {
     display: flex;
     flex-direction: row-reverse;
+}
+
+.content-table {
+    display: block;
+}
+
+.mobel {
+    display: none;
+}
+
+@media screen and (max-width: 750px) {
+    .top-l {
+        font-size: .48rem;
+    }
+
+    .top-img {
+        width: .48rem;
+    }
+
+    .content-table {
+        display: none;
+    }
+
+    .mobel {
+        display: block;
+    }
+
+    .mob-searchbar {
+        margin-top: .53rem;
+    }
+
+    .mob-search-input {
+        height: .8rem;
+        background: rgba(134, 146, 176, 0.1);
+        border-radius: 3px 3px 0px 0px;
+    }
+
+    .mob-search-input>input {
+        height: .8rem;
+        background: rgba(134, 146, 176, 0.1);
+        border-radius: 3px 3px 0px 0px;
+    }
+
+    /* 订单记录表格开始 */
+    .mob-tabledata {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #D7D8DB;
+        border-radius: 0px 0px 3px 3px;
+    }
+
+    .mob-tabledata-item {
+        /* height: 2.32rem; */
+        height: auto;
+        border-bottom: 1px solid #D7D8DB;
+        display: flex;
+        flex-direction: column;
+        padding: 0 .3rem;
+    }
+
+    .mob-item-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: .2rem;
+    }
+
+    .mob-item-row1,
+    .mob-item-row3,
+    .mob-item-row-notes {
+        font-size: .26rem;
+        line-height: .26rem;
+        color: #8692B0;
+        margin-left: .26rem;
+    }
+
+    .mob-item-row1 {
+        margin-top: .41rem;
+        align-items: center;
+    }
+
+    .mob-item-row2 {
+        font-size: .3rem;
+        line-height: .31rem;
+        color: #1E2736;
+    }
+
+    .mob-item-row3 {
+        margin-bottom: .33rem;
+    }
+
+    .mob-item-row2-name {
+        width: 50%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+
+    .bottom-text {
+        font-size: .26rem;
+        line-height: .26rem;
+        color: #8692B0;
+        margin: .4rem 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .back-top-img {
+        width: 0.88rem;
+        position: fixed;
+        right: .3rem;
+        bottom: 1.17rem;
+    }
 }

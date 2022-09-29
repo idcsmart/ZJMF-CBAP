@@ -232,6 +232,9 @@ ol {
   padding: 0 0 0 1.2em;
   line-height: 22px;
 }
+.t-radio-group .t-radio {
+  white-space: nowrap;
+}
 .t-textarea__inner {
   text-align: justify;
 }
@@ -519,6 +522,7 @@ body {
   line-height: 32px;
   border-style: solid;
   border-width: 1px;
+  box-sizing: border-box;
 }
 .com-search .t-input {
   line-height: 30px;
@@ -1077,6 +1081,33 @@ textarea {
 }
 .t-pagination {
   padding: 14px 0;
+}
+/* 批量续费 */
+.renew-dialog .t-dialog {
+  width: 800px !important;
+}
+.renew-dialog .com-f-btn {
+  margin-top: 40px;
+  line-height: 1;
+}
+.renew-dialog .com-f-btn .total {
+  margin-bottom: 10px;
+}
+.renew-dialog .com-f-btn .price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #FF0000;
+}
+.renew-dialog .com-f-btn .price .symbol {
+  font-size: 16px;
+  font-weight: normal;
+}
+.renew-dialog .com-f-btn .t-checkbox {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px;
+}
+.renew-dialog .no-renew {
+  color: #999;
 }
 @media screen and (max-width: 768px) {
   #layout .header {

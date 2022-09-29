@@ -9,15 +9,6 @@
                 this.getCloudList()
                 this.getCommon()
             },
-            mounted() {
-                // 关闭loading
-                // document.getElementById('mainLoading').style.display = 'none';
-            },
-            updated() {
-                // 关闭loading
-                document.getElementById('mainLoading').style.display = 'none';
-                document.getElementsByClassName('template')[0].style.display = 'block'
-            },
             components: {
                 asideMenu,
                 topMenu,
@@ -26,9 +17,10 @@
             data() {
                 return {
                     imgUrl: `${url}`,
-                    id: 30,
+                    id: 0,
                     menuActiveId: 1,
-                    commonData:{},
+                    hostData:{},
+                    commonData: {},
                     menuList: [
                         {
                             id: 1,
@@ -61,11 +53,43 @@
                     status: {
                         Unpaid: { text: "未付款", color: "#F64E60", bgColor: "#FFE2E5" },
                         Pending: { text: "开通中", color: "#3699FF", bgColor: "#E1F0FF" },
-                        Active: { text: "已开通", color: "#1BC5BD", bgColor: "#C9F7F5" },
-                        // Suspended:{text:"已暂停",color:"#F0142F",bgColor:"#FFE2E5"},
+                        Active: { text: "正常", color: "#1BC5BD", bgColor: "#C9F7F5" },
+                        suspended: { text: "已暂停", color: "#F0142F", bgColor: "#FFE2E5" },
                         Deleted: { text: "已删除", color: "#9696A3", bgColor: "#F2F2F7" },
                         Failed: { text: "开通失败", color: "#FFA800", bgColor: "#FFF4DE" }
                     },
+                    statusSelect: [
+                        {
+                            id: 1,
+                            status: 'Unpaid',
+                            label: "未付款"
+                        },
+                        {
+                            id: 2,
+                            status: 'Pending',
+                            label: "开通中"
+                        },
+                        {
+                            id: 3,
+                            status: 'Active',
+                            label: "正常"
+                        },
+                        {
+                            id: 4,
+                            status: 'Suspended',
+                            label: "已暂停"
+                        },
+                        {
+                            id: 5,
+                            status: 'Deleted',
+                            label: "已删除"
+                        },
+                        {
+                            id: 6,
+                            status: 'Failed',
+                            label: "开通失败"
+                        },
+                    ],
                     // 数据中心
                     center: [],
                     // 产品列表
@@ -79,7 +103,8 @@
                         orderby: 'id',
                         sort: 'desc',
                         keywords: '',
-                        data_center_id: ''
+                        data_center_id: '',
+                        status: ''
                     },
                     timerId: null
                 }
@@ -94,7 +119,7 @@
                 }
             },
             methods: {
-                getCommon(){
+                getCommon() {
                     this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
                     document.title = this.commonData.website_name + '-产品列表'
                 },
@@ -114,14 +139,8 @@
                     this.getCloudList()
                 },
                 inputChange() {
-                    // this.getCloudList()
-                    // if (this.timerId) {
-                    //     clearTimeout(this.timerId)
-                    // }
-                    // this.timerId = setTimeout(() => {
-                        this.params.page = 1
-                        this.getCloudList()
-                    // }, 500)
+                    this.params.page = 1
+                    this.getCloudList()
                 },
                 // 获取数据中心 
                 getDataCenter(id) {
@@ -129,16 +148,15 @@
                         if (res.data.status === 200) {
                             const list = res.data.data.list
                             let centerData = []
-                            list.map(item => {
-
-                                let label = item.country + "-" + item.city
-                                item.area.map(area => {
+                            list && list.map(item => {
+                                let label = item.name_zh
+                                item.city.map(city => {
                                     let itemData = {
                                         id: '',
                                         label
                                     }
-                                    itemData.id = area.id
-                                    itemData.label = itemData.label + "-" + area.area
+                                    itemData.id = city.id
+                                    itemData.label = itemData.label + "-" + city.name
                                     centerData.push(itemData)
                                 })
                             })
@@ -157,6 +175,15 @@
                         }
                         this.loading = false
                     })
+                },
+                // 跳转产品详情
+                toDetail(id) {
+                    location.href = `cloudManager.html?id=${id}`
+                },
+                // 跳转订购页
+                toOrder() {
+                    const id = this.id
+                    location.href = `order.html?id=${id}`
                 },
             },
 

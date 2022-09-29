@@ -49,12 +49,12 @@ class CountryModel extends Model
             }
         };
 
-        $countries = $this->field('name,name_zh,phone_code,iso')
+        $countries = $this->field('id,name,name_zh,phone_code,iso')
             ->where($where)
             ->select()
             ->toArray();
 
-        $count = $this->field('name,name_zh,phone_code')
+        $count = $this->field('id,name,name_zh,phone_code')
             ->where($where)
             ->count();
 

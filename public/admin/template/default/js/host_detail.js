@@ -91,7 +91,17 @@
           popupProps: {
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` }),
           },
-          config: ''
+          config: '',
+          // 续费相关
+          renewVisible: false,
+          renewList: [],
+          curId: 1,
+          renewTotal: '',
+          pay: false,
+          submitLoading: false,
+          showId: [1, 2, 3],
+          curRenew: {},
+          curStatus: ''
         }
       },
       watch: {
@@ -103,6 +113,11 @@
         },
         serverList () {
           this.done = this.serverList.length === this.total
+        },
+        curId: {
+          handler (val) {
+            this.curRenew = this.renewList[val - 1]
+          }
         }
       },
       created () {
@@ -121,6 +136,77 @@
         }
       },
       methods: {
+        /* 续费 */
+        renewDialog () {
+          this.renewVisible = true
+          this.getRenewPage()
+        },
+        // 获取续费页面
+        async getRenewPage () {
+          try {
+            const res = await getSingleRenew(this.formData.id)
+            this.renewList = res.data.data.host.map((item, index) => {
+              item.id = index + 1
+              return item
+            })
+            this.curRenew = this.renewList[0]
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
+        },
+        // 向左移动
+        subIndex () {
+          let num = this.curId
+          if (num > 1) {
+            num -= 1
+            this.curId -= 1
+          }
+          if (this.showId[0] > 1) {
+            let newIds = this.showId
+            newIds[0] = newIds[0] - 1
+            newIds[1] = newIds[1] - 1
+            newIds[2] = newIds[2] - 1
+            this.showId = newIds
+          }
+        },
+        // 向右移动
+        addIndex () {
+          let num = this.curId
+          if (num < this.renewList.length) {
+            num += 1
+            this.curId = num++
+          }
+          if (this.showId[2] < this.renewList.length) {
+            let newIds = this.showId
+            newIds[0] = newIds[0] + 1
+            newIds[1] = newIds[1] + 1
+            newIds[2] = newIds[2] + 1
+            this.showId = newIds
+          }
+        },
+        checkCur (item) {
+          this.curId = item.id
+        },
+        async submitRenew () {
+          try {
+            this.submitLoading = true
+            const temp = JSON.parse(JSON.stringify(this.curRenew))
+            delete temp.id
+            const params = {
+              id: this.formData.id,
+              pay: this.pay,
+              ...temp
+            }
+            const res = await postSingleRenew(params)
+            this.$message.success(res.data.msg)
+            this.submitLoading = false
+            this.renewVisible = false
+            this.getProductDetail()
+          } catch (error) {
+            this.submitLoading = false
+            this.$message.error(error.data.msg)
+          }
+        },
         back () {
           this.delVisible = true
         },
@@ -228,6 +314,7 @@
             this.status = res.data.data.status.map((item, index) => {
               return { value: item, label: lang[item] }
             })
+            this.curStatus = this.formData.status
           } catch (error) {
           }
         },

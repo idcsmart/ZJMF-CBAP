@@ -165,7 +165,7 @@ function postSingleRenew (params) {
 
 // 批量续费页面
 function getRenewBatch (params) {
-  return Axios.get(`/host/renew/batch?ids=[${params.ids}]&client_id=${params.client_id}`)
+  return Axios.get(`/host/renew/batch`, { params })
 }
 // 批量续费
 function postRenewBatch (params) {
