@@ -1,0 +1,256 @@
+.main-card-title {
+  font-size: .28rem;
+  display: flex;
+  align-items: center;
+  color: #171725;
+}
+
+.top-back-img {
+  cursor: pointer;
+  width: 0.24rem;
+  height: 0.26rem;
+  margin-right: 0.25rem;
+
+}
+
+.top-line {
+  width: 100%;
+  height: 1px;
+  background: #E6E7EB;
+  opacity: 1;
+  margin-top: .2rem;
+  margin-bottom: 0.65rem;
+
+}
+
+
+.content-title {
+  font-size: 0.18rem;
+  color: #1E2736;
+  font-weight: 500;
+}
+
+.check-type {
+  display: flex;
+  margin-top: .2rem;
+}
+
+.check-type>div {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 3rem;
+  height: 1.8rem;
+  font-size: 0.28rem;
+  color: #4E5259;
+  font-weight: 800;
+  border: 0.01rem solid #E6E7EB;
+  border-radius: 0.03rem;
+}
+
+.check-type>div:nth-of-type(1) {
+  margin-right: .3rem;
+}
+
+.checked-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  line-height: 0;
+  width: 0;
+  height: 0;
+  border-bottom: .25rem solid #0058FF;
+  border-left: .25rem solid transparent;
+}
+
+.checked-icon::after {
+  content: '√';
+  font-size: .16rem;
+  color: #fff;
+  position: absolute;
+  right: 0;
+  top: .15rem;
+}
+
+.check-mode {
+  margin-top: 0.4rem;
+  margin-bottom: 2.5rem;
+}
+
+.check-select .el-select {
+  margin-top: .2rem;
+  width: 4.2rem;
+  height: 0.52rem;
+  border-radius: 0.03rem;
+}
+
+
+.next-box .el-button {
+  width: 1.8rem;
+  height: 0.46rem;
+  background: #0058FF;
+  color: #FFFFFF;
+  font-size: 0.16rem;
+}
+
+.main-content .el-form .el-form-item .el-input {
+  width: 5.2rem;
+}
+
+
+
+.upload-btn {
+  display: flex;
+}
+
+.el-upload--picture-card {
+  width: 3.6rem;
+  height: 2.3rem;
+  border: none;
+}
+
+.upload-btn-img {
+  width: 3.6rem;
+  height: 2.3rem;
+}
+
+.upload-btn-img img {
+  width: 3.6rem;
+  height: 2.3rem;
+}
+
+.certification-person {
+  margin-bottom: .3rem;
+}
+
+.visibleImg {
+  height: 65vh;
+  text-align: center;
+}
+
+.visibleImg img {
+  height: 100%;
+  width: 100%;
+}
+
+.hide .el-upload--picture-card {
+  display: none !important;
+}
+
+.el-upload-list--picture-card .el-upload-list__item {
+  width: 3.6rem;
+  height: 2.3rem;
+}
+
+.status-box {
+  width: 100%;
+  height: 6.97rem;
+  box-sizing: border-box;
+  text-align: center;
+  padding-top: 1.08rem;
+  border: 1px solid #E6E7EB;
+  border-radius: 0.03rem;
+}
+
+.status-title {
+  color: #3DD598;
+  font-weight: 800;
+  font-size: 0.28rem;
+  margin-bottom: 0.2rem;
+}
+
+.status-tips {
+  font-size: 0.16rem;
+  font-weight: 400;
+  color: #1E2736;
+}
+
+.status-info {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.status-info>div:nth-of-type(1) {
+  text-align: right;
+}
+
+.status-info>div:nth-of-type(2) {
+  text-align: left;
+}
+
+.status-info>p {
+  margin-bottom: .05rem;
+  font-size: 0.13rem;
+}
+
+.info-key {
+  color: #8692B0;
+}
+
+.info-value {
+  margin-left: .2rem;
+  color: #4E5259;
+}
+
+.btn-box {
+  margin-top: 0.82rem;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-box .el-button {
+  width: 1.8rem;
+  background: #0058FF;
+  color: #FFFFFF;
+  font-size: 0.16rem;
+}
+
+.origin-color {
+  color: #F99600;
+}
+
+.black-color {
+  color: #1E2736;
+}
+
+.err-img {
+  margin-top: 0.3rem;
+  width: 0.68rem;
+  height: 0.68rem;
+}
+
+.el-link.el-link--default {
+  align-items: flex-end;
+  margin-left: 0.1rem;
+  color: #0058FF;
+  font-size: 0.14rem;
+}
+
+.green-text {
+  color: #3DD598;
+}
+
+.font-14 {
+  color: #8692B0;
+  font-size: 0.16rem;
+  font-weight: 400;
+}
+
+.bule-text {
+  color: #3699FF;
+}
+
+.red-text {
+  font-size: 0.16rem;
+  color: red;
+  margin-top: 0;
+}
+
+/*去除upload组件过渡效果*/
+.el-upload-list__item {
+  transition: none !important;
+}

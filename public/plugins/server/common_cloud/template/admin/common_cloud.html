@@ -1,0 +1,589 @@
+<link rel="stylesheet" href="/plugins/server/common_cloud/template/admin/css/common_cloud.css">
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<div class="common-cloud" v-cloak>
+  <div class="t-card">
+    <t-tabs v-model="tabs" @change="changeTab">
+      <!-- 套餐 -->
+      <t-tab-panel value="package" :label="lang.package_config">
+        <div class="box">
+          <div class="com-top">
+            <span class="txt">{{lang.goods_model}}</span>
+            <t-select disabled v-model="curModel">
+              <t-option :value="0" :label="lang.fixed_package" :key="0">
+              </t-option>
+            </t-select>
+            <t-button @click="addPackage">{{lang.create_package}}</t-button>
+          </div>
+          <t-table row-key="id" :data="packageList" size="medium" :columns="packageColumns" :hover="hover"
+            :loading="dataLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+            :hide-sort-tips="true">
+            <template slot="sortIcon">
+              <t-icon name="caret-down-small"></t-icon>
+            </template>
+            <template #bw="{row}">
+              {{row.in_bw}}/{{row.out_bw}} Mbps
+            </template>
+            <template #data_center_id="{row}">
+              {{row.country_name + row.city}}
+            </template>
+            <template #order="{row}">
+              <div class="com-order">
+                <template>
+                  <t-input v-if="row.status" v-model="row.order"></t-input>
+                  <span v-else>{{row.order}}</span>
+                </template>
+                <template>
+                  <t-icon name="edit-1" v-if="!row.status" @click="eidtDataOrder(row)"></t-icon>
+                  <t-icon name="save" v-else @click="saveDataOrder(row)"></t-icon>
+                </template>
+              </div>
+            </template>
+            <template #server_name="{row}">
+              <span v-for="(i,ind) in row.server">
+                {{i.server_name}}
+                <span v-if="row.server.length > 1 && ind !== row.server.length -1">、</span>
+              </span>
+            </template>
+            <template #cycle="{row}">
+              <span v-if="row.onetime_fee !== ''">{{ row.onetime_fee * 1 === 0 ? lang.free : currency_prefix +
+                row.onetime_fee + '/' + lang.onetime}}</span>
+              <span v-else-if="row.month_fee * 1">{{currency_prefix}}{{row.month_fee}}/{{lang.month}}</span>
+              <span
+                v-else-if="row.quarter_fee * 1">{{currency_prefix}}{{row.quarter_fee}}/{{lang.quarter}}</span>
+              <span
+                v-else-if="row.half_year_fee * 1">{{currency_prefix}}{{row.half_year_fee}}/{{lang.half_year_fee}}</span>
+              <span v-else-if="row.year_fee * 1">{{currency_prefix}}{{row.year_fee}}/{{lang.year_fee}}</span>
+              <span v-else-if="row.two_year * 1">{{currency_prefix}}{{row.two_year}}/{{lang.two_year}}</span>
+              <span
+                v-else-if="row.two_year * 1">{{currency_prefix}}{{row.three_year}}/{{lang.three_year}}</span>
+              <span v-else>--</span>
+            </template>
+            <template #op="{row}">
+              <div class="com-opt">
+                <t-icon name="edit-1" @click="editPackage(row)"></t-icon>
+                <t-icon name="delete" @click="comDel('package',row)"></t-icon>
+              </div>
+            </template>
+          </t-table>
+          <t-pagination :total="package_total" :page-size="packageParams.limit" :current="packageParams.page"
+            :page-size-options="pageSizeOptions" @change="changePage" v-if="package_total" />
+        </div>
+      </t-tab-panel>
+      <!-- 数据中心 -->
+      <t-tab-panel value="data_center" :label="lang.data_center_config">
+        <div class="box">
+          <div class="com-top">
+            <t-button @click="addData">{{lang.new_create}}</t-button>
+          </div>
+          <t-table row-key="id" :data="dataList" size="medium" :columns="dataColumns" :hover="hover"
+            :loading="dataLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+            :hide-sort-tips="true">
+            <template slot="sortIcon">
+              <t-icon name="caret-down-small"></t-icon>
+            </template>
+            <template #order="{row}">
+              <div class="com-order">
+                <template>
+                  <t-input v-if="row.status" v-model="row.order"></t-input>
+                  <span v-else>{{row.order}}</span>
+                </template>
+                <template>
+                  <t-tooltip v-if="!row.status" :content="lang.update + lang.sort" :show-arrow="false"
+                    theme="light">
+                    <t-icon name="edit-1" @click="eidtDataOrder(row)"></t-icon>
+                  </t-tooltip>
+                  <t-icon name="save" v-else @click="saveDataOrder(row)"></t-icon>
+                </template>
+              </div>
+            </template>
+            <template #server_name="{row}">
+              <span v-for="(i,ind) in row.server">
+                {{i.server_name}}
+                <span v-if="row.server.length > 1 && ind !== row.server.length -1">、</span>
+              </span>
+            </template>
+            <template #op="{row}">
+              <div class="com-opt">
+                <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+                  <t-icon name="edit-1" class="common-look" @click="editData(row)"></t-icon>
+                </t-tooltip>
+                <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+                  <t-icon name="delete" class="common-look" @click="comDel('data',row)"></t-icon>
+                </t-tooltip>
+              </div>
+            </template>
+          </t-table>
+          <t-pagination :total="data_total" :page-size="dataParams.limit" :current="dataParams.page"
+            :page-size-options="pageSizeOptions" @change="changeDataPage" v-if="data_total" />
+        </div>
+      </t-tab-panel>
+      <!-- 操作系统管理 -->
+      <t-tab-panel value="system" :label="lang.system_config">
+        <div class="box system-box">
+          <div class="search">
+            <div class="com-top">
+              <t-button @click="refeshImage">{{lang.get_system}}</t-button>
+            </div>
+            <t-select v-model="image_group_id" :placeholder="lang.select+lang.system_classify" clearable
+              @change="getSystems">
+              <t-option :value="item.id" :label="item.name" :key="item.id" v-for="item in systemName">
+              </t-option>
+            </t-select>
+          </div>
+          <t-table row-key="id" :data="systemList" size="medium" :columns="systemColumns" :hover="hover"
+            :loading="dataLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+            :hide-sort-tips="true" class="system-table">
+            <template slot="sortIcon">
+              <t-icon name="caret-down-small"></t-icon>
+            </template>
+            <template #pay="{row}">
+              <div class="opt">
+                <t-switch :custom-value="[1,0]" v-model="row.charge" @click.native="changeSwitch(row)">
+                </t-switch>
+                <t-input class="price" :disabled="!row.charge" v-model="row.price" @focus="focusEidt(row)"
+                  @blur="savePrice(row)">
+                </t-input>
+                <t-icon name="check" v-if="row.status" @click="savePrice(row)"></t-icon>
+              </div>
+            </template>
+            <template #available="{row}">
+              <t-switch :custom-value="[1,0]" v-model="row.enable" @click.native="changeSwitch(row)">
+              </t-switch>
+            </template>
+          </t-table>
+        </div>
+      </t-tab-panel>
+      <!-- 其他配置 -->
+      <t-tab-panel value="other" :label="lang.other_config">
+        <div class="box other-box">
+          <t-form :data="otherForm" ref="otherConfig" @submit="submitConfig" :rules="dataRules"
+            class="other-form">
+            <t-form-item :label="lang.use_ssh">
+              <t-switch :custom-value="[1,0]" v-model="otherForm.support_ssh_key">
+              </t-switch>
+              <t-tooltip :content="lang.ssh_tip" :show-arrow="false" theme="light" placement="top-left">
+                <t-icon name="help-circle"></t-icon>
+              </t-tooltip>
+            </t-form-item>
+            <t-form-item :label="lang.buy_data_disk">
+              <t-switch :custom-value="[1,0]" v-model="otherForm.buy_data_disk">
+              </t-switch>
+              <t-tooltip :content="lang.disk_tip" :show-arrow="false" theme="light" placement="top-left">
+                <t-icon name="help-circle"></t-icon>
+              </t-tooltip>
+            </t-form-item>
+            <t-form-item v-show="otherForm.buy_data_disk" style="margin-bottom: 40px;">
+              <!-- 购买独立数据盘 -->
+              <div class="buy-disk">
+                <t-form-item name="price" class="configs" :label="lang.price_tip" :rules="otherForm.buy_data_disk ? [
+        { required: true, message: lang.input + lang.price_tip, type: 'error' },
+        {
+          pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'
+        },
+        {
+          validator: val => val > 0, message: lang.verify5, type: 'warning'
+        }
+        ] : [{required: false}]">
+                  <t-input v-model="otherForm.price" :placeholder="lang.input + lang.price_tip"></t-input>
+                </t-form-item>
+                <div class="configs">
+                  <!-- 最小容量 -->
+                  <t-form-item name="disk_min_size" :label="lang.min_size" :rules="otherForm.buy_data_disk ? [
+      { required: true, message: lang.input + '10G' + lang.integer, type: 'error' },
+      { validator: checkNum},
+      {
+        pattern: /^\d+$/, message: '10G' + lang.integer_multiple, type: 'warning'
+      },
+      {
+        validator: val => val % 10 === 0, message: '10G' + lang.integer_multiple, type: 'warning'
+      }
+      ] : [{required: false}]">
+                    <t-input v-model="otherForm.disk_min_size" :placeholder="'10G' + lang.integer"
+                      @change="changeNum" class="disk-num">
+                    </t-input>
+                  </t-form-item>
+                  &nbsp;-&nbsp;
+                  <!-- 最大容量 -->
+                  <t-form-item name="disk_max_size" :label="lang.max_size" :rules="otherForm.buy_data_disk ? [
+      { required: true, message: lang.input + '10G' + lang.integer, type: 'error' },
+      { validator: checkNum1},
+      {
+        pattern: /^\d+$/, message: '10G' + lang.integer_multiple, type: 'warning'
+      },
+      {
+        validator: val => val % 10 === 0, message: '10G' + lang.integer_multiple, type: 'warning'
+      }
+      ] : [{required: false}]">
+                    <t-input v-model="otherForm.disk_max_size" :placeholder="'10G' + lang.integer"
+                      @change="changeNum" class="disk-num">
+                    </t-input>
+                  </t-form-item>
+                </div>
+                <!-- 最大数量 -->
+                <t-form-item name="disk_max_num" :label="lang.disk_max_size" class="configs" :rules="otherForm.buy_data_disk ? [
+      { required: true, message: lang.input + lang.disk_max_size, type: 'error' },
+      {
+        pattern: /^([1-5]{1})$/, message: '1-5' + lang.verify2, type: 'warning'
+      }
+      ] : [{required: false}]">
+                  <t-input v-model="otherForm.disk_max_num" :placeholder="lang.input + lang.disk_max_size">
+                  </t-input>
+                </t-form-item>
+                <!-- 存储ID -->
+                <t-form-item :label="lang.storage + 'ID'" name="disk_store_id" class="configs" :rules="[
+                {
+                  pattern: /^[0-9]*$/, message: lang.input + lang.number, type: 'warning'
+                }
+                ]">
+                  <t-input :placeholder="lang.storage_tip" v-model="otherForm.disk_store_id"></t-input>
+                </t-form-item>
+              </div>
+            </t-form-item>
+            <!-- 备份管理 -->
+            <t-form-item :label="lang.backup_manage">
+              <t-switch :custom-value="[1,0]" v-model="otherForm.backup_enable">
+              </t-switch>
+              <t-tooltip :content="lang.backup_tip" :show-arrow="false" theme="light" placement="top-left">
+                <t-icon name="help-circle"></t-icon>
+              </t-tooltip>
+            </t-form-item>
+            <t-table row-key="id" :data="backList" size="medium" :columns="backupColumns" :hover="hover"
+              :loading="backLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+              :hide-sort-tips="true" class="back-table" bordered :loading="backLoading"
+              v-show="otherForm.backup_enable" style="margin-bottom: 40px;">
+              <template #num="{row}">
+                <t-input-number v-model="row.num" theme="column" :min="1" :max="999" style="width: 88px"
+                  :disabled="!row.status">
+                </t-input-number>
+              </template>
+              <template #id="{row,rowIndex}">
+                {{rowIndex + 1}}
+              </template>
+              <template #price="{row,rowIndex}">
+                <t-input-number v-model="row.price" theme="column" :min="0" :step="1.00" :decimal-places="2"
+                  style="width: 88px" :disabled="!row.status">
+                </t-input-number>
+                <template v-if="row.status">
+                  <div class="com-icon" @click="saveBack(row,'backup')">
+                    <t-icon name="check"></t-icon>
+                  </div>
+                  <div class="com-icon" @click="closeEdit(row,rowIndex, 'backup')">
+                    <t-icon name="close"></t-icon>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="com-icon" @click="openEdit('backup',rowIndex)">
+                    <t-icon name="edit"></t-icon>
+                  </div>
+                  <div class="com-icon" @click="comDel('backup',row)">
+                    <t-icon name="remove"></t-icon>
+                  </div>
+                </template>
+                <div class="com-icon" v-if="rowIndex === backList.length-1 && backList.length < 5"
+                  @click="addGroup('backup')">
+                  <t-icon name="add"></t-icon>
+                </div>
+              </template>
+              <template #available="{row}">
+                <t-switch :custom-value="[1,0]" v-model="row.enable" @click.native="changeSwitch(row)">
+                </t-switch>
+              </template>
+            </t-table>
+            <!-- 快照管理管理 -->
+            <t-form-item :label="lang.snap_manage">
+              <t-switch :custom-value="[1,0]" v-model="otherForm.snap_enable">
+              </t-switch>
+              <t-tooltip :content="lang.snap_tip" :show-arrow="false" theme="light" placement="top-left">
+                <t-icon name="help-circle"></t-icon>
+              </t-tooltip>
+            </t-form-item>
+            <t-table row-key="id" :data="snapList" size="medium" :columns="backupColumns" :hover="hover"
+              :loading="backLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+              :hide-sort-tips="true" class="back-table" bordered :loading="backLoading"
+              v-show="otherForm.snap_enable" style="margin-bottom: 40px;">
+              <template #num="{row}">
+                <t-input-number v-model="row.num" theme="column" :min="1" :max="999" style="width: 88px"
+                  :disabled="!row.status">
+                </t-input-number>
+              </template>
+              <template #id="{row,rowIndex}">
+                {{rowIndex + 1}}
+              </template>
+              <template #price="{row,rowIndex}">
+                <t-input-number v-model="row.price" theme="column" :min="0" :step="1.00" :decimal-places="2"
+                  style="width: 88px" :disabled="!row.status">
+                </t-input-number>
+                <template v-if="row.status">
+                  <div class="com-icon" @click="saveBack(row,'snap')">
+                    <t-icon name="check"></t-icon>
+                  </div>
+                  <div class="com-icon" @click="closeEdit(row,rowIndex, 'snap')">
+                    <t-icon name="close"></t-icon>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="com-icon" @click="openEdit('snap',rowIndex)">
+                    <t-icon name="edit"></t-icon>
+                  </div>
+                  <div class="com-icon" @click="comDel('snap',row)">
+                    <t-icon name="remove"></t-icon>
+                  </div>
+                </template>
+                <div class="com-icon" v-if="rowIndex === snapList.length-1 && snapList.length < 5"
+                  @click="addGroup('snap')">
+                  <t-icon name="add"></t-icon>
+                </div>
+              </template>
+              <template #available="{row}">
+                <t-switch :custom-value="[1,0]" v-model="row.enable" @click.native="changeSwitch(row)">
+                </t-switch>
+              </template>
+            </t-table>
+            <t-button theme="primary" type="submit" :loading="submitLoading" class="submit"
+              :style="{'margin-top': otherForm.snap_enable ?  '0' : '5px'}">{{lang.hold}}
+            </t-button>
+          </t-form>
+        </div>
+      </t-tab-panel>
+    </t-tabs>
+  </div>
+  <!-- 新增/修改套餐弹窗 -->
+  <t-dialog :header="dataTitle" :visible.sync="packageModel" @close-btn-click="closePackage"
+  :footer="false"
+    class="package-form" :close-on-overlay-click="false" placement="center">
+    <t-form :data="packageForm" ref="packageForm" @submit="submitPackage" :rules="packageRules"
+      label-align="top" v-if="packageModel">
+      <t-row :gutter="{ xs: 0, sm: 20, md: 40, lg: 60, xl: 80, xxl: 100 }">
+        <!-- 左侧 -->
+        <t-col :xs="12" :xl="6">
+          <p class="com-tit"><span>{{ lang.basic_info }}</span></p>
+          <div class="item">
+            <t-form-item :label="lang.products_name" name="name">
+              <t-input v-model="packageForm.name" :placeholder="lang.input+lang.products_name"></t-input>
+            </t-form-item>
+            <div class="data-select">
+              <t-form-item :label="lang.data_center" name="data_center_id">
+                <t-select v-model="packageForm.data_center_id" :multiple="optType ==='add'"
+                  :min-collapsed-num="1" :placeholder="lang.select+lang.data_center">
+                  <t-option :key="item.id" :value="item.id" :label="item.country_name + item.city"
+                    v-for="item in selectDataCenter">
+                  </t-option>
+                </t-select>
+              </t-form-item>
+              <t-tooltip :content="lang.data_tip" :show-arrow="false" theme="light" placement="top-right"
+                v-if="optType ==='add'">
+                <t-icon name="help-circle" class="pack-tip"></t-icon>
+              </t-tooltip>
+            </div>
+          </div>
+          <t-form-item :label="lang.description" name="description">
+            <t-textarea v-model="packageForm.description" :placeholder="lang.description_tip" />
+          </t-form-item>
+          <p class="com-tit"><span>{{ lang.detail_config }}</span></p>
+          <div class="item">
+            <t-form-item :label="`CPU(${lang.core})`" name="cpu">
+              <t-input v-model="packageForm.cpu" :placeholder="lang.core"></t-input>
+            </t-form-item>
+            <t-form-item :label="lang.memory + '(M)'" name="memory">
+              <t-input v-model="packageForm.memory" placeholder="M"></t-input>
+            </t-form-item>
+          </div>
+          <!-- 系统盘 -->
+          <div class="item">
+            <t-form-item class="half-item">
+              <div class="half">
+                <t-form-item :label="lang.system_disk_size + '(GB)'" name="system_disk_size">
+                  <t-input v-model="packageForm.system_disk_size" placeholder="GB"></t-input>
+                </t-form-item>
+                <t-form-item>
+                  <t-input v-model="packageForm.system_disk_store"
+                    :placeholder="lang.storage + 'ID' + ',' + lang.storage_tip"></t-input>
+                </t-form-item>
+              </div>
+            </t-form-item>
+            <t-form-item class="half-item">
+              <div class="half">
+                <t-form-item :label="lang.free_data_disk_size + '(GB)'" name="free_data_disk_size" :rules="packageForm.free_data_disk_size? 
+                [ {
+                  pattern: /^[0-9]*$/, message: lang.input + '0-1048576' + lang.verify2, type: 'warning'
+                },
+                {
+                  validator: val => val >= 0 && val <= 1048576, message: lang.input + '0-1048576' + lang.verify2, type: 'warning'
+                }]: 
+                [{required: false}]">
+                  <t-input v-model="packageForm.free_data_disk_size" placeholder="GB"></t-input>
+                </t-form-item>
+                <t-form-item>
+                  <t-input v-model="packageForm.data_disk_store"
+                    :placeholder="lang.storage + 'ID' + ',' + lang.storage_tip"></t-input>
+                </t-form-item>
+              </div>
+            </t-form-item>
+          </div>
+          <!-- 带宽 -->
+          <div class="item">
+            <t-form-item class="half-item">
+              <div class="half">
+                <t-form-item :label="lang.bw + '(Mbps)'" name="in_bw">
+                  <t-input v-model="packageForm.in_bw" :placeholder="lang.in"></t-input>
+                </t-form-item>
+                <t-form-item name="out_bw">
+                  <t-input v-model="packageForm.out_bw" :placeholder="lang.out"></t-input>
+                </t-form-item>
+              </div>
+            </t-form-item>
+            <t-form-item class="half-item">
+              <div class="half">
+                <t-form-item :label="lang.ip_num_config" name="ip_num">
+                  <t-input v-model="packageForm.ip_num" :placeholder="lang.one"></t-input>
+                </t-form-item>
+                <t-form-item>
+                  <t-input v-model="packageForm.ip_group"
+                    :placeholder=" 'IP' + lang.group + ',' + lang.storage_tip"></t-input>
+                </t-form-item>
+              </div>
+            </t-form-item>
+          </div>
+          <t-form-item :label="lang.custom_param" name="custom_param">
+            <t-textarea v-model="packageForm.custom_param" :placeholder="lang.custom_param" />
+          </t-form-item>
+        </t-col>
+        <!-- 右侧 -->
+        <t-col :xs="12" :xl="6">
+          <p class="com-tit"><span>{{ lang.traffic_info }}</span></p>
+          <t-form-item :label="lang.traffic_billing" name="traffic_enable" label-align="left">
+            <t-switch :custom-value="[1,0]" v-model="packageForm.traffic_enable">
+            </t-switch>
+          </t-form-item>
+          <div class="item" v-show="packageForm.traffic_enable">
+            <t-form-item :label="lang.available_traffic + '(G)'" name="flow" :rules="packageForm.traffic_enable ? [
+              {required:true,message: lang.input + lang.available_traffic, type: 'error'}
+              ]: [ {required:false}]">
+              <t-input v-model="packageForm.flow" :placeholder="lang.input + lang.available_traffic"></t-input>
+            </t-form-item>
+            <t-form-item :label="lang.billing_cycle" name="traffic_bill_type">
+              <t-select v-model="packageForm.traffic_bill_type" :placeholder="lang.select+lang.billing_cycle">
+                <t-option key="month" value="month" :label="lang.natural_month">
+                </t-option>
+                <t-option key="last_30days" value="last_30days" :label="lang.last_30days">
+                </t-option>
+              </t-select>
+            </t-form-item>
+          </div>
+          <p class="com-tit"><span>{{ lang.charging }}</span></p>
+          <!-- 计费方式 -->
+           <!-- 一次性 -->
+           <t-form-item class="onetime" name="onetime_fee" v-if="payType === 'onetime'" 
+           :label="lang.onetime"
+           :rules="packageForm.onetime_fee || curCarging === '1' ? 
+           [{ required: true, message: lang.input + lang.money, type: 'error' },
+       {pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+       {validator: val => val >= 0, message: lang.verify5, type: 'warning'}]: 
+       [{required: false}]">
+             <t-input v-model="packageForm.onetime_fee" :label="currency_prefix"
+               :placeholder="lang.input + lang.money"  @blur="changeMonth($event,'onetime_fee')"></t-input>
+           </t-form-item>
+           <!-- 周期 -->
+           <div class="cycle-box" v-if="payType === 'recurring_prepayment' || payType === 'recurring_postpaid'">
+             <p>{{lang.cycle}}</p>
+             <div class="item">
+               <t-form-item :label="lang.month" name="month_fee" :rules="packageForm.month_fee? 
+               [{pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+           {validator: val => val >= 0, message: lang.verify5, type: 'wsarning'}
+           ]: [{required: false}]">
+                 <t-input v-model="packageForm.month_fee" :label="currency_prefix"
+                   :placeholder="lang.input + lang.money" @blur="changeMonth($event,'month_fee')"></t-input>
+               </t-form-item>
+               <t-form-item :label="lang.quarter" name="quarter_fee" :rules="packageForm.month_fee? 
+               [{pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+           {validator: val => val >= 0, message: lang.verify5, type: 'warning'}
+           ]: [{required: false}]">
+                 <t-input v-model="packageForm.quarter_fee" :label="currency_prefix"
+                   :placeholder="lang.input + lang.money" @blur="changeMonth($event,'quarter_fee')"></t-input>
+               </t-form-item>
+               <t-form-item :label="lang.half_year_fee" name="half_year_fee" :rules="packageForm.month_fee? 
+               [{pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+           {validator: val => val >= 0, message: lang.verify5, type: 'warning'}
+           ]: [{required: false}]">
+                 <t-input v-model="packageForm.half_year_fee" :label="currency_prefix"
+                   :placeholder="lang.input + lang.money"  @blur="changeMonth($event,'half_year_fee')"></t-input>
+               </t-form-item>
+             </div>
+             <div class="item">
+               <t-form-item :label="lang.year_fee" name="year_fee" :rules="packageForm.month_fee? 
+               [{pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+           {validator: val => val >= 0, message: lang.verify5, type: 'warning'}
+           ]: [{required: false}]">
+                 <t-input v-model="packageForm.year_fee" :label="currency_prefix"
+                   :placeholder="lang.input + lang.money"  @blur="changeMonth($event,'year_fee')"></t-input>
+               </t-form-item>
+               <t-form-item :label="lang.two_year" name="two_year" :rules="packageForm.month_fee? 
+               [{pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+           {validator: val => val >= 0, message: lang.verify5, type: 'warning'}
+           ]: [{required: false}]">
+                 <t-input v-model="packageForm.two_year" :label="currency_prefix"
+                   :placeholder="lang.input + lang.money"  @blur="changeMonth($event,'two_year')"></t-input>
+               </t-form-item>
+               <t-form-item :label="lang.three_year" name="three_year" :rules="packageForm.month_fee? 
+               [{pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning'},
+           {validator: val => val >= 0, message: lang.verify5, type: 'warning'}
+           ]: [{required: false}]">
+                 <t-input v-model="packageForm.three_year" :label="currency_prefix"
+                   :placeholder="lang.input + lang.money"  @blur="changeMonth($event,'three_year')"></t-input>
+               </t-form-item>
+             </div>
+           </div>
+         </t-col>
+       </t-row>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
+        </t-button>
+        <t-button theme="default" variant="base" @click="packageModel = false">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 新增/修改数据中心弹窗 -->
+  <t-dialog :header="dataTitle" :visible.sync="dataModel" :footer="false" width="635" @close="closeData">
+    <t-form :data="dataForm" ref="dataForm" @submit="submitData" :rules="dataRules" class="data-form"
+      v-if="dataModel">
+      <t-form-item :label="lang.country" name="country_id">
+        <t-select v-model="dataForm.country_id" class="flow-type" :placeholder="lang.input+lang.country">
+          <t-option :key="item.id" :value="item.id" :label="item.name_zh" v-for="item in countryList">
+          </t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="lang.city" name="city">
+        <t-input v-model="dataForm.city" :placeholder="lang.input+lang.city"></t-input>
+      </t-form-item>
+      <t-form-item :label="lang.cloud_config" name="cloud_config">
+        <t-form-item name="cloud_config" class="configs" style="margin-right: 20px;margin-bottom: 0;">
+          <t-select v-model="dataForm.cloud_config" class="flow-type" @change="changeType">
+            <t-option :key="item.value" :value="item.value" :label="item.lable" v-for="item in dataConfig">
+            </t-option>
+          </t-select>
+        </t-form-item>
+        <t-form-item name="cloud_config_id" class="configs" :rules="[
+        { required: true, message: lang.input + lang[dataForm.cloud_config] + 'ID', type: 'error' },]">
+          <t-input v-model="dataForm.cloud_config_id"
+            :placeholder="lang.input+lang[dataForm.cloud_config] + 'ID'" class="flow">
+          </t-input>
+        </t-form-item>
+      </t-form-item>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
+        </t-button>
+        <t-button theme="default" variant="base" @click="closeData">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 删除提示框 -->
+  <t-dialog theme="warning" :header="lang.sureDelete" :close-btn="false" :visible.sync="delVisible">
+    <template slot="footer">
+      <t-button theme="primary" @click="sureDelete">{{lang.sure}}</t-button>
+      <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
+    </template>
+  </t-dialog>
+</div>
+<!-- cloud -->
+<script src="/plugins/server/common_cloud/template/admin/api/common_cloud.js"></script>
+<script src="/plugins/server/common_cloud/template/admin/js/common_cloud.js"></script>

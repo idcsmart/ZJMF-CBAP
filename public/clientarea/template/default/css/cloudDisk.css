@@ -1,0 +1,249 @@
+.main-card .buy-btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #EEF4FF;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  color: #0058FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0.6rem auto;
+}
+.main-card .no-disk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.main-card .no-disk .text {
+  font-size: 0.24rem;
+  color: #1E2736;
+  margin-top: 1.4rem;
+}
+.main-card .no-disk .text2 {
+  font-size: 0.16rem;
+  color: #4E5259;
+  margin-top: 0.16rem;
+}
+.main-card .no-disk .buy-btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #EEF4FF;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  color: #0058FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 0.6rem;
+}
+.main-card .yes-disk .main-table {
+  margin-top: 0.4rem;
+  border-radius: 3px;
+  border: 1px solid #E6E7EB;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.main-card .yes-disk .main-table .more-operation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 0.3rem;
+  cursor: pointer;
+}
+.main-card .yes-disk .main-table .more-operation .dot {
+  width: 3px;
+  height: 3px;
+  border: 3px solid #0058ff;
+  border-radius: 50%;
+  margin-right: 0.05rem;
+}
+.main-card .dg-dialog .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.main-card .dg-dialog .disk-card {
+  margin-top: 0.4rem;
+}
+.main-card .dg-dialog .disk-card .disk-label {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.main-card .dg-dialog .disk-card .disk-main-card {
+  margin-top: 0.1rem;
+  width: 100%;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .old-disk-item {
+  margin-left: 0.42rem;
+  margin-bottom: 0.2rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .old-disk-item:first-child {
+  margin-top: 0.3rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .old-disk-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .old-disk-item .disk-item-text {
+  display: inline-block;
+  width: 2.2rem;
+  font-size: 0.14rem;
+  color: #1E2736;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .old-disk-item .disk-item-size {
+  color: #0058FF;
+  font-size: 0.14rem;
+  margin-left: 0.6rem;
+  margin-right: 0.72rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .old-disk-item .del {
+  font-size: 0.1543rem;
+  color: #F0142F;
+  cursor: pointer;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item {
+  margin-left: 0.42rem;
+  margin-bottom: 0.2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item:first-child {
+  margin-top: 0.3rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .item-name {
+  color: #1E2736;
+  margin-right: 0.3rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .item-min-size {
+  color: #999999;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .el-slider {
+  width: 4.34rem;
+  margin-left: 0.12rem;
+  margin-right: 0.12rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .item-max-size {
+  color: #999999;
+  margin-right: 0.19rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .del,
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .add {
+  font-size: 0.18rem;
+  cursor: pointer;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .del {
+  color: #F0142F;
+  margin-right: 0.15rem;
+}
+.main-card .dg-dialog .disk-card .disk-main-card .new-disk-item .add {
+  color: #0058FF;
+}
+.main-card .dg-dialog .dialog-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.main-card .dg-dialog .dialog-footer .text {
+  color: #1e2736;
+  align-self: flex-end;
+}
+.main-card .dg-dialog .dialog-footer .num {
+  color: #f99600;
+  align-self: flex-end;
+  margin-right: 0.2rem;
+}
+.main-card .dg-dialog .dialog-footer .btn-ok {
+  margin-right: 0.12rem;
+  cursor: pointer;
+}
+.main-card .dg-dialog .dialog-footer .btn-no {
+  cursor: pointer;
+}
+.main-card .kr-dialog .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.main-card .kr-dialog .dialog-main {
+  margin-top: 0.4rem;
+}
+.main-card .kr-dialog .dialog-main .label {
+  font-size: 0.16rem;
+  color: #1E2736;
+  margin-bottom: 0.1rem;
+}
+.main-card .kr-dialog .dialog-main .disk-main-card {
+  margin-top: 0.1rem;
+  width: 100%;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+}
+.main-card .kr-dialog .dialog-main .disk-main-card .old-disk-item {
+  margin-bottom: 0.2rem;
+  margin-left: 0.4rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main-card .kr-dialog .dialog-main .disk-main-card .old-disk-item:first-child {
+  margin-top: 0.3rem;
+}
+.main-card .kr-dialog .dialog-main .disk-main-card .old-disk-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.main-card .kr-dialog .dialog-main .disk-main-card .old-disk-item .disk-item-text {
+  width: 1rem;
+  margin-right: 0.3rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.main-card .kr-dialog .dialog-main .disk-main-card .old-disk-item .el-slider {
+  width: 4rem;
+  margin-left: 0.12rem;
+  margin-right: 0.12rem;
+}
+.main-card .kr-dialog .dialog-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.main-card .kr-dialog .dialog-footer .text {
+  color: #1e2736;
+  align-self: flex-end;
+}
+.main-card .kr-dialog .dialog-footer .num {
+  color: #f99600;
+  align-self: flex-end;
+  margin-right: 0.2rem;
+}
+.main-card .kr-dialog .dialog-footer .btn-ok {
+  margin-right: 0.12rem;
+  cursor: pointer;
+}
+.main-card .kr-dialog .dialog-footer .btn-no {
+  cursor: pointer;
+}
+.el-popover {
+  min-width: 0.5rem !important;
+}
+.el-popover .operation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.el-popover .operation .operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  cursor: pointer;
+}

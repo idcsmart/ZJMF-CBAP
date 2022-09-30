@@ -1,0 +1,299 @@
+.manage-content {
+  margin-top: 0.2rem;
+}
+.manage-content .manage-item {
+  /* width: 3.94rem; */
+  height: 1.25rem;
+  border: 1px solid #E6E7EB;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.3rem;
+  padding-left: 0.24rem;
+  margin-bottom: 0.4rem;
+}
+.manage-content .el-row{
+  margin: 0 -.3rem;
+}
+.manage-content .el-col{
+  padding: 0 .3rem;
+}
+.manage-content .manage-item .item-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.manage-content .manage-item .item-top .item-top-btn {
+  margin-left: 0.2rem;
+}
+.manage-content .manage-item .item-top-btn {
+  width: 0.88rem;
+  height: 0.32rem;
+  background: #0058FF;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+.manage-content .manage-item .item-bottom {
+  color: #1E2736;
+  margin-top: 0.16rem;
+}
+.rescue-dialog .dialog-title {
+  display: flex;
+  flex-direction: column;
+}
+.rescue-dialog .dialog-title .second-title {
+  font-size: 0.14rem;
+  color: #8692B0;
+}
+.rescue-dialog .dialog-main .os-select {
+  width: 100%;
+}
+.rescue-dialog .dialog-main .os-select .el-input__inner {
+  height: 0.52rem;
+  width: 100%;
+  padding-left: 0.65rem;
+}
+.rescue-dialog .dialog-main .os-select .os-img {
+  width: 0.48rem;
+  height: 0.48rem;
+}
+.rescue-dialog .dialog-main .pass-input .el-input__suffix {
+  right: 0;
+}
+.rescue-dialog .dialog-main .pass-input .pass-btn {
+  width: 1.12rem;
+  height: calc(100% - 0.02rem);
+  background: #EEF4FF;
+  border-radius: 0px 3px 3px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.16rem;
+  color: #4E5259;
+  border-top: 1px solid #E6E7EB;
+  border-right: 1px solid #E6E7EB;
+  border-bottom: 1px solid #E6E7EB;
+  cursor: pointer;
+}
+.rescue-dialog .dialog-main .alert {
+  margin-top: 0.2rem;
+}
+.rescue-dialog .dialog-main .alert .remind {
+  height: 0.46rem;
+  background: #FDE6E9;
+  border: 1px solid rgba(240, 20, 47, 0.2);
+  opacity: 1;
+  border-radius: 3px;
+  color: #F64E60;
+  line-height: 0.46rem;
+  padding-left: 0.16rem;
+}
+.upgrade-dialog .dialog-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.upgrade-dialog .dialog-main .package:first-child {
+  margin-right: 0.35rem;
+}
+.upgrade-dialog .dialog-main .package .label {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.upgrade-dialog .dialog-main .package .package-main {
+  width: 2.6rem;
+  min-height: 3.09rem;
+  border: 1px solid #E6E7EB;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.upgrade-dialog .dialog-main .package .package-main .day-row {
+  color: #8692B0;
+  margin-top: 0.34rem;
+}
+.upgrade-dialog .dialog-main .package .package-main .day-row .day {
+  color: #0058ff;
+}
+.upgrade-dialog .dialog-main .package .package-main .money {
+  font-size: 0.22rem;
+  color: #0058FF;
+  font-weight: 800;
+  margin-top: 0.3rem;
+}
+.upgrade-dialog .dialog-main .package .package-main .package-line {
+  width: 0.42rem;
+  height: 0px;
+  border: 2px solid #0058FF;
+  margin-top: 0.21rem;
+  margin-bottom: 0.2rem;
+}
+.upgrade-dialog .dialog-main .package .package-upgrade {
+  min-height: 2.55rem;
+}
+.upgrade-dialog .dialog-main .package .package-select {
+  width: 100%;
+  margin-bottom: 0.08rem;
+}
+.upgrade-dialog .dialog-main .package .package-select .el-input__inner {
+  height: 0.46rem;
+  width: 100%;
+}
+.upgrade-dialog .alert {
+  margin-top: 0.2rem;
+}
+.upgrade-dialog .dialog-footer {
+  display: flex;
+  align-items: flex-end;
+}
+.upgrade-dialog .dialog-footer .money-text {
+  color: #1e2736;
+}
+.upgrade-dialog .dialog-footer .money-num {
+  color: #f99600;
+  margin-right: 0.2rem;
+}
+.repass-dialog .dialog-title {
+  display: flex;
+  flex-direction: column;
+}
+.repass-dialog .dialog-title .second-title {
+  font-size: 0.14rem;
+  color: #8692B0;
+}
+.repass-dialog .dialog-main .label i {
+  color: #DBDBDD;
+  cursor: help;
+  margin-left: 0.04rem;
+}
+.repass-dialog .dialog-main .pass-input .el-input__suffix {
+  right: 0;
+}
+.repass-dialog .dialog-main .pass-input .pass-btn {
+  width: 1.12rem;
+  height: calc(100% - 0.02rem);
+  background: #EEF4FF;
+  border-radius: 0px 3px 3px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.16rem;
+  color: #4E5259;
+  border-top: 1px solid #E6E7EB;
+  border-right: 1px solid #E6E7EB;
+  border-bottom: 1px solid #E6E7EB;
+  cursor: pointer;
+}
+.repass-dialog .dialog-main .alert {
+  background: #FDE6E9;
+  border: 1px solid rgba(240, 20, 47, 0.2);
+  opacity: 1;
+  border-radius: 3px;
+  color: #F64E60;
+  padding: 0.13rem 0.16rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+.repass-dialog .dialog-main .alert .title {
+  margin-bottom: 0.25rem;
+}
+.repass-dialog .dialog-main .alert .row {
+  display: flex;
+  flex-direction: row;
+}
+.repass-dialog .dialog-main .alert .row .dot {
+  width: 4px;
+  height: 4px;
+  background: #F64E60;
+  border-radius: 50%;
+  opacity: 1;
+  margin-top: 0.1rem;
+  margin-right: 0.1rem;
+}
+.repass-dialog .dialog-main .alert-err-text {
+  margin-top: 0.2rem;
+}
+.refund-dialog .host-content {
+  background: rgba(102, 107, 128, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+.refund-dialog .host-content .host-item {
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.1rem;
+  margin-left: 0.3rem;
+}
+.refund-dialog .host-content .host-item:first-child {
+  margin-top: 0.2rem;
+}
+.refund-dialog .host-content .host-item:last-child {
+  margin-bottom: 0.2rem;
+}
+.refund-dialog .host-content .host-item .left {
+  color: #8692B0;
+}
+.refund-dialog .host-content .host-item .right {
+  display: flex;
+  flex-direction: column;
+  margin-left: 0.34rem;
+  color: #4E5259;
+}
+.refund-dialog .amount-content {
+  height: 0.46rem;
+  background: rgba(102, 107, 128, 0.08);
+  border: 1px solid #E6E7EB;
+  padding-left: 0.16rem;
+  display: flex;
+  align-items: center;
+}
+.refund-dialog .el-select {
+  width: 100%;
+}
+.refund-dialog .el-select .el-input {
+  width: 100%;
+}
+.el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.dialog-main {
+  margin-top: 0.4rem;
+}
+.dialog-main .el-input__inner {
+  height: 0.52rem;
+}
+.dialog-main .label {
+  font-size: 0.16rem;
+  color: #1E2736;
+  margin-bottom: 0.1rem;
+}
+.dialog-main .label:not(:first-child) {
+  margin-top: 0.2rem;
+}
+.dialog-footer .btn-no {
+  margin-left: 0.12rem;
+  cursor: pointer;
+}
+.dialog-footer .btn-ok {
+  cursor: pointer;
+}
+.os-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.os-item .item-os-img {
+  width: 0.24rem;
+  height: 0.24rem;
+}
