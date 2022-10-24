@@ -49,6 +49,12 @@
               <t-form-item :label="lang.name" name="username">
                 <t-input v-model="formData.username" :placeholder="lang.input+lang.name"></t-input>
               </t-form-item>
+              <t-form-item :label="lang.clinet_level" name="username" v-if="hasPlugin">
+                <t-select v-model="formData.level_id" :placeholder="lang.clinet_level" clearable>
+                  <t-option v-for="item in levelList" :value="item.id" :label="item.name" :key="item.name">
+                  </t-option>
+                </t-select>
+              </t-form-item>
               <t-form-item :label="lang.phone" name="phone" :rules="formData.email ? 
             [{ required: false},{pattern: /^\d{0,11}$/, message: lang.verify11 }]: 
             [{ required: true,message: lang.input + lang.phone, type: 'error' },
@@ -57,10 +63,8 @@
                   <t-option v-for="item in country" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code" :key="item.name">
                   </t-option>
                 </t-select>
-                <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" style="width: calc(100% - 100px);"/>
+                <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" style="width: calc(100% - 100px);" />
               </t-form-item>
-            </div>
-            <div class="item">
               <t-form-item :label="lang.email" name="email" :rules="formData.phone ? 
                 [{ required: false },
                 {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
@@ -77,16 +81,12 @@
                   </t-option>
                 </t-select>
               </t-form-item>
-            </div>
-            <div class="item">
               <t-form-item :label="lang.address" name="address">
                 <t-input v-model="formData.address" :placeholder="lang.input+lang.address"></t-input>
               </t-form-item>
               <t-form-item :label="lang.company" name="company">
                 <t-input v-model="formData.company" :placeholder="lang.input+lang.company"></t-input>
               </t-form-item>
-            </div>
-            <div class="item">
               <t-form-item :label="lang.language" name="language">
                 <t-select v-model="formData.language" :placeholder="lang.select+lang.language">
                   <t-option v-for="item in langList" :value="item.display_lang" :label="item.display_name" :key="item.display_lang">
@@ -96,10 +96,10 @@
               <t-form-item :label="lang.password" name="password">
                 <t-input type="password" v-model="formData.password" :placeholder="lang.input+lang.password"></t-input>
               </t-form-item>
+              <t-form-item :label="lang.notes" name="notes" class="textarea">
+                <t-textarea :placeholder="lang.input+lang.notes" v-model="formData.notes" />
+              </t-form-item>
             </div>
-            <t-form-item :label="lang.notes" name="notes" class="textarea">
-              <t-textarea :placeholder="lang.input+lang.notes" v-model="formData.notes" />
-            </t-form-item>
           </t-form>
         </t-col>
         <!-- 个人中心右侧 -->
@@ -180,7 +180,7 @@
     </div>
     <!-- 底部操作按钮 -->
     <div class="footer-btn">
-      <t-button theme="primary" @click="updateUserInfo" type="submit" v-if="authList.includes('ClientController::update')">{{lang.hold}}</t-button>
+      <t-button theme="primary" :loading="submitLoading" @click="updateUserInfo" type="submit" v-if="authList.includes('ClientController::update')">{{lang.hold}}</t-button>
       <div class="com-transparent" @click="changeStatus" v-if="authList.includes('ClientController::status')">
         <t-button theme="primary" variant="base">
           <span>{{data.status===0 ? lang.enable :lang.deactivate}}</span>
@@ -225,7 +225,7 @@
         <t-input v-model="moneyData.amount" :placeholder="lang.input+lang.money" :label="inputLabel">
         </t-input>
       </t-form-item>
-      <t-form-item :label="lang.notes" name="notes">
+      <t-form-item :label="lang.notes">
         <t-textarea v-model="moneyData.notes" :placeholder="lang.input+lang.notes" />
       </t-form-item>
       <div class="submit-btn">

@@ -48,6 +48,11 @@ class ConfigModel extends Model{
      * @return  string data.disk_store_id - 储存ID
      * @return  int data.backup_enable - 是否启用备份(0=不启用,1=启用)
      * @return  int data.snap_enable - 是否启用快照(0=不启用,1=启用)
+     * @return  string data.product_name - 商品名称
+     * @return  int data.backup_data[].num - 备份数量
+     * @return  string data.backup_data[].price - 备份价格
+     * @return  int data.snap_data[].num - 快照数量
+     * @return  string data.snap_data[].price - 快照价格
      */
     public function indexConfig($param){
         $ProductModel = ProductModel::find($param['product_id'] ?? 0);
@@ -73,6 +78,14 @@ class ConfigModel extends Model{
         }else{
             unset($config['id'], $config['product_id']);
         }
+        $config['product_name'] = $ProductModel['name'];
+
+        $BackupConfigModel = new BackupConfigModel();
+        $backupData = $BackupConfigModel->backupConfigList(['product_id'=>$param['product_id'], 'type'=>'backup']);
+        $config['backup_data'] = $backupData['data']['list'];
+
+        $backupData = $BackupConfigModel->backupConfigList(['product_id'=>$param['product_id'], 'type'=>'snap']);
+        $config['snap_data'] = $backupData['data']['list'];
 
         $result = [
             'status' => 200,
@@ -99,6 +112,12 @@ class ConfigModel extends Model{
      * @param  string data.disk_store_id - 储存ID buy_data_disk=1时生效
      * @param  int data.backup_enable - 是否启用备份(0=不启用,1=启用)
      * @param  int data.snap_enable - 是否启用快照(0=不启用,1=启用)
+     * @param  array data.backup_data - 允许备份数量数据
+     * @param  int data.backup_data[].num - 数量
+     * @param  float data.backup_data[].float - 价格
+     * @param  array data.snap_data - 允许快照数量数据
+     * @param  int data.snap_data[].num - 数量
+     * @param  float data.snap_data[].float - 价格
      */
     public function saveConfig($param){
         $ProductModel = ProductModel::find($param['product_id']);
@@ -139,6 +158,29 @@ class ConfigModel extends Model{
         if(empty($data)){
             return ['status'=>400, 'msg'=>lang_plugins('param_error')];
         }
+        $appendLog = '';
+        if(isset($param['backup_data'])){
+            if(count($param['backup_data']) > 5){
+                return ['status'=>400, 'msg'=>lang_plugins('over_max_allow_num')];
+            }
+            if( count(array_unique(array_column($param['backup_data'], 'num'))) != count($param['backup_data'])){
+                return ['status'=>400, 'msg'=>lang_plugins('already_add_the_same_number')];
+            }
+            $BackupConfigModel = new BackupConfigModel();
+            $res = $BackupConfigModel->saveBackupConfig($param['product_id'], $param['backup_data'], 'backup');
+            $appendLog .= $res['data']['desc'];
+        }
+        if(isset($param['snap_data'])){
+            if(count($param['snap_data']) > 5){
+                return ['status'=>400, 'msg'=>lang_plugins('over_max_allow_num')];
+            }
+            if( count(array_unique(array_column($param['snap_data'], 'num'))) != count($param['snap_data'])){
+                return ['status'=>400, 'msg'=>lang_plugins('already_add_the_same_number')];
+            }
+            $BackupConfigModel = new BackupConfigModel();
+            $res = $BackupConfigModel->saveBackupConfig($param['product_id'], $param['snap_data'], 'snap');
+            $appendLog .= $res['data']['desc'];
+        }
 
         $config = $this->where('product_id', $param['product_id'])->find();
         if(empty($config)){
@@ -175,9 +217,9 @@ class ConfigModel extends Model{
         if(isset($data['snap_enable'])) $data['snap_enable'] = $switch[ $data['snap_enable'] ];
 
         $description = ToolLogic::createEditLog($config, $data, $desc);
-        if(!empty($description)){
+        if(!empty($description) || !empty($appendLog) ){
             $description = lang_plugins('log_modify_config_success', [
-                '{detail}'=>$description,
+                '{detail}'=>$description.$appendLog,
             ]);
             active_log($description, 'product', $param['product_id']);
         }
@@ -203,8 +245,24 @@ class ConfigModel extends Model{
      * @return  int data.snap_enable - 是否启用快照(0=不启用,1=启用)
      * @return  int data.backup_option[].num - 备份数量
      * @return  string data.backup_option[].price - 价格
+     * @return  string data.backup_option[].free - 免费价格
+     * @return  string data.backup_option[].onetime_fee - 一次性价格
+     * @return  string data.backup_option[].month_fee - 月
+     * @return  string data.backup_option[].quarter_fee - 季度
+     * @return  string data.backup_option[].half_year_fee - 半年
+     * @return  string data.backup_option[].year_fee - 年
+     * @return  string data.backup_option[].two_year - 两年
+     * @return  string data.backup_option[].three_year - 三年
      * @return  int data.snap_option[].num - 快照数量
      * @return  string data.snap_option[].price - 价格
+     * @return  string data.snap_option[].free - 免费价格
+     * @return  string data.snap_option[].onetime_fee - 一次性价格
+     * @return  string data.snap_option[].month_fee - 月
+     * @return  string data.snap_option[].quarter_fee - 季度
+     * @return  string data.snap_option[].half_year_fee - 半年
+     * @return  string data.snap_option[].year_fee - 年
+     * @return  string data.snap_option[].two_year - 两年
+     * @return  string data.snap_option[].three_year - 三年
      */
     public function homeConfig($param){
         $where = [];
@@ -219,6 +277,8 @@ class ConfigModel extends Model{
         }
         unset($config['disk_store_id']);
 
+        $ProductModel = ProductModel::find($param['product_id']);
+
         $config['backup_option'] = [];
         $config['snap_option'] = [];
 
@@ -226,12 +286,38 @@ class ConfigModel extends Model{
         if($config['backup_enable']){
             $res = $BackupConfigModel->backupConfigList(['product_id'=>$param['product_id'], 'type'=>'backup']);
 
-            $config['backup_option'] = $res['data']['list'];
+            $backup_option = $res['data']['list'];
+
+            foreach($backup_option as $k=>$v){
+                $backup_option[$k]['free'] = '0.00';
+                $backup_option[$k]['onetime_fee'] = amount_format($v['price']);
+                $backup_option[$k]['month_fee'] = amount_format($v['price']);
+                $backup_option[$k]['quarter_fee'] = amount_format(bcmul($v['price'], 3));
+                $backup_option[$k]['half_year_fee'] = amount_format(bcmul($v['price'], 6));
+                $backup_option[$k]['year_fee'] = amount_format(bcmul($v['price'], 12));
+                $backup_option[$k]['two_year'] = amount_format(bcmul($v['price'], 24));
+                $backup_option[$k]['three_year'] = amount_format(bcmul($v['price'], 36));
+            }
+
+            $config['backup_option'] = $backup_option;
         }
         if($config['snap_enable']){
             $res = $BackupConfigModel->backupConfigList(['product_id'=>$param['product_id'], 'type'=>'snap']);
 
-            $config['snap_option'] = $res['data']['list'];
+            $snap_option = $res['data']['list'];
+
+            foreach($snap_option as $k=>$v){
+                $snap_option[$k]['free'] = '0.00';
+                $snap_option[$k]['onetime_fee'] = amount_format($v['price']);
+                $snap_option[$k]['month_fee'] = amount_format($v['price']);
+                $snap_option[$k]['quarter_fee'] = amount_format(bcmul($v['price'], 3));
+                $snap_option[$k]['half_year_fee'] = amount_format(bcmul($v['price'], 6));
+                $snap_option[$k]['year_fee'] = amount_format(bcmul($v['price'], 12));
+                $snap_option[$k]['two_year'] = amount_format(bcmul($v['price'], 24));
+                $snap_option[$k]['three_year'] = amount_format(bcmul($v['price'], 36));
+            }
+
+            $config['snap_option'] = $snap_option;
         }
 
         $result = [
@@ -288,7 +374,7 @@ class ConfigModel extends Model{
     public function checkDiskArr($data, $ConfigModel = null){
         $ConfigModel = $ConfigModel ?? $this;
         if(count($data) > $ConfigModel['disk_max_num']){
-            return ['status'=>400, 'msg'=>'最多只可购买'.$ConfigModel['disk_max_num'].'个额外磁盘'];
+            return ['status'=>400, 'msg'=>lang_plugins('over_max_disk_num', ['{num}'=>$ConfigModel['disk_max_num']]) ];
         }
         $size = 0;
         foreach($data as $v){
@@ -305,18 +391,18 @@ class ConfigModel extends Model{
         $ConfigModel = $ConfigModel ?? $this;
 
         if(!is_numeric($size) || !preg_match('/^[\d]+$/', $size)){
-            return ['status'=>400, 'msg'=>'额外数据盘大小只能是数字'];
+            return ['status'=>400, 'msg'=>lang_plugins('extra_data_disk_size_must_be_number') ];
         }
         if(!empty($ConfigModel['disk_min_size']) && $size < $ConfigModel['disk_min_size']){
-            return ['status'=>400, 'msg'=>'额外数据盘大小错误'];
+            return ['status'=>400, 'msg'=>lang_plugins('extra_data_disk_size_error')];
         }
         if(!empty($ConfigModel['disk_max_size']) && $size > $ConfigModel['disk_max_size']){
-            return ['status'=>400, 'msg'=>'额外数据盘大小错误'];
+            return ['status'=>400, 'msg'=>lang('extra_data_disk_size_error')];
         }
         if($size%10 != 0){
-            return ['status'=>400, 'msg'=>'磁盘大小只能是10的倍数'];
+            return ['status'=>400, 'msg'=>lang_plugins('data_disk_size_format_error')];
         }
-        return ['status'=>200, 'msg'=>'成功'];
+        return ['status'=>200, 'msg'=>lang_plugins('success_message')];
     }
 
 
@@ -333,7 +419,7 @@ class ConfigModel extends Model{
         // 验证产品和用户
         $host = HostModel::find($param['id']);
         if(empty($host) || $host['status'] != 'Active'){
-            return ['status'=>400, 'msg'=>lang_plugins('产品未开通')];
+            return ['status'=>400, 'msg'=>lang_plugins('host_not_create')];
         }
         // 前台判断
         $app = app('http')->getName();
@@ -344,27 +430,27 @@ class ConfigModel extends Model{
         }    
         $hostLink = HostLinkModel::where('host_id', $param['id'])->find();
         if(empty($hostLink)){
-            return ['status'=>400, 'msg'=>lang_plugins('产品未开通')];
+            return ['status'=>400, 'msg'=>lang_plugins('host_not_create')];
         }
         if( $hostLink[ $param['type'].'_num' ] == $param['num']){
-            return ['status'=>400, 'msg'=>'数量没有变动'];
+            return ['status'=>400, 'msg'=>lang_plugins('num_not_change')];
         }
         $ConfigModel = ConfigModel::where('product_id', $host['product_id'])->find();
 
-        $type = ['backup'=>'备份','snap'=>'快照'];
+        $type = ['backup'=>lang_plugins('backup'), 'snap'=>lang_plugins('snap')];
 
         $ServerModel = ServerModel::find($host['server_id']);
         $IdcsmartCloud = new IdcsmartCloud($ServerModel);
         // 当前已用数量
         $res = $IdcsmartCloud->cloudSnapshot($hostLink['rel_id'], ['per_page'=>999, 'type'=>$param['type']]);
         if($res['status'] != 200){
-            return ['status'=>400, 'msg'=>'产品状态异常,请联系管理员'];
+            return ['status'=>400, 'msg'=>lang_plugins('host_status_except_please_wait_and_retry')];
         }
         if($param['num'] < ($res['data']['meta']['total'] ?? 0 )){
-            return ['status'=>400, 'msg'=>'当前已用数量超过'.$param['num'].',请删除后再降级'];
+            return ['status'=>400, 'msg'=>lang_plugins('backup_use_over_max', ['{num}'=>$param['num']]) ];
         }
         if(!isset($ConfigModel[$param['type'].'_enable']) || $ConfigModel[$param['type'].'_enable'] == 0){
-            return ['status'=>400, 'msg'=>'不能购买'.$type[$param['type']]];
+            return ['status'=>400, 'msg'=>lang_plugins('not_support_buy_backup', ['{type}'=>$type[$param['type']] ]) ];
         }
         $arr = BackupConfigModel::where('product_id', $host['product_id'])
             ->where('type', $param['type'])
@@ -372,12 +458,12 @@ class ConfigModel extends Model{
             ->toArray();
         $arr = array_column($arr, 'price', 'num');
         if(!isset($arr[ $param['num'] ])){
-            return ['status'=>400, 'msg'=>'数量错误'];
+            return ['status'=>400, 'msg'=>lang_plugins('number_error')];
         }
 
-        $diffTime = $this->hostModel['due_time'] - time();
+        $diffTime = $host['due_time'] - time();
         // 获取之前的周期
-        $duration = HostLinkModel::getDuration($this->hostModel);
+        $duration = HostLinkModel::getDuration($host);
 
         $price = 0;
         $priceDifference = 0;
@@ -385,11 +471,16 @@ class ConfigModel extends Model{
         // 原价,找不到数量就当成0
         $oldPrice = $arr[ $hostLink[ $param['type'].'_num' ] ] ?? 0;
         
-        if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0 || $this->hostModel['billing_cycle_time'] == 0){
+        $isFree = false;
+        if($host['billing_cycle'] == 'free'){
+            $price = 0;
+            $isFree = true;
+        }else if($host['billing_cycle'] == 'onetime' || $diffTime<=0 || $host['billing_cycle_time'] == 0){
             // 不允许白嫖
             $price = $arr[ $param['num'] ] - $oldPrice;
         }else{
-            $price = ( $arr[ $param['num'] ] - $oldPrice ) * $diffTime/$this->hostModel['billing_cycle_time'];
+            // 周期
+            $price = ( $arr[ $param['num'] ] - $oldPrice ) * $diffTime/$host['billing_cycle_time'];
         }
         $price = bcmul($price, $duration['num']);
 
@@ -404,11 +495,13 @@ class ConfigModel extends Model{
             'status' => 200,
             'msg'    => lang_plugins('success_message'),
             'data'   => [
-                'price' => $price,
+                'price' => $isFree ? 0 : $price,
                 'description' => $description,
-                'price_difference' => $priceDifference,
+                'price_difference' => $isFree ? 0 : $priceDifference,
+                'renew_price_difference' => $isFree ? 0 : $priceDifference,
             ]
         ];
+
         return $result;
     }
 
@@ -440,6 +533,8 @@ class ConfigModel extends Model{
             'amount'      => $res['data']['price'],
             'description' => $res['data']['description'],
             'price_difference' => $res['data']['price_difference'],
+            'renew_price_difference' => $res['data']['renew_price_difference'],
+            'upgrade_refund' => 0,
             'config_options' => [
                 'type'       => 'modify_backup',
                 'backup_type' => $param['type'],

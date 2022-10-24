@@ -24,6 +24,8 @@ class ConfigurationModel extends Model
             'website_name',
             'website_url',
             'terms_service_url',
+            'terms_privacy_url',
+            'system_logo',
         ],
         'login'=>[
             'login_phone_verify',
@@ -187,6 +189,7 @@ class ConfigurationModel extends Model
                     'value'=>$param[$v],
                 ];
             }
+
             $this->saveAll($list);
             # 记录日志
             if($description)

@@ -66,15 +66,21 @@ class OrderTmpModel extends Model
         if (!isset($param['gateway']) || empty($param['gateway'])){
             return ['status'=>400,'msg'=>lang('gateway_is_required')];
         }
-        if (!check_gateway($param['gateway'])){
-            return ['status'=>400,'msg'=>lang('no_support_gateway')];
+
+        if ($param['gateway']!='credit'){
+            if (!check_gateway($param['gateway'])){
+                return ['status'=>400,'msg'=>lang('no_support_gateway')];
+            }
         }
+
         # 支付金额为0
-        if ($order->amount_unpaid <= 0){
+        if ($order->amount_unpaid <= 0 || $param['gateway']=='credit'){
 
             $gateway = $param['gateway'];
 
-            $plugin = PluginModel::where('name',$gateway)->where('module','gateway')->find();
+            if ($gateway!='credit'){
+                $plugin = PluginModel::where('name',$gateway)->where('module','gateway')->find();
+            }
 
             $ClientModel = new ClientModel();
             $client = $ClientModel->find($order->client_id);
@@ -86,7 +92,7 @@ class OrderTmpModel extends Model
                 try{
                     $order->save([
                         'gateway' => $gateway,
-                        'gateway_name' => $plugin['title'],
+                        'gateway_name' => $plugin['title']??'余额',
                         'status' => 'Paid',
                         'pay_time' => time()
                     ]);
@@ -94,7 +100,7 @@ class OrderTmpModel extends Model
                     update_credit([
                         'type' => 'Applied',
                         'amount' => -$order->amount,
-                        'notes' => "Applied Creidt to Order #{$id}",
+                        'notes' => "应用余额至订单#{$id}",
                         'client_id' => $order->client_id,
                         'order_id' => $id,
                         'host_id' => 0,
@@ -104,7 +110,7 @@ class OrderTmpModel extends Model
                     $OrderItemModel = new OrderItemModel();
                     $OrderItemModel->update([
                         'gateway' => $gateway,
-                        'gateway_name' => $plugin['title'],
+                        'gateway_name' => $plugin['title']??'余额',
                     ],['order_id'=>$order->id]);
 
                     $this->commit();
@@ -523,7 +529,7 @@ class OrderTmpModel extends Model
                     update_credit([
                         'type' => 'Overpayment',
                         'amount' => $amount,
-                        'notes' => "Order #{$order->id} Overpayment",
+                        'notes' => "订单超付,充值至余额#{$order->id}",
                         'client_id' => $order->client_id,
                         'order_id' => $order->id,
                         'host_id' => 0,
@@ -540,7 +546,7 @@ class OrderTmpModel extends Model
                         update_credit([
                             'type' => 'Applied',
                             'amount' => -$order->amount,
-                            'notes' => "Applied Creidt to Order #{$order->id}",
+                            'notes' => "应用余额至订单#{$order->id}",
                             'client_id' => $order->client_id,
                             'order_id' => $order->id,
                             'host_id' => 0,
@@ -568,7 +574,7 @@ class OrderTmpModel extends Model
                     update_credit([
                         'type' => 'Underpayment',
                         'amount' => $amount,
-                        'notes' => "Order #{$order->id} Underpayment",
+                        'notes' => "少付,充值至余额#{$order->id}",
                         'client_id' => $order->client_id,
                         'order_id' => $order->id,
                         'host_id' => 0,
@@ -597,7 +603,7 @@ class OrderTmpModel extends Model
                                 update_credit([
                                     'type' => 'Applied',
                                     'amount' => -$order->credit,
-                                    'notes' => "Applied Creidt to Order #{$order->id}",
+                                    'notes' => "应用余额至订单#{$order->id}",
                                     'client_id' => $order->client_id,
                                     'order_id' => $order->id,
                                     'host_id' => 0,
@@ -609,7 +615,7 @@ class OrderTmpModel extends Model
                                 update_credit([
                                     'type' => 'Underpayment',
                                     'amount' => $amount,
-                                    'notes' => "Order #{$order->id} Underpayment",
+                                    'notes' => "少付,充值至余额#{$order->id}",
                                     'client_id' => $order->client_id,
                                     'order_id' => $order->id,
                                     'host_id' => 0,

@@ -1,10 +1,57 @@
 .template {
+    .el-main {
+        padding-right: 2.1rem;
+    }
+
     .main-card {
         .card-top {
             .top-operation {
                 .operation-row1 {
                     display: flex;
                     align-items: end;
+
+                    .host-status {
+                        width: 59px;
+                        height: 26px;
+                        border-radius: 3px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        align-self: center;
+                        font-size: .13rem;
+                        margin-left: .1rem;
+                    }
+
+                    .Active {
+                        color: rgba(61, 213, 152, 1);
+                        background: rgba(61, 213, 152, .12);
+                    }
+
+                    .Unpaid {
+                        color: #F64E60;
+                        background: #FFE2E5;
+                    }
+
+                    .Pending {
+                        color: #3699FF;
+                        background: #E1F0FF;
+                    }
+
+                    .Suspended {
+                        color: #FFF99600;
+                        background: #FFF4DE;
+                    }
+
+                    .Deleted {
+                        color: #9696A3;
+                        background: #F2F2F7;
+                    }
+
+                    .Failed {
+                        color: #FFA800;
+                        background: #FFF4DE;
+                    }
+
 
                     .back-img {
                         width: .24rem;
@@ -60,6 +107,59 @@
                     }
 
                     .row2-right {
+                        display: flex;
+                        align-items: center;
+
+
+                        .el-popover__reference-wrapper {
+                            display: flex;
+                            align-items: center;
+                        }
+
+                        .refund {
+                            display: flex;
+                            align-items: center;
+                        }
+
+                        .refund-status {
+                            // width: .48rem;
+                            height: .14rem;
+                            line-height: .14rem;
+                            padding: 4px 14px;
+                            display: inline-block;
+                            border: 1px solid #F0142F;
+                            border-radius: 3px;
+                            font-size: .12rem;
+                            color: #F0142F;
+                            margin-left: .1rem;
+                            margin-right: .08rem;
+                        }
+
+                        .refund-stop-btn {
+                            font-size: .12rem;
+                            color: #0058FF;
+                            cursor: pointer;
+                            // align-self: flex-end;
+                            margin-right: .3rem;
+                            align-self: flex-end;
+                        }
+
+                        .refund-btn {
+                            height: .14rem;
+                            line-height: .14rem;
+                            padding: 4px 8px;
+                            display: inline-block;
+                            border: 1px solid #0058FF;
+                            border-radius: 3px;
+                            font-size: .12rem;
+                            margin-left: .1rem;
+                            color: #0058FF;
+                            cursor: pointer;
+                            margin-left: .08rem;
+                            margin-right: .3rem;
+                        }
+
+
                         img {
                             cursor: pointer;
                             width: .28rem;
@@ -115,11 +215,11 @@
             .top-msg {
                 display: flex;
                 justify-content: space-between;
-                margin-top: .4rem;
+                margin-top: .05rem;
 
                 .msg-l {
                     width: 6.5rem;
-                    height: 2.3rem;
+                    // height: 2.3rem;
                     border: 1px solid #E6E7EB;
                     opacity: 1;
                     border-radius: 3px;
@@ -152,21 +252,52 @@
                             }
                         }
 
-                        .re-btn {
-                            // width: .64rem;
-                            height: .24rem;
-                            padding-left: .08rem;
-                            padding-right: .08rem;
-                            background: #0052D9;
-                            opacity: 1;
-                            border-radius: 3px;
-                            color: rgba(255, 255, 255, 0.9);
-                            font-size: .12rem;
+                        .btn-port {
                             display: flex;
+                            flex-direction: column;
                             align-items: center;
-                            justify-content: center;
-                            cursor: pointer;
-                            margin-left: .05rem;
+                            margin-left: .03rem;
+                            .re-btn {
+                                min-width: 50px;
+                                height: .24rem;
+                                padding-left: .08rem;
+                                padding-right: .08rem;
+                                background: #0052D9;
+                                opacity: 1;
+                                border-radius: 3px;
+                                color: rgba(255, 255, 255, 0.9);
+                                font-size: .12rem;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                cursor: pointer;
+                                
+                            }
+
+                            .port {
+                                color: #8692B0;
+                                margin-top: .04rem;
+                            }
+                        }
+
+
+                        .user-name-pass {
+                            display: flex;
+                            flex-direction: row;
+                            flex-wrap: wrap;
+                            color: #1E2736;
+                            margin-left: .4rem;
+                            width: 2.7rem;
+
+                            .user-name {
+                                margin-right: .5rem;
+                            }
+
+                            .user-pass {}
+
+                            .eyes {
+                                cursor: pointer;
+                            }
                         }
                     }
 
@@ -195,7 +326,7 @@
 
                 .msg-r {
                     width: 6.02rem;
-                    height: 2.3rem;
+                    // height: 2.3rem;
                     border: 1px solid #E6E7EB;
                     border-radius: 3px;
                     display: flex;
@@ -213,6 +344,7 @@
                             display: flex;
                             flex-direction: row;
                             align-items: center;
+                            width: 50%;
 
                             .r-t-l-text {
                                 color: #1E2736;
@@ -240,6 +372,23 @@
                             display: flex;
                             flex-direction: row;
                             align-items: center;
+                            width: 50%;
+                            padding-left: .33rem;
+
+
+                            .help {
+                                margin-left: .08rem;
+                                width: 0.12rem;
+                                height: 0.12rem;
+                                border: 1px solid #0058FF;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: #0058FF;
+                                border-radius: 50%;
+                                font-size: .12rem;
+                                cursor: pointer;
+                            }
 
                             .r-t-r-text {
                                 font-size: .14rem;
@@ -254,7 +403,7 @@
                             }
 
                             .renew-btn-disable {
-                                width: .64rem;
+                                width: .4rem;
                                 height: .24rem;
                                 background: rgba(102, 107, 128, 0.1);
                                 border-radius: 3px;
@@ -307,8 +456,13 @@
                             justify-content: space-between;
 
                             .row-l {
+                                width: 50%;
                                 display: flex;
                                 flex-direction: row;
+
+                                .red {
+                                    color: #F0142F !important;
+                                }
 
                                 .label {
                                     width: 1.1rem;
@@ -321,16 +475,45 @@
                                     font-size: .14rem;
                                     margin-left: .3rem;
                                     color: #1E2736;
-                                    width: 1.5rem;
+
                                     overflow: hidden;
                                     white-space: nowrap;
                                     text-overflow: ellipsis;
                                 }
+
+                                .renew-btn {
+                                    width: .4rem;
+                                    height: .24rem;
+                                    background: #0058FF;
+                                    font-size: .12rem;
+                                    color: #fff;
+                                    cursor: pointer;
+                                    margin-left: .1rem;
+                                    border-radius: 5px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                }
+
+                                .renew-btn-disable {
+                                    width: .4rem;
+                                    height: .24rem;
+                                    background: rgba(102, 107, 128, 0.1);
+                                    border-radius: 3px;
+                                    font-size: .12rem;
+                                    color: #757575;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    margin-left: .1rem;
+                                }
                             }
 
                             .row-r {
+                                width: 50%;
                                 display: flex;
                                 flex-direction: row;
+                                padding-left: .33rem;
 
                                 .label {
                                     width: 1.1rem;
@@ -343,7 +526,7 @@
                                     font-size: .14rem;
                                     margin-left: .3rem;
                                     color: #1E2736;
-                                    width: .75rem;
+
                                     overflow: hidden;
                                     white-space: nowrap;
                                     text-overflow: ellipsis;
@@ -357,6 +540,7 @@
             .refund-msg {
                 display: flex;
                 justify-content: flex-end;
+                margin-top: .4rem;
 
                 .refund-success {
                     width: 6.34rem;
@@ -491,7 +675,7 @@
                     }
 
                     .help-icon {
-                        font-size: .12rem;
+                        font-size: .14rem;
                         margin-left: .04rem;
                         margin-right: .04rem;
                         color: #DBDBDD;
@@ -560,7 +744,7 @@
 
                         .renew-item {
                             width: 1.6rem;
-                            height: .62rem;
+                            min-height: .62rem;
                             border: 1px solid #E6E7EB;
                             border-radius: 3px;
                             display: flex;

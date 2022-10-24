@@ -163,6 +163,7 @@ class CommonCloud{
   `three_year` varchar(255) NOT NULL DEFAULT '' COMMENT '三年',
   `create_time` int(10) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `product_id` int(10) NOT NULL DEFAULT '0',
+  `order` int(10) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`),
   KEY `data_center_id` (`data_center_id`),
   KEY `product_id` (`product_id`)
@@ -925,12 +926,49 @@ class CommonCloud{
 
 	/**
 	 * 时间 2022-06-29
-	 * @title 前台产品内页输出,TODO
+	 * @title 前台产品内页输出
 	 * @author hh
 	 * @version v1
 	 */
 	public function clientArea(){
-		return '';
+		$res = [
+			'template'=>'template/clientarea/product_detail.php',
+		];
+
+		return $res;
+	}
+
+	/**
+	 * 时间 2022-10-13
+	 * @title 产品列表
+	 * @author hh
+	 * @version v1
+	 * @param   [type] $params [description]
+	 * @return  [type]         [description]
+	 */
+	public function hostList($params){
+		$res = [
+			'template'=>'template/clientarea/product_list.php',
+		];
+
+		return $res;
+	}
+
+	/**
+	 * 时间 2022-10-13
+	 * @title 前台购买
+	 * @author hh
+	 * @version v1
+	 * @param   string x       -             x
+	 * @param   [type] $params [description]
+	 * @return  [type]         [description]
+	 */
+	public function clientProductConfigOption($params){
+		$res = [
+			'template'=>'template/clientarea/goods.php',
+		];
+
+		return $res;
 	}
 
 	/**
@@ -942,9 +980,6 @@ class CommonCloud{
 	public function adminArea(){
 		return '';
 	}
-
-	// 前台商品配置项输出,好像不需要
-	// public function clientProductConfigOption(){}
 
 	// 后台商品配置项输出,好像不需要
 	// public function adminProductConfigOption(){}

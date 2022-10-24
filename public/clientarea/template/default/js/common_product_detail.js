@@ -81,8 +81,8 @@
           },
           refundMoney: '0.00',
           refundDialog: {},
-          renewActiveId: '',
           // 续费
+          renewActiveId: '0',
           // 显示续费弹窗
           isShowRenew: false,
           // 续费页面信息
@@ -222,7 +222,7 @@
             if (res.data.status === 200) {
               this.renewPageData = res.data.data.host
 
-              this.renewActiveId = this.renewPageData[0].duration
+              this.renewActiveId = 0
               this.renewParams.billing_cycle = this.renewPageData[0].billing_cycle
               this.renewParams.price = this.renewPageData[0].price
               this.isShowRenew = true
@@ -257,9 +257,9 @@
           })
         },
         // 续费周期点击
-        renewItemChange(item) {
+        renewItemChange(item, index) {
           console.log(item);
-          this.renewActiveId = item.duration
+          this.renewActiveId = index
           this.renewParams.billing_cycle = item.billing_cycle
           this.renewParams.price = item.price
         },

@@ -16,7 +16,9 @@ class ConfigurationValidate extends Validate
         'maintenance_mode' => 'require|in:0,1',
         'website_name' => 'require|max:255',
         'website_url' => 'require|max:255|url',	
-        'terms_service_url' => 'max:255|url',	
+        'terms_service_url' => 'max:255|url',
+        'terms_privacy_url' => 'require|max:255|url',
+        'system_logo' => 'require',	
 		
 		# 登录设置
 		'register_email' => 'require|in:0,1',
@@ -92,6 +94,10 @@ class ConfigurationValidate extends Validate
         'website_url.url' => 'configuration_website_url_error',
         'terms_service_url.max' => 'configuration_terms_service_url_cannot_exceed_255_chars',
         'terms_service_url.url' => 'configuration_website_url_error',
+        'terms_privacy_url.require' => 'configuration_terms_privacy_url',
+        'terms_privacy_url.max' => 'configuration_terms_privacy_url_cannot_exceed_255_chars',
+        'terms_privacy_url.url' => 'configuration_website_url_error',
+        'system_logo.require' => 'configuration_system_logo',
 		
 		# 登录设置
 		'register_email.require' => 'configuration_register_email_cannot_empty',

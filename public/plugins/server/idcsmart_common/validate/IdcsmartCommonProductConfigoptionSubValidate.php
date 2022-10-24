@@ -1,6 +1,7 @@
 <?php
 namespace server\idcsmart_common\validate;
 
+use server\idcsmart_common\logic\IdcsmartCommonLogic;
 use server\idcsmart_common\model\IdcsmartCommonProductConfigoptionModel;
 use server\idcsmart_common\model\IdcsmartCommonProductConfigoptionSubModel;
 use think\Validate;
@@ -12,7 +13,7 @@ class IdcsmartCommonProductConfigoptionSubValidate extends Validate
 {
 	protected $rule = [
 	    'id' => 'integer',
-	    'configoption_id' => 'integer|checkOptionName:thinkphp|checkYesNo:thinkphp',
+	    'configoption_id' => 'integer|checkOptionName:thinkphp|checkYesNo:thinkphp|checkQtyMin:thinkphp',
 		'option_name' => 'max:255',
 		'option_param' => 'max:255',
 		'qty_min' => 'integer|egt:0',
@@ -23,6 +24,7 @@ class IdcsmartCommonProductConfigoptionSubValidate extends Validate
     ];
 
     protected $message  =   [
+        'qty_max.egt' => 'idcsmart_common_configoption_sub_qty_max_egt'
     ];
 
     protected $scene = [
@@ -66,6 +68,43 @@ class IdcsmartCommonProductConfigoptionSubValidate extends Validate
 
             if ($count>=2){
                 return lang_plugins('idcsmart_common_configoption_yes_no_cannnot_greater_two');
+            }
+            # 不可更改配置子项名称
+            $oldOptionName = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$value)->where('id',$data['id'])->value('option_name');
+            if ($data['option_name']!=$oldOptionName){
+                return lang_plugins('idcsmart_common_configoption_yes_no_cannnot_update_option_name');
+            }
+        }
+
+        return true;
+    }
+
+    # 数量类型 范围值限制
+    protected function checkQtyMin($value,$rule,$data)
+    {
+        $IdcsmartCommonLogic = new IdcsmartCommonLogic();
+        $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+        $configoption = $IdcsmartCommonProductConfigoptionModel->find($value);
+
+        $max = $configoption['qty_max'];
+
+        $min = $configoption['qty_min'];
+
+        # 编辑子项时
+        $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+        if (isset($data['id'])){
+            $max = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$value)
+                ->where('id','<>',$data['id'])
+                ->max('qty_max');
+            $min = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$value)
+                ->where('id','<>',$data['id'])
+                ->max('qty_min');
+
+        }
+
+        if ($IdcsmartCommonLogic->checkQuantity($configoption['option_type'])){
+            if (($max>0 && $data['qty_min'] <= $max) && ($min>0 && $data['qty_max']>=$min)){
+                return lang_plugins('idcsmart_common_configoption_sub_qty_min_gt_value',['{max}'=>$max,'{min}'=>$min]);
             }
         }
 

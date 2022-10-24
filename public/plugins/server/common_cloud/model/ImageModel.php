@@ -191,6 +191,12 @@ class ImageModel extends Model{
      * @return  string data.price - 需要支付的金额(0.00表示镜像免费或已购买)
      */
     public function checkHostImage($param){
+        $result = [
+            'status' => 200,
+            'msg'    => lang_plugins('success_message'),
+            'data'   => []
+        ];
+
         // 验证产品和用户
         $host = HostModel::find($param['id']);
         if(empty($host) || $host['status'] != 'Active'){
@@ -211,20 +217,12 @@ class ImageModel extends Model{
         if(empty($image) || $image['enable'] == 0){
             return ['status'=>400, 'msg'=>lang_plugins('image_not_found')];
         }
-        $result = [
-            'status' => 200,
-            'msg'    => lang_plugins('success_message'),
-            'data'   => []
-        ];
-        if($image['charge'] == 1){
+        $result['data']['price'] = '0.00';
+        if($host['billing_cycle'] != 'free' && $image['charge'] == 1){
             $res = HostImageLinkModel::where('host_id', $param['id'])->where('image_id', $param['image_id'])->find();
-            if(!empty($res)){
-                $result['data']['price'] = '0.00';
-            }else{
+            if(empty($res)){
                 $result['data']['price'] = amount_format($image['price']);
             }
-        }else{
-            $result['data']['price'] = '0.00';
         }
         return $result;
     }
@@ -262,6 +260,8 @@ class ImageModel extends Model{
             'amount'      => $res['data']['price'],
             'description' => $description,
             'price_difference' => $res['data']['price'],
+            'renew_price_difference' => 0,
+            'upgrade_refund' => 0,
             'config_options' => [
                 'type'     => 'buy_image',
                 'image_id' => $param['image_id'],

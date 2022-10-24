@@ -102,9 +102,13 @@ function captchaCheckCancel() {
                     }
                 },
                 // 前往协议
-                toRead() {
+                toService() {
                     const url = this.commonData.terms_service_url
-                    location.href = url
+                    window.open(url);
+                },
+                toPrivacy() {
+                    const url = this.commonData.terms_privacy_url
+                    window.open(url);
                 },
                 // 注册
                 doRegist() {

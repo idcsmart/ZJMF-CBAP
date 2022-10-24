@@ -54,7 +54,7 @@ class OrderModel extends Model
      * @return string list[].type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return int list[].create_time - 创建时间 
      * @return string list[].amount - 金额 
-     * @return string list[].status - 状态Unpaid未付款Paid已付款 
+     * @return string list[].status - 状态Unpaid未付款Paid已付款Cancelled已取消 
      * @return string list[].gateway - 支付方式 
      * @return float list[].credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
      * @return int list[].client_id - 用户ID,前台接口调用时不返回
@@ -92,8 +92,11 @@ class OrderModel extends Model
         $count = $this->alias('o')
             ->field('o.id')
             ->leftjoin('client c', 'c.id=o.client_id')
-            ->where(function ($query) use($param) {
+            ->where(function ($query) use($param, $app) {
                 $query->where('o.type', '<>', 'recharge');
+                if($app=='home'){
+                    $query->where('o.status', '<>', 'Cancelled');
+                }
                 if(!empty($param['client_id'])){
                     $query->where('o.client_id', $param['client_id']);
                 }
@@ -111,8 +114,11 @@ class OrderModel extends Model
         $orders = $this->alias('o')
             ->field('o.id,o.type,o.create_time,o.amount,o.status,o.gateway_name gateway,o.credit,o.client_id,c.username client_name,c.credit client_credit,c.email,c.phone_code,c.phone,c.company')
             ->leftjoin('client c', 'c.id=o.client_id')
-            ->where(function ($query) use($param) {
+            ->where(function ($query) use($param, $app) {
                 $query->where('o.type', '<>', 'recharge');
+                if($app=='home'){
+                    $query->where('o.status', '<>', 'Cancelled');
+                }
                 if(!empty($param['client_id'])){
                     $query->where('o.client_id', $param['client_id']);
                 }
@@ -240,6 +246,7 @@ class OrderModel extends Model
      * @return string items[].host_name - 产品标识 
      * @return string items[].billing_cycle - 计费周期 
      * @return string items[].host_status - 产品状态Unpaid未付款Pending开通中Active使用中Suspended暂停Deleted删除Failed开通失败
+     * @return int items[].edit - 是否可编辑1是0否
      */
     public function indexOrder($id)
     {
@@ -254,7 +261,7 @@ class OrderModel extends Model
         // 订单的用户ID和前台用户不一致时返回空对象
         if($app=='home'){
             $client_id = get_client_id();
-            if($order['client_id']!=$client_id){
+            if($order['client_id']!=$client_id || $order['status']=='Cancelled'){
                 return (object)[]; // 转换为对象
             }
         }
@@ -281,6 +288,9 @@ class OrderModel extends Model
             if($orderItem['type']=='addon_idcsmart_promo_code'){
                 $orderItems[$key]['product_name'] = $orderItem['description'];
                 $orderItems[$key]['host_name'] = '';
+            }
+            if($app!='home'){
+                $orderItems[$key]['edit'] = $order['status']=='Unpaid' ? ($orderItem['type']=='manual' ? 1 : 0) : 0;
             }
             unset($orderItems[$key]['billing_cycle_name'], $orderItems[$key]['type']);
         }
@@ -382,6 +392,7 @@ class OrderModel extends Model
             $amount += $result['data']['price']*$value['qty'];
             $products[$key] = $value;
             $products[$key]['price'] = $result['data']['price'];
+            $products[$key]['renew_price'] = $result['data']['renew_price'] ?? $products[$key]['price'];
             $products[$key]['billing_cycle'] = $result['data']['billing_cycle'];
             $products[$key]['duration'] = $result['data']['duration'];
             $products[$key]['description'] = $result['data']['description'];
@@ -430,7 +441,7 @@ class OrderModel extends Model
                         'name' => generate_host_name(),
                         'status' => 'Unpaid',
                         'first_payment_amount' => $value['price'],
-                        'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $value['price'] : 0,
+                        'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $value['renew_price'] : 0,
                         'billing_cycle' => $product['pay_type'],
                         'billing_cycle_name' => $value['billing_cycle'],
                         'billing_cycle_time' => $value['duration'],
@@ -612,6 +623,7 @@ class OrderModel extends Model
         }
 
         $result['data']['price'] = isset($param['product']['price']) ? $param['product']['price'] : $result['data']['price'];
+        $result['data']['renew_price'] = isset($param['product']['price']) ? $param['product']['price'] : ($result['data']['renew_price'] ?? $result['data']['price']);
         $time = time(); // 获取当前时间
         
         $this->startTrans();
@@ -702,6 +714,7 @@ class OrderModel extends Model
                 'data' => json_encode($param['product']['config_options']),
                 'amount' => $amount,
                 'price' => $result['data']['price'],
+                'renew_price' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $result['data']['renew_price'] : 0,
                 'billing_cycle_name' => $result['data']['billing_cycle'],
                 'billing_cycle_time' => $result['data']['duration'],
                 'status' => $amount>0 ? 'Unpaid' : 'Pending',
@@ -742,7 +755,7 @@ class OrderModel extends Model
                     'product_id' => $param['product']['product_id'],
                     'server_id' => $serverId,
                     'first_payment_amount' => $result['data']['price'],
-                    'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $result['data']['price'] : 0,
+                    'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $result['data']['renew_price'] : 0,
                     'billing_cycle' => $product['pay_type'],
                     'billing_cycle_name' => $result['data']['billing_cycle'],
                     'billing_cycle_time' => $result['data']['duration'],
@@ -756,7 +769,7 @@ class OrderModel extends Model
                     $result = update_credit([
                         'type' => 'Refund',
                         'amount' => -$amount,
-                        'notes' => "Upgrade Refund",
+                        'notes' => "升降级退款",
                         'client_id' => $host['client_id'],
                         'order_id' => $order->id,
                         'host_id' => $host['id']
@@ -764,6 +777,15 @@ class OrderModel extends Model
                     if(!$result){
                         throw new Exception(lang('fail_message'));           
                     }
+                }else if($amount<0 && $param['upgrade_refund']!=1){
+                    OrderItemModel::create([
+                        'type' => 'manual',
+                        'order_id' => $order->id,
+                        'client_id' => $host['client_id'],
+                        'description' => lang('update_amount'),
+                        'amount' => -$amount,
+                        'create_time' => $time
+                    ]);
                 }
             }
 
@@ -799,6 +821,7 @@ class OrderModel extends Model
         }
 
         $param['config_options'] = $param['config_options'] ?? [];
+        $param['renew_price_difference'] = $param['renew_price_difference'] ?? $param['price_difference'];
 
         $time = time(); // 获取当前时间
         
@@ -832,6 +855,7 @@ class OrderModel extends Model
                 'data' => json_encode($param['config_options']),
                 'amount' => $amount,
                 'price' => ($host['first_payment_amount']+$param['price_difference'])>0 ? ($host['first_payment_amount']+$param['price_difference']) : 0,
+                'renew_price' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? (($host['renew_amount']+$param['renew_price_difference'])>0 ? ($host['renew_amount']+$param['renew_price_difference']) : 0) : 0,
                 'billing_cycle_name' => $host['billing_cycle_name'],
                 'billing_cycle_time' => $host['billing_cycle_time'],
                 'status' => $amount>0 ? 'Unpaid' : 'Pending',
@@ -859,7 +883,7 @@ class OrderModel extends Model
             if($amount<=0){
                 HostModel::update([
                     'first_payment_amount' => $upgrade['price'],
-                    'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['price'] : 0,
+                    'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? (($host['renew_amount']+$param['renew_price_difference'])>0 ? ($host['renew_amount']+$param['renew_price_difference']) : 0) : 0,
                 ],['id' => $host['id']]);
 
                 $ModuleLogic = new ModuleLogic();
@@ -871,7 +895,7 @@ class OrderModel extends Model
                     $result = update_credit([
                         'type' => 'Refund',
                         'amount' => -$amount,
-                        'notes' => "Upgrade Refund",
+                        'notes' => "升降级退款",
                         'client_id' => $host['client_id'],
                         'order_id' => $order->id,
                         'host_id' => $host['id']
@@ -879,6 +903,15 @@ class OrderModel extends Model
                     if(!$result){
                         throw new Exception(lang('fail_message'));           
                     }
+                }else if($amount<0 && $param['upgrade_refund']!=1){
+                    OrderItemModel::create([
+                        'type' => 'manual',
+                        'order_id' => $order->id,
+                        'client_id' => $host['client_id'],
+                        'description' => lang('update_amount'),
+                        'amount' => -$amount,
+                        'create_time' => $time
+                    ]);
                 }
             }
 
@@ -1012,6 +1045,7 @@ class OrderModel extends Model
         $this->startTrans();
         try {
             OrderItemModel::create([
+                'type' => 'manual',
                 'order_id' => $param['id'],
                 'client_id' => $order['client_id'],
                 'description' => $param['description'],
@@ -1056,6 +1090,91 @@ class OrderModel extends Model
     }
 
     /**
+     * 时间 2022-10-11
+     * @title 编辑人工调整的订单子项
+     * @desc 编辑人工调整的订单子项
+     * @author theworld
+     * @version v1
+     * @param int param.id - 订单子项ID required
+     * @param float param.amount - 金额 required
+     * @param string param.description - 描述 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function updateOrderItem($param)
+    {
+        // 验证订单ID
+        $orderItem = OrderItemModel::find($param['id']);
+        if (empty($orderItem)){
+            return ['status'=>400, 'msg'=>lang('order_item_is_not_exist')];
+        }
+
+        if ($orderItem['type']!='manual'){
+            return ['status'=>400, 'msg'=>lang('order_item_cannot_update')];
+        }
+
+        // 验证订单ID
+        $order = $this->find($orderItem['order_id']);
+        if (empty($order)){
+            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+        }
+
+        if ($order['status']=='Paid'){
+            return ['status'=>400, 'msg'=>lang('order_already_paid_cannot_adjustment_amount')];
+        }
+
+        // 调整后的订单金额不能小于0
+        $order['amount_unpaid'] = $order['amount_unpaid'] - $orderItem['amount'] + $param['amount'];
+        if($order['amount_unpaid']<0){
+            return ['status'=>400, 'msg'=>lang('order_amount_adjustment_failed')];
+        }
+
+        $this->startTrans();
+        try {
+            OrderItemModel::update([
+                'type' => 'manual',
+                'description' => $param['description'],
+                'amount' => $param['amount'],
+                'create_time' => time()
+            ], ['id' => $param['id']]);
+            // 修改订单金额
+            $this->update(['amount' => $order['amount_unpaid'] + $order['credit'], 'amount_unpaid' => $order['amount_unpaid'], 'update_time' => time()], ['id' => $order['id']]);
+
+            $client = ClientModel::find($order->client_id);
+            if(empty($client)){
+                $clientName = '#'.$order->client_id;
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('admin_adjust_user_order_price', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{old}'=>$order->amount, '{new}'=>($order['amount_unpaid'] + $order['credit'])]), 'order', $order->id);
+            add_task([
+                'type' => 'email',
+                'description' => '后台管理员调整订单价格,发送邮件',
+                'task_data' => [
+                    'name'=>'admin_order_amount',//发送动作名称
+                    'order_id'=>$param['id'],//订单ID
+                ],      
+            ]);
+            add_task([
+                'type' => 'sms',
+                'description' => '后台管理员调整订单价格,发送短信',
+                'task_data' => [
+                    'name'=>'admin_order_amount',//发送动作名称
+                    'order_id'=>$param['id'],//订单ID
+                ],      
+            ]);
+            
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+
+    /**
      * 时间 2022-05-17
      * @title 标记支付
      * @desc 标记支付
@@ -1089,22 +1208,24 @@ class OrderModel extends Model
                         update_credit([
                             'type' => 'Applied',
                             'amount' => -$order['amount_unpaid'],
-                            'notes' => "Applied Creidt to Order #{$param['id']}",
+                            'notes' => "应用余额至订单#{$param['id']}",
                             'client_id' => $order->client_id,
                             'order_id' => $param['id'],
                             'host_id' => 0,
                         ]);
                         $order['amount_unpaid'] = 0;
+                        $order['credit'] = $order['credit']+$order['amount_unpaid'];
                     }else{
                         $order['amount_unpaid'] = $order['amount_unpaid']-$client['credit'];
                         update_credit([
                             'type' => 'Applied',
                             'amount' => -$client['credit'],
-                            'notes' => "Applied Creidt to Order #{$param['id']}",
+                            'notes' => "应用余额至订单#{$param['id']}",
                             'client_id' => $order->client_id,
                             'order_id' => $param['id'],
                             'host_id' => 0,
                         ]);
+                        $order['credit'] = $order['credit']+$client['credit'];
                     }
                 }
             }
@@ -1121,7 +1242,7 @@ class OrderModel extends Model
                 ]);
             }
 
-            $this->update(['status' => 'Paid', 'amount_unpaid'=>0, 'pay_time' => time(), 'update_time' => time()], ['id' => $param['id']]);
+            $this->update(['status' => 'Paid', 'credit' => $order['credit'], 'amount_unpaid'=>0, 'pay_time' => time(), 'update_time' => time()], ['id' => $param['id']]);
 
             // 处理已支付订单
             $this->processPaidOrder($param['id']);
@@ -1207,6 +1328,70 @@ class OrderModel extends Model
         return ['status' => 200, 'msg' => lang('delete_success')];
     }
 
+    /**
+     * 时间 2022-10-18
+     * @title 取消订单
+     * @desc 取消订单
+     * @author theworld
+     * @version v1
+     * @param int id - 订单ID required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function cancelOrder($id)
+    {
+        // 验证订单ID
+        $order = $this->find($id);
+        if (empty($order)){
+            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+        }
+        $clientId = get_client_id();
+        if($clientId!=$order['client_id']){
+            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+        }
+
+        if($order['status']!='Unpaid'){
+            return ['status'=>400, 'msg'=>lang('order_cannot_cancel')];
+        }
+
+        $hosts = HostModel::where('status', '<>', 'Unpaid')->where('order_id', $id)->select()->toArray();
+        if (!empty($hosts)){
+            return ['status'=>400, 'msg'=>lang('order_host_not_unpaid')];
+        }
+
+        $this->startTrans();
+        try {
+            $client = ClientModel::find($clientId);
+            if(empty($client)){
+                $clientName = '#'.$clientId;
+            }else{
+                $clientName = 'client#'.$clientId.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('log_client_cancel_order', ['{client}'=>$clientName, '{order}'=>'#'.$order->id]), 'order', $order->id);
+
+            $this->update([
+                'status' => 'Cancelled',
+                'update_time' => time()
+            ], ['id' => $id]);
+            
+            HostModel::update([
+                'status' => 'Cancelled',
+                'update_time' => time()
+            ], ['order_id' => $id]);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('delete_fail')];
+        }
+
+        hook('after_order_cancel',['id'=>$id]);
+
+        return ['status' => 200, 'msg' => lang('delete_success')];
+    }
+
     # 处理已支付订单
     public function processPaidOrder($id)
     {
@@ -1217,7 +1402,7 @@ class OrderModel extends Model
 
         $OrderItemModel = new OrderItemModel();
         $orderItems = $OrderItemModel->where('order_id',$id)->select();
-		if($orderItems[0]['type'] == 'recharge'){
+		if(isset($orderItems[0]['type']) && $orderItems[0]['type'] == 'recharge'){
 			add_task([
 				'type' => 'email',
 				'description' => '客户充值成功,发送邮件',
@@ -1267,7 +1452,7 @@ class OrderModel extends Model
                     update_credit([
                         'type' => 'Recharge',
                         'amount' => $orderItem->amount,
-                        'notes' => "Transaction Number #{$transactionNumber} Recharge",
+                        'notes' => "充值#{$transactionNumber}",
                         'client_id' => $orderItem->client_id,
                         'order_id' => $id,
                         'host_id' => 0

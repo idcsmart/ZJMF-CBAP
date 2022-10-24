@@ -617,7 +617,7 @@ location / {
             $data['admin_url'] = $server_http.$domain.'/'.$this->getSession('install_db_config')['admin_application'];
             $data['admin_name'] = $this->getSession('install_admin_info')['name'];
             $data['admin_pass'] = $this->getSession('install_admin_info')['password'];
-            deleteDir(IDCSMART_ROOT.'public/install');
+            $this->deleteDir(IDCSMART_ROOT.'public/install');
             return json_encode(['status' => 200, 'msg' => '安装完成！','data'=>$data]);
         } else {
             return json_encode(['status' => 200, 'msg' => '非法安装！']);

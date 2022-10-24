@@ -1,7 +1,7 @@
 (function (window, undefined) {
     var old_onload = window.onload
     window.onload = function () {
-        location.href = 'finance.html'
+        location.href = 'home.html'
         const template = document.getElementById('account')
         Vue.prototype.lang = window.lang
         new Vue({

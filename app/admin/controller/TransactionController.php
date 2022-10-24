@@ -104,6 +104,39 @@ class TransactionController extends AdminBaseController
 	}
 
     /**
+     * 时间 2022-10-12
+     * @title 编辑交易流水
+     * @desc 编辑交易流水
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/transaction/:id
+     * @method  PUT
+     * @param int id - 交易流水ID required
+     * @param float amount - 金额 required
+     * @param string gateway - 支付方式 required
+     * @param string transaction_number - 交易流水号
+     * @param int client_id - 用户ID required
+     */
+    public function update()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('update')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $TransactionModel = new TransactionModel();
+        
+        // 编辑交易流水
+        $result = $TransactionModel->updateTransaction($param);
+
+        return json($result);
+    }
+
+    /**
      * 时间 2022-05-17
      * @title 删除交易流水
      * @desc 删除交易流水

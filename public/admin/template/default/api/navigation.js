@@ -14,3 +14,13 @@ function saveHomeMenu(params){
 function saveAdminMenu(params){
     return Axios.put(`/menu/admin`,params)
 }
+
+// 根据模块获取商品列表
+function productBymodule(params){
+    return Axios.get(`/module/${params.module}/product`)
+}
+
+// 获取后台导航
+function leftMenu(){
+    return Axios.get(`/menu`)
+}

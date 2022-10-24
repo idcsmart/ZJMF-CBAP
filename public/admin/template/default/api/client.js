@@ -1,8 +1,12 @@
 /* 用户管理 + 业务管理 API */
 
 // 用户管理-用户列表
-function getClientList (params) {
-  return Axios.get(`/client`, { params })
+function getClientList (params,id) {
+  if (id) {
+    return Axios.get(`/client?custom_field[IdcsmartClientLevel_level]=${id}`, {params})
+  } else {
+    return Axios.get(`/client`, {params})
+  }
 }
 // 用户管理-添加用户
 function addClient (params) {
@@ -58,11 +62,14 @@ function getClientOrder (params) {
 function deleteFlow (id) {
   return Axios.delete(`/transaction/${id}`)
 }
-// 产品管理-新增流水
-function addFlow (params) {
-  return Axios.post(`/transaction`, params)
+// 产品管理-新增/编辑流水
+function addAndUpdateFlow (type, params) {
+  if (type === 'add') {
+    return Axios.post(`/transaction`, params)
+  } else if (type === 'update') {
+    return Axios.put(`/transaction/${params.id}`, params)
+  }
 }
-
 // 用户信息-日志
 function getLog (id, params) {
   return Axios.get(`/log/system?client_id=${id}`, { params })
@@ -93,7 +100,10 @@ function getOrderDetail (id) {
 function updateOrder (params) {
   return Axios.put(`/order/${params.id}/amount`, params)
 }
-
+// 订单管理-编辑人工调整的订单子项
+function updateArtificialOrder (params) {
+  return Axios.put(`/order/item/${params.id}`, params)
+}
 // 订单管理-删除订单
 function delOrderDetail (params) {
   return Axios.delete(`/order/${params.id}`, { params })
@@ -179,4 +189,21 @@ function getSystemOpt () {
 // 充值
 function recharge(params){
   return Axios.post(`/client/${params.client_id}/recharge`,params)
+}
+
+// 获取用户等级
+function getClientLevel (id) {
+  return Axios.get(`/client_level/client/${id}`)
+}
+function updateClientLevel (params) {
+  return Axios.put(`/client_level/client`, params)
+}
+// 所有用户等级
+function getAllLevel () {
+  return Axios.get(`/client_level/all`)
+}
+
+// 插件列表
+function getAddon (params) {
+  return Axios.get(`/plugin/addon`, { params })
 }

@@ -19,7 +19,7 @@
                     imgUrl: `${url}`,
                     id: 0,
                     menuActiveId: 1,
-                    hostData:{},
+                    hostData: {},
                     commonData: {},
                     menuList: [
                         {
@@ -54,9 +54,9 @@
                         Unpaid: { text: "未付款", color: "#F64E60", bgColor: "#FFE2E5" },
                         Pending: { text: "开通中", color: "#3699FF", bgColor: "#E1F0FF" },
                         Active: { text: "正常", color: "#1BC5BD", bgColor: "#C9F7F5" },
-                        suspended: { text: "已暂停", color: "#F0142F", bgColor: "#FFE2E5" },
+                        Suspended: { text: "已暂停", color: "#FFF99600", bgColor: "#FFF4DE" },
                         Deleted: { text: "已删除", color: "#9696A3", bgColor: "#F2F2F7" },
-                        Failed: { text: "开通失败", color: "#FFA800", bgColor: "#FFF4DE" }
+                        Failed: { text: "开通中", color: "#3699FF", bgColor: "#E1F0FF" }
                     },
                     statusSelect: [
                         {
@@ -76,18 +76,13 @@
                         },
                         {
                             id: 4,
-                            status: 'Suspended',
+                            status: 'suspended',
                             label: "已暂停"
                         },
                         {
                             id: 5,
                             status: 'Deleted',
                             label: "已删除"
-                        },
-                        {
-                            id: 6,
-                            status: 'Failed',
-                            label: "开通失败"
                         },
                     ],
                     // 数据中心
@@ -142,6 +137,14 @@
                     this.params.page = 1
                     this.getCloudList()
                 },
+                centerSelectChange() {
+                    this.params.page = 1
+                    this.getCloudList()
+                },
+                statusSelectChange() {
+                    this.params.page = 1
+                    this.getCloudList()
+                },
                 // 获取数据中心 
                 getDataCenter(id) {
                     dataCenter(id).then(res => {
@@ -153,7 +156,8 @@
                                 item.city.map(city => {
                                     let itemData = {
                                         id: '',
-                                        label
+                                        label,
+                                        iso:item.iso
                                     }
                                     itemData.id = city.id
                                     itemData.label = itemData.label + "-" + city.name
@@ -177,8 +181,8 @@
                     })
                 },
                 // 跳转产品详情
-                toDetail(id) {
-                    location.href = `cloudManager.html?id=${id}`
+                toDetail(row) {
+                    location.href = `cloudDetail.html?id=${row.id}`
                 },
                 // 跳转订购页
                 toOrder() {

@@ -42,6 +42,7 @@ class ClientModel extends Model
      * @desc 用户列表
      * @author theworld
      * @version v1
+     * @param object param.custom_field - 自定义字段,key为自定义字段名称,value为自定义字段的值
      * @param string param.keywords - 关键字,搜索范围:用户ID,姓名,邮箱,手机号
      * @param int param.page - 页数
      * @param int param.limit - 每页条数
@@ -57,26 +58,51 @@ class ClientModel extends Model
      * @return string list[].company - 公司 
      * @return int list[].host_num - 产品数量 
      * @return int list[].host_active_num - 已激活产品数量
+     * @return array list[].custom_field - 自定义字段
+     * @return string list[].custom_field[].name - 名称
+     * @return string list[].custom_field[].value - 值
      * @return int count - 用户总数
      */
     public function clientList($param)
     {
+        $param['custom_field'] = $param['custom_field'] ?? [];
         $param['keywords'] = $param['keywords'] ?? '';
-        $param['orderby'] = isset($param['orderby']) && in_array($param['orderby'], ['id', 'username', 'phone', 'email']) ? $param['orderby'] : 'id';
+        $param['orderby'] = isset($param['orderby']) && in_array($param['orderby'], ['id', 'username', 'phone', 'email']) ? 'c.'.$param['orderby'] : 'c.id';
 
-    	$count = $this->field('id')
+    	$count = $this->alias('c')
+            ->field('c.id')
+            ->leftJoin('client_custom_field ccf', 'ccf.client_id=c.id')
     		->where(function ($query) use($param) {
     			if(!empty($param['keywords'])){
-    				$query->where('id|username|email|phone', 'like', "%{$param['keywords']}%");
+    				$query->where('c.id|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
     			}
-		        
+		        if(!empty($param['custom_field'])){
+                    $where = [];
+                    foreach ($param['custom_field'] as $key => $value) {
+                        $where[] = "(ccf.name='{$key}' AND ccf.value='{$value}')";
+                    }
+                    if(!empty($where)){
+                        $query->whereRaw(implode(' AND ', $where));
+                    } 
+                }
 		    })
 		    ->count();
-    	$clients = $this->field('id,username,email,phone_code,phone,status,company')
+    	$clients = $this->alias('c')
+            ->field('c.id,c.username,c.email,c.phone_code,c.phone,c.status,c.company')
+            ->leftJoin('client_custom_field ccf', 'ccf.client_id=c.id')
     		->where(function ($query) use($param) {
-    			if(!empty($param['keywords'])){
-    				$query->where('id|username|email|phone', 'like', "%{$param['keywords']}%");
-    			}
+                if(!empty($param['keywords'])){
+                    $query->where('c.id|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
+                }
+    			if(!empty($param['custom_field'])){
+                    $where = [];
+                    foreach ($param['custom_field'] as $key => $value) {
+                        $where[] = "(ccf.name='{$key}' AND ccf.value='{$value}')";
+                    }
+                    if(!empty($where)){
+                        $query->whereRaw(implode(' AND ', $where));
+                    }
+                }
 		        
 		    })
     		->limit($param['limit'])
@@ -90,9 +116,18 @@ class ClientModel extends Model
         $hostActiveNum = HostModel::field('COUNT(id) num,client_id')->where('status', 'Active')->whereIn('client_id', $clientId)->group('client_id')->select()->toArray();;
         $hostActiveNum = array_column($hostActiveNum, 'num', 'client_id'); 
 
+        $ClientCustomFieldModel = new ClientCustomFieldModel();
+        $customField = $ClientCustomFieldModel->whereIn('client_id', $clientId)->select()->toArray();
+
+        $customFieldArr = [];
+        foreach ($customField as $key => $value) {
+            $customFieldArr[$value['client_id']][] = ['name' => $value['name'], 'value' => $value['value']];
+        }
+
     	foreach ($clients as $key => $client) {
     		$clients[$key]['host_num'] = $hostNum[$client['id']] ?? 0; // 产品数量
     		$clients[$key]['host_active_num'] = $hostActiveNum[$client['id']] ?? 0; // 已激活产品数量
+            $clients[$key]['custom_field'] = $customFieldArr[$client['id']] ?? []; // 自定义字段
     	}
 
     	return ['list' => $clients, 'count' => $count];
@@ -151,9 +186,47 @@ class ClientModel extends Model
         }else if($app=='home'){
             $client['notes'] = $client['client_notes'];
             // 前台接口去除字段
-            unset($client['id'], $client['client_notes'], $client['register_time'], $client['last_login_time'], $client['last_login_ip']);
+            unset($client['client_notes'], $client['register_time'], $client['last_login_time'], $client['last_login_ip']);
         }
         
+        
+        return $client;
+    }
+
+    public function indexClient2($id)
+    {
+        // 获取当前应用
+        $app = app('http')->getName();
+
+        $client = $this->field('id,username,email,phone_code,phone,credit')->find($id);
+        if (empty($client)){
+            return (object)[]; // 转换为对象
+        }
+
+        $client['credit'] = amount_format($client['credit']); // 余额 
+        $client['host_num'] = HostModel::where('client_id', $id)->count();  // 产品数量
+        $client['host_active_num'] = HostModel::where('status', 'Active')->where('client_id', $id)->count(); // 已激活产品数量
+        $client['unpaid_order'] = OrderModel::where('client_id', $id)->where('status', 'Unpaid')->count(); // 未支付订单
+        $client['consume'] = amount_format(TransactionModel::where('client_id', $id)->where('amount', '>', 0)->sum('amount')); // 消费
+
+        // 获取本月消费
+        $start = mktime(0,0,0,date("m"),1,date("Y"));
+        $end = time();
+        $client['this_month_consume'] = amount_format(TransactionModel::where('client_id', $id)->where('amount', '>', 0)->where('create_time', '>=', $start)->where('create_time', '<', $end)->sum('amount')); // 本月消费
+
+        # 获取上月销售额， 截止到上月的昨天同日期
+        if(date("m")==1){
+            $start = mktime(0,0,0,12,1,date("Y")-1);
+        }else{
+            $start = mktime(0,0,0,date("m")-1,1,date("Y"));
+        }
+        $end = mktime(0,0,0,date("m"),1,date("Y"));
+        
+        $prevMonthAmount = TransactionModel::where('client_id', $id)->where('amount', '>', 0)->where('create_time', '>=', $start)->where('create_time', '<', $end)->sum('amount');
+
+        $thisMonthAmountPercent = $prevMonthAmount>0 ? bcmul(($client['this_month_consume']-$prevMonthAmount)/$prevMonthAmount, 100, 1) : 100;
+
+        $client['this_month_consume_percent'] = $thisMonthAmountPercent;
         
         return $client;
     }

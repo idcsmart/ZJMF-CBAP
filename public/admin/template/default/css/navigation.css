@@ -206,5 +206,79 @@
 
 .front-icon {
     margin-right: 9px;
-    filter: invert(100%);
+}
+
+.icon-input .t-input {
+    padding-right: 0;
+}
+
+.icon-input .icon-btn {
+    width: 56px;
+    background: #ECF2FE;
+    border-radius: 0px 3px 3px 0px;
+    border-left: 1px solid #DCDCDC;
+    cursor: pointer;
+    color: #0052D9;
+    font-size: 14px;
+}
+
+.menu_set .icon-operation {
+    position: relative;
+}
+
+.all-icon {
+    width: 500px;
+
+    background: #FEFFFF;
+    opacity: 1;
+    border-radius: 3px;
+    overflow: hidden;
+    padding: 30px;
+
+}
+
+.all-icon .icon-top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+.all-icon .icon-top .text {
+    font-size: 18px;
+    color: #333333;
+    font-weight: bold;
+}
+
+.all-icon .icon-top .close {
+    font-size: 25px;
+    color: #999999;
+    cursor: pointer;
+}
+
+.all-icon .main-icons {
+    max-height: 300px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 25px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.main-icons-item {
+    padding: 12px 14px;
+    cursor: pointer;
+}
+
+.back-icons-item {
+    cursor: pointer;
+    width: 48px;
+    height: 44px;
+    padding: 12px 14px;
+}
+
+.main-icons-item.active {
+    background: #ECF2FE;
 }

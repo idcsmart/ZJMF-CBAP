@@ -98,6 +98,37 @@ class PackageController{
 		return json($result);
 	}
 
+	/**
+	 * 时间 2022-10-12
+	 * @title 获取套餐所有周期价格
+	 * @desc 获取套餐所有周期价格
+	 * @url /console/v1/product/:id/common_cloud/duration
+	 * @method  POST
+	 * @author hh
+	 * @version v1
+	 * @param   int id - 商品ID require
+	 * @param   int package_id - 套餐ID require
+     * @param   int image_id 0 镜像ID
+     * @param   array data_disk - 数据盘大小
+     * @param   int backup_num 0 备份数量
+     * @param   int snap_num 0 快照数量
+     * @return  string [].name - 周期名称
+     * @return  string [].duration - 周期标识
+     * @return  string [].price.total - 周期总价
+     * @return  string [].price.package - 套餐价格
+     * @return  string [].price.data_disk - 数据盘价格
+     * @return  string [].price.backup - 备份数量价格
+     * @return  string [].price.snap - 快照数量价格
+     * @return  string [].price.image - 镜像价格
+	 */
+	public function getAllDurationPrice(){
+		$param = request()->param();
+
+		$PackageModel = new PackageModel();
+		$result = $PackageModel->allDuration($param);
+		return json($result);
+	}
+
 
 
 }

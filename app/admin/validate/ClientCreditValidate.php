@@ -12,7 +12,7 @@ class ClientCreditValidate extends Validate
 		'id' 			=> 'require|integer|gt:0',
         'type' 		    => 'require|in:recharge,deduction',
         'amount' 		=> 'require|float|gt:0',
-        'notes' 	    => 'require|max:1000',
+        'notes' 	    => 'max:1000',
     ];
 
     protected $message  =   [
@@ -24,7 +24,6 @@ class ClientCreditValidate extends Validate
         'amount.require'            => 'please_enter_amount', 
         'amount.float'        		=> 'amount_formatted_incorrectly', 
         'amount.gt'                 => 'amount_formatted_incorrectly', 
-        'notes.require'        	    => 'please_enter_notes', 
         'notes.max'                 => 'notes_cannot_exceed_1000_chars',
     ];
 

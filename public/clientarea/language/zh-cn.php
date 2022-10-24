@@ -39,7 +39,7 @@ return [
     'login_unauthorized' => '未授权',
     'remember_password_value_0_or_1' => '记住密码取值为0或1',
     'password_is_change_please_login_again' => '密码已修改,请重新授权',
-    'logout_success' => '注销成功',
+    'logout_success' => '成功退出',
     'inconsistent_login_ip' => '登录ip不一致',
     'login_user_ID_is_inconsistent' => '登录用户ID不一致',
     'log_out_automatically_after_2_hours_without_operation' => '2个小时未操作自动退出登录',
@@ -108,6 +108,7 @@ return [
     'nav_finance_info' => '财务信息',
     'nav_account_info' => '账户信息',
     'nav_security' => '安全',
+    'nav_goods_list' => '订购产品',
 
     # 日志
     'modify_profile' => '{client}将{description}',
@@ -129,6 +130,8 @@ return [
     'log_client_add_api' => '{client}添加API，API名称：{name}',
     'log_client_edit_api' => '{client}修改API，API名称：{name}',
     'log_client_delete_api' => '{client}删除API，API名称：{name}',
+
+    'log_client_cancel_order' => '{client}取消订单{order}',
 
 
     'client_username' => '姓名',
@@ -175,4 +178,8 @@ return [
 
     # 产品
     'host_notes_cannot_exceed_1000_chars' => '备注最多不能超过1000个字符',
+
+    # 订单
+    'order_cannot_cancel' => '未支付订单才可以取消',
+    'order_host_not_unpaid' => '订单下产品不是未支付状态，不可取消订单',
 ];

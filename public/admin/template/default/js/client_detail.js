@@ -42,6 +42,7 @@
           formData: {
             id: '',
             username: '',
+            level_id: '',
             phone_code: '',
             phone: '',
             email: '',
@@ -183,8 +184,11 @@
             ],
           },
           // 支付方式列表
-          gatewayList: []
+          gatewayList: [],
           // 充值相关结束
+          levelList: [],
+          submitLoading: false,
+          hasPlugin: false
         }
       },
       computed: {
@@ -197,7 +201,6 @@
         }
       },
       created () {
-        localStorage.setItem('curValue', 2)
         const query = location.href.split('?')[1].split('&')
         this.moneyData.id = this.id = Number(this.getQuery(query[0]))
         this.langList = JSON.parse(localStorage.getItem('common_set')).lang_home
@@ -209,8 +212,41 @@
         // 获取支付方式列表
         this.getGatewayList()
         this.getRefundAmount()
+        /* 用户等级 */
+        this.getLevel()
+        this.getLevelDetail()
+        this.getPlugin()
+        document.title = lang.user_list + '-' + lang.personal + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartClientLevel')[0]
+            if (cur.status === 1) {
+              this.hasPlugin = true
+            }
+          } catch (error) {
+
+          }
+        },
+        async getLevel () {
+          try {
+            const res = await getAllLevel()
+            this.levelList = res.data.data.list
+          } catch (error) {
+
+          }
+        },
+        async getLevelDetail () {
+          try {
+            const res = await getClientLevel(this.id)
+            this.formData.level_id = res.data.data.client_level?.id
+            console.log(res)
+          } catch (error) {
+
+          }
+        },
         // 获取退款
         async getRefundAmount () {
           try {
@@ -405,10 +441,20 @@
             }
             // 验证通过
             try {
+              this.submitLoading = true
               const res = await updateClient(this.id, this.formData)
+              if (this.hasPlugin) {
+                // 修改用户等级
+                await updateClientLevel({
+                  client_id: this.id,
+                  id: this.formData.level_id
+                })
+                this.getLevelDetail()
+              }
               this.$message.success(res.data.msg)
               this.getUserDetail()
               this.formData.password = ''
+              this.submitLoading = false
             } catch (error) {
               this.$message.error(error.data.msg)
             }

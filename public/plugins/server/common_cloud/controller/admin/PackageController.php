@@ -22,7 +22,7 @@ class PackageController{
 	 * @param   int product_id - 商品ID require
 	 * @param   string name - 套餐名称 require
 	 * @param   string description - 描述 require
-	 * @param   array data_center_id - 数据中心ID require
+	 * @param   array data_center_id - 数据中心ID
 	 * @param   int cpu - CPU require
 	 * @param   int memory - 内存 require
 	 * @param   int system_disk_size - 系统盘 require
@@ -44,6 +44,7 @@ class PackageController{
 	 * @param   string year_fee - 一年
 	 * @param   string two_year - 两年
 	 * @param   string three_year - 三年
+	 * @param   int order 0 排序
 	 * @return  array data.id - 创建的套餐ID
 	 */
 	public function create(){
@@ -69,6 +70,8 @@ class PackageController{
 	 * @version v1
      * @param   int page - 页数
      * @param   int limit - 每页条数
+     * @param   string orderby - 排序字段(id,order)
+     * @param   string sort - 升降序
      * @param   int product_id - 商品ID
      * @return  array list - 列表数据
      * @return  int list[].id - 套餐ID
@@ -96,6 +99,7 @@ class PackageController{
      * @return  string list[].year_fee - 一年
      * @return  string list[].two_year - 两年
      * @return  string list[].three_year - 三年
+     * @return  int list[].order - 排序
      * @return  int list[].create_time - 创建时间
      * @return  int list[].product_id - 商品ID
      * @return  string list[].city - 城市
@@ -122,7 +126,7 @@ class PackageController{
 	 * @param   int id - 套餐ID require
 	 * @param   string name - 套餐名称 require
 	 * @param   string description - 描述 require
-	 * @param   int data_center_id - 数据中心ID require
+	 * @param   int data_center_id - 数据中心ID
 	 * @param   int cpu - CPU require
 	 * @param   int memory - 内存 require
 	 * @param   int system_disk_size - 系统盘 require
@@ -144,6 +148,7 @@ class PackageController{
 	 * @param   string year_fee - 一年
 	 * @param   string two_year - 两年
 	 * @param   string three_year - 三年
+	 * @param   int order - 排序
 	 */
 	public function update(){
 		$param = request()->param();
@@ -179,7 +184,31 @@ class PackageController{
 		return json($result);
 	}
 
+	/**
+	 * 时间 2022-06-17
+	 * @title 修改套餐排序
+	 * @desc 修改套餐排序
+	 * @url /admin/v1/common_cloud/package/:id/order
+	 * @method  PUT
+	 * @author hh
+	 * @version v1
+	 * @param   int id - 套餐ID require
+	 * @param   int order - 排序 require
+	 * @return  int status - 状态码(200=成功,400=失败)
+	 * @return  string msg - 提示信息
+	 */
+	public function updateOrder(){
+		$param = request()->param();
 
+		$PackageValidate = new PackageValidate();
+		if (!$PackageValidate->scene('order')->check($param)){
+            return json(['status' => 400 , 'msg' => lang_plugins($PackageValidate->getError())]);
+        }
+		$PackageModel = new PackageModel();
+
+		$result = $PackageModel->updateOrder($param);
+		return json($result);
+	}
 
 
 }

@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <title>tempalte</title>
+  <title></title>
   <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/tdesign.min.css" />
   <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/reset.css" />
   <script src="/{$template_catalog}/template/{$themes}/js/common/vue.js"></script>
@@ -31,7 +31,7 @@
     <!-- header+menu -->
     <t-layout class="aside" id="aside" v-cloak :class="{isFold:collapsed}">
       <div class="header">
-        <div class="logo">
+        <div class="logo" @click="goIndex">
           <img :src="logUrl" alt="logo">
         </div>
         <div class="h-left">

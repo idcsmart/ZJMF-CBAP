@@ -69,7 +69,7 @@ class ClientCreditController extends AdminBaseController
      * @param int id - 用户ID required
      * @param string type - 类型recharge充值deduction扣费 required
      * @param float amount - 金额 required
-     * @param string notes - 备注 required
+     * @param string notes - 备注
      */
 	public function update()
     {

@@ -65,21 +65,20 @@
                             return
                         }
                         if (this.rzType === '2') {
-                            if (this.companyStatus === 1) {
+                            if (this.companyStatus === 1) { // 企业认证成功
                                 this.userStatus = 20
-                            } else if (this.companyStatus === 3 || this.companyStatus === 4) {
+                            } else if (this.companyStatus === 3 || this.companyStatus === 4) { // 企业待审核
                                 this.userStatus = 25
-                            } else if (this.companyStatus === 2) {
-
+                            } else if (this.companyStatus === 2) { // 企业认证失败
                                 this.userStatus = 50
                             }
                         } else if (this.rzType === '1' || this.rzType === '3') {
                             if (this.personStatus === 1) {
-                                this.userStatus = 10
+                                this.userStatus = 10 // 个人认证成功    
                             } else if (this.personStatus === 3 || this.personStatus === 4) {
-                                this.userStatus = 15
+                                this.userStatus = 15 // 个人待审核
                             } else if (this.personStatus === 2) {
-                                this.userStatus = 50
+                                this.userStatus = 50 // 个人认证失败
                             }
                         }
 

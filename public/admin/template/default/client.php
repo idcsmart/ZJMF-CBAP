@@ -1,4 +1,5 @@
 {include file="header"}
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
 <!-- =======内容区域======= -->
 <div id="content" class="client table" v-cloak>
   <t-card class="list-card-container">
@@ -7,13 +8,19 @@
         {{lang.create_user}}
       </t-button>
       <p v-else></p>
-      <div class="com-search">
-        <t-input v-model="params.keywords" class="search-input" :placeholder="`${lang.please_search}ID、${lang.username}、${lang.email}、${lang.phone}`" @keyup.enter.native="seacrh" :on-clear="clearKey" clearable>
+      <div class="client-search">
+        <t-select v-model="curLevelId" :placeholder="lang.select + lang.clinet_level" clearable v-if="hasPlugin">
+          <t-option v-for="item in levelList" :value="item.id" :label="item.name" :key="item.name">
+          </t-option>
+        </t-select>
+        <t-input v-model="params.keywords" @keyup.enter.native="seacrh" :on-clear="clearKey"
+         :placeholder="`${lang.please_search}ID、${lang.username}、${lang.email}、${lang.phone}`" clearable>
         </t-input>
-        <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
+        <t-button @click="seacrh">{{lang.query}}</t-button>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"  @row-click="rowClick"
+    :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -22,8 +29,10 @@
         <span v-else>{{row.id}}</span>
       </template>
       <template #username="{row}">
-        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-if="authList.includes('ClientController::index')">{{row.username}}</a>
-        <span v-else>{{row.username}}</span>
+        <t-tooltip :content="filterName(row.custom_field)" :show-arrow="false" theme="light" :disabled="row.custom_field.length === 0 || !hasPlugin">
+          <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" :class="{bg:row.custom_field.length > 0 && hasPlugin}" :style="{'background-color': filterColor(row.custom_field)}" v-if="authList.includes('ClientController::index')">{{row.username}}</a>
+          <span v-else>{{row.username}}</span>
+        </t-tooltip>
       </template>
       <template #host_active_num="{row}">
         {{row.host_active_num}}({{row.host_num}})

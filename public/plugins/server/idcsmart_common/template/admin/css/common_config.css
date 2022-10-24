@@ -9,6 +9,18 @@
 .common_config .t-textarea__inner {
   background-color: transparent;
 }
+.common_config .basic .t-form-item__order_page_description .t-form__label {
+  font-size: 14px;
+  color: #333;
+  height: 40px;
+}
+.common_config .basic .t-form__controls {
+  line-height: 1;
+  min-height: auto;
+}
+.common_config .basic .t-form__item {
+  margin-bottom: 15px;
+}
 .common_config .t-card {
   border: 1px solid var(--td-component-border);
 }
@@ -43,7 +55,10 @@
 }
 .common_config .top-text {
   width: 690px;
-  height: 70px;
+  height: 120px;
+}
+.common_config .top-text textarea {
+  height: 100% !important;
 }
 .common_config td,
 .common_config th {

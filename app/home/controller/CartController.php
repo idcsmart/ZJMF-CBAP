@@ -31,6 +31,8 @@ class CartController extends HomeBaseController
      * @return  int list[].qty - 数量
      * @return  string list[].name - 商品名称
      * @return  string list[].description - 商品描述
+     * @return  int list[].stock_control - 库存控制0:关闭1:启用
+     * @return  int list[].stock_qty - 库存数量
      */
 	public function index()
 	{
@@ -163,6 +165,35 @@ class CartController extends HomeBaseController
 
         return json($result);
 	}
+
+    /**
+     * 时间 2022-05-30
+     * @title 批量删除购物车商品
+     * @desc 批量删除购物车商品
+     * @author theworld
+     * @version v1
+     * @url /console/v1/cart/batch
+     * @method  DELETE
+     * @param  array positions - 位置 required
+     */
+    public function batchDelete()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('batch_delete')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $CartModel = new CartModel();
+        
+        // 删除购物车商品
+        $result = $CartModel->batchDeleteCart($param['positions']);
+
+        return json($result);
+    }
 
 	/**
      * 时间 2022-05-30

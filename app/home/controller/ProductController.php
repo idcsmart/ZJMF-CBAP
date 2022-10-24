@@ -81,8 +81,9 @@ class ProductController extends HomeBaseController
      * @param int limit - 每页条数
      * @return array list - 商品列表
      * @return int list[].id - ID
-     * @return int list[].name - 商品名
-     * @return int list[].description - 描述
+     * @return string list[].name - 商品名
+     * @return string list[].description - 描述
+     * @return string list[].price - 商品最低价格
      * @return int count - 商品总数
      */
     public function productList()
@@ -94,6 +95,33 @@ class ProductController extends HomeBaseController
             'status' => 200,
             'msg' => lang('success_message'),
             'data' => (new ProductModel())->productList($param)
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-5-17
+     * @title 商品详情
+     * @desc 商品详情
+     * @url /console/v1/product/:id
+     * @method  GET
+     * @author wyh
+     * @version v1
+     * @param int id - 商品ID required
+     * @return object product - 商品
+     * @return int product.id - ID
+     * @return string product.name - 商品名称
+     */
+    public function index()
+    {
+        $param = $this->request->param();
+
+        $result = [
+            'status'=>200,
+            'msg'=>lang('success_message'),
+            'data' =>[
+                'product' => (new ProductModel())->indexProduct(intval($param['id']))
+            ]
         ];
         return json($result);
     }
@@ -180,5 +208,30 @@ class ProductController extends HomeBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2022-10-11
+     * @title 获取商品库存
+     * @desc 获取商品库存
+     * @author theworld
+     * @version v1
+     * @url /console/v1/product/:id/stock
+     * @method  GET
+     * @param int id - 商品ID
+     * @return object product - 商品
+     * @return int product.id - ID
+     * @return int product.stock_control - 库存控制0:关闭1:启用
+     * @return int product.qty - 库存数量
+     */
+    public function productStock()
+    {
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' =>[
+                'product' => (new ProductModel())->productStock($param['id'])
+            ] 
+        ];
+        return json($result);
+    }
 
 }

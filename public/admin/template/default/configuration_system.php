@@ -13,6 +13,9 @@
       <li>
         <a href="configuration_theme.html">{{lang.theme_setting}}</a>
       </li>
+      <li>
+        <a href="configuration_upgrade.html">{{lang.system_upgrade}}</a>
+      </li>
     </ul>
     <div class="box">
       <div class="box-title">
@@ -50,7 +53,36 @@
               <t-input v-model="formData.terms_service_url" :placeholder="lang.input+lang.service_address"></t-input>
             </t-form-item>
           </t-col>
+          <!-- 新增 -->
           <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="terms_privacy_url" :label="lang.privacy_clause_address">
+              <t-input v-model="formData.terms_privacy_url" :placeholder="lang.input+lang.privacy_clause_address"></t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="6" :md="6">
+            <t-form-item name="system_logo" :label="lang.member_center + 'LOGO'">
+              <t-upload ref="uploadRef3" :size-limit="{ size: 2, unit: 'MB' }" :action="uploadUrl" v-model="formData.system_logo" :auto-upload="true" @fail="handleFail" theme="custom" :headers="uploadHeaders" accept="image/*" :format-response="formatImgResponse">
+                <div class="upload">
+                  <t-icon name="upload"></t-icon>
+                  <span class="txt">{{lang.attachment + 'logo'}}</span>
+                </div>
+                <div class="up-tip">
+                  <p>{{lang.size + '：' + lang.width + '130px；' + lang.height + '28px'}}</p>
+                  <p>{{lang.logo_size + '：≤2M'}}</p>
+                </div>
+              </t-upload>
+              <div class="logo" v-if="formData.system_logo[0]?.url">
+                <div class="box">
+                  <img :src="formData.system_logo[0]?.url" alt="">
+                  <div class="hover" @click="deleteLogo" v-if="formData.system_logo[0]?.url">
+                    <t-icon name="delete"></t-icon>
+                  </div>
+                </div>
+                <span class="name">{{formData.system_logo[0]?.url.split('^')[1]}}</span>
+              </div>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6" style="margin-top: -30px;">
             <t-form-item name="lang_admin" :label="lang.isAllowChooseLan">
               <t-radio-group name="creating_notice_sms" v-model="formData.lang_home_open">
                 <t-radio value="1">{{lang.allow}}</t-radio>
@@ -58,7 +90,7 @@
               </t-radio-group>
             </t-form-item>
           </t-col>
-          <t-col :xs="12" :xl="3" :md="6" class="service">
+          <t-col :xs="12" :xl="3" :md="6" class="service" style="margin-top: -30px;">
             <t-form-item name="lang_admin" :label="lang.maintenance_mode">
               <t-radio-group name="maintenance_mode" v-model="formData.maintenance_mode">
                 <t-radio value="1">{{lang.open}}</t-radio>
@@ -66,7 +98,7 @@
               </t-radio-group>
             </t-form-item>
           </t-col>
-          <t-col :xs="12" :xl="3" :md="6">
+          <t-col :xs="12" :xl="3" :md="6" style="margin-top: -30px;">
             <t-form-item v-if="formData.maintenance_mode == '1'" :label="lang.maintenance_mode_info" name="maintenance_mode_message">
               <t-textarea :placeholder="lang.input+lang.maintenance_mode_info" v-model="formData.maintenance_mode_message" />
             </t-form-item>
@@ -78,36 +110,6 @@
         </t-form-item>
       </t-form>
 
-      <div class="box-title system-msg-title">
-        <span class="box-title-text">系统信息 </span>
-        <div class="box-title-line"></div>
-      </div>
-      <div class="content-msg">
-        <div class="system-msg">
-          <div class="msg-item">
-            <div class="msg-item-l">最新版本:</div>
-            <div class="msg-item-r">{{systemData.last_version}}</div>
-          </div>
-          <div class="msg-item">
-            <div class="msg-item-l">当前版本:</div>
-            <div class="msg-item-r">{{systemData.version}}</div>
-          </div>
-        </div>
-        <div class="msg-footer">
-          <div class="footer-btn" v-if="!isShowProgress">
-            <t-button @click="beginDown" v-show="!isDown">立即更新</t-button>
-            <t-button @click="toUpdate" v-show="isDown">安装包已下载，立即升级</t-button>
-          </div>
-          <div class="footer-progress" v-else>
-            <div class="progress-text">
-              {{'下载中...(' + updateData.progress + ')'}}
-            </div>
-            <div class="progress">
-              <div :style="'width:'+ updateData.progress" class="down-progress-success"></div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </t-card>
 </div>

@@ -168,7 +168,7 @@
           location.href = `notice_email_template.html`
         },
         getMore () {
-          location.href = ''
+          window.open('https://market.idcsmart.com/shop/#/home-page')
         },
         // 获取列表
         async getEmailList () {

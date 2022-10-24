@@ -235,6 +235,9 @@ ol {
 .t-radio-group .t-radio {
   white-space: nowrap;
 }
+.t-table td {
+  white-space: nowrap;
+}
 .t-textarea__inner {
   text-align: justify;
 }
@@ -244,6 +247,14 @@ ol {
 ::selection {
   background-color: var(--td-brand-color-8);
   color: #fff;
+}
+.t-radio-group.t-radio-group__outline {
+  flex-wrap: nowrap;
+}
+.t-icon-help-circle {
+  color: #0052D9;
+  cursor: pointer;
+  margin-left: 10px;
 }
 .t-card__body {
   display: flow-root;
@@ -263,10 +274,34 @@ a {
 .t-table td,
 .t-table th {
   padding: 12px 5px;
+  min-width: 80px;
+}
+/* 重置tag颜色 */
+.t-tag {
+  color: #fff !important;
+}
+.t-tag--primary.t-tag--light {
+  background: #58A1F5;
+}
+.t-tag--success.t-tag--light {
+  background: #03B193;
+}
+.t-tag--default {
+  background: #999;
+}
+.t-tag--danger.t-tag--light {
+  background: #FF0023;
+}
+.t-tag--warning.t-tag--light {
+  background: #FF6000;
 }
 .t-submenu a {
   display: block;
   width: 100%;
+}
+.t-select .t-tag--default {
+  color: var(--td-text-color-primary) !important;
+  background-color: var(--td-bg-color-component);
 }
 body {
   color: var(--td-text-color-secondary);
@@ -321,6 +356,23 @@ body {
 }
 .theme-color {
   color: var(--td-brand-color);
+}
+.host .product-name > div {
+  display: flex;
+  align-items: center;
+}
+.host .product-name .aHover {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  border-bottom: 1px solid transparent;
+}
+.host .product-name .aHover:hover {
+  border-bottom: 1px solid var(--td-text-color-primary);
+}
+.host .product-name .t-tag {
+  margin-left: 5px;
 }
 /* loading */
 #loading {
@@ -575,6 +627,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 #layout .header .logo img {
   height: 31px;
@@ -589,6 +642,10 @@ body {
   flex: inherit !important;
   position: relative;
   z-index: 51;
+}
+#layout .aside .t-icon-help-circle {
+  margin-left: 0;
+  color: #666;
 }
 #layout .aside.isFold {
   width: 64px;
@@ -975,9 +1032,6 @@ textarea {
 }
 .common-dialog .t-button {
   margin: 0 10px;
-}
-.delted {
-  color: #999;
 }
 .t-dialog__ctx .t-dialog__body {
   padding-bottom: 0;

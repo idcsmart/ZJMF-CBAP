@@ -305,35 +305,42 @@ function lang($name = '', $param = [])
  * @param array param - 要替换语言中的参数
  * @return string
  */
-function lang_plugins($name = '', $param = [])
+function lang_plugins($name = '', $param = [], $reload = false)
 {
     #$currentAddon = request()->param('_plugin')??'';
     #$name = $currentAddon?$currentAddon . '_' . $name:$name;
     $defaultLang = config('lang.default_lang');
-    $lang = [];
-    # 加载插件多语言(wyh 20220616 改:涉及到一个插件需要调另一个插件以及系统调插件钩子的情况,所以只有加载所有已安装使用插件的多语言)
-    $addonDir = WEB_ROOT . 'plugins/addon/';
-    $addons = array_map('basename', glob($addonDir . '*', GLOB_ONLYDIR));
-    $PluginModel = new PluginModel();
-    foreach ($addons as $addon){
-        $parseName = parse_name($addon,1);
-        # 说明:存在一定的安全性,判断是否安装且启用的插件
-        $plugin = $PluginModel->where('name',$parseName)
-            ->where('status',1)
-            ->find();
-        if (!empty($plugin) && is_file($addonDir . $addon . "/lang/{$defaultLang}.php")){
-            $pluginLang = include $addonDir . $addon . "/lang/{$defaultLang}.php";
-            $lang = array_merge($lang,$pluginLang);
+    $cacheName = 'pluginLang_'.$defaultLang;
+    $lang = Cache::get($cacheName);
+    if(!empty($lang) && $reload===false){
+        $lang = json_decode($lang, true);
+    }else{
+        $lang = [];
+        # 加载插件多语言(wyh 20220616 改:涉及到一个插件需要调另一个插件以及系统调插件钩子的情况,所以只有加载所有已安装使用插件的多语言)
+        $addonDir = WEB_ROOT . 'plugins/addon/';
+        $addons = array_map('basename', glob($addonDir . '*', GLOB_ONLYDIR));
+        $PluginModel = new PluginModel();
+        foreach ($addons as $addon){
+            $parseName = parse_name($addon,1);
+            # 说明:存在一定的安全性,判断是否安装且启用的插件
+            $plugin = $PluginModel->where('name',$parseName)
+                //->where('status',1)
+                ->find();
+            if (!empty($plugin) && is_file($addonDir . $addon . "/lang/{$defaultLang}.php")){
+                $pluginLang = include $addonDir . $addon . "/lang/{$defaultLang}.php";
+                $lang = array_merge($lang,$pluginLang);
+            }
         }
-    }
-    # 加载模块多语言
-    $serverDir = WEB_ROOT . 'plugins/server/';
-    $servers = array_map('basename', glob($serverDir . '*', GLOB_ONLYDIR));
-    foreach ($servers as $server){
-        if (is_file($serverDir . $server . "/lang/{$defaultLang}.php")){
-            $pluginLang = include $serverDir . $server . "/lang/{$defaultLang}.php";
-            $lang = array_merge($lang,$pluginLang);
+        # 加载模块多语言
+        $serverDir = WEB_ROOT . 'plugins/server/';
+        $servers = array_map('basename', glob($serverDir . '*', GLOB_ONLYDIR));
+        foreach ($servers as $server){
+            if (is_file($serverDir . $server . "/lang/{$defaultLang}.php")){
+                $pluginLang = include $serverDir . $server . "/lang/{$defaultLang}.php";
+                $lang = array_merge($lang,$pluginLang);
+            }
         }
+        Cache::set($cacheName, json_encode($lang), 24*3600);
     }
 
     if(empty($name)){
@@ -1282,41 +1289,13 @@ function certification_list()
  */
 function check_certification($client_id)
 {
-    $CertificationLogModel = new CertificationLogModel();
+    $result = hook('check_certification',['client_id'=>$client_id]);
 
-    return $CertificationLogModel->checkCertification($client_id);
-}
+    foreach ($result as $value){
+        if ($value){
+            return true;
+        }
+    }
 
-/**
- * @title 更新个人实名认证信息
- * @desc 更新个人实名认证信息
- * @author wyh
- * @version v1
- * @param int status - 状态:1已认证，2未通过，3待审核，4已提交资料
- * @param string auth_fail - 失败原因
- * @param int certify_id - 认证证书
- * @param int refresh - 此字段解决一些插件如支付宝实名认证时，验证页面除了通过，即status=1时才刷新页面；其他的都不刷新验证页面。默认刷新1，0不刷新
- */
-function update_certification_person($param)
-{
-    $CertificationLogModel = new CertificationLogModel();
-
-    return $CertificationLogModel->updateCertificationPerson($param);
-}
-
-/**
- * @title 更新企业实名认证信息
- * @desc 更新企业实名认证信息
- * @author wyh
- * @version v1
- * @param int status - 状态:1已认证，2未通过，3待审核，4已提交资料
- * @param string auth_fail - 失败原因
- * @param int certify_id - 认证证书
- * @param int refresh - 此字段解决一些插件如支付宝实名认证时，验证页面除了通过，即status=1时才刷新页面；其他的都不刷新验证页面。默认刷新1，0不刷新
- */
-function update_certification_company($param)
-{
-    $CertificationLogModel = new CertificationLogModel();
-
-    return $CertificationLogModel->updateCertificationCompany($param);
+    return false;
 }

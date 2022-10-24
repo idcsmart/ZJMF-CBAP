@@ -39,7 +39,7 @@
                         </div>
                         <div class="text-title">
                             <!-- {{lang.login_welcome}} -->
-                            欢迎来到{{commonData.website_name}}会员中心
+                            {{lang.login_welcome}}{{commonData.website_name}}{{lang.login_vip}}
                         </div>
                         <div class="text-level">
                             {{lang.login_level}}
@@ -92,10 +92,13 @@
                                     <el-input :placeholder="lang.tip2" v-model="formData.repassword" type="password"></el-input>
                                 </div>
                                 <div class="form-item read-item">
-                                    <el-checkbox v-model="checked">
+                                    <!-- <el-checkbox v-model="checked">
                                         
                                     </el-checkbox>
-                                    {{lang.tip3}}<a @click="toRead">{{lang.login_list}}</a>
+                                    {{lang.tip3}}<a @click="toRead">{{lang.login_list}}</a> -->
+                                    <el-checkbox v-model="checked">
+                                    {{lang.tip3}}<a @click="toService">{{lang.read_service}}</a>{{lang.read_and}}<a @click="toPrivacy">{{lang.read_privacy}}</a>
+                                    </el-checkbox>
                                 </div>
                                 <div class="read-item" v-if="errorText.length !== 0">
                                     <el-alert :title="errorText" type="error" show-icon :closable="false">

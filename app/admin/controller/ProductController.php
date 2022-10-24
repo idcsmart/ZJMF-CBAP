@@ -58,6 +58,37 @@ class ProductController extends AdminBaseController
     }
 
     /**
+     * 时间 2022-10-12
+     * @title 根据模块获取商品列表
+     * @desc 根据模块获取商品列表
+     * @url /admin/v1/module/:module/product
+     * @method  GET
+     * @author theworld
+     * @version v1
+     * @param string module - 模块名称
+     * @return array list - 一级分组列表
+     * @return int list[].id - 一级分组ID
+     * @return string list[].name - 一级分组名称
+     * @return array list[].child - 二级分组
+     * @return int list[].child[].id - 二级分组ID
+     * @return string list[].child[].name - 二级分组名称
+     * @return array list[].child[].child - 商品
+     * @return int list[].child[].child[].id - 商品ID
+     * @return string list[].child[].child[].name - 商品名称
+     */
+    public function moduleProductList()
+    {
+        $param = $this->request->param();
+
+        $result = [
+            'status'=>200,
+            'msg'=>lang('success_message'),
+            'data' =>(new ProductModel())->moduleProductList($param)
+        ];
+        return json($result);
+    }
+
+    /**
      * 时间 2022-5-17
      * @title 商品详情
      * @desc 商品详情

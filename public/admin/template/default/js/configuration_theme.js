@@ -55,6 +55,7 @@
       },
       created () {
         this.getTheme()
+        document.title = lang.theme_setting + '-' + localStorage.getItem('back_website_name')
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

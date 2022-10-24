@@ -13,7 +13,7 @@ class PackageValidate extends Validate
 		'product_id' 	                => 'require|integer',
         'name'                          => 'require|length:1,100',
         'description'                   => 'require|length:1,65535',
-        'data_center_id'                => 'require|array',
+        'data_center_id'                => 'array',
         'cpu'                           => 'require|number|egt:1|elt:240',
         'memory'                        => 'require|number|egt:128|elt:524288',
         'system_disk_size'              => 'require|number|between:1,1048576',
@@ -35,6 +35,7 @@ class PackageValidate extends Validate
         'year_fee'                      => 'float|between:0,999999',
         'two_year'                      => 'float|between:0,999999',
         'three_year'                    => 'float|between:0,999999',
+        'order'                         => 'number|between:0,999',
     ];
 
     protected $message  =   [
@@ -46,7 +47,7 @@ class PackageValidate extends Validate
         'name.length'                           => 'package_name_length_foramt_error',
         'description.require'                   => 'please_input_description',
         'description.length'                    => 'description_length_cannot_over_65535',
-        'data_center_id.require'                => 'please_select_data_center',
+        // 'data_center_id.require'                => 'please_select_data_center',
         'data_center_id.array'                  => 'please_select_data_center',
         'data_center_id.integer'                => 'please_select_data_center',
         'cpu.require'                           => 'please_input_cpu',
@@ -94,10 +95,14 @@ class PackageValidate extends Validate
         'two_year.between'                      => 'package_price_format_error',
         'three_year.float'                      => 'package_price_format_error',
         'three_year.between'                    => 'package_price_format_error',
+        'order.require'                         => 'order_require',
+        'order.number'                          => 'order_format_error',
+        'order.between'                         => 'order_format_error',
     ];
 
     protected $scene = [
         'create' => ['product_id','name','description','data_center_id','cpu','memory','system_disk_size','system_disk_store','free_data_disk_size','data_disk_store','in_bw','out_bw','ip_num','ip_group','custom_param','traffic_enable','flow','traffic_bill_type','onetime_fee','month_fee','quarter_fee','half_year_fee','year_fee','two_year','three_year'],
+        'order'  => ['id', 'order'],
     ];
 
     public function sceneEdit(){

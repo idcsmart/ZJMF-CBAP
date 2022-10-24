@@ -12,7 +12,7 @@ class IdcsmartCommonCustomCycleValidate extends Validate
 		'name' => 'require|max:255',
 		'cycle_time' => 'require|integer',
         'cycle_unit' => 'require|in:hour,day,month',
-        'amount' => 'require|float',
+        'amount' => 'require|float|egt:0',
     ];
 
     protected $message  =   [

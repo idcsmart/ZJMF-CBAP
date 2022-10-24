@@ -46,20 +46,14 @@ class IdcsmartCommonProductController extends BaseController
      * @return string common_product.order_page_description - 订购页面html
      * @return int common_product.allow_qty - 是否允许选择数量:1是，0否
      * @return int common_product.auto_support - 是否自动化支持:1是，0否
-     * @return  object pricing - 周期信息(注意显示,管理中的删除就是将金额变成-1)
+     * @return  object pricing - 周期信息
      * @return  float pricing.onetime - 一次性,价格(当pay_type=='onetime'时,只显示此价格)
-     * @return  float pricing.monthly - 月，价格(当pay_type!=onetime时,显示,注意按原型图显示,比如：monthly周期名称是月，周期时长是1月，金额就是此字段的值)
-     * @return  float pricing.quarterly - 季，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.semaiannually - 半年，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.annually - 一年，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.biennially - 两年，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.triennianlly - 三年，价格(当pay_type!=onetime时,显示)
      * @return object custom_cycle - 自定义周期
      * @return int custom_cycle.id - 自定义周期ID
      * @return string custom_cycle.name - 名称
      * @return int custom_cycle.cycle_time - 时长
      * @return string custom_cycle.cycle_unit - 时长单位
-     * @return float custom_cycle.amount - 金额,-1不显示出，留空
+     * @return float custom_cycle.amount - 金额
      */
 	public function index()
     {
@@ -84,14 +78,8 @@ class IdcsmartCommonProductController extends BaseController
      * @param string order_page_description - 订购页描述
      * @param int allow_qty - 是否允许选择数量:1是，0否默认
      * @param int auto_support - 自动化支持:开启后所有配置选项都可输入参数
-     * @param object pricing - 周期价格,格式:{"onetime":0.1,"monthly":-1,"quarterly":1.0}
-     * @param float pricing.onetime - 一次性价格:删除时，传此周期价格为-1
-     * @param float pricing.monthly - 月:删除时，传此周期价格为-1
-     * @param float pricing.quarterly - 季:删除时，传此周期价格为-1
-     * @param float pricing.semaiannually - 半年:删除时，传此周期价格为-1
-     * @param float pricing.annually - 一年:删除时，传此周期价格为-1
-     * @param float pricing.biennially - 两年:删除时，传此周期价格为-1
-     * @param float pricing.triennianlly - 三年:删除时，传此周期价格为-1
+     * @param object pricing - 周期价格,格式:{"onetime":0.1,"monthly":0,"quarterly":1.0}
+     * @param float pricing.onetime - 一次性价格
      */
     public function create()
     {
@@ -186,6 +174,11 @@ class IdcsmartCommonProductController extends BaseController
 	public function updateCustomCycle()
     {
         $param = $this->request->param();
+
+        $validate = new IdcsmartCommonCustomCycleValidate();
+        if (!$validate->check($param)){
+            return json(['status'=>400,'msg'=>$validate->getError()]);
+        }
 
         $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
 

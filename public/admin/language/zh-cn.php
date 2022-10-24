@@ -46,7 +46,7 @@ return [
     'login_unauthorized' => '未授权',
     'remember_password_value_0_or_1' => '记住密码取值为0或1',
     'password_is_change_please_login_again' => '密码已修改,请重新授权',
-    'logout_success' => '注销成功',
+    'logout_success' => '成功退出',
     'inconsistent_login_ip' => '登录ip不一致',
     'login_user_ID_is_inconsistent' => '登录用户ID不一致',
     'log_out_automatically_after_2_hours_without_operation' => '2个小时未操作自动退出登录',
@@ -379,6 +379,8 @@ return [
 
     # 订单管理
     'order_is_not_exist' => '订单不存在',
+    'order_item_is_not_exist' => '订单子项不存在',
+    'order_item_cannot_update' => '非人工调整的订单子项不可修改',
     'order_amount_adjustment_failed' => '订单金额调整失败，调整后的待付金额不得小于0',
     'please_select_order_type' => '请选择订单类型',
     'order_type_error' => '订单类型错误',
@@ -398,6 +400,7 @@ return [
     'please_select_host' => '请选择产品',
     'host_id_error' => '产品ID错误',
     'client_host_error' => '产品用户和选择的用户不一致',
+    'update_amount' => '调整金额',
 
     # 产品管理
     'host_is_not_exist' => '产品不存在',
@@ -454,6 +457,8 @@ return [
     'configuration_log_website_name' =>'网站名称',
     'configuration_log_website_url' =>'网站域名地址',
     'configuration_log_terms_service_url' =>'服务条款地址',   
+    'configuration_log_terms_privacy_url' =>'隐私条款地址',   
+    'configuration_log_system_logo' =>'系统LOGO',   
     'configuration_admin_default_language_cannot_empty' => '后台默认语言不能为空',
     'configuration_admin_default_language_error' => '后台默认语言设置错误',
     'configuration_home_default_language_open_cannot_empty' => '前台多语言开关不能为空',
@@ -468,6 +473,9 @@ return [
     'configuration_website_url_cannot_exceed_255_chars' => '网站域名地址最多不能超过255个字符',
     'configuration_website_url_error' => '请输入这样https://wwww.a.com的域名地址',
     'configuration_terms_service_url_cannot_exceed_255_chars' => '服务条款地址最多不能超过255个字符',
+    'configuration_terms_privacy_url' => '隐私条款地址不能为空',
+    'configuration_terms_privacy_url_cannot_exceed_255_chars' => '隐私条款地址最多不能超过255个字符',
+    'configuration_system_logo' => '请选择系统LOGO',
 	# 登录设置
     'configuration_log_register_phone' =>'手机是否支持注册',
     'configuration_log_register_email' =>'邮箱是否支持注册',
@@ -742,6 +750,8 @@ return [
 	'send_mail_action_not_enabled' => '邮件发送动作未开启',
     'send_mail_interface_not_set' => '邮件发送接口未设置',
     'send_mail_template_not_set' => '邮件发送模板未设置',
+    'email_cancel_send' => '邮件取消发送',
+    'sms_cancel_send' => '短信取消发送',
 	
 	
 	# 发送管理
@@ -832,6 +842,7 @@ return [
 
     # 导航管理
     'nav_is_not_exist' => '默认导航不存在',
+    'product_error' => '商品错误',
 
     # 首页管理
     'one_year_ago' => '一年前',

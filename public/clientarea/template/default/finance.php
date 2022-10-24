@@ -21,30 +21,39 @@
                     <!-- 订单列表 -->
                     <div class="finance main-card" v-if="!isDetail">
                         <div class="top">
-                            <div class="top-l">财务</div>
+                            <div class="top-l">{{lang.finance_title}}</div>
                             <div class="top-r" v-if="activeIndex == 3">
                                 <div class="item-balance">
                                     <div class="money">
                                         <div class="money-num">
                                             {{ commonData.currency_prefix + balance }}
-                                            <div class="text">当前余额</div>
+                                            <div class="text">{{lang.finance_text1}}</div>
                                         </div>
-                                        <div class="btn-cz" @click="showCz">充值</div>
-                                        <div class="btn-tx" v-if="false" @click="showTx">提现</div>
+                                        <div class="btn-cz" @click="showCz">{{lang.finance_btn1}}</div>
+                                        {foreach $addons as $addon}
+                                        {if $addon['name']=='IdcsmartWithdraw'}
+                                        <div class="btn-tx" @click="showTx">{{lang.finance_btn2}}</div>
+                                        {/if}
+                                        {/foreach}
                                     </div>
                                 </div>
+                                {foreach $addons as $addon}
+                                {if $addon['name']=='IdcsmartRefund'}
                                 <div class="item-unbalance">
                                     <div class="money">
                                         {{ commonData.currency_prefix + unAmount}}
                                     </div>
-                                    <div class="text">待退款金额</div>
+                                    <div class="text">{{lang.finance_text2}}</div>
                                 </div>
+                                {/if}
+                                {/foreach}
+
                             </div>
                         </div>
                         <div class="content_box">
                             <div class="content_tab">
                                 <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                    <el-tab-pane label="订单记录" name="1">
+                                    <el-tab-pane :label="lang.finance_tab1" name="1">
                                         <div class="content_table">
                                             <div class="content_searchbar">
                                                 <div class="left_tips">
@@ -60,42 +69,42 @@
                                                 </div>
                                             </div>
                                             <div class="tabledata">
-                                                <el-table v-loading="loading1" :data="dataList1" style="width: 100%;margin-bottom: 20px;" row-key="id" lazy :load="load" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
-                                                    <el-table-column prop="id" label="ID" width="150" align="left">
+                                                <el-table v-loading="loading1" :data="dataList1" style="width: 100%;margin-bottom: 20px;" :row-key="getRowKey" lazy :load="load" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                                                    <el-table-column prop="id" label="ID" width="100" align="left">
                                                         <template slot-scope="scope">
                                                             <span>
                                                                 {{scope.row.product_names?scope.row.id:'--'}}
                                                             </span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="product_names" label="商品名称" min-width="400" :show-overflow-tooltip="true">
+                                                    <el-table-column prop="product_names" :label="lang.finance_label1" min-width="400" :show-overflow-tooltip="true">
                                                         <template slot-scope="scope">
                                                             <span class="dot" :class="scope.row.type">
                                                             </span>
                                                             <span>{{scope.row.product_name}}</span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="billing_cycle" label="金额/周期" width="300">
+                                                    <el-table-column prop="billing_cycle" :label="lang.finance_label2" width="300">
                                                         <template slot-scope="scope">
                                                             <span>{{ commonData.currency_prefix + scope.row.amount}}</span>
                                                             <span v-if="scope.row.billing_cycle">/{{scope.row.billing_cycle}}</span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="create_time" label="时间" width="250">
+                                                    <el-table-column prop="create_time" :label="lang.finance_label3" width="200">
                                                         <template slot-scope="scope">
                                                             <span>{{scope.row.create_time | formateTime}}</span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="status" label="状态" width="150">
+                                                    <el-table-column prop="status" :label="lang.finance_label4" width="150">
                                                         <template slot-scope="scope">
                                                             <el-tag v-if="scope.row.status" :class="scope.row.status=='Unpaid'?'Unpaid':scope.row.status=='Paid'?'Paid':''">
-                                                                {{scope.row.status=='Unpaid'?'未付款':scope.row.status=='Paid'?'已付款':''}}
+                                                                {{scope.row.status=='Unpaid'?lang.finance_text3:scope.row.status=='Paid'?lang.finance_text4:''}}
                                                             </el-tag>
                                                             {{scope.row.host_status?status[scope.row.host_status]:null}}
                                                             {{scope.row.host_status||scope.row.status ? null : '--'}}
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="gateway" label="支付方式" width="150">
+                                                    <el-table-column prop="gateway" :label="lang.finance_label5" width="100">
                                                         <template slot-scope="scope">
                                                             <!-- 存在支付状态 父 -->
                                                             <div v-if="scope.row.status">
@@ -105,7 +114,7 @@
                                                                     <div v-if="scope.row.credit > 0">
                                                                         <!-- 全部使用余额 -->
                                                                         <div v-if="scope.row.credit == scope.row.amount">
-                                                                            <span>余额</span>
+                                                                            <span>{{lang.finance_text5}}</span>
                                                                         </div>
                                                                         <!-- 部分使用余额 -->
                                                                         <div v-else>
@@ -114,7 +123,7 @@
                                                                                 <span style="color: #F99600;"> {{commonData.currency_prefix
                                                                             + scope.row.credit +
                                                                             commonData.currency_suffix}}</span>
-                                                                                <span slot="reference" class='gateway-pay'>余额</span>
+                                                                                <span slot="reference" class='gateway-pay'>{{lang.finance_text5}}</span>
                                                                             </el-popover>
                                                                             <span>{{scope.row.gateway ? '+'+scope.row.gateway:''}}</span>
                                                                         </div>
@@ -124,9 +133,20 @@
 
                                                                 </div>
                                                                 <!-- 未支付 -->
-                                                                <a v-else class='gateway-pay' @click="showPayDialog(scope.row)">去支付</a>
+                                                                <a v-else class='gateway-pay'>--</a>
                                                             </div>
 
+                                                        </template>
+                                                    </el-table-column>
+                                                    <el-table-column :label="lang.finance_label6" prop="id" width="100" align="left">
+                                                        <template slot-scope="scope" v-if="scope.row.status === 'Unpaid'">
+                                                            <el-popover placement="top-start" trigger="hover">
+                                                                <div class="operation-box">
+                                                                    <div slot="reference" class="operation-item" @click="openDeletaDialog(scope.row,scope.$index)">{{lang.finance_btn4}}</div>
+                                                                    <div class="operation-item" @click="showPayDialog(scope.row)">{{lang.finance_btn3}}</div>
+                                                                </div>
+                                                                <i slot="reference" class="el-icon-more"></i>
+                                                            </el-popover>
                                                         </template>
                                                     </el-table-column>
                                                 </el-table>
@@ -147,7 +167,7 @@
                                                             <span>{{item.id}}</span>
                                                             <span>
                                                                 <el-tag v-if="item.status" :class="item.status=='Unpaid'?'Unpaid':item.status=='Paid'?'Paid':''">
-                                                                    {{item.status=='Unpaid'?'未付款':item.status=='Paid'?'已付款':''}}
+                                                                    {{item.status=='Unpaid'?lang.finance_text3:item.status=='Paid'?lang.finance_text4:''}}
                                                                 </el-tag>
                                                             </span>
                                                         </div>
@@ -187,7 +207,7 @@
                                                                     <div v-if="item.credit > 0">
                                                                         <!-- 全部使用余额 -->
                                                                         <div v-if="item.credit == item.amount">
-                                                                            <span>余额</span>
+                                                                            <span>{{lang.finance_text5}}</span>
                                                                         </div>
                                                                         <!-- 部分使用余额 -->
                                                                         <div v-else>
@@ -196,7 +216,7 @@
                                                                                 <span style="color: #F99600;"> {{commonData.currency_prefix
                                                                             + item.credit +
                                                                             commonData.currency_suffix}}</span>
-                                                                                <span slot="reference" class='gateway-pay'>余额</span>
+                                                                                <span slot="reference" class='gateway-pay'>{{lang.finance_text5}}</span>
                                                                             </el-popover>
                                                                             <span> + {{item.gateway}}</span>
                                                                         </div>
@@ -205,14 +225,14 @@
                                                                     <span v-else>{{item.gateway}}</span>
                                                                 </div>
                                                                 <!-- 未支付 -->
-                                                                <a v-else class='gateway-pay' @click="showPayDialog(item)">去支付</a>
+                                                                <a v-else class='gateway-pay' @click="showPayDialog(item)">{{lang.finance_btn3}}</a>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="bottom-text">
 
-                                                    <span v-show="isEnd">已经到底啦~</span>
+                                                    <span v-show="isEnd">{{lang.finance_text6}}</span>
                                                     <span v-loading=isShowMore></span>
                                                 </div>
                                                 <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
@@ -220,7 +240,7 @@
 
                                         </div>
                                     </el-tab-pane>
-                                    <el-tab-pane label="交易记录" name="2">
+                                    <el-tab-pane :label="lang.finance_tab2" name="2">
                                         <div class="content_table">
                                             <div class="content_searchbar">
                                                 <div class="left_tips">
@@ -239,7 +259,7 @@
                                                 <el-table v-loading="loading2" :data="dataList2" style="width: 100%;margin-bottom: .2rem;">
                                                     <el-table-column prop="id" label="ID" width="100" align="left">
                                                     </el-table-column>
-                                                    <el-table-column prop="order_id" width="130" label="订单ID" align="left">
+                                                    <el-table-column prop="order_id" width="130" :label="lang.finance_label7" align="left">
                                                         <template slot-scope="scope">
                                                             <div class="order_id">
                                                                 <span class="dot" :class="scope.row.type">
@@ -250,19 +270,19 @@
 
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="amount" min-width="250" label="金额" align="left">
+                                                    <el-table-column prop="amount" min-width="250" :label="lang.finance_label8" align="left">
                                                         <template slot-scope="scope">
                                                             <span>{{ commonData.currency_prefix + scope.row.amount }}
                                                             </span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="create_time" width="200" label="时间" align="left">
+                                                    <el-table-column prop="create_time" width="200" :label="lang.finance_label3" align="left">
                                                         <template slot-scope="scope">
                                                             <span>{{scope.row.create_time | formateTime}}</span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="gateway" width="400" label="支付方式" align="left"></el-table-column>
-                                                    <el-table-column prop="transaction_number" width="280" label="交易流水号" align="left" :show-overflow-tooltip="true"></el-table-column>
+                                                    <el-table-column prop="gateway" width="400" :label="lang.finance_label5" align="left"></el-table-column>
+                                                    <el-table-column prop="transaction_number" width="280" :label="lang.finance_label9" align="left" :show-overflow-tooltip="true"></el-table-column>
                                                 </el-table>
                                                 <pagination :page-data="params2" @sizechange="sizeChange2" @currentchange="currentChange2"></pagination>
                                             </div>
@@ -304,7 +324,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="bottom-text">
-                                                    <span v-show="isEnd">已经到底啦~</span>
+                                                    <span v-show="isEnd">{{lang.finance_text6}}</span>
                                                     <span v-loading=isShowMore></span>
                                                 </div>
                                                 <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
@@ -313,7 +333,7 @@
 
                                         </div>
                                     </el-tab-pane>
-                                    <el-tab-pane label="余额记录" name="3">
+                                    <el-tab-pane :label="lang.finance_tab3" name="3">
                                         <div class="content_table">
                                             <div class="content_searchbar balance-searchbar">
                                                 <div class="left_tips">
@@ -331,20 +351,20 @@
                                                 <el-table v-loading="loading3" :data="dataList3" style="width: 100%;margin-bottom: .2rem;">
                                                     <el-table-column prop="id" label="ID" width="100" align="left">
                                                     </el-table-column>
-                                                    <el-table-column prop="amount" width="150" label="金额" align="left">
+                                                    <el-table-column prop="amount" width="150" :label="lang.finance_label8" align="left">
                                                         <template slot-scope="scope">
                                                             <span>{{ commonData.currency_prefix + scope.row.amount}}
                                                             </span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="notes" label="备注" min-width="800" align="left" :show-overflow-tooltip="true">
+                                                    <el-table-column prop="notes" :label="lang.finance_label10" min-width="800" align="left" :show-overflow-tooltip="true">
                                                     </el-table-column>
-                                                    <el-table-column prop="type" label="类型" width="150" align="left">
+                                                    <el-table-column prop="type" :label="lang.finance_label11" width="150" align="left">
                                                         <template slot-scope="scope">
                                                             <span class="balance-tag" :class="scope.row.type">{{balanceType[scope.row.type].text}}</span>
                                                         </template>
                                                     </el-table-column>
-                                                    <el-table-column prop="create_time" width="200" label="时间" align="left">
+                                                    <el-table-column prop="create_time" width="200" :label="lang.finance_label3" align="left">
                                                         <template slot-scope="scope">
                                                             <span>{{scope.row.create_time | formateTime}}</span>
                                                         </template>
@@ -388,7 +408,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="bottom-text">
-                                                    <span v-show="isEnd">已经到底啦~</span>
+                                                    <span v-show="isEnd">{{lang.finance_text6}}</span>
                                                     <span v-loading=isShowMore></span>
                                                 </div>
                                                 <img v-show="isShowBackTop" class="back-top-img" @click="goBackTop" src="/{$template_catalog}/template/{$themes}/img/common/toTop.png">
@@ -404,12 +424,12 @@
                     <!-- 订单详情 -->
                     <div class="main-card" v-else>
                         <div class="top">
-                            <div class="top-l"> <img src="/{$template_catalog}/template/{$themes}/img/finance/back.png" class="top-img" @click="isDetail=false"> 订单详情</div>
+                            <div class="top-l"> <img src="/{$template_catalog}/template/{$themes}/img/finance/back.png" class="top-img" @click="isDetail=false"> {{lang.finance_title2}}</div>
                         </div>
                         <div class="top-line"></div>
                         <div class="main_table">
                             <el-table v-loading="loading4" :data="dataList4" style="width: 100%;" :tree-props="{children:'items'}" row-key="id" :default-expand-all="true">
-                                <el-table-column prop="product_name" label="商品名称" min-width="500" align="left">
+                                <el-table-column prop="product_name" :label="lang.finance_label1" min-width="500" align="left">
                                     <template slot-scope="scope">
                                         <span>
                                             {{
@@ -418,17 +438,17 @@
                                         </span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="create_time" label="时间" width="250" align="left">
+                                <el-table-column prop="create_time" :label="lang.finance_label3" width="250" align="left">
                                     <template slot-scope="scope">
                                         <span>{{scope.row.create_time | formateTime}}</span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="host_name" label="标识" width="350" align="left">
+                                <el-table-column prop="host_name" :label="lang.finance_label12" width="350" align="left">
                                     <template slot-scope="scope">
                                         <span>{{scope.row.host_name?scope.row.host_name:'--'}}</span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="amount" label="金额/周期" width="150" align="left">
+                                <el-table-column prop="amount" :label="lang.finance_label2" width="150" align="left">
                                     <template slot-scope="scope">
                                         <span>
                                             {{scope.row.amount? commonData.currency_prefix + scope.row.amount + commonData.currency_suffix :
@@ -438,11 +458,11 @@
                                         </span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="host_status" label="状态" width="150" align="left">
+                                <el-table-column prop="host_status" :label="lang.finance_label4" width="150" align="left">
                                     <template slot-scope="scope">
 
                                         <el-tag v-if="scope.row.status" :class="scope.row.status=='Unpaid'?'Unpaid':scope.row.status=='Paid'?'Paid':''">
-                                            {{scope.row.status=='Unpaid'?'未付款':scope.row.status=='Paid'?'已付款':''}}
+                                            {{scope.row.status=='Unpaid'?lang.finance_text3:scope.row.status=='Paid'?lang.finance_text4:''}}
                                         </el-tag>
                                         {{scope.row.host_status?status[scope.row.host_status]:null}}
                                         {{scope.row.host_status||scope.row.status ? null : '--'}}
@@ -458,7 +478,7 @@
                                         <span></span>
                                         <span>
                                             <el-tag v-if="item.status" :class="item.status=='Unpaid'?'Unpaid':item.status=='Paid'?'Paid':''">
-                                                {{item.status=='Unpaid'?'未付款':item.status=='Paid'?'已付款':''}}
+                                                {{item.status=='Unpaid'?lang.finance_text3:item.status=='Paid'?lang.finance_text4:''}}
                                             </el-tag>
                                         </span>
                                     </div>
@@ -504,29 +524,28 @@
                     <div class="tx-dialog">
                         <el-dialog width="6.8rem" :visible.sync="isShowTx" :show-close=false :close-on-click-modal=false>
                             <div class="dialog-title">
-                                申请提现
+                                {{lang.finance_title3}}
                             </div>
                             <div class="dialog-form">
                                 <el-form :model="txData" label-position="top">
-                                    <el-form-item label="提现方式">
+                                    <el-form-item :label="lang.finance_label13">
                                         <el-select v-model="txData.method">
-
                                             <el-option v-for="item in ruleData.method" :key="item" :label="item=='alipay'?'支付宝':'银行卡'" :value="item"></el-option>
                                             <!-- <el-option label="银行卡" value="bank"></el-option> -->
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item v-if="txData.method==='alipay'" label="支付宝账号">
+                                    <el-form-item v-if="txData.method==='alipay'" :label="lang.finance_label14">
                                         <el-input v-model="txData.account"></el-input>
                                     </el-form-item>
-                                    <el-form-item v-if="txData.method==='bank'" label="银行卡号">
+                                    <el-form-item v-if="txData.method==='bank'" :label="lang.finance_label15">
                                         <el-input v-model="txData.card_number"></el-input>
                                     </el-form-item>
-                                    <el-form-item v-if="txData.method==='bank'" label="姓名">
+                                    <el-form-item v-if="txData.method==='bank'" :label="finance_label16">
                                         <el-input v-model="txData.name"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="提现金额">
+                                    <el-form-item :label="lang.finance_label16">
                                         <el-input @keyup.native="txData.amount=oninput(txData.amount)" v-model="txData.amount" :placeholder="'可提现'+ commonData.currency_prefix + balance + commonData.currency_suffix">
-                                            <el-button type="text" slot="suffix" @click="txData.amount=balance">全部
+                                            <el-button type="text" slot="suffix" @click="txData.amount=balance">{{lang.finance_btn5}}
                                             </el-button>
                                         </el-input>
                                     </el-form-item>
@@ -537,8 +556,8 @@
                                 </el-form>
                             </div>
                             <div class="dialog-footer">
-                                <el-button class="btn-ok" @click="doCredit">提交</el-button>
-                                <el-button class="btn-no" @click="isShowTx = false">取消</el-button>
+                                <el-button class="btn-ok" @click="doCredit">{{lang.finance_btn6}}</el-button>
+                                <el-button class="btn-no" @click="isShowTx = false">{{lang.finance_btn7}}</el-button>
                             </div>
                         </el-dialog>
                     </div>
@@ -546,20 +565,20 @@
                     <div class="cz-dialog">
                         <el-dialog width="6.8rem" :visible.sync="isShowCz" :show-close=false @close="czClose">
                             <div class="dialog-title">
-                                充值
+                                {{lang.finance_title4}}
                             </div>
                             <div class="dialog-form">
                                 <el-form :model="czData" label-position="top">
-                                    <el-form-item label="充值方式">
+                                    <el-form-item :label="lang.finance_label18">
                                         <el-select v-model="czData.gateway" @change="czSelectChange">
                                             <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item label="充值金额" @keyup.native="czData.amount=oninput(czData.amount)">
+                                    <el-form-item :label="lang.finance_label19" @keyup.native="czData.amount=oninput(czData.amount)">
                                         <div class="cz-input">
                                             <el-input v-model="czData.amount">
                                             </el-input>
-                                            <el-button class="btn-ok" @click="czInputChange">提交</el-button>
+                                            <el-button class="btn-ok" @click="czInputChange">{{lang.finance_btn6}}</el-button>
                                         </div>
                                     </el-form-item>
                                     <el-form-item v-if="errText">
@@ -573,81 +592,20 @@
                             </div>
                         </el-dialog>
                     </div>
-                    <!-- 支付 dialog -->
-                    <!-- <pay-dialog :is-show-zf="isShowZf" :order-id="orderId" :amount="amount"></pay-dialog> -->
-                    <div class="zf-dialog">
-                        <el-dialog width="6.8rem" :visible.sync="isShowZf" :show-close=false @close="zfClose">
-                            <div class="dialog-title">
-                                支付
-                            </div>
-                            <div class="dialog-form">
-                                <el-row>
-                                    <el-col :span="5">支付方式</el-col>
-                                    <el-col :span="19">
-                                        <el-select @change="zfSelectChange" v-model="zfData.gateway">
-                                            <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
-                                        </el-select>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="5"><span>&nbsp;</span></el-col>
-                                    <el-col :span="19">
-                                        <el-checkbox v-model="zfData.checked" @change="useBalance">使用余额</el-checkbox>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="5">订单金额</el-col>
-                                    <el-col :span="19">
-                                        <div>{{ commonData.currency_prefix }}
-                                            {{ Number(zfData.amount).toFixed(2)}} {{ commonData.currency_suffix }}
-                                        </div>
-                                    </el-col>
-                                </el-row>
-                                <el-row>
-                                    <el-col :span="5">支付金额</el-col>
-                                    <el-col :span="19">
-                                        <div class="true-money">{{ currency_prefix}}
-                                            {{
-                                                zfData.checked?(zfData.amount-balance <=0 ? 0:
-                                                zfData.amount-balance).toFixed(2):Number(zfData.amount).toFixed(2)}} {{
-                                                    commonData.currency_suffix }}
-                                        </div>
-                                    </el-col>
-                                </el-row>
-                                <el-row v-show="!isShowPay">
-                                    <el-col :span="5"><span>&nbsp;</span></el-col>
-                                    <el-col :span="19">
-                                        <div class="true-money">
-                                            -{{ currency_prefix }}
-                                            {{zfData.checked?zfData.amount>=balance?Number(balance).toFixed(2):Number(zfData.amount).toFixed(2):null}}
-                                            {{commonData.currency_suffix }}
-                                        </div>
-                                    </el-col>
-                                </el-row>
-                                <el-row v-show="errText">
-                                    <el-col :span="24">
-                                        <el-alert :title="errText" type="error" :closable="false" show-icon>
-                                        </el-alert>
-                                    </el-col>
-                                </el-row>
 
-                                <el-row v-show="isShowPay" v-loading="payLoading">
-                                    <el-col :span="24">
-                                        <div class="pay-html" v-show="isShowimg" v-html="payHtml"></div>
-                                    </el-col>
-                                </el-row>
-                                <el-row v-show="!isShowPay">
-                                    <el-col :span="24">
-                                        <div class="form-footer">
-                                            <el-button class="btn-ok" @click="handleOk">确认支付</el-button>
-                                            <el-button class="btn-no" @click="zfClose">取消</el-button>
-                                        </div>
-                                    </el-col>
-                                </el-row>
+                    <!-- 删除确认 dialog -->
+                    <div class="delete-dialog">
+                        <el-dialog width="4.35rem" :visible.sync="isShowDeOrder" :show-close=false @close="isShowDeOrder=false">
+                            <div class="delete-box">
+                                <div class="delete-content">{{lang.finance_text7}}</div>
+                                <div class="delete-btn">
+                                    <span class="confirm-btn" @click=handelDeleteOrder>{{lang.finance_btn8}}</span>
+                                    <span class="cancel-btn" @click="isShowDeOrder=false">{{lang.finance_btn7}}</span>
+                                </div>
                             </div>
                         </el-dialog>
                     </div>
-
+                    <pay-dialog ref="payDialog" @payok="paySuccess" @paycancel="payCancel"></pay-dialog>
                 </el-main>
             </el-container>
         </el-container>
@@ -655,6 +613,7 @@
     <!-- =======页面独有======= -->
     <script src="/{$template_catalog}/template/{$themes}/api/finance.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/finance.js"></script>
+    <script src="/{$template_catalog}/template/{$themes}/components/payDialog/payDialog.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
 

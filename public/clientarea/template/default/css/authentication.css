@@ -39,24 +39,59 @@
   position: relative;
   cursor: pointer;
   display: flex;
+  flex: 1;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  width: 3rem;
-  height: 1.8rem;
-  font-size: 0.28rem;
-  color: #4E5259;
-  font-weight: 800;
+  height: 3.13rem;
   border: 0.01rem solid #E6E7EB;
+}
+
+.select-type {
   border-radius: 0.03rem;
+  background: #FEFFFF;
+  box-shadow: 0rem 0rem 0.06rem rgba(0, 0, 0, 0.12);
+}
+
+.font-18 {
+  color: #1E2736;
+  font-weight: bold;
+  font-size: 0.18rem;
+}
+
+/* .person-box {} */
+.presonl-status {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+  height: 0.52rem;
+  line-height: 0.52rem;
+  z-index: 8;
+}
+
+.person-success {
+  color: #FFFFFF;
+  font-size: 0.16rem;
+  background: rgb(61, 213, 152);
+}
+
+.person-loading {
+  color: #F0142F;
+  font-weight: bold;
+  font-size: 0.16rem;
+  background: rgba(240, 20, 46, 0.08);
 }
 
 .check-type>div:nth-of-type(1) {
-  margin-right: .3rem;
+  margin-right: .4rem;
 }
 
 .checked-icon {
   position: absolute;
+  z-index: 9;
   bottom: 0;
   right: 0;
   line-height: 0;
@@ -77,7 +112,6 @@
 
 .check-mode {
   margin-top: 0.4rem;
-  margin-bottom: 2.5rem;
 }
 
 .check-select .el-select {
@@ -85,6 +119,11 @@
   width: 4.2rem;
   height: 0.52rem;
   border-radius: 0.03rem;
+}
+
+.next-box {
+  margin-top: 1.5rem;
+  display: flex;
 }
 
 
@@ -96,8 +135,45 @@
   font-size: 0.16rem;
 }
 
+.next-box .back-btn {
+  color: #0058FF;
+  background: #fff;
+  border: 1px solid #0058FF;
+}
+
+.go-Back-Btn {
+  margin-top: 1.1rem;
+}
+
+.go-Back-Btn .back-btn {
+  border-radius: 0;
+  width: 1.8rem;
+  height: 0.46rem;
+  font-size: 0.16rem;
+  color: #0058FF;
+  background: #fff;
+  border: 1px solid #0058FF;
+}
+
 .main-content .el-form .el-form-item .el-input {
   width: 5.2rem;
+}
+
+
+.type-img img {
+  width: 0.64rem;
+  height: 0.64rem;
+}
+
+.type-title {
+  margin: 0.24rem 0 0.21rem 0;
+}
+
+.type-tips {
+  margin-bottom: 0.1rem;
+  width: 4.36rem;
+  color: #4E5259;
+  text-align: center;
 }
 
 
@@ -108,18 +184,31 @@
 
 .el-upload--picture-card {
   width: 3.6rem;
-  height: 2.3rem;
+  height: 2.66rem;
   border: none;
 }
 
-.upload-btn-img {
+.upload-progress {
   width: 3.6rem;
-  height: 2.3rem;
+  height: 2.66rem;
+}
+
+.upload-btn-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 3.6rem;
+  height: 2.66rem;
+  background: #FEFFFF;
+  box-shadow: 0rem 0.08rem 0.12rem rgba(0, 0, 0, 0.08);
+  border-radius: 0.03rem;
+  overflow: hidden;
 }
 
 .upload-btn-img img {
-  width: 3.6rem;
-  height: 2.3rem;
+  width: 3.08rem;
+  border: 1px dashed #DCDCDC;
+  height: 1.83rem;
 }
 
 .certification-person {
@@ -142,7 +231,12 @@
 
 .el-upload-list--picture-card .el-upload-list__item {
   width: 3.6rem;
-  height: 2.3rem;
+  height: 2.66rem;
+}
+
+.el-upload-list--picture-card .el-upload-list__item-thumbnail {
+  width: 3.6rem;
+  height: 2.66rem;
 }
 
 .status-box {
@@ -151,13 +245,22 @@
   box-sizing: border-box;
   text-align: center;
   padding-top: 1.08rem;
-  border: 1px solid #E6E7EB;
   border-radius: 0.03rem;
+}
+
+.third-box {
+  width: 9.7rem;
+  height: 5.49rem;
+  box-sizing: border-box;
+  text-align: center;
+  padding-top: 1.08rem;
+  border-radius: 0.03rem;
+  border: 1px solid #E6E7EB;
 }
 
 .status-title {
   color: #3DD598;
-  font-weight: 800;
+  font-weight: 500;
   font-size: 0.28rem;
   margin-bottom: 0.2rem;
 }
@@ -217,10 +320,74 @@
   color: #1E2736;
 }
 
-.err-img {
-  margin-top: 0.3rem;
+.personl-ing {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.title-blue {
+  color: #0058FF;
+  font-size: 0.28rem;
+}
+
+.updata-btn {
+  margin-top: 0.24rem;
+}
+
+.updata-btn .el-button {
+  color: #FFFFFF;
+  font-size: 0.16rem;
+  border-radius: 0;
+  background: #0058FF;
+  width: 1.8rem;
+  height: 0.46rem;
+}
+
+.status-img-box img {
   width: 0.68rem;
   height: 0.68rem;
+}
+
+.title-green {
+  margin-top: 0.21rem;
+  color: #3DD598;
+  font-weight: 800;
+  font-size: 0.28rem;
+}
+
+.table-box {
+  margin-top: 0.8rem;
+  border-spacing: 0;
+  text-align: left;
+  width: 8.23rem;
+  height: 1.05rem;
+  border: 1px solid #E6E7EB;
+}
+
+.mar-top-42 {
+  margin-top: 0.42rem;
+}
+
+.table-box tr td {
+  color: #1E2736;
+  font-size: 0.14rem;
+  border: 1px solid #E6E7EB;
+  padding-left: 0.4rem !important;
+}
+
+.again-btn {
+  margin-top: 0.4rem;
+}
+
+.again-btn .el-button {
+  border-radius: 0;
+  width: 1.8rem;
+  height: 0.46rem;
+  color: #0058FF;
+  font-size: 0.16rem;
+  border: 1px solid #0058FF;
 }
 
 .el-link.el-link--default {
@@ -245,6 +412,7 @@
 }
 
 .red-text {
+  text-align: center;
   font-size: 0.16rem;
   color: red;
   margin-top: 0;
@@ -253,4 +421,18 @@
 /*去除upload组件过渡效果*/
 .el-upload-list__item {
   transition: none !important;
+}
+
+.mar-top-114 {
+  margin-top: 1.14rem;
+}
+
+.tips-text {
+  text-align: center;
+  font-size: 0.14rem;
+  color: #8692B0;
+}
+
+.upload-1 {
+  margin-right: 0.6rem;
 }

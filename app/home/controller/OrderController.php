@@ -106,4 +106,28 @@ class OrderController extends HomeBaseController
         ];
         return json($result);
 	}
+
+    /**
+     * 时间 2022-10-18
+     * @title 删除订单
+     * @desc 删除订单
+     * @author theworld
+     * @version v1
+     * @url /console/v1/order/:id
+     * @method  DELETE
+     * @param int id - 订单ID required
+     */
+    public function delete()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 取消订单
+        $result = $OrderModel->cancelOrder($param['id']);
+
+        return json($result);
+    }
 }

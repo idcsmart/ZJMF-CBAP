@@ -77,13 +77,7 @@ class IdcsmartCommonProductConfigoptionController extends BaseController
      * @return  string configoption.description - 说明
      * @return array configoption_sub - 子项信息
      * @return int configoption_sub.id -
-     * @return  float configoption_sub.onetime - 一次性,价格(值为-1时显示空)
-     * @return  float configoption_sub.monthly - 月，价格(值为-1时显示空)
-     * @return  float configoption_sub.quarterly - 季，价格(值为-1时显示空)
-     * @return  float configoption_sub.semaiannually - 半年，价格(值为-1时显示空)
-     * @return  float configoption_sub.annually - 一年，价格(值为-1时显示空)
-     * @return  float configoption_sub.biennially - 两年，价格(值为-1时显示空)
-     * @return  float configoption_sub.triennianlly - 三年，价格(值为-1时显示空)
+     * @return  float configoption_sub.onetime - 一次性,价格
      * @return  float configoption_sub.qty_min - 最小值
      * @return  float configoption_sub.qty_max - 最大值
      * @return array configoption_sub.custom_cycle - 自定义周期

@@ -47,6 +47,9 @@
                 backTicket() {
                     location.href = 'account.html'
                 },
+                goSelect() {
+                    location.href = 'authentication_select.html'
+                },
                 // 获取基础信息
                 getCertificationInfo() {
                     certificationInfo().then((res) => {

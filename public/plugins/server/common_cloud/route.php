@@ -9,6 +9,7 @@ Route::group('console/v1',function (){
 
     Route::get('product/:id/common_cloud/data_center', "\\server\\common_cloud\\controller\\home\\DataCenterController@list");
     Route::get('product/:id/common_cloud/package', "\\server\\common_cloud\\controller\\home\\PackageController@list");
+    Route::post('product/:id/common_cloud/duration', "\\server\\common_cloud\\controller\\home\\PackageController@getAllDurationPrice");
     Route::get('product/:id/common_cloud/config', "\\server\\common_cloud\\controller\\home\\ConfigController@list");
     Route::get('product/:id/common_cloud/image', "\\server\\common_cloud\\controller\\home\\ImageController@list");
     Route::get('common_cloud/:id/vnc', "\\server\\common_cloud\\controller\\home\\CloudController@vncPage");
@@ -96,6 +97,7 @@ Route::group(DIR_ADMIN . '/v1',function (){
 	Route::get('common_cloud/package', "\\server\\common_cloud\\controller\\admin\\PackageController@list");
 	Route::put('common_cloud/package/:id', "\\server\\common_cloud\\controller\\admin\\PackageController@update");
 	Route::delete('common_cloud/package/:id', "\\server\\common_cloud\\controller\\admin\\PackageController@delete");
+	Route::put('common_cloud/package/:id/order', "\\server\\common_cloud\\controller\\admin\\PackageController@updateOrder");
 
 	// 备份/快照设置
 	Route::post('common_cloud/backup_config', "\\server\\common_cloud\\controller\\admin\\BackupConfigController@create");

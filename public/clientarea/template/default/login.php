@@ -43,32 +43,32 @@
                             WELCOME
                         </div>
                         <div class="text-title">
-                            欢迎来到{{commonData.website_name}}会员中心
+                            {{lang.login_welcome}}{{commonData.website_name}}{{lang.login_vip}}
                         </div>
                         <div class="text-level">
-                            实现在线业务的便捷交易与管理
+                            {{lang.login_level}}
                         </div>
                     </div>
                 </div>
                 <div class="container-before">
                     <div class="login">
                         <div class="login-text">
-                            <div class="login-text-title">登录</div>
+                            <div class="login-text-title">{{lang.login}}</div>
                             <div class="login-text-regist" v-if="commonData.register_email == 1 || commonData.register_phone == 1">
-                                没有账户？<a @click="toRegist">立即注册</a>
+                                {{lang.login_no_account}}<a @click="toRegist">{{lang.login_regist_text}}</a>
                             </div>
                         </div>
                         <div class="login-form">
                             <div class="login-top">
-                                <div v-show="isPassOrCode" class="login-email" :class="isEmailOrPhone? 'active':null" @click="isEmailOrPhone = true">电子邮箱
+                                <div v-show="isPassOrCode" class="login-email" :class="isEmailOrPhone? 'active':null" @click="isEmailOrPhone = true">{{lang.login_email}}
                                 </div>
-                                <div class="login-phone" :class="!isEmailOrPhone? 'active':null" @click="isEmailOrPhone = false">手机号码
+                                <div class="login-phone" :class="!isEmailOrPhone? 'active':null" @click="isEmailOrPhone = false">{{lang.login_phone}}
                                 </div>
                             </div>
                             <div class="form-main">
                                 <div class="form-item">
-                                    <el-input v-if="isEmailOrPhone" v-model="formData.email" placeholder="请输入邮箱"></el-input>
-                                    <el-input v-else class="input-with-select select-input" v-model="formData.phone" placeholder="请输入手机号码">
+                                    <el-input v-if="isEmailOrPhone" v-model="formData.email" :placeholder="lang.login_placeholder_pre + lang.login_email"></el-input>
+                                    <el-input v-else class="input-with-select select-input" v-model="formData.phone" :placeholder="lang.login_placeholder_pre + lang.login_phone">
                                         <el-select filterable slot="prepend" v-model="formData.countryCode">
                                             <el-option v-for="item in countryList" :key="item.name" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code"></el-option>
                                         </el-select>
@@ -104,7 +104,8 @@
                                 </div>
                                 <div class="form-item read-item">
                                     <el-checkbox v-model="checked">
-                                    </el-checkbox>{{lang.login_read}}<a @click="toRead">{{lang.login_list}}</a>
+                                    {{lang.login_read}}<a @click="toService">{{lang.read_service}}</a>{{lang.read_and}}<a @click="toPrivacy">{{lang.read_privacy}}</a>
+                                    </el-checkbox>
                                 </div>
                                 
                                 <div class="form-item line-item" v-if="commonData.login_phone_verify == 1">

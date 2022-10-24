@@ -101,7 +101,8 @@
           submitLoading: false,
           showId: [1, 2, 3],
           curRenew: {},
-          curStatus: ''
+          curStatus: '',
+          hasPlugin: false
         }
       },
       watch: {
@@ -128,7 +129,14 @@
         this.getProductDetail()
         this.getProList()
         this.getproModule()
-        localStorage.setItem('curValue', 2)
+        this.getPlugin()
+        const navList = JSON.parse(localStorage.getItem('backMenus'))
+        let tempArr = navList.reduce((all, cur) => {
+          all.push(...cur.child)
+          return all
+        }, [])
+        const curValue = tempArr.filter(item => item.url === 'client.html')[0]?.id
+        localStorage.setItem('curValue', curValue)
       },
       computed: {
         disabled () {
@@ -136,6 +144,17 @@
         }
       },
       methods: {
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartRenew')[0]
+            if (cur.status === 1) {
+              this.hasPlugin = true
+            }
+          } catch (error) {
+
+          }
+        },
         /* 续费 */
         renewDialog () {
           this.renewVisible = true
@@ -315,6 +334,7 @@
               return { value: item, label: lang[item] }
             })
             this.curStatus = this.formData.status
+            document.title = lang.user_list + '-' + temp.product_name + '-' + localStorage.getItem('back_website_name')
           } catch (error) {
           }
         },

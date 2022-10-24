@@ -171,7 +171,7 @@
 }
 
 .select-input {
-  width: auto;
+  /* width: auto; */
   min-width: 1.14rem;
 
 }

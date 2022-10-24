@@ -45,6 +45,7 @@ class ProductModel extends Model
         'product_id'                       => 'int',
         'create_time'                      => 'int',
         'update_time'                      => 'int',
+        'price'                            => 'float',
     ];
 
     /**
@@ -71,6 +72,7 @@ class ProductModel extends Model
      * @return int list[].product_group_id_second - 二级分组ID
      * @return int list[].product_group_name_first - 一级分组名称
      * @return int list[].product_group_id_first - 一级分组ID
+     * @return string list[].price - 商品最低价格
      * @return int count - 商品总数
      */
     public function productList($param)
@@ -97,7 +99,7 @@ class ProductModel extends Model
         };
 
         $products = $this->alias('p')
-            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,s.module,ss.module module1,
+            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,p.price,s.module,ss.module module1,
             pg.name as product_group_name_second,pg.id as product_group_id_second,
             pgf.name as product_group_name_first,pgf.id as product_group_id_first')
             ->leftjoin('product_group pg','p.product_group_id=pg.id')
@@ -105,16 +107,17 @@ class ProductModel extends Model
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
             ->leftjoin('server ss','ss.server_group_id=sg.id')
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud'])
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim'])
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
-            ->order($param['orderby'], (isset($param['sort']) && !empty($param['sort']))?$param['sort']:"desc")
+            #->order($param['orderby'], (isset($param['sort']) && !empty($param['sort']))?$param['sort']:"desc")
             ->order('p.order','desc')
             ->select()
             ->toArray();
 
         foreach ($products as $key => $value) {
+            $products[$key]['price'] = amount_format($value['price']);
             if($app=='home'){
                 unset($products[$key]['stock_control'], $products[$key]['qty'], $products[$key]['hidden'], $products[$key]['product_group_name_second'], $products[$key]['product_group_id_second'], $products[$key]['product_group_name_first'], $products[$key]['product_group_id_first']);
             }
@@ -129,6 +132,7 @@ class ProductModel extends Model
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
             ->leftjoin('server ss','ss.server_group_id=sg.id')
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim'])
             ->where($where)
             ->count();
 
@@ -167,7 +171,7 @@ class ProductModel extends Model
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
-            ->order($param['orderby'], (isset($param['sort']) && !empty($param['sort']))?$param['sort']:"desc")
+            #->order($param['orderby'], (isset($param['sort']) && !empty($param['sort']))?$param['sort']:"desc")
             ->order('p.order','desc')
             ->select()
             ->toArray();
@@ -185,6 +189,68 @@ class ProductModel extends Model
             ->count();
 
         return ['list'=>$products,'count'=>$count];
+    }
+
+    /**
+     * 时间 2022-10-12
+     * @title 根据模块获取商品列表
+     * @desc 根据模块获取商品列表
+     * @author theworld
+     * @version v1
+     * @param string param.module - 模块名称
+     * @return array list - 一级分组列表
+     * @return int list[].id - 一级分组ID
+     * @return string list[].name - 一级分组名称
+     * @return array list[].child - 二级分组
+     * @return int list[].child[].id - 二级分组ID
+     * @return string list[].child[].name - 二级分组名称
+     * @return array list[].child[].child - 商品
+     * @return int list[].child[].child[].id - 商品ID
+     * @return string list[].child[].child[].name - 商品名称
+     */
+    public function moduleProductList($param)
+    {
+        $where = function (Query $query) use($param) {
+            $query->where('p.hidden', 0);
+            if(!empty($param['module'])){
+                $query->where('s.module|ss.module', $param['module']);
+            }
+        };
+
+        $ProductGroupModel = new ProductGroupModel();
+        $firstGroup = $ProductGroupModel->productGroupFirstList();
+        $firstGroup = $firstGroup['list'];
+
+        $secondGroup = $ProductGroupModel->productGroupSecondList([]);
+        $secondGroup = $secondGroup['list'];
+
+        $products = $this->alias('p')
+            ->field('p.id,p.name,p.product_group_id')
+            ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
+            ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
+            ->leftjoin('server ss','ss.server_group_id=sg.id')
+            ->where($where)
+            ->order('p.order','desc')
+            ->select()
+            ->toArray();
+        $productArr = [];
+        foreach ($products as $key => $value) {
+            $productArr[$value['product_group_id']][] = ['id' => $value['id'], 'name' => $value['name']];
+        }
+        $secondGroupArr = [];
+        foreach ($secondGroup as $key => $value) {
+            if(isset($productArr[$value['id']])){
+                $secondGroupArr[$value['parent_id']][] = ['id' => $value['id'], 'name' => $value['name'], 'child' => $productArr[$value['id']]];
+            }
+        }
+        $list = [];
+        foreach ($firstGroup as $key => $value) {
+            if(isset($secondGroupArr[$value['id']])){
+                $list[] = ['id' => $value['id'], 'name' => $value['name'], 'child' => $secondGroupArr[$value['id']]];
+            }
+        }
+
+        return ['list'=>$list];
     }
 
     /**
@@ -222,6 +288,9 @@ class ProductModel extends Model
      */
     public function indexProduct($id)
     {
+        // 获取当前应用
+        $app = app('http')->getName();
+
         $product = $this->field('id,name,product_group_id,description,hidden,stock_control,qty,
         creating_notice_sms,creating_notice_sms_api,creating_notice_sms_api_template,created_notice_sms,
         created_notice_sms_api,created_notice_sms_api_template,creating_notice_mail,creating_notice_mail_api,creating_notice_mail_template,
@@ -237,6 +306,9 @@ class ProductModel extends Model
         $upgradeProducts = array_column($upgrades?:[],'upgrade_product_id');
         if (!empty($product)){
             $product['upgrade'] = $upgradeProducts;
+            if($app=='home'){
+                $product = ['id' => $product['id'], 'name' => $product['name']];
+            }
         }
 
         return $product?:(object)[];
@@ -622,6 +694,10 @@ class ProductModel extends Model
                 active_log(lang('log_admin_update_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$product->id.'#'.$product['name'].'#','{description}'=>$logDescription]),'product',$product->id);
             }
 
+            # 创建导航
+            $MenuModel = new MenuModel();
+            $MenuModel->createHomeModuleMenu($id);
+
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -672,6 +748,10 @@ class ProductModel extends Model
 
             # 删除其他商品升降级至此商品的ID
             $ProductUpgradeProductModel->where('upgrade_product_id',$id)->delete();
+
+            # 删除导航
+            $MenuModel = new MenuModel();
+            $MenuModel->deleteHomeModuleMenu($id);
 
             # 记录日志
             active_log(lang('log_admin_delete_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$id.'#'.$product['name'].'#']),'product',$id);
@@ -1006,6 +1086,7 @@ class ProductModel extends Model
         }
         $amount = $result['data']['price']*$param['qty'];
         $param['price'] = $result['data']['price'];
+        $param['renew_price'] = $result['data']['renew_price'] ?? $param['price'];
         $param['billing_cycle'] = $result['data']['billing_cycle'];
         $param['duration'] = $result['data']['duration'];
         $param['description'] = $result['data']['description'];
@@ -1053,7 +1134,7 @@ class ProductModel extends Model
                     'name' => generate_host_name(),
                     'status' => 'Unpaid',
                     'first_payment_amount' => $param['price'],
-                    'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $param['price'] : 0,
+                    'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $param['renew_price'] : 0,
                     'billing_cycle' => $product['pay_type'],
                     'billing_cycle_name' => $param['billing_cycle'],
                     'billing_cycle_time' => $param['duration'],
@@ -1099,7 +1180,7 @@ class ProductModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
-        return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['order_id' => $order->id]];
+        return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['order_id' => $order->id, 'amount' => $amount]];
     }
 
     /**
@@ -1159,8 +1240,26 @@ class ProductModel extends Model
         return $ModuleLogic->allConfigOption($ProductModel);
     }
 
+    /**
+     * 时间 2022-10-11
+     * @title 获取商品库存
+     * @desc 获取商品库存
+     * @author theworld
+     * @version v1
+     * @param int id - 商品ID
+     * @return int id - ID
+     * @return int stock_control - 库存控制0:关闭1:启用
+     * @return int qty - 库存数量
+     */
+    public function productStock($id)
+    {
+        $product = $this->field('id,stock_control,qty')
+            ->where('hidden', 0)
+            ->where('id', $id)
+            ->find();
 
-
+        return $product?:(object)[];
+    }
 
 
 }

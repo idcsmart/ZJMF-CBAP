@@ -111,6 +111,8 @@
           popupProps: {
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
           },
+          optType: 'add',
+          optTitle: ''
         }
       },
       mounted () {
@@ -126,6 +128,7 @@
             timer = null
           }, 300)
         }
+        document.title = lang.flow + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         changeUser (id) {
@@ -171,14 +174,23 @@
           this.formData.amount = ''
           this.formData.gateway = ''
           this.formData.transaction_number = ''
+          this.optTitle = lang.new_flow
+          this.optType = 'add'
           this.$refs.form.reset()
+        },
+        updateFlow (row) {
+          this.flowModel = true
+          this.optTitle = lang.update_flow
+          this.optType = 'update'
+          this.formData = JSON.parse(JSON.stringify(row))
+          this.formData.gateway = this.payList.filter(item=> item.title === row.gateway)[0].name
         },
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               this.addLoading = true
               this.formData.client_id = this.client_id
-              await addFlow(this.formData).then(res => {
+              await addAndUpdateFlow(this.optType, this.formData).then(res => {
                 this.$message.success(res.data.msg)
               }).finally(() => {
                 this.addLoading = false

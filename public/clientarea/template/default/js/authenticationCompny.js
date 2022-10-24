@@ -35,6 +35,7 @@
                     dialogImageUrl: '',
                     uploadTipsText1: '',
                     uploadTipsText2: '',
+                    upload_progress: "0%",
                     uploadTipsText3: '',
                     plugin_name: '',// 实名接口
                     certificationEnterprise: {// 企业实名认证信息对象
@@ -110,6 +111,12 @@
                 // 返回按钮
                 backTicket() {
                     location.href = 'account.html'
+                },
+                onProgress(event) {
+                    this.upload_progress = (event.percent).toFixed(2) + '%'
+                },
+                goSelect() {
+                    location.href = 'authentication_select.html'
                 },
                 // 获取配置信息
                 getCertificationInfo() {
@@ -191,6 +198,8 @@
                 handleRemove3() {
                     this.card_three_fileList = []
                     this.img_three = ''
+                    this.upload_progress = '0%'
+                    this.sunmitBtnLoading = false
                 },
                 // 预览
                 handlePictureCardPreview(file) {
@@ -216,14 +225,14 @@
                             return
                         }
                         if (this.certificationInfoObj.certification_upload === '1') {
-                            if (this.img_one == '') {
-                                this.$message.warning("请上传身份证人像页!")
-                                return
-                            }
-                            if (this.img_two == '') {
-                                this.$message.warning("请上传身份证国徽页!")
-                                return
-                            }
+                            // if (this.img_one == '') {
+                            //     this.$message.warning("请上传身份证人像页!")
+                            //     return
+                            // }
+                            // if (this.img_two == '') {
+                            //     this.$message.warning("请上传身份证国徽页!")
+                            //     return
+                            // }
                             if (this.img_three == '') {
                                 this.$message.warning("请上传营业执照!")
                                 return

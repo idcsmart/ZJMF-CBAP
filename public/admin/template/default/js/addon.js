@@ -200,10 +200,11 @@
             const res = await deleteMoudle(this.type, this.name)
             this.$message.success(res.data.msg)
             this.delVisible = false
-            this.getAddonList()
+           // this.getAddonList()
             // 获取导航
             const menus = await getMenus()
             localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
+            window.location.reload()
           } catch (error) {
             console.log(error)
             this.$message.error(error.data.msg)

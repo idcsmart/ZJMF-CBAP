@@ -1,0 +1,570 @@
+.common_product_detail {
+  .main-card-title {
+    .title {
+      font-size: .28rem;
+      color: #171725;
+      margin: 0 .1rem 0 .25rem;
+    }
+
+    display: flex;
+    align-items: center;
+
+    img {
+      cursor: pointer;
+    }
+  }
+
+  .tag {
+    line-height: .26rem;
+    padding: 0 .1rem;
+    border-radius: .03rem;
+  }
+
+
+  /* 备注 */
+  .notes {
+    padding-left: .5rem;
+    font-size: .14rem;
+    color: #0058FF;
+    cursor: pointer;
+    .notes-text{
+      color: #1E2736;
+    }
+  }
+  .help{
+    margin-left: 0.08rem;
+    width: 0.12rem;
+    height: 0.12rem;
+    line-height: .12rem;
+    border: 1px solid #0058FF;
+    display: inline-block;
+    text-align: center;
+    color: #0058FF;
+    border-radius: 50%;
+    font-size: 0.12rem;
+    cursor: pointer;
+  }
+}
+
+.s-tit {
+  font-size: .18rem;
+  color: #1E2736;
+  line-height: 1;
+}
+
+.stop-info {
+  text-align: right;
+  position: absolute;
+  right: 0;
+  bottom: -.1rem;
+  .info {
+    line-height: .44rem;
+    background: #E1F0FF;
+    border-radius: .03rem;
+    border: 1px solid #3699FF;
+    display: inline-block;
+    color: #3699FF;
+    padding: 0 .15rem;
+  }
+
+  .reject {
+    background: #FDE6E9;
+    color: #F64E60;
+    border: 1px solid #F64E60;
+  }
+}
+
+.finance-info {
+  margin-top: .4rem;
+  .status-box{
+    position: relative;
+
+  }
+  .s-tit {
+    margin-bottom: .2rem;
+  }
+
+  .box {
+    border-radius: .03rem;
+    padding: .24rem;
+    border: 1px solid #E6E7EB;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .item {
+    flex: 1;
+    min-width: 33.33%;
+    margin-top: .1rem;
+    line-height: .24rem;
+    height: .24rem;
+    margin-right: 0;
+    .l-txt{
+      min-width: .9rem;
+      display: inline-block;
+    }
+
+    // &:last-child{
+    //   margin-top: 0.06rem;
+    // }
+
+  }
+
+  .renew {
+    background: #0058FF;
+    color: #fff;
+  }
+
+  .btn {
+    line-height: .24rem;
+    padding: 0 .08rem;
+    display: inline-block;
+    border-radius: .03rem;
+    cursor: pointer;
+    margin-right: .05rem;
+  }
+
+  .stop {
+    border: 1px solid #0058FF;
+    color: #0058FF;
+    background: #fff;
+  }
+
+  .disabeld {
+    background: #EFF0F2;
+    color: #757575;
+    cursor: auto;
+  }
+
+  .war {
+    color: #F0142F;
+    cursor: auto;
+    border: 1px solid #F0142F;
+  }
+  .refund-stop-btn {
+    cursor: pointer;
+  }
+
+  .cancel {
+    color: #0058FF;
+    border: 1px solid #0058FF;
+  }
+}
+
+/* basic-info */
+.basic-info {
+  margin-top: .4rem;
+
+  .box{
+    border-radius: .03rem;
+    display: flex;
+    flex-wrap: wrap;
+    border: 1px solid #E6E7EB;
+    border-left: 0;
+    border-top: 0;
+    .item{
+      width: 50%;
+      line-height: .5rem;
+      height: .5rem;
+      display: flex;
+      font-size: .14rem;
+      color: #1E2736;
+      margin: 0;
+      .r-info{
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+    .name{
+      width: 2.4rem;
+      background: #EEF4FF;
+      box-sizing: border-box;
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis; //（文本溢出显示省略号）
+      white-space: nowrap;
+    }
+  }
+  .s-tit{
+    margin-bottom: .2rem;
+  }
+  .last_item {
+    .name,.r-info {
+      border-bottom: 1px solid #E6E7EB;
+    }
+  }
+  .r-info {
+    padding: 0 .2rem;
+    border-left: 1px solid #E6E7EB;
+    border-top: 1px solid #E6E7EB;
+    overflow: hidden;
+    text-overflow: ellipsis; //（文本溢出显示省略号）
+    white-space: nowrap;
+    span{
+      display: inline-block;
+      vertical-align: middle;
+      max-width: 100% !important;
+    }
+  }
+
+  .name {
+    min-width: .7rem;
+    border-left: 1px solid #E6E7EB;
+    border-top: 1px solid #E6E7EB;
+    padding: 0 .2rem;
+  }
+
+  img {
+    width: .22rem;
+    margin-right: .1rem;
+  }
+
+  .s-item {
+    margin-right: .2rem;
+    display: flex;
+    align-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+  }
+}
+
+
+// 续费弹窗
+.renew-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .dialog-main {
+    margin-top: .6rem;
+
+    .renew-content {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .renew-item {
+        width: 1.6rem;
+        height: .62rem;
+        border: 1px solid #E6E7EB;
+        border-radius: 3px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: .2rem;
+        margin-bottom: .2rem;
+        cursor: pointer;
+        position: relative;
+
+        &:nth-child(3) {
+          margin-right: 0;
+        }
+
+        &:nth-child(6) {
+          margin-right: 0;
+        }
+
+        .item-top {
+          font-size: .15rem;
+          color: #1E2736;
+          margin-top: .08rem;
+        }
+
+        .item-bottom {
+          font-size: .15rem;
+          color: #0058FF;
+          margin-top: .04rem;
+        }
+
+        .check {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          z-index: 3;
+          color: #FFF;
+        }
+      }
+
+      .renew-active {
+        box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          z-index: 2;
+          width: 0;
+          height: 0;
+          border-bottom: 0.24rem solid #0058FF;
+          border-left: 0.24rem solid transparent;
+
+        }
+      }
+    }
+
+    .pay-content {
+      width: 100%;
+      border: 1px solid #E6E7EB;
+      border-radius: 3px;
+
+      .pay-price {
+        margin-top: .3rem;
+        margin-left: 1.9rem;
+        margin-bottom: .3rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .text {
+          color: #1E2736;
+          margin-right: 1.43rem;
+        }
+
+        .money {
+          font-size: .28rem;
+          font-family: Helvetica;
+          font-weight: bold;
+          color: #F0142F;
+
+        }
+      }
+
+      .code-btn {
+        .add-icon {}
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+
+    .btn-ok {
+      cursor: pointer;
+    }
+
+    .btn-no {
+      margin-left: .2rem;
+      cursor: pointer;
+    }
+  }
+}
+
+
+
+/* refundDialog */
+.refundDialog {
+  .el-dialog {
+    width: 6.8rem;
+    padding: .6rem .8rem;
+  }
+
+  .el-dialog__header,
+  .el-dialog__body,
+  .el-dialog__footer {
+    padding: 0;
+  }
+
+  .el-dialog__header {
+    font-size: .24rem;
+    color: #171725;
+  }
+
+  .tit {
+    font-size: .16rem;
+    color: #1E2736;
+    margin: .3rem 0 .1rem;
+  }
+
+  .info {
+    background: #F3F3F5;
+    border: 1px solid #E6E7EB;
+    border-radius: .03rem;
+    padding: .2rem .3rem;
+    margin-bottom: .3rem;
+  }
+
+  .s-tit {
+    font-size: .14rem;
+    color: #8692B0;
+    line-height: .3rem;
+    margin-right: .34rem;
+    white-space: nowrap;
+  }
+
+  .el-select {
+    width: 100%;
+  }
+
+  .des {
+    .item {
+      line-height: .3rem;
+      display: flex;
+      align-items: flex-start;
+    }
+  }
+
+  .el-form-item__label {
+    line-height: 1;
+  }
+
+  .money {
+    line-height: .46rem;
+    background: #F3F3F5;
+    border: 1px solid #E6E7EB;
+    cursor: not-allowed;
+    padding: 0 .16rem;
+    font-size: .14rem;
+    color: #4E5259;
+    border-radius: .03rem;
+  }
+
+  .dialog-footer {
+    .el-button {
+      height: .46rem;
+      width: 1.12rem;
+
+      &:first-child {
+        background: #0058FF;
+      }
+
+      &:last-child {
+        background: #E7E7E7;
+        color: #1E2736;
+      }
+    }
+  }
+}
+
+/* no-allow */
+.no-allow {
+  text-align: center;
+
+  .el-dialog {
+    width: 7.6rem;
+  }
+
+  .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    img {
+      width: .68rem;
+      height: .68rem;
+    }
+  }
+
+  .tit {
+    margin-top: .24rem;
+    font-size: .24rem;
+    color: #1E2736;
+    margin-bottom: .2rem;
+  }
+
+  .des {
+    font-size: .16rem;
+    color: #4E5259;
+  }
+
+  .dialog-footer {
+    justify-content: center;
+    margin-bottom: .4rem;
+    margin-top: 0;
+
+    .el-button {
+      background: #0058FF;
+      border-radius: .03rem;
+      width: 1.12rem;
+      padding: 0 .4rem;
+      line-height: .46rem;
+      height: .46rem;
+      box-sizing: border-box;
+    }
+  }
+}
+
+/* 备注弹窗 */
+.notes-dialog{
+  .el-dialog__body{
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+  .dialog-main{
+    margin-top: .4rem;
+  }
+  .label{
+    font-size: 0.16rem;
+    color: #1E2736;
+    margin-bottom: 0.1rem;
+  }
+  .el-input__inner{
+    height: .52rem;
+  }
+  .btn-no{
+    margin-left: 0.12rem;
+    cursor: pointer;
+  }
+  .dialog-footer{
+    div{
+      cursor: pointer;
+    }
+  }
+}
+
+
+
+/* 自动续费 */
+.autoDialog{
+  width: 6.2rem;
+  .el-dialog__body{
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+  .title{
+    font-size: .24rem;
+    font-family: PingFang SC;
+    font-weight: 400;
+    line-height: .24rem;
+    color: #171725;
+  }
+  .dialog-main{
+    margin-top: .4rem;
+    .label{
+      font-size: 0.16rem;
+      color: #1E2736;
+      margin-bottom: 0.1rem;
+    }
+  }
+  .dialog-footer{
+    div{
+      cursor: pointer;
+    }
+    .btn-ok{
+      height: 0.46rem;
+      width: 1.12rem;
+      background: #0058FF;
+      border-radius: 3px;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-no{
+      height: 0.46rem;
+      width: 1.12rem;
+      background: #E7E7E7;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: .12rem;
+    }
+  }
+}

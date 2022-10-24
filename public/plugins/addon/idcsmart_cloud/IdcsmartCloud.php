@@ -27,7 +27,7 @@ class IdcsmartCloud extends Plugin
         'name'        => 'IdcsmartCloud', //插件英文名,作为插件唯一标识,改成你的插件英文就行了
         'title'       => '魔方云管理',
         'description' => '魔方云管理',
-        'author'      => 'idcsmart',  //开发者
+        'author'      => '智简魔方',  //开发者
         'version'     => '1.0',      // 版本号
     );
     # 插件安装
@@ -148,7 +148,7 @@ class IdcsmartCloud extends Plugin
     {
         if($param['type']=='addon_idcsmart_security_group_rule'){
             $fail = false;
-            $data = json_decode($param['task_data']);
+            $data = json_decode($param['task_data'], true);
             if($data){
                 if($data['type']=='create'){
                     $idcsmartSecurityGroupRule = IdcsmartSecurityGroupRuleModel::find($param['rel_id']);

@@ -4,6 +4,7 @@ new Vue({
   data () {
     return {
       id: '',
+      tabs: 'basic', // basic,cost,config,custom
       hover: true,
       tableLayout: false,
       dataLoading: false,
@@ -15,6 +16,7 @@ new Vue({
       payType: '', // 计费方式 free , onetime, recurring_prepayment , recurring_postpaid
       currency_prefix: JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥',
       optType: 'add', // 新增/编辑
+      subOpt: 'add', // 子项编辑状态
       comTitle: '',
       // 整个页面
       commonConfig: {
@@ -27,7 +29,7 @@ new Vue({
       defaultCycle: [],
       dataForm: {},
       dataRules: {
-        onetime:[
+        onetime: [
           { required: true, message: lang.input + lang.money, type: 'error' },
           { pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning' },
           { validator: val => val >= 0 && val <= 99999999.99, message: lang.verify5 + '，' + lang.money_ver, type: 'warning' }
@@ -61,7 +63,7 @@ new Vue({
         },
         {
           value: 'month',
-          label: lang.month
+          label: lang.natural_month
         }
       ],
       cycleData: [
@@ -216,7 +218,7 @@ new Vue({
         },
 
       ],
-      configDetail: {
+      configDetail: { // 单个配置详情
         option_name: '',
         option_type: '',
         unit: '',
@@ -228,6 +230,7 @@ new Vue({
         allow_repeat: 0,
         max_repeat: ''
       },
+      backupConfig: {}, // 备份配置详情
       // 子配置项数据
       subTit: '',
       configSub: [],
@@ -277,11 +280,6 @@ new Vue({
           }
         ],
         amount: [
-          { required: true, message: lang.input + lang.money, type: 'error' },
-          { pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning' },
-          { validator: val => val >= 0, message: lang.verify5, type: 'warning' }
-        ],
-        onetime: [
           { required: true, message: lang.input + lang.money, type: 'error' },
           { pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning' },
           { validator: val => val >= 0, message: lang.verify5, type: 'warning' }
@@ -375,6 +373,13 @@ new Vue({
     this.getCountryList()
   },
   methods: {
+    // 切换tab
+    changeTab () {
+
+    },
+    changeOnetime (val) {
+      console.log(val)
+    },
     async getCountryList () {
       try {
         const res = await getCountry()
@@ -446,6 +451,9 @@ new Vue({
     },
     closeData () {
       this.dataModel = false
+    },
+    closeSubData () {
+      this.configSubModel = false
     },
     /* 周期相关 */
     addCycle () {
@@ -605,6 +613,9 @@ new Vue({
           params.product_id = this.id
           if (this.optType === 'add') {
             delete params.id
+            delete params.qty_min
+            delete params.qty_max
+            delete params.order
           }
           this.submitLoading = true
           const res = await addAndUpdateConfigoption(this.optType, params)
@@ -630,6 +641,7 @@ new Vue({
           id
         })
         this.configDetail = res.data.data.configoption
+        this.backupConfig = JSON.parse(JSON.stringify(this.configDetail))
         this.configSub = res.data.data.configoption_sub
       } catch (error) {
         console.log(error)
@@ -637,7 +649,7 @@ new Vue({
     },
     /* 添加/编辑配置子项 */
     addConfigSub () {
-      this.optType = 'add'
+      this.subOpt = 'add'
       this.configSubModel = true
       this.configSubForm.custom_cycle = JSON.parse(JSON.stringify(this.cycleData)).map(item => {
         item.amount = ''
@@ -652,7 +664,7 @@ new Vue({
       this.configSubForm.country = ''
     },
     async editSub (row) {
-      this.optType = 'update'
+      this.subOpt = 'update'
       this.configSubModel = true
       this.subTit = lang.update
       try {
@@ -660,18 +672,16 @@ new Vue({
           product_id: this.configDetail.id,
           id: row.id
         })
-        this.configSubForm =res.data.data.configoption_sub
+        this.configSubForm = res.data.data.configoption_sub
       } catch (error) {
-        
       }
-
     },
     async submitConfigSub ({ validateResult, firstError }) {
       if (validateResult === true) {
         try {
           const params = JSON.parse(JSON.stringify(this.configSubForm))
           params.product_id = this.configDetail.id
-          if (this.optType === 'add') {
+          if (this.subOpt === 'add') {
             delete params.id
           }
           // quantity,quantity_range
@@ -687,7 +697,7 @@ new Vue({
             return all
           }, {})
           this.submitLoading = true
-          const res = await addAndUpdateConfigSub(this.optType, params)
+          const res = await addAndUpdateConfigSub(this.subOpt, params)
           this.$message.success(res.data.msg)
           // 提交过后拉取配置详情
           this.getConfigDetail(this.configDetail.id)
@@ -704,23 +714,36 @@ new Vue({
     },
     // 修改首个套餐
     changeMonth (val, item) {
-      if (isNaN(val * 1)) {
+      if (typeof val === 'string' && isNaN(val * 1) || val * 1 < 0) {
         return false
       }
-      if (item.id !== this.cycleData[0].id) {
+      if (item) { // 失去焦点格式化价格
+        let index = this.cycleData.findIndex(el => el.id === item.id)
+        this.configSubForm.custom_cycle[index].amount = (val * 1).toFixed(2)
         return false
       }
-      let index = this.cycleData.findIndex(el => el.id === item.id)
-      let curPrice = this.cycleData[index].amount
-      let otherArr = this.configSubForm.custom_cycle.filter(el => item.id !== el.id)
-      otherArr = otherArr.map(item => {
-        if (!item.amount) {
-          const curId = this.cycleData.filter(ele => item.id === ele.id)
-          item.amount = (val * (curId[0].amount * 1 / curPrice * 1)).toFixed(2)
-          return item
+      // 自动生成价格  月价格 * （月价格 / 周期价格）
+      let temp = JSON.parse(JSON.stringify(this.configSubForm.custom_cycle))
+      const curPrice = temp[0].amount
+      temp = temp.map(item => {
+        // 当首个周期为0的时候，全都为0
+        if (this.cycleData[0].amount * 1 === 0) {
+          if (item.id !== this.cycleData[0].id) {
+            item.amount = '0.00'
+          }
+        } else {
+          if (item.id !== this.cycleData[0].id) {
+            const curId = this.cycleData.filter(ele => item.id === ele.id)
+            if (curId[0].amount * 1 === 0) {
+              item.amount = '0.00'
+            } else {
+              item.amount = (curPrice * ( curId[0].amount * 1 / this.cycleData[0].amount * 1 )).toFixed(2)
+            }
+          }
         }
+        return item
       })
-      this.configSubForm.custom_cycle[index].amount = (val * 1).toFixed(2)
+      this.configSubForm.custom_cycle = temp
     },
     // 删除配置子项
     async deleteSub () {

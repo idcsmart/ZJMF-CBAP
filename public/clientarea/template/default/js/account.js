@@ -19,6 +19,9 @@
             },
             mounted() {
                 window.addEventListener('scroll', this.computeScroll)
+                const addons = document.querySelector('#addons_js')
+                this.addons_js_arr = JSON.parse(addons.getAttribute('addons_js'))
+                this.getCertificationInfo()
             },
             updated() {
                 // 关闭loading
@@ -30,6 +33,7 @@
             },
             data() {
                 return {
+                    addons_js_arr: [],
                     isShowCaptcha: false, //是否显示验证码弹窗
                     tip_dialong_show: false,
                     activeIndex: "1",
@@ -195,90 +199,100 @@
                             }
                         }
                     })
-                    // 获取认证状态信息
-                    certificationInfo().then((ress) => {
-                        this.attestationStatusInfo.iocnShow = false
-                        if (ress.data.status === 200) {
-                            this.attestationStatusInfo.iocnShow = true
-                            // 认证失败
-                            if (!ress.data.data.is_certification || (ress.data.data.company.status !== 1 && ress.data.data.person.status !== 1)) {
-                                this.attestationStatusInfo.iconUrl = `${url}/img/account/unauthorized.png`
-                                this.attestationStatusInfo.text = '未认证'
-                                if (ress.data.data.company.status === 3 || ress.data.data.company.status === 4) {
-                                    this.attestationStatusInfo.status = 25
-                                } else if (ress.data.data.person.status === 3 || ress.data.data.person.status === 4) {
-                                    this.attestationStatusInfo.status = 15
-                                } else if (ress.data.data.company.status === 2 || ress.data.data.person.status === 2) {
-                                    if (ress.data.data.company.status === 2) {
-                                        this.attestationStatusInfo.status = 40
-                                    } else {
-                                        this.attestationStatusInfo.status = 45
-                                    }
-                                } else {
-                                    this.attestationStatusInfo.status = 0
-                                }
-                                // this.tip_dialong_show = true
-                                return
-                            }
-                            // 企业认证成功
-                            if (ress.data.data.company.status === 1) {
-                                this.attestationStatusInfo.iconUrl = `${url}/img/account/enterprise_certification.png`
-                                this.attestationStatusInfo.text = '企业认证'
-                                if (ress.data.data.person.status === 1) {
-                                    this.attestationStatusInfo.status = 30
-                                } else {
-                                    this.attestationStatusInfo.status = 20
-                                }
-                                return
-                            }
-                            // 个人认证成功
-                            if (ress.data.data.person.status === 1) {
-                                this.attestationStatusInfo.iconUrl = `${url}/img/account/personal_certification.png`
-                                this.attestationStatusInfo.text = '个人认证'
-                                if (ress.data.data.company.status === 1) {
-                                    this.attestationStatusInfo.status = 30
-                                } else {
-                                    this.attestationStatusInfo.status = 10
-                                }
-                                return
-                            }
-                        }
+
+                },
+                // 获取认证状态信息
+                getCertificationInfo() {
+                    const arr = this.addons_js_arr.map((item) => {
+                        return item.name
                     })
+                    if (arr.includes('IdcsmartCertification')) {
+                        certificationInfo().then((ress) => {
+                            this.attestationStatusInfo.iocnShow = false
+                            if (ress.data.status === 200) {
+                                this.attestationStatusInfo.iocnShow = true
+                                // 认证失败
+                                if (!ress.data.data.is_certification || (ress.data.data.company.status !== 1 && ress.data.data.person.status !== 1)) {
+                                    this.attestationStatusInfo.iconUrl = `${url}/img/account/unauthorized.png`
+                                    this.attestationStatusInfo.text = window.lang.account_tips12
+                                    if (ress.data.data.company.status === 3 || ress.data.data.company.status === 4) { // 企业资料审核中
+                                        this.attestationStatusInfo.status = 25
+                                    } else if (ress.data.data.person.status === 3 || ress.data.data.person.status === 4) {  // 个人资料审核中
+                                        this.attestationStatusInfo.status = 15
+                                    } else if (ress.data.data.company.status === 2 || ress.data.data.person.status === 2) {
+                                        if (ress.data.data.company.status === 2) {
+                                            // 企业认证失败
+                                            this.attestationStatusInfo.status = 40
+                                        } else {
+                                            // 个人认证失败
+                                            this.attestationStatusInfo.status = 45
+                                        }
+                                    } else {
+                                        this.attestationStatusInfo.status = 0 // 未认证
+                                    }
+                                    // this.tip_dialong_show = true
+                                    return
+                                }
+                                // 企业认证成功
+                                if (ress.data.data.company.status === 1) {
+                                    this.attestationStatusInfo.iconUrl = `${url}/img/account/enterprise_certification.png`
+                                    this.attestationStatusInfo.text = window.lang.account_tips13
+                                    if (ress.data.data.person.status === 1) {
+                                        this.attestationStatusInfo.status = 30 // 个人成功
+                                    } else {
+                                        this.attestationStatusInfo.status = 20 // 个人未成功
+                                    }
+                                    return
+                                }
+                                // 个人认证成功
+                                if (ress.data.data.person.status === 1) {
+                                    this.attestationStatusInfo.iconUrl = `${url}/img/account/personal_certification.png`
+                                    this.attestationStatusInfo.text = window.lang.account_tips14
+                                    if (ress.data.data.company.status === 1) {
+                                        this.attestationStatusInfo.status = 30
+                                    } else {
+                                        this.attestationStatusInfo.status = 10
+                                    }
+                                    return
+                                }
+                            }
+                        })
+                    }
                 },
                 // 点击认证图标
-                handelAttestation() {
-                    // 未认证或者都未通过时
+                handelAttestation(val) {
+                    // 未认证或者都未通过时 跳转认证选择页面
                     if (this.attestationStatusInfo.status === 0) {
-                        location.href = 'authentication_select.html'
+                        location.href = `plugin/${val}/authentication_select.html`
                         return
                     }
-                    // 企业认证成功时
+                    // 企业认证成功时 跳转企业认证成功页面
                     if (this.attestationStatusInfo.status === 20 || this.attestationStatusInfo.status === 30) {
-                        location.href = `authentication_status.html?type=2`
+                        location.href = `plugin/${val}/authentication_status.html?type=2`
                         return
                     }
-                    // 仅个人认证成功时
+                    // 仅个人认证成功时 跳转个人认证成功页面
                     if (this.attestationStatusInfo.status === 10) {
-                        location.href = `authentication_status.html?type=1`
+                        location.href = `plugin/${val}/authentication_status.html?type=1`
                         return
                     }
-                    // 企业审核中
+                    // 企业审核中 跳转企业认证审核中页面
                     if (this.attestationStatusInfo.status === 25) {
-                        location.href = `authentication_status.html?type=2`
+                        location.href = `plugin/${val}/authentication_status.html?type=2`
                         return
                     }
-                    // 个人审核中
+                    // 个人审核中 跳转个人认证审核中页面
                     if (this.attestationStatusInfo.status === 15) {
-                        location.href = `authentication_status.html?type=1`
+                        location.href = `plugin/${val}/authentication_status.html?type=1`
                         return
                     }
                     // 有审核失败
-                    if (this.attestationStatusInfo.status === 40) {
-                        location.href = `authentication_status.html?type=2`
+                    if (this.attestationStatusInfo.status === 40) { // 企业认证失败
+                        location.href = `plugin/${val}/authentication_status.html?type=2`
                         return
                     }
-                    if (this.attestationStatusInfo.status === 45) {
-                        location.href = `authentication_status.html?type=1`
+                    if (this.attestationStatusInfo.status === 45) { // 个人认证失败
+                        location.href = `plugin/${val}/authentication_status.html?type=1`
                         return
                     }
                 },

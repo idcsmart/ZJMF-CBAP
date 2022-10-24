@@ -1,0 +1,13 @@
+{
+    "env": {
+        "node": true,
+        "mocha": true
+    },
+    "globals": {
+        "chai": false,
+        "sinon": false
+    },
+    "rules": {
+        "prefer-arrow-callback": 0
+    }
+}

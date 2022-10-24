@@ -98,6 +98,8 @@ class CartModel extends Model
      * @return  int list[].qty - 数量
      * @return  string list[].name - 商品名称
      * @return  string list[].description - 商品描述
+     * @return  int list[].stock_control - 库存控制0:关闭1:启用
+     * @return  int list[].stock_qty - 库存数量
      */
     public function indexCart()
     {
@@ -107,9 +109,13 @@ class CartModel extends Model
             $product = ProductModel::select(array_column($cartData, 'product_id'))->toArray();
             $productName = array_column($product, 'name', 'id');
             $productDesc = array_column($product, 'description', 'id');
+            $productStock = array_column($product, 'stock_control', 'id');
+            $productQty = array_column($product, 'qty', 'id');
             foreach ($cartData as $key => $value) {
                 $cartData[$key]['name'] = $productName[$value['product_id']] ?? '';
                 $cartData[$key]['description'] = $productDesc[$value['product_id']] ?? '';
+                $cartData[$key]['stock_control'] = $productStock[$value['product_id']] ?? 0;
+                $cartData[$key]['stock_qty'] = $productQty[$value['product_id']] ?? 0;
             }
         }
         
@@ -157,7 +163,8 @@ class CartModel extends Model
             'config_options' => $param['config_options'] ?? [],
             'qty' => $param['qty'],
         ];
-        self::$cartData[] = $data;
+        //self::$cartData[] = $data;
+        array_unshift(self::$cartData, $data);
         self::saveCart();
         return ['status'=>200, 'msg'=>lang('add_success')];
     }
@@ -270,6 +277,30 @@ class CartModel extends Model
 
     /**
      * 时间 2022-05-30
+     * @title 批量删除购物车商品
+     * @desc 批量删除购物车商品
+     * @author theworld
+     * @version v1
+     * @param  array positions - 位置 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function batchDeleteCart($positions)
+    {
+        foreach ($positions as $key => $value) {
+            if(isset(self::$cartData[$value])){
+                unset(self::$cartData[$value]);
+            }else{
+                return ['status'=>400, 'msg'=>lang('param_error')];
+            }
+        }
+        
+        self::saveCart();
+        return ['status'=>200, 'msg'=>lang('delete_success')];
+    }
+
+    /**
+     * 时间 2022-05-30
      * @title 清空购物车
      * @desc 清空购物车
      * @author theworld
@@ -311,7 +342,7 @@ class CartModel extends Model
                 }
                 $value['config_options'] = $value['config_options'] ?? [];
                 
-                $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options']);
+                $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options'],$value['qty']);
 
                 if($result['status']!=200){
                     return $result;
@@ -323,6 +354,7 @@ class CartModel extends Model
                 $amount += $result['data']['price']*$value['qty'];
                 $cartData[$key] = $value;
                 $cartData[$key]['price'] = $result['data']['price'];
+                $cartData[$key]['renew_price'] = $result['data']['renew_price'] ?? $cartData[$key]['price'];
                 $cartData[$key]['billing_cycle'] = $result['data']['billing_cycle'];
                 $cartData[$key]['duration'] = $result['data']['duration'];
                 $cartData[$key]['description'] = $result['data']['description'];
@@ -378,7 +410,7 @@ class CartModel extends Model
                         'name' => generate_host_name(),
                         'status' => 'Unpaid',
                         'first_payment_amount' => $value['price'],
-                        'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $value['price'] : 0,
+                        'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $value['renew_price'] : 0,
                         'billing_cycle' => $product['pay_type'],
                         'billing_cycle_name' => $value['billing_cycle'],
                         'billing_cycle_time' => $value['duration'],
@@ -426,7 +458,7 @@ class CartModel extends Model
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
 
-        return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['order_id' => $order->id]];
+        return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['order_id' => $order->id, 'amount' => $amount]];
     }
 
     # 保存购物车

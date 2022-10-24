@@ -295,7 +295,15 @@
 .other-box .back-price .com-icon .t-icon {
   color: #282828;
 }
+.t-tooltip--light {
+  white-space: pre-wrap;
+}
 /* package-form */
+.package-form .noSelect_tip {
+  line-height: 1.2;
+  margin-top: 5px;
+  color: red;
+}
 .package-form .t-dialog {
   width: 1494px;
   max-width: 90%;

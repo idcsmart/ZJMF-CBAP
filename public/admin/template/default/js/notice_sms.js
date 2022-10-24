@@ -123,7 +123,7 @@
           location.href = `notice_sms_template.html?name=${row.name}`
         },
         getMore(){
-          location.href = ''
+          window.open('https://market.idcsmart.com/shop/#/home-page')
         },
         // 获取列表
         async getSmsList () {

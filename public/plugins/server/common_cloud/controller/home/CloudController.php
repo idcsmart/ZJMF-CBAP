@@ -33,11 +33,12 @@ class CloudController{
     * @param   string sort - 升/降序
     * @param   string keywords - 关键字搜索,搜索套餐名称/主机名/IP
     * @param   int data_center_id - 数据中心搜索
-    * @param   string param.status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除,Failed=开通失败)
+    * @param   string param.status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除)
+    * @param   int param.m - 菜单ID
     * @return  array data.list - 列表数据
     * @return  int data.list[].id - 列表数据
     * @return  string data.list[].name - 产品标识
-    * @return  string data.list[].status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除,Failed=开通失败)
+    * @return  string data.list[].status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除)
     * @return  int data.list[].due_time - 到期时间
     * @return  string data.list[].country - 国家
     * @return  string data.list[].country_code - 国家代码
@@ -48,6 +49,7 @@ class CloudController{
     * @return  string data.list[].image_group_name - 镜像分组名称
     * @return  string data.list[].power_status - 电源状态(on=开机,off=关机,operating=操作中,fault=故障)
     * @return  int data.list[].active_time - 开通时间
+    * @return  string data.list[].product_name - 商品名称
 	*/
 	public function list(){
 		$param = request()->param();
@@ -743,6 +745,7 @@ class CloudController{
 	 * @return  string username - 远程用户名
 	 * @return  string password - 远程密码
 	 * @return  int port - 远程端口
+	 * @return  int ip_num - IP数量
 	 */
 	public function remoteInfo(){
 		$param = request()->param();

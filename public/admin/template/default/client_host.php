@@ -38,11 +38,10 @@
         </t-option>
       </t-select>
     </div>
-    <t-button @click="batchRenew" class="add" style="margin-bottom: 20px ;">
+    <t-button @click="batchRenew" class="add" style="margin-bottom: 20px ;" v-if="hasPlugin">
       {{lang.batch_renew}}
     </t-button>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" 
-    :max-height="maxHeight" :hide-sort-tips="true" @sort-change="sortChange" @select-change="rehandleSelectChange" :selected-row-keys="checkId">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight" :hide-sort-tips="true" @sort-change="sortChange" @select-change="rehandleSelectChange" :selected-row-keys="checkId">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -56,6 +55,7 @@
         {{currency_prefix}}&nbsp;{{row.first_payment_amount}}<span v-if="row.billing_cycle">/</span>{{row.billing_cycle}}
       </template>
       <template #status="{row}">
+        <t-tag theme="default" variant="light" v-if="row.status==='Cancelled'" class="canceled">{{lang.canceled}}</t-tag>
         <t-tag theme="warning" variant="light" v-if="row.status==='Unpaid'">{{lang.Unpaid}}</t-tag>
         <t-tag theme="primary" variant="light" v-if="row.status==='Pending'">{{lang.Pending}}</t-tag>
         <t-tag theme="success" variant="light" v-if="row.status==='Active'">{{lang.Active}}</t-tag>
@@ -86,8 +86,7 @@
     </template>
   </t-dialog>
   <!-- 批量续费弹窗 -->
-  <t-dialog :header="lang.batch_renew" :close-btn="false" :visible.sync="renewVisible" :footer="false"
-  placement="center"  @close="cancelRenew" class="renew-dialog">
+  <t-dialog :header="lang.batch_renew" :close-btn="false" :visible.sync="renewVisible" :footer="false" placement="center" @close="cancelRenew" class="renew-dialog">
     <t-table row-key="1" :data="renewList" size="medium" :columns="renewColumns" :hover="hover" :table-layout="tableLayout ? 'auto' : 'fixed'" :loading="renewLoading" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
@@ -111,7 +110,7 @@
       <div>
         <t-checkbox v-model="pay">{{lang.mark_Paid}}</t-checkbox>
       </div>
-      <t-button theme="primary" @click="submitRenew" :loading="submitLoading">{{lang.sure_renew}}</t-button>
+      <t-button theme="primary" @click="submitRenew" :loading="submitLoading" :disabled="renewList.length === 0">{{lang.sure_renew}}</t-button>
     </div>
   </t-dialog>
 </div>

@@ -18,6 +18,10 @@ function createOrUpdatePackage (type, params) {
 function deletePackage (id) {
   return Axios.delete(`/common_cloud/package/${id}`)
 }
+// 修改排序
+function updatePackageOrders (params) {
+  return Axios.put(`/common_cloud/package/${params.id}/order`, params)
+}
 
 /* 数据中心 */
 function getDataCenter (params) {

@@ -88,7 +88,9 @@
             send_email: [
               { required: true, message: lang.select + lang.email_interface },
             ],
-          }
+          },
+          canSend: true,
+          submitLoading: false
         }
       },
       mounted () {
@@ -115,6 +117,15 @@
         this.getEmailTemList()
       },
       methods: {
+        // 切换短信接口清空短信模板
+        changeInter (row) {
+          // this.formData[row.name].sms_global_template = this.interTempObj[row.sms_global_name+'_interTemp'][0]?.id
+          this.formData[row.name].sms_global_template = ''
+        },
+        changeHome (row) {
+          // this.formData[row.name].sms_template = this.tempObj[row.sms_name+'_temp'][0]?.id || ''
+          this.formData[row.name].sms_template = ''
+        },
         // 根据短信name获取对应的模板
         async getSmsTemp (type, val) {
           try {
@@ -183,24 +194,55 @@
           location.href = `notice_email_template.html`
         },
         async save () {
-          try {
-            const params = JSON.parse(JSON.stringify(this.formData))
-            for (const item in params) {
-              if (params[item].sms_template === '') {
-                params[item].sms_template = 0
+          this.$refs.sendForm.validate().then(async res => {
+            if (res === true) {
+              try {
+                const params = JSON.parse(JSON.stringify(this.formData))
+                for (const item in params) {
+                  if (params[item].sms_template === '') {
+                    params[item].sms_template = 0
+                  }
+                  if (params[item].email_template === '') {
+                    params[item].email_template = 0
+                  }
+                  if (params[item].sms_global_template === '') {
+                    params[item].sms_global_template = 0
+                  }
+                }
+                this.canSend = true
+                // 提交前验证，选择了接口的必填
+                Object.keys(params).forEach(item => {
+                  try {
+                    if (params[item].sms_global_name && params[item].sms_global_template === 0) { // 选择了国际接口未选择模板
+                      this.canSend = false
+                      throw new Error(lang.select + lang.sms_global_template)
+                    }
+                    if (params[item].sms_name && params[item].sms_template === 0) { // 选择国内接口未选择模板
+                      this.canSend = false
+                      throw new Error(lang.select + lang.home_sms_template)
+                    }
+                    if (params[item].email_name && params[item].email_template === 0) { // 选择了邮件未选择模板
+                      this.canSend = false
+                      throw new Error(lang.select + lang.email_temp)
+                    }
+                  } catch (e) {
+                    this.$message.error(e.message)
+                  }
+                })
+                if (this.canSend) {
+                  this.submitLoading = true
+                  const res = await updateSend(params)
+                  this.$message.success(res.data.msg)
+                  this.submitLoading = false
+                }
+              } catch (error) {
+                this.$message.error(error.data.msg)
+                this.submitLoading = false
               }
-              if (params[item].email_template === '') {
-                params[item].email_template = 0
-              }
-              if (params[item].sms_global_template === '') {
-                params[item].sms_global_template = 0
-              }
+            } else {
+              this.$message.error(res[Object.keys(res)[0]][0].message)
             }
-            const res = await updateSend(params)
-            this.$message.success(res.data.msg)
-          } catch (error) {
-            this.$message.error(error.data.msg)
-          }
+          })
         },
         back () {
           window.history.go(-1)

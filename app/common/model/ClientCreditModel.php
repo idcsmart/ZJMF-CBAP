@@ -107,7 +107,7 @@ class ClientCreditModel extends Model
      * @param int param.id - 用户ID required
      * @param string param.type - 类型recharge充值deduction扣费 required
      * @param float param.amount - 金额 required
-     * @param string param.notes - 备注 required
+     * @param string param.notes - 备注
      * @param int param.order_id - 订单ID
      * @param int param.host_id - 产品ID
      * @return int status - 状态码,200成功,400失败
@@ -133,7 +133,7 @@ class ClientCreditModel extends Model
                 'type' => $param['type'],
                 'amount' => $param['amount'],
                 'credit' => $client['credit'], // 记录当前余额
-                'notes' => $param['notes'],
+                'notes' => $param['notes'] ?? '',
                 'client_id' => $param['id'],
                 'order_id' => $param['order_id'] ?? 0,
                 'host_id' => $param['host_id'] ?? 0,

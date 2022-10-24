@@ -29,11 +29,7 @@
       </template>
       <template #product_name="{row}">
         <a :href="`host_detail.html?client_id=${row.client_id}&id=${row.id}`" class="aHover">{{row.product_name}}</a>
-      </template>
-      <template #id="{row}">
-        <a :href="`host_detail.html?client_id=${row.client_id}&id=${row.id}`" class="aHover">{{row.id}}</a>
-      </template>
-      <template #status="{row}">
+        <t-tag theme="default" variant="light" v-if="row.status==='Cancelled'" class="canceled">{{lang.canceled}}</t-tag>
         <t-tag theme="warning" variant="light" v-if="row.status==='Unpaid'">{{lang.Unpaid}}</t-tag>
         <t-tag theme="primary" variant="light" v-if="row.status==='Pending'">{{lang.Pending}}</t-tag>
         <t-tag theme="success" variant="light" v-if="row.status==='Active'">{{lang.Active}}</t-tag>
@@ -41,6 +37,9 @@
         <t-tag theme="default" variant="light" v-if="row.status==='Suspended'">{{lang.Suspended}}</t-tag>
         <t-tag theme="default" variant="light" v-if="row.status==='Deleted'" class="delted">{{lang.Deleted}}
         </t-tag>
+      </template>
+      <template #id="{row}">
+        <a :href="`host_detail.html?client_id=${row.client_id}&id=${row.id}`" class="aHover">{{row.id}}</a>
       </template>
       <template #active_time="{row}">
         <span>{{row.active_time ===0 ? '-' : moment(row.active_time * 1000).format('YYYY/MM/DD HH:mm')}}</span>

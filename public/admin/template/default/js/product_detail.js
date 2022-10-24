@@ -118,6 +118,8 @@
           smsTempList: {},
           creatingName: '',
           createdName: '',
+          visibleFree: false,
+          tempFreeType: ''
         }
       },
       created () {
@@ -149,6 +151,15 @@
         },
       },
       methods: {
+         // 切换类型
+         changeFreeType (e) {
+          this.visibleFree = true
+          this.tempFreeType = e
+        },
+        confirmChange () {
+          this.visibleFree = false
+          this.formData.pay_type = this.tempFreeType
+        },
         changeSmsInterface(e){
           const name = this.smsInterList.filter(item=>item.id === e)[0]?.name
           this.creatingName = name
@@ -258,6 +269,7 @@
           try {
             const res = await getProductDetail(this.id)
             const temp = res.data.data.product
+            document.title = lang.product_list + '-' + temp.name + '-' + localStorage.getItem('back_website_name')
             this.formData = temp
             this.formData.product_id = temp.product_id || ''
             // 开通中

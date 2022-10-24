@@ -1,11 +1,23 @@
 .manage-content {
     margin-top: .2rem;
 
+    .el-row {
+        .el-col:nth-child(2) {
+            .manage-item {
+                margin: auto;
+            }
+        }
 
+        .el-col:nth-child(3) {
+            .manage-item {
+                float: right;
+            }
+        }
+    }
 
     .manage-item {
-        width: 3.94rem;
-        height: 1.25rem;
+        width: 90%;
+        min-height: 1.25rem;
         border: 1px solid #E6E7EB;
         opacity: 1;
         border-radius: 3px;
@@ -18,7 +30,7 @@
         .item-top {
             display: flex;
             flex-direction: row;
-            align-items: center;
+            // align-items: center;
 
             .item-top-btn {
                 margin-left: .2rem;
@@ -27,6 +39,7 @@
 
         .item-top-btn {
             width: .88rem;
+            min-width: 80px;
             height: .32rem;
             background: #0058FF;
             opacity: 1;
@@ -165,6 +178,7 @@
                     width: .42rem;
                     height: 0px;
                     border: 2px solid #0058FF;
+                    background: #0058FF;
                     margin-top: .21rem;
                     margin-bottom: .2rem;
                 }

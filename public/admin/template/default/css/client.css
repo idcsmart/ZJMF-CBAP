@@ -2,6 +2,28 @@
 .client .status {
   padding: 0 18px !important;
 }
+.client .client-search {
+  display: flex;
+}
+.client .client-search .t-select,
+.client .client-search .t-input {
+  width: 280px;
+  margin-right: 4px;
+}
+.client .client-search .t-button {
+  margin-left: 10px;
+}
+.client .client-search .t-select__wrap,
+.client .client-search .t-input__wrap {
+  width: auto;
+}
+.client .bg {
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.client table tbody tr:hover {
+  cursor: pointer;
+}
 .t-input__prefix {
   margin-right: 5px;
 }
@@ -39,9 +61,13 @@
   flex-wrap: wrap;
   width: 48%;
 }
+.client-detail .list-card-container .t-col {
+  margin-bottom: 24px;
+}
 .client-detail .list-card-container .item {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 .client-detail .list-card-container .t-form__label,
 .client-detail .list-card-container .t-form__controls {
@@ -135,9 +161,6 @@
 }
 .client-order .host-name {
   color: #b1b1bc;
-}
-.client-order .child-name {
-  padding-left: 20px;
 }
 .delDialog .t-dialog__body {
   color: #333;
@@ -288,6 +311,10 @@
 .order .order-id .t-icon {
   margin-left: -5px;
 }
+.order .hover,
+.order .child-name {
+  cursor: pointer;
+}
 .order .checkDelete {
   margin: 10px 0 0 100px;
 }
@@ -300,13 +327,13 @@
 .order .host-name {
   color: #b1b1bc;
 }
-.order .child-name {
-  padding-left: 20px;
-}
 .order .text-overflow {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+.order .canceled {
+  background: #c4c4c4;
 }
 /* host-detail */
 .host-detail .renew-dialog .t-dialog {

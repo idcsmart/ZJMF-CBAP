@@ -24,6 +24,12 @@ return [
     'idcsmart_common_configoption_qty_min_max'=>'数量选项值必填',
     'idcsmart_common_configoption_option_name'=>'选项值必填',
     'idcsmart_common_configoption_yes_no_cannnot_greater_two'=>'是否选项只能两个子项',
+    'idcsmart_common_configoption_yes_no_cannnot_update_option_name'=>'是否选项不可修改子项名称',
+    'idcsmart_common_configoption_yes_no_cannnot_delete'=>'是否选项不可删除',
+    'idcsmart_common_configoption_cannot_delete'=>'存在购买产品,不可删除',
+    'idcsmart_common_configoption_cannot_update'=>'存在购买产品,不可修改数据类型',
+    'idcsmart_common_configoption_sub_qty_max_egt'=>'阶梯范围最大值大于等于最小值',
+    'idcsmart_common_configoption_sub_qty_min_gt_value'=>'阶梯范围最小值大于{max}或最大值小于{min}',
 
 ];
 

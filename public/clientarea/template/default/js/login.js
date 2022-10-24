@@ -217,7 +217,7 @@ function captchaCheckCancel() {
                   delCookie("checked")
                 }
                 this.doGetMenu()
-                location.href = 'finance.html'
+                location.href = '/index.html'
               }
             }).catch(err => {
               if (err.data.msg === "请输入图形验证码" || err.data.msg === "图形验证码错误") {
@@ -361,9 +361,13 @@ function captchaCheckCancel() {
             }
           })
         },
-        toRead() {
+        toService() {
           const url = this.commonData.terms_service_url
-          location.href = url
+          window.open(url);
+        },
+        toPrivacy() {
+          const url = this.commonData.terms_privacy_url
+          window.open(url);
         },
         // 验证码 关闭
         captchaCancel() {

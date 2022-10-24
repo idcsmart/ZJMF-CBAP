@@ -86,6 +86,7 @@
             timer = null
           }, 300)
         }
+        document.title = lang.log  + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         changeUser (id) {

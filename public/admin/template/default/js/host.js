@@ -23,20 +23,22 @@
               sorter: true
             },
             {
-              colKey: 'client_id',
-              title: lang.user + '(' + lang.company + ')',
-              width: 250
-            },
-            {
               colKey: 'product_name',
               title: lang.product_name,
+              ellipsis: true,
+              className: 'product-name',
+              width: 500
+            },
+            {
+              colKey: 'client_id',
+              title: lang.user + '(' + lang.company + ')',
               width: 250,
               ellipsis: true
             },
             {
               colKey: 'name',
               title: lang.host_name,
-              width: 166,
+              width: 200,
               ellipsis: true
             },
             {
@@ -45,26 +47,26 @@
               width: 166,
               ellipsis: true
             },
-            {
-              colKey: 'active_time',
-              title: lang.open_time,
-              width: 180,
-              sortType: 'all',
-              sorter: true
-            },
+            // {
+            //   colKey: 'active_time',
+            //   title: lang.open_time,
+            //   width: 170,
+            //   sortType: 'all',
+            //   sorter: true
+            // },
             {
               colKey: 'due_time',
               title: lang.due_time,
-              width: 180,
+              width: 170,
               sortType: 'all',
               sorter: true
             },
-            {
-              colKey: 'status',
-              title: lang.status,
-              width: 100,
-              ellipsis: true
-            },
+            // {
+            //   colKey: 'status',
+            //   title: lang.status,
+            //   width: 100,
+            //   ellipsis: true
+            // },
             // {
             //   colKey: 'op',
             //   title: lang.operation,

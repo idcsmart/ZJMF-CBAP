@@ -33,8 +33,8 @@ function withdraw(params) {
 }
 
 // 提现规则详情
-function withdrawRule(params){
-  return Axios.get(`/withdraw/rule/credit`, {params})
+function withdrawRule(params) {
+  return Axios.get(`/withdraw/rule/credit`, { params })
 }
 
 // 充值
@@ -53,12 +53,12 @@ function pay(params) {
 }
 
 // 支付状态
-function getPayStatus(id){
+function getPayStatus(id) {
   return Axios.get(`/pay/${id}/status`)
 }
 
 // 获取待审核金额
-function unAmount(){
+function unAmount() {
   return Axios.get(`/refund/pending/amount`)
 }
 
@@ -66,6 +66,11 @@ function unAmount(){
 function creditPay(params) {
   return Axios.post(`/credit`, params);
 }
+ // 删除订单
+ function delete_order(id) {
+  return Axios.delete(`/order/${id}`);
+}
+
 
 // // 使用余额支付
 // function onlinePay(params) {

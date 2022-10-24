@@ -46,7 +46,7 @@
             Active: { text: "正常", color: "#1BC5BD", bgColor: "#C9F7F5" },
             Suspended: { text: "已暂停", color: "#F0142F", bgColor: "#FFE2E5" },
             Deleted: { text: "已删除", color: "#9696A3", bgColor: "#F2F2F7" },
-            Failed: { text: "开通失败", color: "#FFA800", bgColor: "#FFF4DE" }
+            Failed: { text: "开通中", color: "#FFA800", bgColor: "#FFF4DE" }
           },
           statusSelect: [
             {
@@ -74,11 +74,11 @@
               status: 'Deleted',
               label: "已删除"
             },
-            {
-              id: 6,
-              status: 'Failed',
-              label: "开通失败"
-            },
+            // {
+            //   id: 6,
+            //   status: 'Failed',
+            //   label: "开通中"
+            // },
           ],
         }
       },

@@ -178,7 +178,7 @@ class ApiModel extends Model
             ], ['id' => $param['id']]);
 
             # 记录日志
-            active_log(lang('log_client_edit_api', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$param['name']]), 'api', $api->id);
+            active_log(lang('log_client_edit_api', ['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{name}'=>$api['name']]), 'api', $api->id);
 
             $this->commit();
         } catch (\Exception $e) {

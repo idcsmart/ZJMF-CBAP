@@ -56,14 +56,12 @@ const topMenu = {
                     <img src="${url}/img/common/bell.png">
                     <span class="bell-num">2</span>
                 </div>
-                <div v-if="isShowMore" class="right-item">
+                <div class="right-item head-box" ref="headBoxRef" @click="goAccountpage" v-show="firstName">{{firstName}}</div>
+                <div v-if="isShowCart" class="right-item" @click="goShoppingCar">
+                    <el-badge :value="shoppingCarNum" class="item" :hidden="shoppingCarNum === 0 ? true : false">
                     <img src="${url}/img/common/cart.png">
+                    </el-badge>
                 </div>
-
-                <span class="buy-product-btn" @click="toOrder">订购</span>
-                <el-select class="product-select" v-model="selectValue" placeholder="请选择商品">
-                    <el-option v-for="item in produclData" :key="item.id" :value="item.id" :label="item.name"></el-option>
-                </el-select>
             </div>
         </el-header>
         </div>
@@ -78,21 +76,39 @@ const topMenu = {
             logo: `/upload/logo.png`,
             menu1: [],
             menuActiveId: 0,
+            firstName: '',
             produclData: [],
-            selectValue: ''
+            selectValue: '',
+            shoppingCarNum: 0,
+            headBgcList: ['#3699FF', '#57C3EA', '#5CC2D7', '#EF8BA2', '#C1DB81', '#F1978C', '#F08968']
         }
     },
     props: {
         isShowMore: {
             type: Boolean,
             default: false
+        },
+        isShowCart: {
+            type: Boolean,
+            default: true
+        },
+        num: {
+            type: Number,
+            default: 0
+        }
+    },
+    watch: {
+        num(val) {
+            if (val) {
+                this.shoppingCarNum = val
+            }
         }
     },
     created() {
+        this.GetIndexData()
         this.doGetMenu()
         this.setActiveMenu()
-        // 获取商品列表
-        this.getProductList()
+        this.getCartList()
     },
     methods: {
         // 退出登录
@@ -110,6 +126,31 @@ const topMenu = {
                     }, 300)
                 })
             }).catch(() => { })
+        },
+        // 获取购物车数量
+        getCartList() {
+            cartList().then((res) => {
+                this.shoppingCarNum = res.data.data.list.length
+            })
+        },
+        GetIndexData() {
+            indexData().then((res) => {
+                this.firstName = res.data.data.account.username.substring(0, 1)
+                if (sessionStorage.headBgc) {
+                    this.$refs.headBoxRef.style.background = sessionStorage.headBgc
+                } else {
+                    const index = Math.round(Math.random() * this.headBgcList.length)
+                    this.$refs.headBoxRef.style.background = this.headBgcList[index]
+                    sessionStorage.headBgc = this.headBgcList[index]
+                }
+            })
+        },
+        goShoppingCar() {
+            localStorage.frontMenusActiveId = ''
+            location.href = '/shoppingCar.html'
+        },
+        goAccountpage() {
+            location.href = '/account.html'
         },
         // 语言切换
         changeLang(e) {
@@ -202,17 +243,6 @@ const topMenu = {
         // 页面跳转
         toPage(e) {
             location.href = '/' + e.url
-        },
-        // 获取商品列表
-        getProductList() {
-            const params = {
-                limit: 1000
-            }
-            productList(params).then(res => {
-                if (res.data.status === 200) {
-                    this.produclData = res.data.data.list
-                }
-            })
         },
         // 单项商品点击
         itemClick(item) {

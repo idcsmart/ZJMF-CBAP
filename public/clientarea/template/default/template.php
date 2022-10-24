@@ -28,7 +28,7 @@
                 </el-main>
             </el-container>
         </el-container>
-    </div>
+    </div>  
     <!-- =======页面独有======= -->
     <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/template.js"></script>

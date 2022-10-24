@@ -17,4 +17,25 @@ class IdcsmartCommonHostConfigoptionModel extends Model
         'repeat'                 => 'int',
     ];
 
+    # 删除产品时实现钩子
+    public function deleteHost($param)
+    {
+        $hostId = $param['id']??0;
+
+        $this->startTrans();
+
+        try{
+
+            $this->where('host_id',$hostId)->delete();
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+
+            return false;
+        }
+
+        return true;
+    }
+
 }

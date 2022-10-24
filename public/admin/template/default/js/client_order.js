@@ -127,6 +127,8 @@
           popupProps: {
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
           },
+          curInfo: {},
+          optType: '' // order,sub
         }
       },
       mounted () {
@@ -141,7 +143,8 @@
             clearTimeout(timer)
             timer = null
           }, 300)
-        }
+        },
+        document.title = lang.user_list + '-' + lang.order_manage + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         changeUser (id) {
@@ -162,27 +165,47 @@
           }
         },
         // 调整价格
-        updatePrice (row) {
+        updatePrice (row, type) {
+          this.optType = type
           this.formData.id = row.id
           this.formData.amount = ''
           this.formData.description = ''
-          this.$refs.priceForm.clearValidate()
+          this.$refs.priceForm && this.$refs.priceForm.clearValidate()
           this.priceModel = true
+          this.curInfo = row
         },
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
-            try {
-              const res = await updateOrder(this.formData)
-              this.$message.success(res.data.msg)
-              this.orderNum = 0
-              this.priceModel = false
-              this.getClientList()
-            } catch (error) {
-              this.$message.error(error.data.msg);
+            if (this.optType === 'order') {
+              this.changeOrderPrice()
+            } else {
+              this.changeSubPrice()
             }
           } else {
             console.log('Errors: ', validateResult);
             this.$message.warning(firstError);
+          }
+        },
+        // 修改订单价格
+        async changeOrderPrice () {
+          try {
+            await updateOrder(this.formData)
+            this.$message.success(lang.modify_success)
+            this.priceModel = false
+            this.getClientList()
+          } catch (error) {
+            this.$message.error(error.data.msg);
+          }
+        },
+        // 修改子项人工价格
+        async changeSubPrice () {
+          try {
+            await updateArtificialOrder(this.formData)
+            this.$message.success(lang.modify_success)
+            this.priceModel = false
+            this.getClientList()
+          } catch (error) {
+            this.$message.error(error.data.msg);
           }
         },
         closePrice () {
@@ -255,6 +278,10 @@
               item.isExpand = false
             })
             this.loading = false
+            if (this.curInfo) { //修改子项打开对应的订单下拉
+              this.itemClick(this.curInfo)
+            } else {
+            }
           } catch (error) {
             this.$message.error(error.data.msg)
             this.loading = false
@@ -268,16 +295,17 @@
           row.isExpand = row.isExpand ? false : true
           const rowData = this.$refs.table.getData(row.id);
           this.$refs.table.toggleExpandData(rowData);
-          if (row.list.length > 0) {
+          if (row.list?.length > 0) {
             return
           }
-          this.getOrderDetail(row.id)
+          this.getOrderDetail(this.optType === 'sub' ? row.pId : row.id)
         },
         // 订单详情
         async getOrderDetail (id) {
           try {
             const res = await getOrderDetail(id)
             res.data.data.order.items.forEach(item => {
+              item.pId = res.data.data.order.id
               this.$refs.table.appendTo(id, item)
             })
           } catch (error) {

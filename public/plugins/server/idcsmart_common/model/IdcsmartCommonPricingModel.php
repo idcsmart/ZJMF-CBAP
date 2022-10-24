@@ -13,12 +13,6 @@ class IdcsmartCommonPricingModel extends Model
         'type'                   => 'string',
         'rel_id'                 => 'int',
         'onetime'                => 'float',
-        'monthly'                => 'float',
-        'quarterly'              => 'float',
-        'semaiannually'          => 'float',
-        'annually'               => 'float',
-        'biennially'             => 'float',
-        'triennianlly'           => 'float',
     ];
 
     # 插入价格
@@ -29,25 +23,13 @@ class IdcsmartCommonPricingModel extends Model
             ->find();
         if (!empty($pricing)){
             $pricing->save([
-                'onetime' => $param['onetime']??-1,
-                'monthly' => $param['monthly']??-1,
-                'quarterly' => $param['quarterly']??-1,
-                'semaiannually' => $param['semaiannually']??-1,
-                'annually' => $param['annually']??-1,
-                'biennially' => $param['biennially']??-1,
-                'triennianlly' => $param['triennianlly']??-1,
+                'onetime' => $param['onetime']??0,
             ]);
         }else{
             $this->insert([
                 'type' => $type,
                 'rel_id' => $relId,
-                'onetime' => $param['onetime']??-1,
-                'monthly' => $param['monthly']??-1,
-                'quarterly' => $param['quarterly']??-1,
-                'semaiannually' => $param['semaiannually']??-1,
-                'annually' => $param['annually']??-1,
-                'biennially' => $param['biennially']??-1,
-                'triennianlly' => $param['triennianlly']??-1,
+                'onetime' => $param['onetime']??0,
             ]);
         }
 

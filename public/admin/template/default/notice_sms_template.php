@@ -8,7 +8,7 @@
     <t-icon name="chevron-right"></t-icon>
     <a href="notice_sms.html">{{lang.sms_notice}}</a>
     <t-icon name="chevron-right"></t-icon>
-    <span class="cur">{{lang.sms_interface}}</span>
+    <span class="cur">{{lang.template_manage}}</span>
   </div>
   <t-card class="list-card-container">
     <!-- <ul class="common-tab">

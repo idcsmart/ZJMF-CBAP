@@ -17,7 +17,7 @@ return [
         'title' => '发件人邮箱',
         'type'  => 'text',
         'value' => '',
-        'tip'   => '（只需填写邮箱@前面的部分，统一用 mailnoticesystem.com域名，例如admin@mailnoticesystem.com）',
+        'tip'   => '统一用mailnoticesystem.com域名，只需填写邮箱@前面的部分。例如admin@mailnoticesystem.com，填写admin即可',
     ],
     'from_name'=> [
         'title' => '发件人名称',

@@ -3,6 +3,9 @@
   window.onload = function () {
     const template = document.getElementsByClassName('notice-email-template-create')[0]
     Vue.prototype.lang = window.lang
+    const host = location.host
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}/`
     new Vue({
       data () {
         return {
@@ -31,6 +34,7 @@
       },
       mounted () {
         this.initTemplate()
+        document.title = lang.email_notice + '-' + lang.template_manage + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         async getEmailDetail () {
@@ -65,14 +69,43 @@
         initTemplate () {
           tinymce.init({
             selector: '#emailTemp',
-            language_url: `${url}tinymce/langs/zh_CN.js`,
+            language_url: '/tinymce/langs/zh_CN.js',
             language: 'zh_CN',
             min_height: 400,
             width: '100%',
-            plugins: 'code fullpage',
-            toolbar: "code",
+            plugins: 'link lists image code table colorpicker textcolor wordcount contextmenu fullpage',
+            toolbar:
+              'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image fullpage code | removeformat',
+            images_upload_url: 'http://' + str + 'v1/upload',
+            images_upload_handler: this.handlerAddImg
           });
         },
+        handlerAddImg (blobInfo, success, failure) {
+          return new Promise((resolve, reject) => {
+            const formData = new FormData()
+            formData.append('file', blobInfo.blob())
+            axios.post('http://' + str + 'v1/upload', formData, {
+              headers: {
+                Authorization: 'Bearer' + ' ' + localStorage.getItem('backJwt')
+              }
+            }).then(res => {
+              const json = {}
+              if (res.status !== 200) {
+                failure('HTTP Error: ' + res.msg)
+                return
+              }
+              // json = JSON.parse(res)
+              json.location = res.data.data?.image_url
+
+              if (!json || typeof json.location !== 'string') {
+                failure('Error:' + res.data.msg)
+                return
+              }
+              success(json.location)
+            })
+          })
+        },
+
         close () {
           location.href = 'notice_email_template.html'
         },

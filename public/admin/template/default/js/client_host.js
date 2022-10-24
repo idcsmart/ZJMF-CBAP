@@ -130,7 +130,8 @@
           renewLoading: false,
           currency_prefix: JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥',
           pay: false,
-          submitLoading: false
+          submitLoading: false,
+          hasPlugin: false
         }
       },
       mounted () {
@@ -146,6 +147,8 @@
             timer = null
           }, 300)
         }
+        this.getPlugin()
+        document.title = lang.user_list + '-' + lang.product_info + '-' + localStorage.getItem('back_website_name')
       },
       computed: {
         renewTotal () {
@@ -156,9 +159,21 @@
         }
       },
       methods: {
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartRenew')[0]
+            if (cur.status === 1) {
+              this.hasPlugin = true
+            }
+          } catch (error) {
+
+          }
+        },
         /* 批量续费 */
         async batchRenew () {
           this.renewForm = []
+          this.renewList = []
           if (this.checkId.length === 0) {
             return this.$message.error(lang.select)
           }

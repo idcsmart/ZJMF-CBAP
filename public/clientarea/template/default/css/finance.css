@@ -117,8 +117,8 @@
 }
 
 .dot {
-  width: 0.1rem;
-  height: 0.1rem;
+  width: 0.08rem;
+  height: 0.08rem;
   line-height: 0.1rem;
   border-radius: 50%;
   display: inline-block;
@@ -339,6 +339,86 @@
 .mobel {
   display: none;
 }
+
+.el-icon-more {
+  font-size: 0.16rem;
+  color: #0058FF;
+  cursor: pointer;
+}
+
+.el-popover {
+  min-width: 0.5rem !important;
+}
+
+.operation-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  cursor: pointer;
+}
+
+.delete-dialog .el-dialog__header {
+  padding: 0;
+}
+
+.delete-dialog .el-dialog__body {
+  padding: 0;
+}
+
+.delete-box {
+  height: 2.56rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #FFFFFF;
+}
+
+.delete-content {
+  font-size: 0.18rem;
+  color: #171725;
+}
+
+.delete-btn {
+  margin-top: 0.4rem;
+}
+
+.delete-btn .confirm-btn {
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  width: 1.12rem;
+  height: 0.46rem;
+  margin-right: 0.12rem;
+  background: #0058FF;
+  line-height: 0.46rem;
+  font-size: 0.16rem;
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 0.03rem;
+}
+
+.delete-btn .cancel-btn {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.16rem;
+  color: #1E2736;
+  background: #E7E7E7;
+  border-radius: 0.03rem;
+  text-align: center;
+  width: 1.12rem;
+  height: 0.46rem;
+  line-height: 0.46rem;
+  font-size: 0.16rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
 
 @media screen and (max-width: 750px) {
 

@@ -26,7 +26,7 @@ class HostController extends HomeBaseController
      * @url /console/v1/host
      * @method  GET
      * @param string keywords - 关键字,搜索范围:产品ID,商品名称,标识
-     * @param string status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
+     * @param string status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除
      * @param int page - 页数
      * @param int limit - 每页条数
      * @param string orderby - 排序 id,active_time,due_time
@@ -40,7 +40,7 @@ class HostController extends HomeBaseController
      * @return int list[].due_time - 到期时间
      * @return string list[].first_payment_amount - 金额
      * @return string list[].billing_cycle - 周期
-     * @return string list[].status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
+     * @return string list[].status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除
      * @return int count - 产品总数
      */
 	public function hostList()
@@ -61,6 +61,29 @@ class HostController extends HomeBaseController
         ];
         return json($result);
 	}
+
+    /**
+     * 时间 2022-10-13
+     * @title 自定义导航产品列表
+     * @desc 自定义导航产品列表
+     * @author theworld
+     * @version v1
+     * @url /console/v1/menu/:id/host
+     * @method  GET
+     * @param int id - 导航ID
+     * @return  string data.content - 模块输出内容
+     */
+    public function menuHostList()
+    {
+        $param = $this->request->param();
+        
+        // 实例化模型类
+        $HostModel = new HostModel();
+
+        // 获取产品
+        $result = $HostModel->menuHostList((int)$param['id']);
+        return json($result);
+    }
 
 	/**
      * 时间 2022-05-19
@@ -109,9 +132,9 @@ class HostController extends HomeBaseController
 
     /**
      * 时间 2022-05-30
-     * @title 产品内页模块
-     * @desc 产品内页模块
-     * @url /console/v1/host/:id/module
+     * @title 获取产品内页
+     * @desc 获取产品内页
+     * @url /console/v1/host/:id/view
      * @method  GET
      * @author hh
      * @version v1

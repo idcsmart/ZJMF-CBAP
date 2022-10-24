@@ -35,6 +35,8 @@
                     dialogImageUrl: '',
                     uploadTipsText1: '',
                     uploadTipsText2: '',
+                    upload1_progress: "0%", // 身份证正面上传进度
+                    upload2_progress: '0%',
                     plugin_name: '',// 实名接口
                     certificationPerson: { // 个人实名认证信息对象
                         card_name: '', //姓名
@@ -100,7 +102,9 @@
                 backTicket() {
                     location.href = 'account.html'
                 },
-
+                goSelect() {
+                    location.href = 'authentication_select.html'
+                },
                 onUpload(file, val) {
                     this.sunmitBtnLoading = true
                     if (val === 'img_one') {
@@ -123,10 +127,21 @@
                         this.img_one = ''
                     }
                 },
+                onProgress(event, file, fileList, val) {
+                    if (val === 'img_one') {
+                        this.upload1_progress = (event.percent).toFixed(2) + '%'
+                    }
+                    if (val === 'img_two') {
+                        this.upload2_progress = (event.percent).toFixed(2) + '%'
+                    }
+
+                },
                 // 身份证第一张删除
                 handleRemove1(file, fileList) {
                     this.card_one_fileList = []
                     this.img_one = ''
+                    this.upload1_progress = '0%'
+                    this.sunmitBtnLoading = false
                 },
                 // 身份证第二张上传成功回调
                 handleSuccess2(response, file, fileList) {
@@ -161,6 +176,8 @@
                 handleRemove2() {
                     this.card_two_fileList = []
                     this.img_two = ''
+                    this.upload2_progress = '0%'
+                    this.sunmitBtnLoading = false
                 },
                 // 预览
                 handlePictureCardPreview(file) {

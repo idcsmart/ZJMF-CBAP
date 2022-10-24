@@ -28,6 +28,7 @@ class ConfigController{
      * @return  int data.disk_max_num - 最大附加数量
      * @return  int data.backup_enable - 是否启用备份(0=不启用,1=启用)
      * @return  int data.snap_enable - 是否启用快照(0=不启用,1=启用)
+     * @return  string data.product_name - 商品名称
      * @return  int data.backup_option[].num - 备份数量
      * @return  string data.backup_option[].price - 价格
      * @return  int data.snap_option[].num - 快照数量

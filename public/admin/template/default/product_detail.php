@@ -162,10 +162,12 @@
             <t-row :gutter="{ xs: 0, xxl: 30 }" class="dis-box">
               <t-col :xs="12" :xl="6">
                 <p>{{lang.cost_type}}</p>
-                <t-select v-model="formData.pay_type">
-                  <t-option v-for="item in payType" :value="item.value" :label="item.label" :key="item.value">
-                  </t-option>
-                </t-select>
+                <t-popconfirm :visible="visibleFree" theme="warning" @confirm="confirmChange" @cancel="visibleFree = false" :content="lang.free_type_tip + '\n' + lang.free_type_tip1">
+                  <t-select :value="formData.pay_type" @change="changeFreeType">
+                    <t-option v-for="item in payType" :value="item.value" :label="item.label" :key="item.value">
+                    </t-option>
+                  </t-select>
+                </t-popconfirm>
               </t-col>
             </t-row>
           </t-col>

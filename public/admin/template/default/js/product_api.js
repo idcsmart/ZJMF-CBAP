@@ -92,6 +92,7 @@
           try {
             const res = await getProductDetail(this.id)
             const temp = res.data.data.product
+            document.title = lang.product_list + '-' + temp.name + '-' + localStorage.getItem('back_website_name')
             this.formData.auto_setup = temp.auto_setup
             this.formData.type = temp.type
             this.formData.rel_id = temp.rel_id

@@ -40,9 +40,11 @@
         {{row.type ? moment(row.create_time * 1000).format('YYYY-MM-DD HH:mm') : ''}}
       </template>
       <template #icon="{row}">
-        <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
-          <img :src="`${rootRul}img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
-        </t-tooltip>
+        <template v-if="row.type">
+          <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
+            <img :src="`${rootRul}img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
+          </t-tooltip>
+        </template>
       </template>
       <template #product_names={row}>
         <template v-if="row.product_names">
@@ -50,11 +52,12 @@
             <img :src="`${rootRul}/img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
           </t-tooltip> -->
           <!-- <span v-if="row.type==='artificial'">{{lang.artificial}}</span> -->
-          <span>{{row.product_names[0]}}</span>
-          <span v-if="row.product_names.length>1">、{{row.product_names[1]}}</span>
-          <span v-if="row.product_names.length>2">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
+          <span @click="itemClick(row)" class="hover">{{row.product_names[0]}}</span>
+          <span v-if="row.product_names.length>1" @click="itemClick(row)" class="hover">、{{row.product_names[1]}}</span>
+          <span v-if="row.product_names.length>2" @click="itemClick(row)" class="hover">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
         </template>
-        <span v-else class="child-name">
+        <!-- @click="jumpPorduct(row.client_id, row.host_id)" -->
+        <span v-else class="child-name" >
           {{row.product_name ? row.product_name : row.description}}
           <span class="host-name" v-if="row.host_name">({{row.host_name}})</span>
         </span>
@@ -65,6 +68,8 @@
         <span v-if="row.billing_cycle && Number(row.amount) >= 0 && row.type!=='upgrade'">/{{row.billing_cycle}}</span>
       </template>
       <template #status="{row}">
+        <t-tag theme="default" variant="light" v-if="(row.status || row.host_status)==='Cancelled'" class="canceled">{{lang.canceled}}
+        </t-tag>
         <t-tag theme="warning" variant="light" v-if="(row.status || row.host_status)==='Unpaid'">{{lang.Unpaid}}
         </t-tag>
         <t-tag theme="primary" variant="light" v-if="row.status==='Paid'">{{lang.Paid}}
@@ -106,13 +111,18 @@
       <template #op="{row}">
         <template v-if="row.type">
           <t-tooltip :content="lang.update_price" :show-arrow="false" theme="light">
-            <t-icon name="money-circle" class="common-look" @click="updatePrice(row)" v-if="row.status!=='Paid'"></t-icon>
+            <t-icon name="money-circle" class="common-look" @click="updatePrice(row, 'order')" v-if="row.status!=='Paid' && row.status!=='Cancelled'"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light">
-            <t-icon name="discount" class="common-look" :class="{disable:row.status==='Paid'}" @click="signPay(row)" v-if="row.status!=='Paid'"></t-icon>
+            <t-icon name="discount" class="common-look" :class="{disable:row.status==='Paid'}" @click="signPay(row)" v-if="row.status!=='Paid' && row.status!=='Cancelled'"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
             <t-icon name="delete" class="common-look" @click="delteOrder(row)"></t-icon>
+          </t-tooltip>
+        </template>
+        <template v-else>
+          <t-tooltip :content="lang.edit" :show-arrow="false" theme="light" v-if="row.edit">
+            <t-icon name="edit" size="18px" @click="updatePrice(row, 'sub')" class="common-look"></t-icon>
           </t-tooltip>
         </template>
       </template>

@@ -100,15 +100,22 @@ class HostModel extends Model
             ->field('h.id')
             ->leftjoin('product p', 'p.id=h.product_id')
             ->leftjoin('client c', 'c.id=h.client_id')
-            ->where(function ($query) use($param) {
+            ->where(function ($query) use($param, $app) {
+                if($app=='home'){
+                    $query->where('h.status', '<>', 'Cancelled');
+                }
                 if(!empty($param['client_id'])){
-                    $query->where('h.client_id', $param['client_id']);
+                    $query->where('h.client_id', (int)$param['client_id']);
                 }
                 if(!empty($param['keywords'])){
                     $query->where('h.id|p.name|h.name|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
                 }
                 if(!empty($param['status'])){
-                    $query->where('h.status', $param['status']);
+                    if($app=='home' && $param['status']=='Pending'){
+                        $query->whereIn('h.status', ['Pending', 'Failed']);
+                    }else{
+                        $query->where('h.status', $param['status']);
+                    }
                 }
             })
             ->count();
@@ -117,7 +124,10 @@ class HostModel extends Model
             ->leftjoin('product p', 'p.id=h.product_id')
             ->leftjoin('client c', 'c.id=h.client_id')
             ->leftjoin('order o', 'o.id=h.order_id')
-            ->where(function ($query) use($param) {
+            ->where(function ($query) use($param, $app) {
+                if($app=='home'){
+                    $query->where('h.status', '<>', 'Cancelled');
+                }
                 if(!empty($param['client_id'])){
                     $query->where('h.client_id', (int)$param['client_id']);
                 }
@@ -125,7 +135,11 @@ class HostModel extends Model
                     $query->where('h.id|p.name|h.name|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
                 }
                 if(!empty($param['status'])){
-                    $query->where('h.status', $param['status']);
+                    if($app=='home' && $param['status']=='Pending'){
+                        $query->whereIn('h.status', ['Pending', 'Failed']);
+                    }else{
+                        $query->where('h.status', $param['status']);
+                    }
                 }
             })
             ->limit($param['limit'])
@@ -139,10 +153,80 @@ class HostModel extends Model
 
             // 前台接口去除字段
             if($app=='home'){
+                $hosts[$key]['status'] = $host['status']=='Failed' ? 'Pending' : $host['status'];
                 unset($hosts[$key]['client_id'], $hosts[$key]['client_name'], $hosts[$key]['email'], $hosts[$key]['phone_code'], $hosts[$key]['phone'], $hosts[$key]['company']);
             }
 
             unset($hosts[$key]['billing_cycle_name'], $hosts[$key]['create_time'], $hosts[$key]['pay_time']);
+        }
+
+        return ['list' => $hosts, 'count' => $count];
+    }
+
+    /**
+     * 时间 2022-10-13
+     * @title 会员中心首页产品列表
+     * @desc 会员中心首页产品列表
+     * @author theworld
+     * @version v1
+     * @param int param.page - 页数
+     * @return array list - 产品
+     * @return int list[].id - 产品ID 
+     * @return int list[].product_id - 商品ID 
+     * @return string list[].product_name - 商品名称 
+     * @return string list[].name - 标识 
+     * @return int list[].due_time - 到期时间
+     * @return string list[].status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
+     * @return string list[].type - 类型 
+     * @return int count - 产品总数
+     */
+    public function indexHostList($param)
+    {
+        $param['client_id'] = get_client_id();
+        if(empty($param['client_id'])){
+            return ['list' => [], 'count' => 0];
+        }
+
+        $count = $this->alias('h')
+            ->field('h.id')
+            ->leftjoin('product p', 'p.id=h.product_id')
+            ->leftjoin('client c', 'c.id=h.client_id')
+            ->where(function ($query) use($param) {
+                $query->whereIn('h.status', ['Pending', 'Active', 'Suspended', 'Failed']);
+                if(!empty($param['client_id'])){
+                    $query->where('h.client_id', (int)$param['client_id']);
+                }
+            })
+            ->count();
+        $hosts = $this->alias('h')
+            ->field('h.id,h.product_id,p.name product_name,h.name,h.due_time,h.status,s.module,ss.module module1')
+            ->leftjoin('product p', 'p.id=h.product_id')
+            ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
+            ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
+            ->leftjoin('server ss','ss.server_group_id=sg.id')
+            ->where(function ($query) use($param) {
+                $query->whereIn('h.status', ['Pending', 'Active', 'Suspended', 'Failed']);
+                if(!empty($param['client_id'])){
+                    $query->where('h.client_id', (int)$param['client_id']);
+                }
+            })
+            ->limit(10)
+            ->page($param['page'])
+            ->orderRaw('h.due_time>0 desc')
+            ->order('h.due_time', 'asc')
+            ->select()
+            ->toArray();
+
+        $ModuleLogic = new ModuleLogic();
+
+        $moduleList = $ModuleLogic->getModuleList();
+        $moduleList = array_column($moduleList, 'display_name', 'name');
+
+        foreach ($hosts as $key => $host) {
+            $hosts[$key]['status'] = $host['status']=='Failed' ? 'Pending' : $host['status'];
+            $host['module'] = !empty($host['module']) ? $host['module'] : $host['module1'];
+            $hosts[$key]['type'] = $moduleList[$host['module']] ?? $host['module'];
+            unset($hosts[$key]['module'], $hosts[$key]['module1']);
         }
 
         return ['list' => $hosts, 'count' => $count];
@@ -187,11 +271,13 @@ class HostModel extends Model
         // 产品的用户ID和前台用户不一致时返回空对象
         if($app=='home'){
             $client_id = get_client_id();
-            if($host['client_id']!=$client_id){
+            if($host['client_id']!=$client_id || $host['status']=='Cancelled'){
                 return (object)[]; // 转换为对象
             }
             $host['notes'] = $host['client_notes'];
             unset($host['server_id'], $host['client_notes']);
+
+            $host['status'] = $host['status'] != 'Failed' ? $host['status'] : 'Pending';
         }
 
         $host['first_payment_amount'] = amount_format($host['first_payment_amount']); 
@@ -227,7 +313,7 @@ class HostModel extends Model
             ->where(function ($query) use($keywords, $app) {
                 if($app=='home'){
                     $clientId = get_client_id();
-                    $query->where('h.client_id', $clientId);
+                    $query->where('h.client_id', $clientId)->where('h.status', '<>', 'Cancelled');
                 }
                 if(!empty($keywords)){
                     $query->where('h.id|h.name|p.name', 'like', "%{$keywords}%");
@@ -277,23 +363,6 @@ class HostModel extends Model
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
 
-
-        // 获取产品订单
-        $order = OrderModel::find($host['order_id']);
-        // 已付款订单不允许修改产品订购金额以及修改产品状态到未付款
-        /*if(!empty($order)){
-            if($order['status']=='Paid'){
-                if($param['status']=='Unpaid'){
-                    return ['status'=>400, 'msg'=>lang('order_is_paid_host_status_cannot_be_unpaid')];
-                }
-            }else{
-                if($param['status']!='Unpaid'){
-                    return ['status'=>400, 'msg'=>lang('order_is_unpaid_host_status_cannot_be_paid')];
-                }
-            }
-            
-        }*/
-
         $this->startTrans();
         try {
             // 计费周期为一次性和免费的产品没有到期时间和续费金额,其他的使用传入的到期时间和续费金额
@@ -317,37 +386,6 @@ class HostModel extends Model
                 'update_time' => time()
             ], ['id' => $param['id']]);
 
-            // 如果订购金额发生变动更新订单和订单子项金额
-            /*if($host['first_payment_amount']!=$param['first_payment_amount'] && !empty($order)){
-                OrderItemModel::where('rel_id', $param['id'])->where('type', 'host')->update(['amount' => $param['first_payment_amount'] ? floatval($param['first_payment_amount']) : 0, 'update_time' => time()]);
-                // 获取订单金额
-                $amount = OrderItemModel::where('order_id', $host['order_id'])->sum('amount');
-                if($order['status']=='Paid'){
-                    OrderModel::update(['amount'=>$amount, 'update_time'=>time()], ['id' => $host['order_id']]);
-                }else{
-                    $amountUnpaid = $amount-$order['credit'];
-                    if($amountUnpaid<0){
-                        // 退款到余额
-                        if($amountUnpaid<0 && $param['upgrade_refund']==1){
-                            $result = update_credit([
-                                'type' => 'Refund',
-                                'amount' => -$amount,
-                                'notes' => "Upgrade Refund",
-                                'client_id' => $host['client_id'],
-                                'order_id' => $order->id,
-                                'host_id' => $host['id']
-                            ]);
-                            if(!$result){
-                                throw new Exception(lang('fail_message'));           
-                            }
-                        }
-                        $amountUnpaid = 0;
-                    }
-                    OrderModel::update(['amount'=>$amount, 'amount_unpaid'=>$amountUnpaid, 'update_time'=>time()], ['id' => $host['order_id']]);
-                }
-                
-            }*/
-            
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
@@ -480,7 +518,7 @@ class HostModel extends Model
         if($host['status'] == 'Active'){
             return ['status'=>400, 'msg'=>lang('host_is_active')];
         }
-        if($host['status'] == 'Supended'){
+        if($host['status'] == 'Suspended'){
             return ['status'=>400, 'msg'=>lang('host_is_suspended')];
         }
 
@@ -753,6 +791,38 @@ class HostModel extends Model
     }
 
     /**
+     * 时间 2022-10-13
+     * @title 自定义导航产品列表
+     * @desc 自定义导航产品列表
+     * @author hh
+     * @version v1
+     * @param int id - 导航ID
+     * @return int status - 状态码,200=成功,400=失败
+     * @return string msg - 提示信息
+     * @return string data.content - 列表页模块输出
+     */
+    public function menuHostList($id)
+    {
+        $menu = MenuModel::find($id);
+        if(empty($menu) || empty($menu['module'])){
+            return ['status'=>400, 'msg'=>lang('fail_message')];
+        }
+        $param['product_id'] = json_decode($menu['product_id'], true);
+
+        $ModuleLogic = new ModuleLogic();
+        $content = $ModuleLogic->hostList($menu['module'], $param);
+        
+        $result = [
+            'status' => 200,
+            'msg'    => lang('success_message'),
+            'data'   => [
+                'content' => $content,
+            ]
+        ];
+        return $result;
+    }
+
+    /**
      * 时间 2022-05-28
      * @title 前台产品内页模块输出
      * @desc 前台产品内页模块输出
@@ -909,7 +979,7 @@ class HostModel extends Model
                 'product_id' => $upgrade['rel_id'],
                 'server_id' => $serverId,
                 'first_payment_amount' => $upgrade['price'],
-                'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $upgrade['price'] : 0,
+                'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $upgrade['renew_price'] : 0,
                 'billing_cycle' => $product['pay_type'],
                 'billing_cycle_name' => $upgrade['billing_cycle_name'],
                 'billing_cycle_time' => $upgrade['billing_cycle_time'],
@@ -921,7 +991,7 @@ class HostModel extends Model
             $host = $this->find($upgrade['host_id']);
             $this->update([
                 'first_payment_amount' => $upgrade['price'],
-                'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['price'] : 0,
+                'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['renew_price'] : 0,
             ],['id' => $upgrade['host_id']]);
             $ModuleLogic = new ModuleLogic();
             //$host = $this->find($upgrade['host_id']);

@@ -41,7 +41,7 @@
                             WELCOME
                         </div>
                         <div class="text-title">
-                            欢迎来到{{commonData.website_name}}会员中心
+                            {{lang.login_welcome}}{{commonData.website_name}}{{lang.login_vip}}
                         </div>
                         <div class="text-level">
                             {{lang.login_level}}
@@ -95,8 +95,8 @@
                                 </div>
                                 <div class="form-item read-item">
                                     <el-checkbox v-model="checked">
-
-                                    </el-checkbox>{{lang.login_read}}<a @click="toRead">{{lang.login_list}}</a>
+                                        {{lang.login_read}}<a @click="toService">{{lang.read_service}}</a>{{lang.read_and}}<a @click="toPrivacy">{{lang.read_privacy}}</a>
+                                    </el-checkbox>
                                 </div>
                                 <div class="read-item" v-if="errorText.length !== 0">
                                     <el-alert :title="errorText" type="error" show-icon :closable="false">

@@ -36,6 +36,7 @@ class CartValidate extends Validate
         'update' => ['position', 'product_id', 'config_options', 'qty'],
         'update_qty' => ['position', 'qty'],
         'delete' => ['position'],
+        'batch_delete' => ['positions'],
         'settle' => ['positions'],
     ];
 }

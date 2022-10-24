@@ -7,6 +7,7 @@ use app\common\model\ServerModel;
 use app\common\model\HostModel;
 use app\common\model\ProductModel;
 use app\common\model\CountryModel;
+use app\common\model\MenuModel;
 // use server\idcsmart_cloud\logic\ToolLogic;
 use addon\idcsmart_cloud\model\IdcsmartSecurityGroupHostLinkModel;
 use server\common_cloud\logic\CloudLogic;
@@ -45,11 +46,11 @@ class HostLinkModel extends Model{
      * @param   string param.sort - 升/降序
      * @param   string param.keywords - 关键字搜索
      * @param   int param.data_center_id - 数据中心搜索
-     * @param   string param.status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除,Failed=开通失败)
+     * @param   string param.status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除)
      * @return  array data.list - 列表数据
      * @return  int data.list[].id - 列表数据
      * @return  string data.list[].name - 产品标识
-     * @return  string data.list[].status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除,Failed=开通失败)
+     * @return  string data.list[].status - 产品状态(Unpaid=未付款,Pending=开通中,Active=已开通,Suspended=已暂停,Deleted=已删除)
      * @return  int data.list[].due_time - 到期时间
      * @return  string data.list[].country - 国家
      * @return  string data.list[].country_code - 国家代码
@@ -60,6 +61,7 @@ class HostLinkModel extends Model{
      * @return  string data.list[].image_group_name - 镜像分组名称
      * @return  string data.list[].power_status - 电源状态(on=开机,off=关机,operating=操作中,fault=故障)
      * @return  int data.list[].active_time - 开通时间
+     * @return  string data.list[].product_name - 商品名称
      */
     public function idcsmartCloudList($param){
         $result = [
@@ -85,6 +87,7 @@ class HostLinkModel extends Model{
 
         $where = [];
         $where[] = ['h.client_id', '=', $clientId];
+        $where[] = ['h.status', '<>', 'Cancelled'];
         if(isset($param['keywords']) && trim($param['keywords']) !== ''){
             $where[] = ['p.name|h.name|hl.ip', 'LIKE', '%'.$param['keywords'].'%'];
         }
@@ -92,7 +95,22 @@ class HostLinkModel extends Model{
             $where[] = ['hl.data_center_id', '=', $param['data_center_id']];
         }
         if(isset($param['status']) && !empty($param['status'])){
-            $where[] = ['h.status', '=', $param['status']];
+            if($param['status'] == 'Pending'){
+                $where[] = ['h.status', 'IN', ['Pending','Failed']];
+            }else if(in_array($param['status'], ['Unpaid','Active','Suspended','Deleted'])){
+                $where[] = ['h.status', '=', $param['status']];
+            }
+        }
+        if(isset($param['m']) && !empty($param['m'])){
+            $MenuModel = MenuModel::where('module', 'common_cloud')
+                                ->where('id', $param['m'])
+                                ->find();
+            if(!empty($MenuModel) && !empty($MenuModel['product_id'])){
+                $MenuModel['product_id'] = json_decode($MenuModel['product_id'], true);
+                if(!empty($MenuModel['product_id'])){
+                    $where[] = ['h.product_id', 'IN', $MenuModel['product_id'] ];
+                }
+            }
         }
 
         $count = $this
@@ -106,14 +124,18 @@ class HostLinkModel extends Model{
 
         $host = $this
             ->alias('hl')
-            ->field('h.id,h.name,h.status,h.active_time,h.due_time,c.name_zh country,c.iso country_code,dc.city,p.name package_name,hl.ip,hl.power_status,i.name image_name,ig.name image_group_name')
+            ->field('h.id,h.name,h.status,h.active_time,h.due_time,pro.name product_name,c.name_zh country,c.iso country_code,dc.city,p.name package_name,hl.ip,hl.power_status,i.name image_name,ig.name image_group_name')
             ->join('host h', 'hl.host_id=h.id')
+            ->leftJoin('product pro', 'h.product_id=pro.id')
             ->leftJoin('module_common_cloud_data_center dc', 'hl.data_center_id=dc.id')
             ->leftJoin('country c', 'dc.country_id=c.id')
             ->leftJoin('module_common_cloud_package p', 'hl.package_id=p.id')
             ->leftJoin('module_common_cloud_image i', 'hl.image_id=i.id')
             ->leftJoin('module_common_cloud_image_group ig', 'i.image_group_id=ig.id')
             ->where($where)
+            ->withAttr('status', function($val){
+                return $val == 'Failed' ? 'Pending' : $val;
+            })
             ->limit($param['limit'])
             ->page($param['page'])
             ->order($param['orderby'], $param['sort'])
@@ -262,20 +284,20 @@ class HostLinkModel extends Model{
                 '90'=>'quarter_fee',
                 '180'=>'half_year_fee',
                 '365'=>'year_fee',
-                '720'=>'two_year',
-                '1085'=>'three_year',
+                '730'=>'two_year',
+                '1095'=>'three_year',
             ];
 
             $now = $duration[$days] ?? '';
         }
         $desc = [
-            'onetime_fee'=>'一次性',
-            'month_fee'=>'月',
-            'quarter_fee'=>'季度',
-            'half_year_fee'=>'半年',
-            'year_fee'=>'年',
-            'two_year'=>'两年',
-            'three_year'=>'三年',
+            'onetime_fee'=>lang_plugins('onetime_fee'),
+            'month_fee'=>lang_plugins('month_fee'),
+            'quarter_fee'=>lang_plugins('quarter_fee'),
+            'half_year_fee'=>lang_plugins('half_year_fee'),
+            'year_fee'=>lang_plugins('year_fee'),
+            'two_year'=>lang_plugins('two_year'),
+            'three_year'=>lang_plugins('three_year'),
         ];
         $num = [
             'onetime_fee'=>1,
@@ -286,7 +308,7 @@ class HostLinkModel extends Model{
             'two_year'=>24,
             'three_year'=>36,
         ];
-        return ['duration'=>$now, 'desc'=>$desc[$now] ?? '', 'num'=>$num[ $now ]];
+        return ['duration'=>$now, 'desc'=>$desc[$now] ?? '', 'num'=>$num[ $now ] ?? 1];
     }
 
 

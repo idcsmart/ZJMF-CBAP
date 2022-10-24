@@ -84,22 +84,26 @@ class MenuController extends AdminBaseController
      * @method  GET
      * @return array menu - 菜单
      * @return int menu[].id - 菜单ID
-     * @return string menu[].type - 菜单类型system系统plugin插件custom自定义
+     * @return string menu[].type - 菜单类型system系统plugin插件custom自定义module模块
      * @return string menu[].name - 名称
      * @return object menu[].language - 语言
      * @return string menu[].url - 网址
      * @return string menu[].icon - 图标
      * @return int menu[].nav_id - 导航ID
      * @return int menu[].parent_id - 父ID
+     * @return string menu[].module - 模块类型
+     * @return array menu[].product_id - 包含商品
      * @return array menu[].child - 子菜单
      * @return int menu[].child[].id - 菜单ID
-     * @return string menu[].child[].type - 菜单类型system系统plugin插件custom自定义
+     * @return string menu[].child[].type - 菜单类型system系统plugin插件custom自定义module模块
      * @return string menu[].child[].name - 名称
      * @return object menu[].child[].language - 语言
      * @return string menu[].child[].url - 网址
      * @return string menu[].child[].icon - 图标
      * @return int menu[].child[].nav_id - 导航ID
      * @return int menu[].child[].parent_id - 父ID
+     * @return string menu[].child[].module - 模块类型
+     * @return array menu[].child[].product_id - 包含商品
      * @return array language - 语言
      * @return string language[].display_name - 语言名称
      * @return string language[].display_flag - 国家代码
@@ -115,6 +119,9 @@ class MenuController extends AdminBaseController
      * @return int plugin_nav[].nav[].id - 导航ID
      * @return string plugin_nav[].nav[].name - 名称
      * @return string plugin_nav[].nav[].url - 网址
+     * @return array module - 模块
+     * @return string module[].name - 模块名称
+     * @return string module[].display_name - 模块显示名称
      */
     public function getHomeMenu()
     {
@@ -182,29 +189,34 @@ class MenuController extends AdminBaseController
      * @url /admin/v1/menu/home
      * @method  PUT
      * @param array menu - 菜单 required
-     * @param string menu[].type - 菜单类型system系统plugin插件custom自定义 required
+     * @param string menu[].type - 菜单类型system系统plugin插件custom自定义module模块 required
      * @param string menu[].name - 名称 required
      * @param object menu[].language - 语言 required
      * @param string menu[].url - 网址 菜单类型为自定义时需要传递
      * @param string menu[].icon - 图标
-     * @param int menu[].nav_id - 导航ID 菜单类型不为自定义时需要传递
+     * @param int menu[].nav_id - 导航ID 菜单类型为系统或插件时需要传递
+     * @param string menu[].module - 模块类型 菜单类型为模块时需要传递
+     * @param array menu[].product_id - 商品ID 菜单类型为模块时需要传递
      * @param array menu[].child - 子菜单 required
-     * @param string menu[].child[].type - 菜单类型system系统plugin插件custom自定义 required
+     * @param string menu[].child[].type - 菜单类型system系统plugin插件custom自定义module模块 required
      * @param string menu[].child[].name - 名称 required
      * @param object menu[].child[].language - 语言 required
      * @param string menu[].child[].url - 网址 菜单类型为自定义时需要传递
      * @param string menu[].child[].icon - 图标
-     * @param int menu[].child[].nav_id - 导航ID 菜单类型不为自定义时需要传递
+     * @param int menu[].child[].nav_id - 导航ID 菜单类型为系统或插件时需要传递
+     * @param string menu[].child[].module - 模块类型 菜单类型为模块时需要传递
+     * @param array menu[].child[].product_id - 商品ID 菜单类型为模块时需要传递
      */
     public function saveHomeMenu()
     {
         // 接收参数
         $param = $this->request->param();
-        
+        $param['menu2'] = $param['menu'] ?? [];
         // 参数验证
-        if (!$this->validate->scene('save')->check($param)){
+        if (!$this->validate->scene('save_home')->check($param)){
             return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
         }
+        unset($param['menu2']);
         
         // 实例化模型类
         $MenuModel = new MenuModel();

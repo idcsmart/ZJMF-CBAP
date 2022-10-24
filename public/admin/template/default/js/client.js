@@ -70,6 +70,7 @@
             orderby: 'id',
             sort: 'desc'
           },
+          curLevelId: '',
           total: 0,
           pageSizeOptions: [20, 50, 100],
           formData: { // 添加用户
@@ -97,7 +98,26 @@
           curStatus: 1,
           statusTip: '',
           maxHeight: '',
-          authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth')))
+          authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth'))),
+          /* 用户等级 */
+          levelList: [],
+          hasPlugin: false
+        }
+      },
+      computed: {
+        filterColor () {
+          return (level) => {
+            if (level) {
+              return this.levelList.filter(item=> item.id * 1 === level[0]?.value * 1)[0]?.background_color
+            }
+          }
+        },
+        filterName () {
+          return (level) => {
+            if (level) {
+              return this.levelList.filter(item=> item.id * 1 === level[0]?.value * 1)[0]?.name || ''
+            }
+          }
         }
       },
       mounted () {
@@ -119,10 +139,38 @@
         if (!this.authList.includes('ClientController::clientList')) {
           return this.$message.error(lang.tip17 + ',' + lang.tip18)
         }
+        const href = location.href.split('?')[1]
+        if (href) {
+          this.curLevelId = location.href.split('?')[1]?.split('=')[1] * 1
+        }
         this.getClientList()
         this.getCountry()
+        this.getLevel()
+        this.getPlugin()
       },
       methods: {
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartClientLevel')[0]
+            if (cur.status === 1) {
+              this.hasPlugin = true
+            }
+          } catch (error) {
+
+          }
+        },
+        rowClick (e) {
+          location.href = `client_detail.html?client_id=${e.row.id}`
+        },
+        /* 用户等级 */
+        async getLevel () {
+          try {
+            const res = await getAllLevel()
+            this.levelList = res.data.data.list
+          } catch (error) {
+          }
+        },
         // 输入邮箱的时候取消手机号验证
         cancelPhone (val) {
           if (val) {
@@ -138,7 +186,7 @@
         async getClientList () {
           try {
             this.loading = true
-            const res = await getClientList(this.params)
+            const res = await getClientList(this.params, this.curLevelId)
             this.loading = false
             this.data = res.data.data.list
             this.total = res.data.data.count

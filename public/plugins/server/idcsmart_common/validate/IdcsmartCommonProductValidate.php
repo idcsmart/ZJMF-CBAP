@@ -20,7 +20,7 @@ class IdcsmartCommonProductValidate extends Validate
         'configoption' => 'array|checkConfigoption:thinkphp',
         'cycle' => 'require|checkCycle:thinkphp',
         'product_id' => 'integer',
-        'qty' => 'integer|checkQty:thinkphp'
+        'qty' => 'integer|checkQty:thinkphp',
     ];
 
     protected $message  =   [

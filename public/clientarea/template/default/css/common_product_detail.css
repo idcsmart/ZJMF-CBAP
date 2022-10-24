@@ -114,6 +114,10 @@
   display: flex;
   align-items: center;
 }
+.renew-dialog .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
 .renew-dialog .dialog-main {
   margin-top: 0.6rem;
 }

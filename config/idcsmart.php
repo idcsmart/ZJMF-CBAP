@@ -70,6 +70,7 @@ return [
     'order_status' => [
         'Paid',     // 已付款
         'Unpaid',   // 未付款
+        'Cancelled',// 已取消
     ],
     // 产品状态
     'host_status' => [
@@ -79,6 +80,7 @@ return [
         'Suspended',// 已暂停
         'Deleted',  // 已删除
         'Failed',   // 开通失败
+        'Cancelled',// 已取消
     ],
     // 任务状态
     'task_status' => [
@@ -122,7 +124,4 @@ return [
 
 	],
 
-    // 实名认证图片保存路径
-    'certification'             => IDCSMART_ROOT . 'public/upload/common/certification/',
-    'certification_url'         => '/upload/common/certification/',
 ];

@@ -11,7 +11,7 @@ class UserCustom extends Plugin
         'name'        => 'UserCustom',//Demo插件英文名，改成你的插件英文就行了
         'title'       => '线下支付',
         'description' => '线下支付',
-        'author'      => 'idcsmart', // 必填 插件作者
+        'author'      => '智简魔方', // 必填 插件作者
         'version'     => '1.0',  // 必填 插件版本
         'help_url'    => '', // 选填 申请链接
         'author_url'  => '', // 选填 作者链接

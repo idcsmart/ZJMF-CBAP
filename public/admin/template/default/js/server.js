@@ -125,7 +125,7 @@
         calcName () {
           return (module) => {
             const temp = this.typeList.filter(item => item.name === module)
-            return temp[0].display_name
+            return temp[0]?.display_name
           }
         }
       },
@@ -161,8 +161,8 @@
           } catch (error) {
             this.data.forEach((item, index) => {
               if (item.id === id) {
-                item.linkStatus = error.data.status
-                item.fail_reason = error.data.msg
+                item.linkStatus = error.data?.status
+                item.fail_reason = error.data?.msg
               }
             })
           }

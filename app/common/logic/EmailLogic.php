@@ -186,7 +186,22 @@ class EmailLogic
 			'attachments' => $index_mail_template['attachments'],
 			'email_name' => $index_setting['email_name'],
 			'template_param' => $template_param,
-		];	
+		];
+
+		// 发送前hook
+		$send = true;
+		$result_hook = hook('before_email_send', ['param' => $param, 'data' => $data]); // name:动作名称send:true发送false取消发送data:发送数据
+		$result_hook = array_values(array_filter($result_hook ?? []));
+		foreach ($result_hook as $key => $value) {
+			if(isset($value['send']) && $value['send']=='false'){
+				$send = false;
+				break;
+			}
+		}
+		if($send===false){
+			return ['status'=>400, 'msg'=>lang('email_cancel_send')];//邮件取消发送
+		}
+
 		$send_result = $this->sendBase($data);	
 		$log = [       
             'subject' => $send_result['data']['subject'] ?? '',

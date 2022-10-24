@@ -2,27 +2,55 @@
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <div class="common_config" v-cloak>
   <div class="t-card">
-    <p class="com-h-tit">{{lang.basic_config}}</p>
-    <div class="box">
-      <t-form :data="commonConfig" ref="commonConfig" @submit="submitConfig" :rules="dataRules" class="data-form">
-        <t-form-item :label="lang.buy_page_des" name="order_page_description" label-Align="top">
-          <t-textarea v-model="commonConfig.order_page_description" class="top-text" :placeholder="lang.com_tip5">
-          </t-textarea>
-        </t-form-item>
-        <p class="com-tit" v-if="payType !== 'free'">{{lang.cost_setting}}</p>
-        <!-- 一次性 -->
-        <t-form-item :label="lang.onetime" name="onetime" label-Align="top" v-if="payType === 'onetime'" 
-        :rules="commonConfig.onetime ? dataRules.onetime : [{ required: false}]">
-          <!-- <t-input v-model="commonConfig.onetime === '-1.00' ? '' : commonConfig.onetime" :placeholder="lang.input+lang.money" class="onetime"
-            :label="currency_prefix">
-          </t-input> -->
-          <t-input v-model="commonConfig.onetime" :placeholder="lang.input+lang.money" class="onetime"
-            :label="currency_prefix">
-          </t-input>
-        </t-form-item>
-        <!-- 周期 -->
-        <div class="cycle-box" v-if="payType === 'recurring_prepayment' || payType === 'recurring_postpaid' ">
-          <!-- <div class="item">
+    <t-tabs v-model="tabs" @change="changeTab">
+      <!-- 基础设置 -->
+      <t-tab-panel value="basic" :label="lang.basic_config">
+        <div class="box basic">
+          <t-form :data="commonConfig" ref="commonConfig" @submit="submitConfig" :rules="dataRules" class="data-form">
+            <t-form-item :label="lang.buy_page_des" name="order_page_description" label-Align="top">
+              <t-textarea v-model="commonConfig.order_page_description" class="top-text" :placeholder="lang.com_tip5">
+              </t-textarea>
+            </t-form-item>
+            <t-form-item>
+              <span>{{lang.pro_qty}}</span>
+              <t-switch :custom-value="[1,0]" v-model="commonConfig.allow_qty">
+              </t-switch>
+              <span>{{lang.com_tip1}}</span>
+            </t-form-item>
+            <t-form-item>
+              <span>{{lang.auto_support}}</span>
+              <t-switch :custom-value="[1,0]" v-model="commonConfig.auto_support">
+              </t-switch>
+              <span>{{lang.com_tip2}}</span>
+            </t-form-item>
+            <div class="f-btn">
+              <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
+              </t-button>
+            </div>
+          </t-form>
+        </div>
+      </t-tab-panel>
+      <!-- 费用设置 -->
+      <t-tab-panel value="cost" :label="lang.cost_setting">
+        <div class="box">
+          <!-- 一次性 -->
+          <template v-if="payType === 'onetime'">
+            <t-form :data="commonConfig" ref="commonConfig" @submit="submitConfig" :rules="dataRules" class="data-form">
+              <t-form-item :label="lang.onetime" name="onetime" label-Align="top"
+                :rules="commonConfig.onetime * 1 ? dataRules.onetime : [{ required: false}]">
+                <t-input v-model="commonConfig.onetime" :placeholder="lang.input+lang.money" class="onetime"
+                  :label="currency_prefix">
+                </t-input>
+              </t-form-item>
+              <div class="f-btn">
+                <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
+                </t-button>
+              </div>
+            </t-form>
+          </template>
+          <!-- 周期 -->
+          <div class="cycle-box" v-if="payType === 'recurring_prepayment' || payType === 'recurring_postpaid' ">
+            <!-- <div class="item">
             <div class="com-top">
               <p class="tit">{{lang.default + lang.cycle}}</p>
               <div class="add-btn" @click='changeDefault'>{{
@@ -44,35 +72,37 @@
               </template>
             </t-table>
           </div> -->
-          <div class="item">
-            <div class="com-top">
-              <p class="tit">{{lang.custom_cycle}}</p>
-              <div class="add-btn" @click='addCycle'>{{lang.add_cycle}}</div>
+            <div class="item">
+              <div class="com-top">
+                <p class="tit">{{lang.custom_cycle}}</p>
+                <div class="add-btn" @click='addCycle'>{{lang.add_cycle}}</div>
+              </div>
+              <t-table row-key="id" :data="cycleData" size="medium" :columns="cycleColumns" :hover="hover"
+                :loading="dataLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
+                :hide-sort-tips="true" class="cycle-table" bordered>
+                <template slot="sortIcon">
+                  <t-icon name="caret-down-small"></t-icon>
+                </template>
+                <template #cycle_time="{row}">
+                  {{row.cycle_time+lang[row.cycle_unit]}}
+                </template>
+                <template #amount="{row}">
+                  {{currency_prefix + row.amount}}
+                </template>
+                <template #op="{row}">
+                  <div class="com-opt">
+                    <t-icon name="edit-1" @click="editCycle(row)"></t-icon>
+                    <t-icon name="delete" @click="comDel('cycle',row)"></t-icon>
+                  </div>
+                </template>
+              </t-table>
             </div>
-            <t-table row-key="id" :data="cycleData" size="medium" :columns="cycleColumns" :hover="hover"
-              :loading="dataLoading" :table-layout="tableLayout ? 'auto' : 'fixed'" display-type="fixed-width"
-              :hide-sort-tips="true" class="cycle-table" bordered>
-              <template slot="sortIcon">
-                <t-icon name="caret-down-small"></t-icon>
-              </template>
-              <template #cycle_time="{row}">
-                {{row.cycle_time+lang[row.cycle_unit]}}
-              </template>
-              <template #amount="{row}">
-                {{currency_prefix + row.amount}}
-              </template>
-              <template #op="{row}">
-                <div class="com-opt">
-                  <t-icon name="edit-1" @click="editCycle(row)"></t-icon>
-                  <t-icon name="delete" @click="comDel('cycle',row)"></t-icon>
-                </div>
-              </template>
-            </t-table>
           </div>
         </div>
-        <!-- 配置选项 -->
-        <div class="config-option">
-          <p class="com-tit">{{lang.config_option}}</p>
+      </t-tab-panel>
+      <!-- 配置选项 -->
+      <t-tab-panel value="config" :label="lang.config_option">
+        <div class="config-option box">
           <div class="com-top">
             <p class="com-des">{{lang.config_tip}}</p>
             <div class="add-btn" @click="addConfig">{{lang.add_config}}</div>
@@ -98,10 +128,10 @@
             </template>
           </t-table>
         </div>
-
-        <!-- 自定义字段 -->
-        <!-- <div class="custom-fields">
-          <p class="com-tit">{{lang.custom_fields}}</p>
+      </t-tab-panel>
+      <!-- 自定义字段 -->
+      <!-- <t-tab-panel value="custom" :label="lang.custom_fields">
+        <div class="custom-fields box">
           <div class="com-top">
             <p class="com-des">{{lang.custom_tip}}</p>
             <div class="add-btn" @click="addCustom">{{lang.add_config}}</div>
@@ -122,30 +152,9 @@
               </div>
             </template>
           </t-table>
-        </div> -->
-
-        <!-- 其他设置 -->
-        <div class="other-config">
-          <p class="com-tit">{{lang.other_setting}}</p>
-          <t-form-item>
-            <span>{{lang.pro_qty}}</span>
-            <t-switch :custom-value="[1,0]" v-model="commonConfig.allow_qty">
-            </t-switch>
-            <span>{{lang.com_tip1}}</span>
-          </t-form-item>
-          <t-form-item>
-            <span>{{lang.auto_support}}</span>
-            <t-switch :custom-value="[1,0]" v-model="commonConfig.auto_support">
-            </t-switch>
-            <span>{{lang.com_tip2}}</span>
-          </t-form-item>
         </div>
-        <div class="f-btn">
-          <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
-          </t-button>
-        </div>
-      </t-form>
-    </div>
+      </t-tab-panel> -->
+    </t-tabs>
   </div>
   <!-- 新增/修改 周期 -->
   <t-dialog :header="comTitle" :visible.sync="cycleModel" :footer="false" width="600" @close="closeData"
@@ -166,15 +175,13 @@
           </t-select>
         </t-form-item>
       </t-form-item>
-      <t-form-item :label="lang.money" name="amount" :rules="cycleForm.amount ? cycleRules.amount : [{
-        required: false
-      }]">
+      <t-form-item :label="lang.money" name="amount" :rules="cycleRules.amount">
         <t-input v-model="cycleForm.amount" :placeholder="lang.input+lang.money"></t-input>
       </t-form-item>
       <div class="com-f-btn">
         <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
         </t-button>
-        <t-button theme="default" variant="base" @click="closeData">{{lang.cancel}}</t-button>
+        <t-button theme="default" variant="base" @click="cycleModel=false">{{lang.cancel}}</t-button>
       </div>
     </t-form>
   </t-dialog>
@@ -293,9 +300,9 @@
       </t-row>
     </t-form>
     <!-- 配置子选项 -->
-    <template v-if="configDetail.id ">
+    <template v-if="configDetail.id  && payType !== 'free'">
       <p class="com-tit"><span>{{ lang.option_value }}</span></p>
-      <div class="com-top">
+      <div class="com-top" v-if="configDetail.option_type !== 'yes_no'">
         <p class="com-des"></p>
         <div class="add-btn" @click="addConfigSub" style="margin-bottom: 10px;">{{lang.add}}
         </div>
@@ -304,10 +311,10 @@
       <t-table row-key="id" :data="configSub" size="medium" :columns="subColumns" v-if="configSub.length >0"
         :hover="hover" table-layout="auto" :hide-sort-tips="true" bordered class="config-sub">
         <template #title>
-          {{configDetail.option_name + '(' + configDetail.unit + ')'}}
+          {{backupConfig.option_name}}<span v-if="backupConfig.unit">({{backupConfig.unit}})</span>
         </template>
         <template #option_name="{row}">
-          <span v-if="configDetail.option_type === 'quantity' || configDetail.option_type === 'quantity_range'">
+          <span v-if="backupConfig.option_type === 'quantity' || backupConfig.option_type === 'quantity_range'">
             {{row.qty_min}}-{{row.qty_max}}
           </span>
           <span v-else>{{row.option_name}}</span>
@@ -331,17 +338,18 @@
             <template v-if="payType === 'onetime'">
               <span class="config-body">{{row.onetime === '-1.00' ? '' : row.onetime}}</span>
             </template>
-           <template v-else>
-            <span v-for="item in row.custom_cycle" :key="item.id" class="config-body">
-              {{item.amount === '-1.00' ? '' : item.amount}}
-            </span>
-           </template>
+            <template v-else>
+              <span v-for="item in row.custom_cycle" :key="item.id" class="config-body">
+                {{item.amount === '-1.00' ? '' : item.amount}}
+              </span>
+            </template>
           </div>
         </template>
         <template #op="{row}">
           <div class="com-opt">
             <t-icon name="edit-1" @click="editSub(row)"></t-icon>
-            <t-icon name="delete" @click="comDel('sub',row)"></t-icon>
+            <t-icon name="delete" @click="comDel('sub',row)" v-if="configDetail.option_type !== 'yes_no'">
+            </t-icon>
           </div>
         </template>
       </t-table>
@@ -352,8 +360,8 @@
   </t-dialog>
 
   <!-- 新增/修改 子配置弹窗 -->
-  <t-dialog :header="subTit" :visible.sync="configSubModel" :footer="false" width="600" @close="closeData"
-    :close-on-overlay-click="false" class="configSubModel" placement="center">
+  <t-dialog :header="subTit" :visible.sync="configSubModel" :footer="false" width="600" @close="closeSubData"
+    :close-on-overlay-click="false" class="configSubModel">
     <t-form :data="configSubForm" ref="configSubForm" @submit="submitConfigSub" :rules="subRules" v-if="configSubModel">
       <!-- 国家 area时才有 -->
       <t-form-item :label="lang.country" name="country" v-if="configDetail.option_type === 'area'">
@@ -392,8 +400,7 @@
         <span class="tip">{{lang.com_tip3}}</span>
       </t-form-item>
       <!-- 周期价格 -->
-      <t-form-item :label="lang.cost" v-if="payType === 'onetime'" name="onetime"
-      :rules="configSubForm.onetime ? 
+      <t-form-item :label="lang.cost" v-if="payType === 'onetime'" name="onetime" :rules="configSubForm.onetime ? 
       [
       { required: true, message: lang.input + lang.money, type: 'error' },
       { pattern: /^\d+(\.\d{0,2})?$/, message: lang.verify5, type: 'warning' },
@@ -404,7 +411,17 @@
         <t-input v-model="configSubForm.onetime" :placeholder="lang.input+lang.cost"></t-input>
       </t-form-item>
       <template v-else-if="payType === 'recurring_prepayment' || payType === 'recurring_postpaid'">
-        <p class="free-tip">{{lang.com_tip4}}</p>
+        <p class="free-tip">
+          {{lang.charging}}
+          <template
+            v-if="configDetail.option_type === 'quantity' || configDetail.option_type === 'quantity_range' ">({{lang.com_tip4}})</template>
+          <t-button size="small"
+            :disabled="configSubForm.custom_cycle[0]?.amount === '' || configSubForm.custom_cycle[0]?.amount *1 < 0"
+            @click="changeMonth" style="margin-left: 10px;">{{lang.auto_fill_price}}</t-button>
+          <t-tooltip :content="lang.cloud_tip4" :show-arrow="false" theme="light" placement="top-right">
+            <t-icon name="help-circle"></t-icon>
+          </t-tooltip>
+        </p>
         <t-form-item :label="item.name" :name="`custom_cycle[${index}].amount`"
           v-for="(item,index) in configSubForm.custom_cycle" :key="item.id">
           <t-input v-model="item.amount" :placeholder="lang.input+lang.money" @blur="changeMonth($event,item)">
@@ -414,7 +431,7 @@
       <div class="com-f-btn">
         <t-button theme="primary" type="submit" :loading="submitLoading">{{lang.hold}}
         </t-button>
-        <t-button theme="default" variant="base" @click="configSubModel=false">{{lang.cancel}}</t-button>
+        <t-button theme="default" variant="base" @click="closeSubData">{{lang.cancel}}</t-button>
       </div>
     </t-form>
   </t-dialog>

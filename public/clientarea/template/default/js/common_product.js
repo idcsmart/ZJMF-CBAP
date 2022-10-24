@@ -28,12 +28,12 @@
       },
       computed: {
         calStr () {
-          const temp = this.basicInfo.order_page_description?.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&/g, '&').replace(/"/g, '"').replace(/'/g, "'");
+          const temp = this.basicInfo.order_page_description?.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&/g, '&').replace(/"/g, '"').replace(/'/g, "'");
           return temp
         },
         calcDes () {
           return (val) => {
-            const temp = val.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&/g, '&').replace(/"/g, '"').replace(/'/g, "'");
+            const temp = val.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&/g, '&').replace(/"/g, '"').replace(/'/g, "'");
             return temp
           }
         },
@@ -41,10 +41,10 @@
           return (item, type) => {
             if (type) {
               const arr = item.subs.filter(item => item.option_name === lang.com_config.yes)
-              return arr[0].id
+              return arr[0]?.id
             } else {
               const arr = item.subs.filter(item => item.option_name === lang.com_config.no)
-              return arr[0].id
+              return arr[0]?.id
             }
           }
         },

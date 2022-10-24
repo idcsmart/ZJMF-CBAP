@@ -62,7 +62,7 @@
           <t-col :xs="12" :xl="6">
             <p class="com-tit"><span>{{lang.financial_info}}</span></p>
             <!-- 续费 -->
-            <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="curStatus === 'Active' || curStatus === 'Suspended'">{{lang.renew}}</t-button>
+            <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="(curStatus === 'Active' || curStatus === 'Suspended') && hasPlugin">{{lang.renew}}</t-button>
             <div class="item">
               <t-form-item :label="lang.buy_amount" name="first_payment_amount">
                 <t-input v-model="formData.first_payment_amount" :placeholder="lang.input+lang.buy_amount">

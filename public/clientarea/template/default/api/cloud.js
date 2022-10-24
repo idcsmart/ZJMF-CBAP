@@ -192,3 +192,16 @@ function ipList(params) {
 function promoCode(params) {
     return Axios.get(`/promo_code/host/${params.id}/promo_code`, { params })
 }
+
+// 统计图表
+// 获取图表数据
+function chartList(params) {
+    return Axios.get(`/common_cloud/${params.id}/chart`, { params })
+}
+
+// 获取网络流量
+function getFlow(params){
+    return Axios.get(`/common_cloud/${params.id}/flow`, {params})
+}
+
+// 获取套餐所有周期价格

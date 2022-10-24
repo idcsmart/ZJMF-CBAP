@@ -38,7 +38,7 @@ class OrderController extends AdminBaseController
      * @return string list[].type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return int list[].create_time - 创建时间 
      * @return string list[].amount - 金额 
-     * @return string list[].status - 状态Unpaid未付款Paid已付款 
+     * @return string list[].status - 状态Unpaid未付款Paid已付款Cancelled已取消  
      * @return string list[].gateway - 支付方式 
      * @return float list[].credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
      * @return int list[].client_id - 用户ID
@@ -88,7 +88,7 @@ class OrderController extends AdminBaseController
      * @return string order.type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单 
      * @return string order.amount - 金额 
      * @return int order.create_time - 创建时间 
-     * @return string order.status - 状态Unpaid未付款Paid已付款
+     * @return string order.status - 状态Unpaid未付款Paid已付款Cancelled已取消 
      * @return string order.gateway - 支付方式 
      * @return float order.credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
      * @return array order.items - 订单子项 
@@ -100,6 +100,7 @@ class OrderController extends AdminBaseController
      * @return string order.items[].host_name - 产品标识 
      * @return string order.items[].billing_cycle - 计费周期 
      * @return string order.items[].host_status - 产品状态Unpaid未付款Pending开通中Active使用中Suspended暂停Deleted删除Failed开通失败
+     * @return int order.items[].edit - 是否可编辑1是0否
      */
 	public function index()
     {
@@ -231,6 +232,38 @@ class OrderController extends AdminBaseController
 
         return json($result);
 	}
+
+
+    /**
+     * 时间 2022-05-17
+     * @title 编辑人工调整的订单子项
+     * @desc 编辑人工调整的订单子项
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/item/:id
+     * @method  PUT
+     * @param int id - 订单子项ID required
+     * @param float amount - 金额 required
+     * @param string description - 描述 required
+     */
+    public function updateOrderItem()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('amount')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 修改订单金额
+        $result = $OrderModel->updateOrderItem($param);
+
+        return json($result);
+    }
 
     /**
      * 时间 2022-05-17

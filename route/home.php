@@ -5,6 +5,7 @@ Route::pattern([
     'page' => '\d+',
     'limit' => '\d+|max:50',
     'sort'   =>  'in:asc,desc',
+    'position'   => '\d+',
 ]);
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
@@ -29,12 +30,15 @@ Route::group('console/v1',function (){
     Route::get('product/group/first', 'home/product/productGroupFirstList'); // 获取商品一级分组
     Route::get('product/group/second', 'home/product/productGroupSecondList'); // 获取商品二级分组
     Route::get('product', 'home/product/productList'); // 商品列表
+    Route::get('product/:id', 'home/product/index'); // 商品详情
     Route::get('product/:id/config_option', 'home/product/moduleClientConfigOption'); // 商品配置页面
     Route::post('product/:id/config_option', 'home/product/moduleCalculatePrice'); // 修改配置计算价格
+    Route::get('product/:id/stock', 'home/product/productStock'); // 商品列表
     Route::get('cart', 'home/cart/index'); // 获取购物车
     Route::post('cart', 'home/cart/create'); // 加入购物车
     Route::put('cart/:position', 'home/cart/update'); // 编辑购物车商品
     Route::delete('cart/:position', 'home/cart/delete'); // 删除购物车商品
+    Route::delete('cart/batch', 'home/cart/batchDelete'); // 批量删除购物车商品
     Route::put('cart/:position/qty', 'home/cart/updateQty'); // 获取购物车
     Route::delete('cart', 'home/cart/clear'); // 清空购物车
 })
@@ -49,6 +53,10 @@ Route::group('console/v1',function (){
 # 登录后访问
 Route::group('console/v1',function (){
 	Route::post('logout', 'home/account/logout'); // 注销
+    // 首页
+    Route::get('index', 'home/index/index'); // 会员中心首页
+    Route::get('index/host', 'home/index/hostList'); // 会员中心首页产品列表
+
 	// 账户管理
 	Route::get('account', 'home/account/index'); // 账户详情
 	Route::put('account', 'home/account/update'); // 账户编辑
@@ -62,8 +70,9 @@ Route::group('console/v1',function (){
 
 	// 产品管理
 	Route::get('host', 'home/host/hostList'); // 产品列表
+    Route::get('menu/:id/host', 'home/host/menuHostList'); // 自定义导航产品列表
     Route::get('host/:id', 'home/host/index'); // 产品详情
-    Route::get('host/:id/module', 'home/host/clientArea'); // 产品内页模块
+    Route::get('host/:id/view', 'home/host/clientArea'); // 产品内页模块
     Route::get('host/:id/upgrade/config_option', 'home/host/changeConfigOption'); // 产品升降级配置
     Route::post('host/:id/upgrade/config_option', 'home/host/changeConfigOptionCalculatePrice'); // 产品升降级配置计算价格
 	Route::rule('module/:module/:controller/:method', 'home/module/customFunction', 'GET|POST'); // 模块自定义方法
@@ -72,6 +81,7 @@ Route::group('console/v1',function (){
 	// 订单管理
 	Route::get('order', 'home/order/orderList'); // 订单列表
 	Route::get('order/:id', 'home/order/index'); // 订单详情
+    Route::delete('order/:id', 'home/order/delete'); // 删除订单
 
 	// 消费管理
 	Route::get('transaction', 'home/transaction/transactionList'); // 消费记录
@@ -97,16 +107,6 @@ Route::group('console/v1',function (){
 
     // 公共接口
     Route::get('global_search', 'home/common/globalSearch'); # 全局搜索
-
-    // 实名认证
-    Route::get('certification/info', 'home/certification/certificationInfo'); # 实名认证基础信息
-    Route::get('certification/plugin', 'home/certification/certificationPlugin'); # 实名认证接口
-    Route::get('certification/custom_fields', 'home/certification/certificationCustomfields'); # 获取实名认证自定义字段
-    Route::post('certification/person', 'home/certification/certificationPerson'); # 个人认证
-    Route::post('certification/company', 'home/certification/certificationCompany'); # 企业认证
-    Route::post('certification/convert', 'home/certification/certificationConvert'); # 个人转企业认证
-    Route::get('certification/auth', 'home/certification/certificationAuth'); # 实名认证验证页面
-    Route::get('certification/status', 'home/certification/certificationStatus'); # 实名认证验证页面
 
 })->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,

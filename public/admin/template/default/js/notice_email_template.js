@@ -98,6 +98,7 @@
             timer = null
           }, 300)
         }
+        document.title = lang.email_notice + '-' + lang.template_manage + '-' + localStorage.getItem('back_website_name')
       },
       created () {
         this.getEmailList()

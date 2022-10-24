@@ -3,6 +3,7 @@ namespace server\common_cloud\controller\admin;
 
 use server\common_cloud\model\ConfigModel;
 use server\common_cloud\validate\ConfigValidate;
+use server\common_cloud\validate\BackupConfigValidate;
 
 /**
  * @title 通用云设置
@@ -59,6 +60,10 @@ class ConfigController{
      * @param  string disk_store_id - 储存ID
      * @param  int backup_enable - 是否启用备份(0=不启用,1=启用)
      * @param  int snap_enable - 是否启用快照(0=不启用,1=启用)
+     * @param  int backup_data[].num - 备份数量
+     * @param  float backup_data[].float - 备份价格
+     * @param  int snap_data[].num - 快照数量
+     * @param  float snap_data[].float - 快照价格
 	 */
 	public function save(){
 		$param = request()->param();
@@ -67,6 +72,26 @@ class ConfigController{
 		if (!$ConfigValidate->scene('save')->check($param)){
             return json(['status' => 400 , 'msg' => lang_plugins($ConfigValidate->getError())]);
         }
+        $BackupConfigValidate = new BackupConfigValidate();
+        if(isset($param['backup_data']) && is_array($param['backup_data'])){
+        	foreach($param['backup_data'] as $v){
+        		if (!$BackupConfigValidate->scene('save')->check($v)){
+		            return json(['status' => 400 , 'msg' => lang_plugins($BackupConfigValidate->getError())]);
+		        }
+        	}
+        }else{
+        	$param['backup_data'] = null;
+        }
+        if(isset($param['snap_data']) && is_array($param['snap_data'])){
+        	foreach($param['snap_data'] as $v){
+        		if (!$BackupConfigValidate->scene('save')->check($v)){
+		            return json(['status' => 400 , 'msg' => lang_plugins($BackupConfigValidate->getError())]);
+		        }
+        	}
+        }else{
+        	$param['snap_data'] = null;
+        }
+
 		$ConfigModel = new ConfigModel();
 
 		$result = $ConfigModel->saveConfig($param);

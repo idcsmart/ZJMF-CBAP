@@ -1,6 +1,7 @@
 <?php 
 namespace server\idcsmart_common\model;
 
+use app\common\model\HostModel;
 use server\idcsmart_common\logic\IdcsmartCommonLogic;
 use think\Model;
 
@@ -33,13 +34,7 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
      * @param   int id - 配置子项ID require
      * @return object configoption_sub - 子项信息
      * @return int configoption_sub.id -
-     * @return  float configoption_sub.onetime - 一次性,价格(值为-1时显示空)
-     * @return  float configoption_sub.monthly - 月，价格(值为-1时显示空)
-     * @return  float configoption_sub.quarterly - 季，价格(值为-1时显示空)
-     * @return  float configoption_sub.semaiannually - 半年，价格(值为-1时显示空)
-     * @return  float configoption_sub.annually - 一年，价格(值为-1时显示空)
-     * @return  float configoption_sub.biennially - 两年，价格(值为-1时显示空)
-     * @return  float configoption_sub.triennianlly - 三年，价格(值为-1时显示空)
+     * @return  float configoption_sub.onetime - 一次性,价格
      * @return array configoption_sub.custom_cycle - 自定义周期
      * @return array configoption_sub.custom_cycle.id - 自定义周期ID
      * @return array configoption_sub.custom_cycle.name - 名称
@@ -51,7 +46,7 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
 
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
         $configoptionSub = $IdcsmartCommonProductConfigoptionSubModel->alias('cs')
-            ->field('cs.id,cs.option_name,cs.option_param,cs.country,cs.qty_min,cs.qty_max,p.onetime,p.monthly,p.quarterly,p.semaiannually,p.annually,p.biennially,p.triennianlly')
+            ->field('cs.id,cs.option_name,cs.option_param,cs.country,cs.qty_min,cs.qty_max,p.onetime')
             ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=cs.id AND p.type=\'configoption\'')
             ->where('cs.product_configoption_id',$configoptionId)
             ->where('cs.id',$param['id'])
@@ -103,15 +98,9 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
      * @param   int qty_max - 最大值：类型为数量的时候quantity,quantity_range选择
      * @param   string country - 国家:类型为区域时选择
      * @param   string country - 国家:类型为区域时选择
-     * @param   float onetime - 一次性价格：不填时传-1,
-     * @param   float monthly - 月：不填时传-1,
-     * @param   float quarterly - 季：不填时传-1,
-     * @param   float semaiannually - 半年：不填时传-1,
-     * @param   float annually - 一年：不填时传-1,
-     * @param   float biennially - 两年：不填时传-1,
-     * @param   float triennianlly - 三年：不填时传-1,
+     * @param   float onetime - 一次性价格
      * @param   object custom_cycle - 自定义周期及价格格式：{"{自定义周期ID}":"{金额}"}
-     * @param   float custom_cycle.1 - 自定义周期及价格：留空传-1(所有价格都是如此，留空传-1)
+     * @param   float custom_cycle.1 - 自定义周期及价格
      */
     public function createConfigoptionSub($param)
     {
@@ -152,11 +141,15 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
                     'custom_cycle_id' => $customCycle['id'],
                     'rel_id' => $subId,
                     'type' => 'configoption',
-                    'amount' => $param['custom_cycle'][$customCycle['id']]??-1
+                    'amount' => $param['custom_cycle'][$customCycle['id']]??0
                 ]);
             }
 
             $IdcsmartCommonProductConfigoptionModel->updateConfigoptionQuantity($configoptionId);
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -182,15 +175,9 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
      * @param   int qty_max - 最大值：类型为数量的时候quantity,quantity_range选择
      * @param   string country - 国家:类型为区域时选择
      * @param   string country - 国家:类型为区域时选择
-     * @param   float onetime - 一次性价格：不填时传-1,
-     * @param   float monthly - 月：不填时传-1,
-     * @param   float quarterly - 季：不填时传-1,
-     * @param   float semaiannually - 半年：不填时传-1,
-     * @param   float annually - 一年：不填时传-1,
-     * @param   float biennially - 两年：不填时传-1,
-     * @param   float triennianlly - 三年：不填时传-1,
+     * @param   float onetime - 一次性价格
      * @param   object custom_cycle - 自定义周期及价格格式：{"{自定义周期ID}":"{金额}"}
-     * @param   float custom_cycle.1 - 自定义周期及价格：留空传-1(所有价格都是如此，留空传-1)
+     * @param   float custom_cycle.1 - 自定义周期及价格
      */
     public function updateConfigoptionSub($param)
     {
@@ -239,19 +226,23 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
                         'custom_cycle_id' => $customCycle['id'],
                         'rel_id' => $subId,
                         'type' => 'configoption',
-                        'amount' => $param['custom_cycle'][$customCycle['id']]??-1
+                        'amount' => $param['custom_cycle'][$customCycle['id']]??0
                     ]);
                 }else{
                     $IdcsmartCommonCustomCyclePricingModel->insert([
                         'custom_cycle_id' => $customCycle['id'],
                         'rel_id' => $subId,
                         'type' => 'configoption',
-                        'amount' => $param['custom_cycle'][$customCycle['id']]??-1
+                        'amount' => $param['custom_cycle'][$customCycle['id']]??0
                     ]);
                 }
             }
 
             $IdcsmartCommonProductConfigoptionModel->updateConfigoptionQuantity($configoptionId);
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -281,6 +272,12 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
 
             $subId = $param['id']??0;
 
+            $IdcsmartCommonHostConfigoptionModel = new IdcsmartCommonHostConfigoptionModel();
+            $hostCount = $IdcsmartCommonHostConfigoptionModel->where('configoption_sub_id',$subId)->count();
+            if ($hostCount>0){
+                throw new \Exception(lang_plugins('idcsmart_common_configoption_cannot_delete'));
+            }
+
             $configoptionSub = $this->find($subId);
             if (empty($configoptionSub)){
                 throw new \Exception(lang_plugins('idcsmart_common_configoption_sub_not_exist'));
@@ -296,7 +293,12 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
 
             # 获取自定义周期
             $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
-            $productId = $IdcsmartCommonProductConfigoptionModel->where('id',$configoptionId)->value('product_id');
+            $configoption = $IdcsmartCommonProductConfigoptionModel->where('id',$configoptionId)->find();
+            if ($configoption['option_type']=='yes_no'){
+                throw new \Exception(lang_plugins('idcsmart_common_configoption_yes_no_cannnot_delete'));
+            }
+            $productId = $configoption['product_id'];
+
             $IdcsmartCommonCustomCycleModel = new IdcsmartCommonCustomCycleModel();
             $customCycles = $IdcsmartCommonCustomCycleModel->where('product_id',$productId)
                 ->select()
@@ -312,6 +314,11 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
             }
 
             $IdcsmartCommonProductConfigoptionModel->updateConfigoptionQuantity($configoptionId);
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
+
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -322,4 +329,55 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
         return ['status'=>200,'msg'=>lang_plugins('success_message')];
     }
 
+    # 默认插入是否配置子项
+    public function insertYesNo($id)
+    {
+        $yesId = $this->insertGetId([
+            'product_configoption_id' => $id,
+            'option_name' => '是',
+            'option_param' => '',
+            'qty_min' => 0,
+            'qty_max' => 0,
+            'order' => 0,
+            'hidden' => 0,
+            'country' => ''
+        ]);
+
+        $noId = $this->insertGetId([
+            'product_configoption_id' => $id,
+            'option_name' => '否',
+            'option_param' => '',
+            'qty_min' => 0,
+            'qty_max' => 0,
+            'order' => 0,
+            'hidden' => 0,
+            'country' => ''
+        ]);
+
+        # 获取自定义周期
+        $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+        $productId = $IdcsmartCommonProductConfigoptionModel->where('id',$id)->value('product_id');
+        $IdcsmartCommonCustomCycleModel = new IdcsmartCommonCustomCycleModel();
+        $customCycles = $IdcsmartCommonCustomCycleModel->where('product_id',$productId)
+            ->select()
+            ->toArray();
+        $IdcsmartCommonCustomCyclePricingModel = new IdcsmartCommonCustomCyclePricingModel();
+        foreach ($customCycles as $customCycle){
+            # 插入自定义周期价格
+            $IdcsmartCommonCustomCyclePricingModel->insert([
+                'custom_cycle_id' => $customCycle['id'],
+                'rel_id' => $yesId,
+                'type' => 'configoption',
+                'amount' => 0
+            ]);
+            $IdcsmartCommonCustomCyclePricingModel->insert([
+                'custom_cycle_id' => $customCycle['id'],
+                'rel_id' => $noId,
+                'type' => 'configoption',
+                'amount' => 0
+            ]);
+        }
+
+        return true;
+    }
 }

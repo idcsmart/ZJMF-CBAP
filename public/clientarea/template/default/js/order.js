@@ -19,7 +19,7 @@
                 // 获取镜像数据
                 this.getImage()
                 // 获取sshkey数据
-                // this.getSshKey()
+                this.getSshKey()
                 this.autoPass()
             },
             data() {
@@ -111,6 +111,7 @@
                     snapPrice: 0,
                     // 商品总价格
                     totalPrice: 0,
+                    onePrice: 0,
                     timerId: null,
                     // 镜像价格
                     osPrice: 0,
@@ -130,7 +131,15 @@
                     // 优惠码叠加总金额
                     codePrice: 0,
                     // 套餐价格 以及周期
-                    pageData: {},
+                    pageData: {
+                        num: 1
+                    },
+                    priceLoading: false,
+                    // 客户折扣金额
+                    clDiscount: 0,
+                    // 套餐所有周期价格
+                    durationPrice: [],
+                    priceData: {}
                 }
             },
             filters: {
@@ -142,10 +151,15 @@
                     }
                 },
                 // 选择套餐价格显示
-                showFee(data) {
+                showFee(data, type) {
+                    console.log(type);
                     let fee = ""
                     // 有一次付清
-                    if (data.onetime_fee) {
+                    if (type == 'free') {
+                        fee = '免费/永久'
+                        return fee
+                    }
+                    if (data.onetime_fee && type == 'onetime_fee') {
                         if (data.onetime_fee == 0) {
                             fee = '免费/永久'
                         } else {
@@ -199,7 +213,30 @@
                     } else {
                         return price
                     }
+                },
+                // 计算周期价格
+                cyclePrice(price) {
+                    if (price == '免费') {
+                        return '免费'
+                    }
+                    console.log(this.pageData);
+                    if (this.pageData.durationName == '月') {
+                        return (price * 1).toFixed(2)
+                    }
+                    if (this.pageData.durationName == '季') {
+                        return (price * 3).toFixed(2)
+                    }
+                    if (this.pageData.durationName == '年') {
+                        return (price * 12).toFixed(2)
+                    }
+                    if (this.pageData.durationName == '两年') {
+                        return (price * 24).toFixed(2)
+                    }
+                    if (this.pageData.durationName == '三年') {
+                        return (price * 36).toFixed(2)
+                    }
                 }
+
             },
             watch: {
                 // 计算额外磁盘的价格
@@ -234,6 +271,11 @@
                     },
                 },
                 isSnapshot: {
+                    handler(newValue, oldValue) {
+                        this.getConfigPrice()
+                    },
+                },
+                isPassOrKey: {
                     handler(newValue, oldValue) {
                         this.getConfigPrice()
                     },
@@ -289,10 +331,18 @@
                                 }
                             })
                             this.centerData = data
-                            // 默认选取第一个数据中心
-                            this.orderData.centerId = this.centerData[0].id
-                            this.orderData.country = this.centerData[0].countryName
-                            this.orderData.city = this.centerData[0].cityName
+
+                            if (this.centerData.length == 0) {
+                                this.orderData.centerId = 0
+                            } else {
+                                // 默认选取第一个数据中心
+                                this.orderData.centerId = this.centerData[0].id
+                                this.orderData.country = this.centerData[0].countryName
+                                this.orderData.city = this.centerData[0].cityName
+                            }
+
+
+
                             // 拉取第一个数据中心的套餐
                             this.getOrderPackge()
                         }
@@ -317,18 +367,8 @@
                             this.packageData = res.data.data.package
                             this.pageType = res.data.data.product.pay_type
                             // 获取到的套餐进行分页
-
                             this.packageDataParams.total = Math.ceil(this.packageData.length / 6)
                             this.pageChange(1)
-                            // this.packageDataPage = this.packageData
-
-                            // // 默认选中第一个套餐
-                            // this.orderData.packageId = this.packageData[0] ? this.packageData[0].id : ''
-                            // // 默认展示第一个套餐的周期
-                            // this.payCircleData = this.packageData[0]
-                            // console.log("this.payCircleData", this.payCircleData);
-
-
                         }
                     })
                 },
@@ -342,7 +382,6 @@
                     this.orderData.packageId = this.packageDataPage[0] ? this.packageDataPage[0].id : ''
                     // 默认展示分页后的第一个套餐的周期
                     this.payCircleData = this.packageDataPage[0]
-                    console.log(this.payCircleData);
                     this.filterPayCircleData()
                 },
                 // 套餐切换时
@@ -364,50 +403,57 @@
                     // 免费
                     if (this.pageType == 'free') {
                         showCircleData.push({
-                            duration: 'free',
+                            duration: 'onetime_fee',
                             money: '免费',
-                            durationName: '永久'
+                            durationName: '永久',
+                            num: 1
                         })
                     } else if (this.pageType == 'onetime') {
                         showCircleData.push({
-                            duration: 'onetime',
+                            duration: 'onetime_fee',
                             money: this.payCircleData.onetime_fee == 0 ? '免费' : parseFloat(this.payCircleData.onetime_fee).toFixed(2),
-                            durationName: '永久'
+                            durationName: '永久',
+                            num: 1
                         })
                     } else {
                         if (this.payCircleData.month_fee) {
                             showCircleData.push({
                                 duration: 'month_fee',
                                 money: this.payCircleData.month_fee == 0 ? '免费' : parseFloat(this.payCircleData.month_fee).toFixed(2),
-                                durationName: '月'
+                                durationName: '月',
+                                num: 1
                             })
                         }
                         if (this.payCircleData.quarter_fee) {
                             showCircleData.push({
                                 duration: 'quarter_fee',
                                 money: this.payCircleData.quarter_fee == 0 ? '免费' : parseFloat(this.payCircleData.quarter_fee).toFixed(2),
-                                durationName: '季'
+                                durationName: '季',
+                                num: 3
                             })
                         }
                         if (this.payCircleData.year_fee) {
                             showCircleData.push({
                                 duration: 'year_fee',
                                 money: this.payCircleData.year_fee == 0 ? '免费' : parseFloat(this.payCircleData.year_fee).toFixed(2),
-                                durationName: '年'
+                                durationName: '年',
+                                num: 12
                             })
                         }
                         if (this.payCircleData.two_year) {
                             showCircleData.push({
                                 duration: 'two_year',
                                 money: this.payCircleData.two_year == 0 ? '免费' : parseFloat(this.payCircleData.two_year).toFixed(2),
-                                durationName: '两年'
+                                durationName: '两年',
+                                num: 24
                             })
                         }
                         if (this.payCircleData.three_year) {
                             showCircleData.push({
                                 duration: 'three_year',
                                 money: this.payCircleData.three_year == 0 ? '免费' : parseFloat(this.payCircleData.three_year).toFixed(2),
-                                durationName: '三年'
+                                durationName: '三年',
+                                num: 36
                             })
                         }
                     }
@@ -415,7 +461,6 @@
                     this.orderData.duration = showCircleData[0].duration
                     // console.log(showCircleData[0]);
                     this.pageData = showCircleData[0]
-                    console.log("this.pageData",this.pageData);
                 },
                 // 获取其它配置
                 getConfig() {
@@ -484,9 +529,7 @@
                             this.osPrice = item.price
                         }
                     })
-
                 },
-
                 // 获取SSH秘钥列表
                 getSshKey() {
                     const params = {
@@ -498,13 +541,13 @@
                     sshKey(params).then(res => {
                         if (res.data.status === 200) {
                             this.sshKeyData = res.data.data.list
-                            console.log(this.sshKeyData);
+                            this.orderData.key = this.sshKeyData[0].id
                         }
                     })
                 },
                 // 跳转创建sshkey
                 toCreateSshKey() {
-                    console.log("跳转到sshkey创建页面");
+                    location.href = "security_ssh.html"
                 },
                 // 随机生成密码
                 autoPass() {
@@ -596,48 +639,95 @@
                 },
                 // 通过配置获取价格
                 getConfigPrice() {
-
                     if (this.timerId) {
                         clearTimeout(this.timerId)
                     }
                     this.timerId = setTimeout(() => {
+                        this.priceLoading = true
                         let data_disk = []
 
                         if (this.isMoreDisk) {
-                            console.log("diskYes");
                             this.moreDiskData.map(item => {
                                 data_disk.push(item.size)
                             })
                         }
-                        const params = {
-                            id: this.id,
-                            config_options: {
-                                data_center_id: this.orderData.centerId,
-                                package_id: this.orderData.packageId,
-                                image_id: this.orderData.osId,
-                                duration: this.orderData.duration,
-                                password: this.isPassOrKey == 'pass' ? this.orderData.password : this.orderData.key,
-                                data_disk,
-                                backup_num_id: this.isBack ? this.orderData.backId : '',
-                                snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
+                        let params = {}
+                        if (this.isPassOrKey == 'pass') {
+                            params = {
+                                id: this.id,
+                                config_options: {
+                                    data_center_id: this.orderData.centerId,
+                                    package_id: this.orderData.packageId,
+                                    image_id: this.orderData.osId,
+                                    duration: this.orderData.duration,
+                                    password: this.orderData.password,
+                                    data_disk,
+                                    backup_num_id: this.isBack ? this.orderData.backId : '',
+                                    snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
+                                }
+                            }
+                        } else {
+                            params = {
+                                id: this.id,
+                                config_options: {
+                                    data_center_id: this.orderData.centerId,
+                                    package_id: this.orderData.packageId,
+                                    image_id: this.orderData.osId,
+                                    duration: this.orderData.duration,
+                                    ssh_key_id: this.orderData.key,
+                                    data_disk,
+                                    backup_num_id: this.isBack ? this.orderData.backId : '',
+                                    snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
+                                }
                             }
                         }
-
+                        // 获取所有周期价格
+                        this.getDuration()
+                        // 修改配置计算价格
                         configPrice(params).then(res => {
                             if (res.data.status === 200) {
                                 this.totalPrice = res.data.data.price * this.orderData.qty
+                                this.totalPrice = this.totalPrice.toFixed(2)
+                                this.onePrice = res.data.data.price
                                 this.discountList = []
+
+                                // 获取抵扣价格
+                                // this.doClientLevelAmount()
+
+                                const discountParams = {
+                                    id: this.id,
+                                    amount: this.totalPrice
+                                }
+                                clientLevelAmount(discountParams).then(res2 => {
+                                    if (res2.data.status === 200) {
+                                        this.clDiscount = res2.data.data.discount
+                                        this.totalPrice = (this.totalPrice - this.clDiscount).toFixed(2)
+                                        this.priceLoading = false
+                                        this.priceData = res.data.data
+                                    }
+                                }).catch(error => {
+                                    this.clDiscount = 0
+                                    this.priceLoading = false
+                                })
+
                             }
-                        }).catch(err => { })
+
+                        }).catch(err => {
+                            this.totalPrice = 0.00
+                            this.onePrice = 0.00
+                            this.priceLoading = false
+                        })
                     }, 500)
-
-
-
                 },
                 // 添加购物车
                 addCart() {
+                    if (!this.isRead) {
+                        this.$message.error("请先阅读并勾选协议")
+                        return false
+                    }
+
                     let data_disk = []
-                    if (this.orderData.isMoreDisk) {
+                    if (this.isMoreDisk) {
                         this.moreDiskData.map(item => {
                             data_disk.push(item.size)
                         })
@@ -658,7 +748,7 @@
                     }
                     cart(params).then(res => {
                         if (res.data.status === 200) {
-                            alert("跳转到购物车")
+                            location.href = './shoppingCar.html'
                         }
                     }).catch(error => {
                         this.$message({
@@ -677,7 +767,7 @@
                     }
                     // 获取磁盘数组
                     let data_disk = []
-                    if (this.orderData.isMoreDisk) {
+                    if (this.isMoreDisk) {
                         this.moreDiskData.forEach(item => {
                             data_disk.push(item.size)
                         })
@@ -749,7 +839,7 @@
 
 
                     let data_disk = []
-                    if (this.orderData.isMoreDisk) {
+                    if (this.isMoreDisk) {
                         this.moreDiskData.map(item => {
                             data_disk.push(item.size)
                         })
@@ -805,7 +895,75 @@
                     this.discountList = this.discountList.filter(item => {
                         return item.name != e
                     })
-                }
+                },
+                toService() {
+                    window.open(this.commonData.terms_service_url);
+                },
+                toPrivacy() {
+                    window.open(this.commonData.terms_privacy_url);
+                },
+                // 获取商品折扣金额
+                doClientLevelAmount() {
+                    const params = {
+                        id: this.id,
+                        amount: this.totalPrice
+                    }
+                    clientLevelAmount(params).then(res => {
+                        if (res.data.status === 200) {
+                            this.clDiscount = res.data.data.discount
+                        }
+                    }).catch(error => {
+                        this.clDiscount = 0
+                    })
+
+                },
+                // 获取套餐所有周期价格
+                getDuration() {
+
+                    let data_disk = []
+                    if (this.isMoreDisk) {
+                        this.moreDiskData.forEach(item => {
+                            data_disk.push(item.size)
+                        })
+                    }
+                    const params = {
+                        id: this.id,
+                        package_id: this.orderData.packageId,
+                        image_id: this.orderData.osId,
+                        data_disk,
+                        backup_num: this.isBack ? this.backNum : '',
+                        snap_num: this.isSnapshot ? this.snapNum : ''
+                    }
+
+                    duration(params).then(res => {
+                        if (res.data.status === 200) {
+                            let data = res.data.data
+
+                            if (this.pageType == 'onetime_fee') {
+                                console.log("onetime_fee");
+                                data = data.filter(item => {
+                                    return item.duration == 'onetime_fee'
+                                })
+                            } else if (this.pageType == 'free') {
+                                console.log("free");
+                                data = data.filter(item => {
+                                    return item.duration == 'onetime_fee'
+                                })
+                            } else {
+                                console.log("ssdsdad");
+                                data = data.filter(item => {
+                                    return item.duration != 'onetime_fee'
+                                })
+
+                            }
+
+                            this.durationPrice = data
+                            this.pageData = this.durationPrice[0]
+                        }
+                    }).catch(error => {
+                        this.durationPrice = []
+                    })
+                },
             },
 
         }).$mount(template)

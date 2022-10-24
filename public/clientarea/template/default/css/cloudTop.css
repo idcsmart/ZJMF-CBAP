@@ -1,6 +1,44 @@
+.template .el-main {
+  padding-right: 2.1rem;
+}
 .template .main-card .card-top .top-operation .operation-row1 {
   display: flex;
   align-items: end;
+}
+.template .main-card .card-top .top-operation .operation-row1 .host-status {
+  width: 59px;
+  height: 26px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  font-size: 0.13rem;
+  margin-left: 0.1rem;
+}
+.template .main-card .card-top .top-operation .operation-row1 .Active {
+  color: #3dd598;
+  background: rgba(61, 213, 152, 0.12);
+}
+.template .main-card .card-top .top-operation .operation-row1 .Unpaid {
+  color: #F64E60;
+  background: #FFE2E5;
+}
+.template .main-card .card-top .top-operation .operation-row1 .Pending {
+  color: #3699FF;
+  background: #E1F0FF;
+}
+.template .main-card .card-top .top-operation .operation-row1 .Suspended {
+  color: #FFF99600;
+  background: #FFF4DE;
+}
+.template .main-card .card-top .top-operation .operation-row1 .Deleted {
+  color: #9696A3;
+  background: #F2F2F7;
+}
+.template .main-card .card-top .top-operation .operation-row1 .Failed {
+  color: #FFA800;
+  background: #FFF4DE;
 }
 .template .main-card .card-top .top-operation .operation-row1 .back-img {
   width: 0.24rem;
@@ -42,6 +80,51 @@
 .template .main-card .card-top .top-operation .operation-row2 .row2-left .ip {
   margin-left: 0.2rem;
 }
+.template .main-card .card-top .top-operation .operation-row2 .row2-right {
+  display: flex;
+  align-items: center;
+}
+.template .main-card .card-top .top-operation .operation-row2 .row2-right .el-popover__reference-wrapper {
+  display: flex;
+  align-items: center;
+}
+.template .main-card .card-top .top-operation .operation-row2 .row2-right .refund {
+  display: flex;
+  align-items: center;
+}
+.template .main-card .card-top .top-operation .operation-row2 .row2-right .refund-status {
+  height: 0.14rem;
+  line-height: 0.14rem;
+  padding: 4px 14px;
+  display: inline-block;
+  border: 1px solid #F0142F;
+  border-radius: 3px;
+  font-size: 0.12rem;
+  color: #F0142F;
+  margin-left: 0.1rem;
+  margin-right: 0.08rem;
+}
+.template .main-card .card-top .top-operation .operation-row2 .row2-right .refund-stop-btn {
+  font-size: 0.12rem;
+  color: #0058FF;
+  cursor: pointer;
+  margin-right: 0.3rem;
+  align-self: flex-end;
+}
+.template .main-card .card-top .top-operation .operation-row2 .row2-right .refund-btn {
+  height: 0.14rem;
+  line-height: 0.14rem;
+  padding: 4px 8px;
+  display: inline-block;
+  border: 1px solid #0058FF;
+  border-radius: 3px;
+  font-size: 0.12rem;
+  margin-left: 0.1rem;
+  color: #0058FF;
+  cursor: pointer;
+  margin-left: 0.08rem;
+  margin-right: 0.3rem;
+}
 .template .main-card .card-top .top-operation .operation-row2 .row2-right img {
   cursor: pointer;
   width: 0.28rem;
@@ -78,11 +161,10 @@
 .template .main-card .card-top .top-msg {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.4rem;
+  margin-top: 0.05rem;
 }
 .template .main-card .card-top .top-msg .msg-l {
   width: 6.5rem;
-  height: 2.3rem;
   border: 1px solid #E6E7EB;
   opacity: 1;
   border-radius: 3px;
@@ -111,7 +193,14 @@
   font-size: 0.14rem;
   color: #8692B0;
 }
-.template .main-card .card-top .top-msg .msg-l .system-t .re-btn {
+.template .main-card .card-top .top-msg .msg-l .system-t .btn-port {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 0.03rem;
+}
+.template .main-card .card-top .top-msg .msg-l .system-t .btn-port .re-btn {
+  min-width: 50px;
   height: 0.24rem;
   padding-left: 0.08rem;
   padding-right: 0.08rem;
@@ -124,7 +213,24 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-left: 0.05rem;
+}
+.template .main-card .card-top .top-msg .msg-l .system-t .btn-port .port {
+  color: #8692B0;
+  margin-top: 0.04rem;
+}
+.template .main-card .card-top .top-msg .msg-l .system-t .user-name-pass {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  color: #1E2736;
+  margin-left: 0.4rem;
+  width: 2.7rem;
+}
+.template .main-card .card-top .top-msg .msg-l .system-t .user-name-pass .user-name {
+  margin-right: 0.5rem;
+}
+.template .main-card .card-top .top-msg .msg-l .system-t .user-name-pass .eyes {
+  cursor: pointer;
 }
 .template .main-card .card-top .top-msg .msg-l .system-b {
   display: flex;
@@ -146,7 +252,6 @@
 }
 .template .main-card .card-top .top-msg .msg-r {
   width: 6.02rem;
-  height: 2.3rem;
   border: 1px solid #E6E7EB;
   border-radius: 3px;
   display: flex;
@@ -164,6 +269,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 50%;
 }
 .template .main-card .card-top .top-msg .msg-r .r-t .r-t-l .r-t-l-text {
   color: #1E2736;
@@ -187,6 +293,21 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 50%;
+  padding-left: 0.33rem;
+}
+.template .main-card .card-top .top-msg .msg-r .r-t .r-t-r .help {
+  margin-left: 0.08rem;
+  width: 0.12rem;
+  height: 0.12rem;
+  border: 1px solid #0058FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0058FF;
+  border-radius: 50%;
+  font-size: 0.12rem;
+  cursor: pointer;
 }
 .template .main-card .card-top .top-msg .msg-r .r-t .r-t-r .r-t-r-text {
   font-size: 0.14rem;
@@ -199,7 +320,7 @@
   margin-left: 0.1rem;
 }
 .template .main-card .card-top .top-msg .msg-r .r-t .r-t-r .renew-btn-disable {
-  width: 0.64rem;
+  width: 0.4rem;
   height: 0.24rem;
   background: rgba(102, 107, 128, 0.1);
   border-radius: 3px;
@@ -242,8 +363,12 @@
   justify-content: space-between;
 }
 .template .main-card .card-top .top-msg .msg-r .r-b .row .row-l {
+  width: 50%;
   display: flex;
   flex-direction: row;
+}
+.template .main-card .card-top .top-msg .msg-r .r-b .row .row-l .red {
+  color: #F0142F !important;
 }
 .template .main-card .card-top .top-msg .msg-r .r-b .row .row-l .label {
   width: 1.1rem;
@@ -255,14 +380,40 @@
   font-size: 0.14rem;
   margin-left: 0.3rem;
   color: #1E2736;
-  width: 1.5rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+.template .main-card .card-top .top-msg .msg-r .r-b .row .row-l .renew-btn {
+  width: 0.4rem;
+  height: 0.24rem;
+  background: #0058FF;
+  font-size: 0.12rem;
+  color: #fff;
+  cursor: pointer;
+  margin-left: 0.1rem;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.template .main-card .card-top .top-msg .msg-r .r-b .row .row-l .renew-btn-disable {
+  width: 0.4rem;
+  height: 0.24rem;
+  background: rgba(102, 107, 128, 0.1);
+  border-radius: 3px;
+  font-size: 0.12rem;
+  color: #757575;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.1rem;
+}
 .template .main-card .card-top .top-msg .msg-r .r-b .row .row-r {
+  width: 50%;
   display: flex;
   flex-direction: row;
+  padding-left: 0.33rem;
 }
 .template .main-card .card-top .top-msg .msg-r .r-b .row .row-r .label {
   width: 1.1rem;
@@ -274,7 +425,6 @@
   font-size: 0.14rem;
   margin-left: 0.3rem;
   color: #1E2736;
-  width: 0.75rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -282,6 +432,7 @@
 .template .main-card .card-top .refund-msg {
   display: flex;
   justify-content: flex-end;
+  margin-top: 0.4rem;
 }
 .template .main-card .card-top .refund-msg .refund-success {
   width: 6.34rem;
@@ -385,7 +536,7 @@
   width: 1.35rem;
 }
 .template .main-card .card-top .reinstall-dialog .pass-content .help-icon {
-  font-size: 0.12rem;
+  font-size: 0.14rem;
   margin-left: 0.04rem;
   margin-right: 0.04rem;
   color: #DBDBDD;
@@ -439,7 +590,7 @@
 }
 .template .main-card .card-top .renew-dialog .dialog-main .renew-content .renew-item {
   width: 1.6rem;
-  height: 0.62rem;
+  min-height: 0.62rem;
   border: 1px solid #E6E7EB;
   border-radius: 3px;
   display: flex;

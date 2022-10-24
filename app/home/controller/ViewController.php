@@ -27,6 +27,11 @@ class ViewController extends HomeBaseController
 				$view_path = '../public/clientarea/template/'.$theme_config['config-parent-theme'].'/';
 			}
 		}
+
+        $PluginModel = new PluginModel();
+        $addons = $PluginModel->plugins('addon');
+
+		$data['addons'] = $addons['list'];
 		
 		View::config(['view_path' => $view_path]);
 		return View::fetch("/".$tplName,$data);
@@ -40,7 +45,7 @@ class ViewController extends HomeBaseController
 		$tplName = empty($param['view_html'])?'index':$param['view_html'];
 		$addon = (new PluginModel())->plugins('addon')['list'];
 	    $addon = array_column($addon,'name','id');
-		$name=parse_name($addon[$plugin_id]);
+		$name=parse_name($addon[$plugin_id]??'');
 		if(empty($name)){
 		    exit('not found template1');
 		}
@@ -48,6 +53,11 @@ class ViewController extends HomeBaseController
 
         $data['template_catalog'] = 'clientarea';
         $data['themes'] = configuration('clientarea_theme');
+
+        $PluginModel = new PluginModel();
+        $addons = $PluginModel->plugins('addon');
+
+		$data['addons'] = $addons['list'];
 		
 		if(file_exists($tpl.$tplName.".php")){
 			$content=$this->view('header',$data);

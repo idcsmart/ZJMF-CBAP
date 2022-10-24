@@ -122,6 +122,7 @@
         this.getSmsList()
         this.getCountry()
         this.getSmsTemplateStatus()
+        document.title = lang.sms_notice + '-' + lang.template_manage + '-' + localStorage.getItem('back_website_name')
       },
       mounted () {
         this.maxHeight = document.getElementById('content').clientHeight - 180

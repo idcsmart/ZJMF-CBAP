@@ -58,10 +58,12 @@
                     this.params.limit = e
                     this.params.page = 1
                     // 获取列表
+                    this.getIpList()
                 },
                 // 当前页改变
                 currentChange(e) {
                     this.params.page = e
+                    this.getIpList()
                 },
                 // 获取ip列表
                 getIpList() {

@@ -672,6 +672,8 @@ insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_ti
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('admin_theme','default',0,0,'后台主题');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('clientarea_theme','default',0,0,'会员中心主题');
 insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('recharge_max','100',0,0,'最大充值金额');
+insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('terms_privacy_url','',0,0,'隐私条款地址');
+insert  into `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) values ('system_logo','',0,0,'系统LOGO');
 
 /*Table structure for table `idcsmart_country` */
 
@@ -1053,13 +1055,15 @@ DROP TABLE IF EXISTS `idcsmart_menu`;
 CREATE TABLE `idcsmart_menu` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
   `type` varchar(20) NOT NULL DEFAULT '' COMMENT '类型admin后台home前台',
-  `menu_type` varchar(20) NOT NULL DEFAULT '' COMMENT '菜单类型system系统plugin插件custom自定义',
+  `menu_type` varchar(20) NOT NULL DEFAULT '' COMMENT '菜单类型system系统plugin插件custom自定义module模块',
   `name` varchar(100) NOT NULL DEFAULT '' COMMENT '名称',
   `language` text NOT NULL COMMENT '多语言',
   `url` varchar(255) NOT NULL DEFAULT '' COMMENT '地址',
   `icon` varchar(255) NOT NULL DEFAULT '' COMMENT '图标',
   `nav_id` int(11) NOT NULL DEFAULT '0' COMMENT '系统页面ID',
   `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '上级ID',
+  `module` varchar(255) NOT NULL DEFAULT '' COMMENT '模块名称',
+  `product_id` text NOT NULL COMMENT '商品ID',
   `order` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`),
@@ -1118,6 +1122,8 @@ insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','menu3',0,1,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','menu4',0,2,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (29,'admin','nav_navigation','navigation.html','',11,28,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (30,'home','nav_goods_list','goodsList.html','menu11',0,3,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (31,'home','nav_security','security.html','icon-a-19',0,4,'','');
 
 /*Table structure for table `idcsmart_notice_setting` */
 
@@ -1260,7 +1266,9 @@ CREATE TABLE `idcsmart_plugin` (
   UNIQUE KEY `name` (`name`),
   KEY `status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='插件表';
-insert into `idcsmart_plugin` (`id`, `status`, `name`, `title`, `url`, `author`, `author_url`, `version`, `description`, `config`, `module`, `order`, `help_url`, `create_time`, `update_time`) values(1,'1','TpCaptcha','thinkphp图形验证','','智简魔方','','1.0','thinkphp图形验证','{\"module_name\":\"\\u56fe\\u5f62\\u9a8c\\u8bc1\",\"captcha_width\":\"250\",\"captcha_height\":\"61\",\"captcha_length\":\"5\",\"code_set\":\"1234567890ABCD\"}','captcha','0','','1662529067','1662539097');
+insert into `idcsmart_plugin` (`status`, `name`, `title`, `url`, `author`, `author_url`, `version`, `description`, `config`, `module`, `order`, `help_url`, `create_time`, `update_time`) values('1','TpCaptcha','thinkphp图形验证','','智简魔方','','1.0','thinkphp图形验证','{\"module_name\":\"\\u56fe\\u5f62\\u9a8c\\u8bc1\",\"captcha_width\":\"250\",\"captcha_height\":\"61\",\"captcha_length\":\"5\",\"code_set\":\"1234567890ABCD\"}','captcha','0','','1662529067','1662539097');
+insert into `idcsmart_plugin` (`status`, `name`, `title`, `url`, `author`, `author_url`, `version`, `description`, `config`, `module`, `order`, `help_url`, `create_time`, `update_time`) values('1','Idcsmart','智简魔方','','智简魔方','','1.0','智简魔方官方短信平台接口','{\"api\":\"\",\"key\":\"\",\"sign\":\"\"}','sms','0','https://market.idcsmart.com/cart?fid=1&gid=22','1662529067','1662539097');
+insert into `idcsmart_plugin` (`status`, `name`, `title`, `url`, `author`, `author_url`, `version`, `description`, `config`, `module`, `order`, `help_url`, `create_time`, `update_time`) values('1','Smtp','Smtp','','智简魔方','','1.0','Smtp','{\"charset\":\"\",\"port\":\"\",\"host\":\"\",\"username\":\"\",\"password\":\"\",\"smtpsecure\":\"\",\"fromname\":\"\",\"systememail\":\"\"}','mail','0','','1654076586','1660814646');
 /*Table structure for table `idcsmart_plugin_hook` */
 
 DROP TABLE IF EXISTS `idcsmart_plugin_hook`;
@@ -1326,6 +1334,7 @@ CREATE TABLE `idcsmart_product` (
   `product_id` int(11) NOT NULL DEFAULT '0' COMMENT '父级商品ID',
   `create_time` int(11) NOT NULL DEFAULT '0',
   `update_time` int(11) NOT NULL DEFAULT '0',
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '显示价格,模块存进去',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `product_group_id` (`product_group_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='商品表';
@@ -1573,6 +1582,7 @@ CREATE TABLE `idcsmart_upgrade` (
   `data` text NOT NULL COMMENT '配置',
   `amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '金额',
   `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '模块价格',
+  `renew_price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '续费价格',
   `billing_cycle_name` varchar(100) NOT NULL DEFAULT '' COMMENT '模块计费周期名称',
   `billing_cycle_time` int(11) NOT NULL DEFAULT '0' COMMENT '模块计费周期时间,秒',
   `status` varchar(20) NOT NULL DEFAULT 'Unpaid' COMMENT '状态Unpaid未支付,Pending待执行,Completed已完成',
@@ -1584,6 +1594,18 @@ CREATE TABLE `idcsmart_upgrade` (
   KEY `host_id` (`host_id`),
   KEY `client_id` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='升降级表';
+
+/*Table structure for table `idcsmart_client_custom_field` */
+
+DROP TABLE IF EXISTS `idcsmart_client_custom_field`;
+
+CREATE TABLE `idcsmart_client_custom_field` (
+  `client_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '字段名称',
+  `value` varchar(255) NOT NULL DEFAULT '' COMMENT '值',
+  KEY `client_id` (`client_id`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户自定义字段表';
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

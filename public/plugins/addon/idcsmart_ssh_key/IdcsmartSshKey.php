@@ -22,7 +22,7 @@ class IdcsmartSshKey extends Plugin
         'name'        => 'IdcsmartSshKey', //插件英文名,作为插件唯一标识,改成你的插件英文就行了
         'title'       => 'SSH密钥',
         'description' => 'SSH密钥',
-        'author'      => 'idcsmart',  //开发者
+        'author'      => '智简魔方',  //开发者
         'version'     => '1.0',      // 版本号
     );
     # 插件安装

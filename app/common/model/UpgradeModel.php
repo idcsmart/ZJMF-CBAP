@@ -24,6 +24,7 @@ class UpgradeModel extends Model
         'data'                  => 'string',
         'amount'                => 'float',
         'price'                 => 'float',
+        'renew_price'           => 'float',
         'billing_cycle_name'    => 'string',
         'billing_cycle_time'    => 'int',
         'status'                => 'string',

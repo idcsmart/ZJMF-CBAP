@@ -73,7 +73,8 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
           try {
             const res = await getLoginInfo()
             this.captcha_admin_login = res.data.data.captcha_admin_login
-            this.website_name = res.data.data.website_name
+            localStorage.setItem('back_website_name', res.data.data.website_name)
+            document.title = lang.login + '-' + res.data.data.website_name
           } catch (error) {
           }
         },
@@ -107,12 +108,11 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
             })
             localStorage.setItem('backAuth', JSON.stringify(authTemp))
             this.$message.success(res.data.msg)
-            localStorage.setItem('curValue', 1622)
             // 获取导航
             const menus = await getMenus()
             localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
             this.loading = false
-            location.href = 'client.html'
+            location.href = 'index.html'
           } catch (error) {
             (this.captcha_admin_login == 1) && this.getCaptcha()
             this.$message.error(error.data.msg)

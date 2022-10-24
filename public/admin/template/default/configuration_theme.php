@@ -13,6 +13,9 @@
       <li class="active">
         <a href="javascript:;">{{lang.theme_setting}}</a>
       </li>
+      <li>
+        <a href="configuration_upgrade.html">{{lang.system_upgrade}}</a>
+      </li>
     </ul>
     <div class="box">
       <t-form :data="formData" :rules="rules" label-align="top" :label-width="80" ref="formValidatorStatus" @submit="onSubmit">

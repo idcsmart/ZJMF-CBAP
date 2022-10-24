@@ -15,13 +15,15 @@ new Vue({
       delType: '',
       payType: '', // 计费方式 free , onetime, recurring_prepayment , recurring_postpaid
       currency_prefix: JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥',
+      currency_suffix: JSON.parse(localStorage.getItem('common_set')).currency_suffix || '',
       optType: 'add', // 新增/编辑
       // 套餐
       curModel: 0,
       package_total: 0,
       packageParams: {
         page: 1,
-        limit: 20
+        limit: 20,
+        orderby: 'order'
       },
       selectDataCenter: [], // 套餐下拉数据
       packageForm: {// 套餐表单
@@ -56,13 +58,13 @@ new Vue({
       curCarging: '1', // 1 一次性 2周期
       packageRules: {
         name: [
-          { required: true, message: lang.input + lang.products_name, type: 'error' },
+          { required: true, message: lang.input + lang.package + lang.nickname, type: 'error' },
           {
             validator: val => val.length <= 20, message: lang.verify8 + '1-20', type: 'warning'
           }
         ],
         data_center_id: [
-          { required: true, message: lang.select + lang.data_center, type: 'error' },
+          // { required: true, message: lang.select + lang.data_center, type: 'error' },
         ],
         description: [
           { required: true, message: lang.input + lang.description, type: 'error' },
@@ -141,13 +143,13 @@ new Vue({
       pageSizeOptions: [20, 50, 100],
       packageColumns: [ // 套餐表格
         {
-          colKey: 'id',
-          title: lang.order_index,
-          width: 50
+          colKey: 'order',
+          title: lang.sort + 'ID',
+          width: 80
         },
         {
           colKey: 'name',
-          title: lang.products_name,
+          title: lang.package + lang.nickname,
           width: 250,
           ellipsis: true
         },
@@ -210,7 +212,7 @@ new Vue({
       },
       dataRules: {
         country_id: [
-          { required: true, message: lang.select + lang.country, type: 'error' },
+          { required: true, message: lang.select + lang.area, type: 'error' },
         ],
         city: [
           { required: true, message: lang.input + lang.city, type: 'error' },
@@ -239,7 +241,7 @@ new Vue({
         },
         {
           colKey: 'country_name',
-          title: lang.country_name,
+          title: lang.area + lang.nickname,
           ellipsis: true,
           className: 'country_name',
           width: '50%'
@@ -300,6 +302,8 @@ new Vue({
         disk_store_id: '',
         backup_enable: 0,
         snap_enable: 0,
+        snap_data: [],
+        backup_data: []
       },
       backupColumns: [ // 备份表格
         {
@@ -315,7 +319,7 @@ new Vue({
         },
         {
           colKey: 'price',
-          title: lang.price,
+          title: lang.price + `/${lang.month}`,
           className: 'back-price'
         },
       ],
@@ -333,7 +337,7 @@ new Vue({
         },
         {
           colKey: 'price',
-          title: lang.price,
+          title: lang.price + `/${lang.month}`,
         },
       ],
       backList: [],
@@ -341,6 +345,45 @@ new Vue({
       backLoading: false,
       snapLoading: false,
       backAllStatus: false
+    }
+  },
+  computed: {
+    isShowTip () {
+      if (this.selectDataCenter.length > 0 && (this.packageForm.data_center_id.length === 0 || this.packageForm.data_center_id === '')) {
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  watch: {
+    'otherForm.backup_enable': {
+      handler () {
+        if (this.backList.length === 0) {
+          this.backList.push({
+            num: 1,
+            type: 'backup',
+            price: 0.00,
+            status: true
+          })
+          this.backAllStatus = true
+        }
+      },
+      immediate: true
+    },
+    'otherForm.snap_enable': {
+      handler () {
+        if (this.snapList.length === 0) {
+          this.snapList.push({
+            num: 1,
+            type: 'snap',
+            price: 0.00,
+            status: true
+          })
+          this.backAllStatus = true
+        }
+      },
+      immediate: true
     }
   },
   created () {
@@ -373,8 +416,8 @@ new Vue({
           break;
         case 'other':
           this.ohterConfig()
-          this.getBackup('backup')
-          this.getBackup('snap')
+          // this.getBackup('backup')
+          // this.getBackup('snap')
           break;
         default:
           break;
@@ -389,7 +432,10 @@ new Vue({
           ...this.packageParams
         }
         const res = await getPackage(params)
-        this.packageList = res.data.data.list
+        this.packageList = res.data.data.list.map(item => {
+          item.status = false
+          return item
+        })
         this.package_total = res.data.data.count
         this.dataLoading = false
         const temp = await getDataCenter({
@@ -400,6 +446,21 @@ new Vue({
         this.selectDataCenter = temp.data.data.list
       } catch (error) {
         this.dataLoading = false
+        this.$message.error(error.data.msg)
+      }
+    },
+     // 修改套餐排序
+     async savePackageOrder (row) {
+      try {
+        const { id, order } = row
+        const res = await updatePackageOrders({
+          id,
+          order
+        })
+        this.$message.success(res.data.msg)
+        this.getPackageList()
+        this.allStatus = false
+      } catch (error) {
         this.$message.error(error.data.msg)
       }
     },
@@ -493,29 +554,20 @@ new Vue({
       }
     },
     // 修改月套餐
-    changeMonth (val, type) {
-      if (isNaN(val * 1)) {
+    changeMonth (val, curType) {
+      if (typeof val === 'string' && isNaN(val * 1) || val * 1 < 0) {
         return false
       }
-      this.packageForm[type] = (this.packageForm[type] * 1).toFixed(2)
-      if (type !== 'month_fee') {
-        return falses
+      this.packageForm[curType] = (this.packageForm[curType] * 1).toFixed(2)
+      if (curType) {
+        return false
       }
-      if (!this.packageForm.quarter_fee) {
-        this.packageForm.quarter_fee = (val * 3).toFixed(2)
-      }
-      if (!this.packageForm.half_year_fee) {
-        this.packageForm.half_year_fee = (val * 6).toFixed(2)
-      }
-      if (!this.packageForm.year_fee) {
-        this.packageForm.year_fee = (val * 12).toFixed(2)
-      }
-      if (!this.packageForm.two_year) {
-        this.packageForm.two_year = (val * 24).toFixed(2)
-      }
-      if (!this.packageForm.three_year) {
-        this.packageForm.three_year = (val * 36).toFixed(2)
-      }
+      const monthFree = this.packageForm.month_fee
+      this.packageForm.quarter_fee = (monthFree * 3).toFixed(2)
+      this.packageForm.half_year_fee = (monthFree * 6).toFixed(2)
+      this.packageForm.year_fee = (monthFree * 12).toFixed(2)
+      this.packageForm.two_year = (monthFree * 24).toFixed(2)
+      this.packageForm.three_year = (monthFree * 36).toFixed(2)
     },
     /* 套餐 end */
 
@@ -551,12 +603,28 @@ new Vue({
     },
     /* 排序 */
     eidtDataOrder (row) {
-      if (this.allStatus) {
-        this.$message.warning(lang.order_type_verify3)
-        return false
-      }
-      this.allStatus = true
+      // if (this.allStatus) {
+      //   this.$message.warning(lang.order_type_verify3)
+      //   return false
+      // }
+      // this.allStatus = true
       row.status = !row.status
+    },
+    // 修改数据中心排序
+    async saveDataOrder (row) {
+      try {
+        const { id, order } = row
+        const res = await updateDataCenterOrders({
+          id,
+          order
+        })
+        this.$message.success(res.data.msg)
+        this.getData()
+        this.allStatus = false
+      } catch (error) {
+        console.log(error)
+        this.$message.error(error.data.msg)
+      }
     },
     async saveDataOrder (row) {
       try {
@@ -713,7 +781,26 @@ new Vue({
         const res = await getOtherConfig({
           product_id: this.id
         })
-        this.otherForm = res.data.data
+        const temp = res.data.data
+        // 处理快照备份的数据
+        this.backList = temp.backup_data.map(item => {
+          item.status = false
+          item.price = item.price * 1
+          return item
+        })
+        if (temp.backup_data.length === 0) {
+          this.otherForm.backup_enable = 0
+        }
+        this.snapList = temp.snap_data.map(item => {
+          item.status = false
+          item.price = item.price * 1
+          return item
+        })
+        if (temp.snap_data.length === 0) {
+          this.otherForm.snap_enable = 0
+        }
+        this.otherForm = temp
+
       } catch (error) {
         this.$message.error(error.data.msg)
       }
@@ -724,6 +811,8 @@ new Vue({
           this.submitLoading = true
           const params = JSON.parse(JSON.stringify(this.otherForm))
           params.product_id = this.id
+          params.backup_data = this.backList
+          params.snap_data = this.snapList
           const res = await saveOtherConfig(params)
           this.$message.success(res.data.msg)
           this.submitLoading = false
@@ -757,12 +846,18 @@ new Vue({
             item.price = item.price * 1
             return item
           })
+          if (this.backList.length === 0) {
+            this.otherForm.backup_enable = 0
+          }
         } else {
           this.snapList = res.data.data.list.map(item => {
             item.status = false
             item.price = item.price * 1
             return item
           })
+          if (this.snapList.length === 0) {
+            this.otherForm.snap_enable = 0
+          }
         }
         if (type === 'backup') {
           this.backLoading = false
@@ -780,10 +875,10 @@ new Vue({
         price: 0.00,
         status: true // 编辑状态
       }
-      if (this.backAllStatus) {
-        this.$message.warning(lang.order_type_verify3)
-        return false
-      }
+      // if (this.backAllStatus) {
+      //   this.$message.warning(lang.order_type_verify3)
+      //   return false
+      // }
       this.backAllStatus = true
       if (type === 'backup') {
         this.backList.push(temp)
@@ -839,10 +934,10 @@ new Vue({
       }
     },
     openEdit (type, index) {
-      if (this.backAllStatus) {
-        this.$message.warning(lang.order_type_verify3)
-        return false
-      }
+      // if (this.backAllStatus) {
+      //   this.$message.warning(lang.order_type_verify3)
+      //   return false
+      // }
       this.backAllStatus = true
       if (type === 'backup') {
         this.backList[index].status = true
@@ -868,14 +963,19 @@ new Vue({
     },
 
     // 删除 备份/快照
-    async deleteBackup (type) {
-      try {
-        const res = await deleteBackup(this.delId)
-        this.$message.success(res.data.msg)
-        this.getBackup(type)
-        this.delVisible = false
-      } catch (error) {
-        this.$message.error(error.data.msg)
+    deleteBackup (type, index) {
+      // try {
+      //   const res = await deleteBackup(this.delId)
+      //   this.$message.success(res.data.msg)
+      //   this.getBackup(type)
+      //   this.delVisible = false
+      // } catch (error) {
+      //   this.$message.error(error.data.msg)
+      // }
+      if (type === 'backup') {
+        this.backList.splice(index, 1)
+      } else {
+        this.snapList.splice(index, 1)
       }
     },
     /* 通用删除按钮 */
@@ -895,10 +995,10 @@ new Vue({
           return this.deletePackage()
         case 'data':
           return this.deleteData()
-        case 'backup':
-          return this.deleteBackup('backup')
-        case 'snap':
-          return this.deleteBackup('snap')
+        // case 'backup':
+        //   return this.deleteBackup('backup')
+        // case 'snap':
+        //   return this.deleteBackup('snap')
         default:
           return null
       }

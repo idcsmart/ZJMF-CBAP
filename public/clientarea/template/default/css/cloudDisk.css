@@ -1,3 +1,13 @@
+.main-card .disk-top-operation {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 0.3rem;
+}
+.main-card .disk-top-operation .btn1,
+.main-card .disk-top-operation .btn2 {
+  background: 0058FF;
+}
 .main-card .buy-btn {
   width: 1.12rem;
   height: 0.46rem;

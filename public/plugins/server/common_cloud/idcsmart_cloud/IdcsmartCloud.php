@@ -1037,7 +1037,7 @@ class IdcsmartCloud{
 			$content = json_decode($res['content'] ?? '', true) ?: [];
 			$result = [
 				'status'=>400,
-				'msg'=>$content['error'] ?: '登录失败',
+				'msg'=>$content['error'] ?? '登录失败',
 			];
 		}
 		return $result;

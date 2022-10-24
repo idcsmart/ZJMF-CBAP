@@ -1154,6 +1154,7 @@ class CloudLogic
 	 * @return  string data.username - 远程用户名
 	 * @return  string data.password - 远程密码
 	 * @return  int data.port - 远程端口
+	 * @return  int data.ip_num - IP数量
 	 */
 	public function detail()
 	{
@@ -1168,12 +1169,14 @@ class CloudLogic
 			'username'=>$info['username'],
 			'password'=>aes_password_decode($this->hostLinkModel['password']),
 			'port'=>$info['port'],
+			'ip_num'=>1,
 		];
 		if(isset($detail['data'])){
 			$data['rescue'] = $detail['data']['rescue'];
 			$data['username'] = $detail['data']['osuser'];
 			$data['password'] = $detail['data']['rootpassword'];
-			$data['port'] = $detail['data']['port'] > 0 ? $detail['data']['port'] : ( $detail['data']['image_group_id'] == 1 ? 3306 : 22);
+			$data['port'] = $detail['data']['port'] > 0 ? $detail['data']['port'] : ($detail['data']['image_group_id'] == 1 ? 3306 : 22);
+			$data['ip_num'] = $detail['data']['ip_num'];
 		}
 
 		$result = [
@@ -1274,13 +1277,13 @@ class CloudLogic
 				$diskNum--;
 			}
 			// 取消的价格
-			if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0){
-				// 不允许白嫖
-				$price = 0;
-			}else{
-				$price = 0;// - ( $size/10*$ConfigModel['price'] ) * $diffTime/$this->hostModel['billing_cycle_time'];
-				// $priceDifference -= $size/10*$ConfigModel['price'];
-			}
+			// if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0){
+			// 	// 不允许白嫖
+			// 	$price = 0;
+			// }else{
+			// 	$price = 0;// - ( $size/10*$ConfigModel['price'] ) * $diffTime/$this->hostModel['billing_cycle_time'];
+			// 	// $priceDifference -= $size/10*$ConfigModel['price'];
+			// }
 			$priceDifference -= $size/10*$ConfigModel['price'];
         }
         $diskNum = max(0, $diskNum);
@@ -1301,7 +1304,9 @@ class CloudLogic
         	}
         	$size = $check['data']['size'];
 
-        	if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0 || $this->hostModel['billing_cycle_time'] == 0){
+        	if($this->hostModel['billing_cycle'] == 'free'){
+        		$price = 0;
+        	}else if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0 || $this->hostModel['billing_cycle_time'] == 0){
 				// 不允许白嫖
 				$price += $size/10*$ConfigModel['price'];
 			}else{
@@ -1311,17 +1316,29 @@ class CloudLogic
 			$add_size = $param['add_disk'];
         }
         if(!empty($add_size) && !empty($del_size) ){
-        	$description = '取消订购磁盘(GB):'.implode(',', $del_size).',新增磁盘(GB):'.implode(',', $add_size);
+        	$description = lang_plugins('upgrade_buy_and_cancel_data_disk', [
+        		'{del}'=>implode(',', $del_size),
+        		'{add}'=>implode(',', $add_size),
+        	]);
         }else if(!empty($add_size)){
-        	$description = '新增磁盘(GB):'.implode(',', $add_size);
+        	$description = lang_plugins('upgrade_buy_data_disk', [
+        		'{add}'=>implode(',', $add_size)
+        	]);
         }else if(!empty($del_size)){
-        	$description = '取消订购磁盘(GB):'.implode(',', $del_size);
+        	$description = lang_plugins('upgrade_cancel_data_disk', [
+        		'{del}'=>implode(',', $del_size)
+        	]);
         }else{
         	return ['status'=>400, 'msg'=>lang_plugins('param_error')];
         }
 
-        $price = max(0, $price);
-        $price = amount_format($price);
+        if($this->hostModel['billing_cycle'] == 'free'){
+        	$price = '0.00';
+        	$priceDifference = 0;
+        }else{
+        	$price = max(0, $price);
+        	$price = amount_format($price);
+        }
         
         $result = [
             'status' => 200,
@@ -1330,6 +1347,7 @@ class CloudLogic
                 'price' => $price,
                 'description' => $description,
                 'price_difference' => $priceDifference,
+                'renew_price_difference' => $priceDifference,
             ]
         ];
         return $result;
@@ -1363,6 +1381,8 @@ class CloudLogic
             'amount'      => $res['data']['price'],
             'description' => $res['data']['description'],
             'price_difference' => $res['data']['price_difference'],
+            'renew_price_difference' => $res['data']['renew_price_difference'],
+            'upgrade_refund' => 0,
             'config_options' => [
                 'type'       => 'buy_disk',
                 'remove_disk_id' => array_filter($param['remove_disk_id'] ?? []),
@@ -1430,20 +1450,30 @@ class CloudLogic
 					'size'=>$allArr[$v['id']]
 				];
 				$inc += $allArr[ $v['id'] ] - $v['size'];
-				$description = '磁盘'.$v['name'].'大小(GB):'.$v['size'].' => '.$allArr[ $v['id'] ].'<br/>';
+				$description .= lang_plugins('upgrade_data_disk_size', [
+					'{name}'=>$v['name'],
+					'{old}'=>$v['size'],
+					'{new}'=>$allArr[ $v['id'] ]
+				]);
 			}
 		}
 		if(empty($inc)){
 			return ['status'=>400, 'msg'=>lang_plugins('disk_not_resize')];
 		}
-	
-		if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0){
+		
+		if($this->hostModel['billing_cycle'] == 'free'){
+			$price = 0;
+			$priceDifference = 0;
+		}else if($this->hostModel['billing_cycle'] == 'onetime' || $diffTime<=0){
 			// 不允许白嫖
-			$price = $inc/10*$ConfigModel['price'];
+			$priceDifference = $inc/10*$ConfigModel['price'];
+
+			$price = $priceDifference;
 		}else{
-			$price = ( $inc/10*$ConfigModel['price'] ) * $diffTime/$this->hostModel['billing_cycle_time'];
+			$priceDifference = $inc/10*$ConfigModel['price'];
+
+			$price = $priceDifference * $diffTime/$this->hostModel['billing_cycle_time'];
 		}
-		$priceDifference = $inc/10*$ConfigModel['price'];
 
         $price = max(0, $price);
         $price = amount_format($price);
@@ -1455,6 +1485,7 @@ class CloudLogic
                 'price' => $price,
                 'description' => $description,
                 'price_difference' => $priceDifference,
+                'renew_price_difference' => $priceDifference,
                 'resize_disk'=>$resizeDisk
             ]
         ];
@@ -1489,6 +1520,8 @@ class CloudLogic
             'amount'      => $res['data']['price'],
             'description' => $res['data']['description'],
             'price_difference' => $res['data']['price_difference'],
+            'renew_price_difference' => $res['data']['renew_price_difference'],
+            'upgrade_refund' => 0,
             'config_options' => [
                 'type'       => 'resize_disk',
                 'resize_disk' => $res['data']['resize_disk'],

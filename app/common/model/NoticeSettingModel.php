@@ -288,12 +288,12 @@ class NoticeSettingModel extends Model
 					}else if(strpos($k,'name')>0){	
 						if(strpos($k,'sms')!==false){
 							$sms_list = array_column($sms['list'],"title","name");				
-							$lang_old = (!empty($notice_setting[$k])) ? ((!empty($sms_list[$notice_setting[$k]])) ? $sms_list[$notice_setting[$k]] : "''") : "''";
-							$lang_new = $sms_list[$v];
+							$lang_old = (isset($notice_setting[$k]) && !empty($notice_setting[$k])) ? ((!empty($sms_list[$notice_setting[$k]])) ? $sms_list[$notice_setting[$k]] : "''") : "''";
+							$lang_new = $sms_list[$v] ?? '';
 						}else{
 							$mail_list = array_column($mail['list'],"title","name");				
-							$lang_old = (!empty($notice_setting[$k])) ? ((!empty($mail_list[$notice_setting[$k]])) ? $mail_list[$notice_setting[$k]] : "''") : "''";
-							$lang_new = $mail_list[$v];
+							$lang_old = (isset($notice_setting[$k]) && !empty($notice_setting[$k])) ? ((!empty($mail_list[$notice_setting[$k]])) ? $mail_list[$notice_setting[$k]] : "''") : "''";
+							$lang_new = $mail_list[$v] ?? '';
 						}
 					}else if(strpos($k,'template')>0){
 						$interface = str_replace('template','name',$k);
@@ -305,7 +305,7 @@ class NoticeSettingModel extends Model
 									'name'=>$notice_setting[$interface],
 								];
 								$old_sms_template = $SmsTemplateModel->indexSmsTemplate($old_sms_param);
-								$lang_old = $old_sms_template['title'];
+								$lang_old = $old_sms_template->title ?? '';
 
 							}else{
 								$lang_old = "''";
@@ -320,12 +320,12 @@ class NoticeSettingModel extends Model
 								'name'=>$sms_param_name,
 							];
 							$sms_template = $SmsTemplateModel->indexSmsTemplate($sms_param); 
-							$lang_new = $sms_template['title'];
+							$lang_new = $sms_template->title ?? '';
 						}else{
 							$old_mail_template = $EmailTemplateModel->indexEmailTemplate($notice_setting[$k]);
-							$lang_old = $old_mail_template['name'];
-							$mail_template = $EmailTemplateModel->indexEmailTemplate($v); 
-							$lang_new = $mail_template['name'];
+							$lang_old = $old_mail_template->name ?? '';
+							$mail_template = $EmailTemplateModel->indexEmailTemplate($v);
+							$lang_new = $mail_template->name ?? '';
 						}
 					}else{				
 						$lang_old = $notice_setting[$k];
@@ -342,7 +342,7 @@ class NoticeSettingModel extends Model
         } catch (\Exception $e) {
             // 回滚事务
             $this->rollback();
-            return ['status' => 400, 'msg' =>lang('save_fail')];
+            return ['status' => 400, 'msg' =>lang('save_fail').$e->getMessage()];
         }
         return ['status' => 200, 'msg' => lang('save_success')];
     }

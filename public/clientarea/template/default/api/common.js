@@ -127,3 +127,12 @@ function renew(params) {
 function productList(params) {
   return Axios.get(`/product`, { params })
 }
+// 获取购物车
+function cartList() {
+  return Axios.get(`/cart`)
+}
+
+// 会员中心首页
+function indexData() {
+  return Axios.get(`/index`)
+}

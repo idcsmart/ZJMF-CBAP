@@ -13,6 +13,81 @@
 .configuration-system .t-col {
   margin-bottom: 25px;
 }
+.configuration-system .upload {
+  width: 130px;
+  height: 32px;
+  background: #eee;
+  border: 1px solid #DCDCDC;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+.configuration-system .up-tip {
+  font-size: 12px;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.4);
+  display: inline-block;
+}
+.configuration-system .up-tip p {
+  line-height: 1;
+  margin: 0;
+  margin-bottom: 5px;
+}
+.configuration-system .t-form-item__system_logo {
+  width: auto;
+}
+.configuration-system .t-form-item__system_logo .t-form__controls-content {
+  align-items: flex-start;
+}
+.configuration-system .logo {
+  margin-left: 35px;
+  cursor: pointer;
+}
+.configuration-system .logo .box {
+  width: 130px;
+  height: 32px;
+  border-radius: 3px;
+  border: 1px solid #DCDCDC;
+  box-sizing: border-box;
+  position: relative;
+  background: #EEEEEE;
+  padding: 0;
+}
+.configuration-system .logo img {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+}
+.configuration-system .logo:hover .hover {
+  opacity: 1;
+}
+.configuration-system .logo .hover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background: #656565;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: all 0.3s;
+}
+.configuration-system .logo .name {
+  font-size: 12px;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.9);
+  display: inline-block;
+}
 /* configuration-login */
 .configuration-login .t-col {
   display: flex;
@@ -158,8 +233,14 @@
   padding: 13px 20px 20px;
 }
 .notice-email-template-create .t-form {
-  width: 50%;
   margin-top: 30px;
+}
+.notice-email-template-create .t-form .t-input {
+  width: 320px;
+}
+.notice-email-template-create .t-form .emailTemp {
+  width: 1230px;
+  max-width: 100%;
 }
 .notice-email-template-create .t-form__label,
 .notice-email-template-create .t-form__controls {
@@ -242,8 +323,20 @@
   max-width: 280px;
   min-width: 200px;
 }
+.notice-send .none_pop .t-popup {
+  display: none;
+}
+.notice-send .common-header {
+  margin-bottom: 20px;
+}
 .notice-send .add {
   margin-top: 30px;
+}
+.notice-send .t-popup {
+  z-index: 1;
+}
+.notice-send .required .t-select {
+  border-color: var(--td-error-color);
 }
 /* 暗黑模式 */
 :root[theme-mode=dark] .configuration-security .tip {
@@ -322,84 +415,47 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
-
-/* 系统升级 */
-.box-title {
+/* upload */
+.upgrade-box .upgrade-box-title {
   display: flex;
-  flex-direction: row;
 }
-
-.box-title-line {
-  width: 1485px;
-  height: 18px;
+.upgrade-box .public-box {
+  margin-top: 40px;
+  margin-bottom: 10px;
+}
+.upgrade-box .upgrade-title-text {
+  font-size: 14px;
+  color: #333333;
+}
+.upgrade-box .upgrade-title-line {
   border-bottom: 1px solid #DCDCDC;
-  opacity: 1;
+  flex: 1;
 }
-
-.box-title-text {
-  font-size: 18px;
-  width: 82px;
+.upgrade-box .upgrade-contend {
+  margin-top: 36px;
 }
-
-.system-msg-title {
-  margin-top: 20px;
-
+.upgrade-box .upgrade-contend .msg-item {
+  display: flex;
+  color: #333333;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
-
-.content-msg {}
-
-.system-msg {
-  width: 719px;
-  height: 238px;
-  border: 1px solid #DDDDDD;
-  opacity: 1;
+.upgrade-box .upgrade-contend .no-margin {
+  margin-bottom: 0;
+}
+.upgrade-box .upgrade-contend .msg-footer {
+  margin-left: 15px;
+}
+.upgrade-box .footer-btn .t-button {
+  width: 64px;
+  height: 24px;
   border-radius: 3px;
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
 }
-
-.msg-item {
-  display: flex;
-  flex-direction: row;
-  margin-top: 32px;
-  margin-left: 30px;
+.upgrade-box .table-box {
+  cursor: pointer;
 }
-
-.msg-item-l {
-  width: 75px;
-  font-size: 15px;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.msg-item-r {
-  font-size: 15px;
-  color: rgba(0, 0, 0, 0.6);
-  margin-left: 30px;
-}
-
-.msg-footer {
-  margin-top: 30px;
-  width: 719px;
-}
-
-.footer-btn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.progress {
-  width: 719px;
-  height: 6px;
-  background: #E7E7E7;
-  opacity: 1;
-  border-radius: 4px;
-}
-
-.down-progress-success {
-  height: 6px;
-  background: #0052D9;
-  opacity: 1;
-  border-radius: 4px;
+.upgrade-box .table-row {
+  padding-left: 25px !important;
 }

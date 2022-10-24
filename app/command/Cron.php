@@ -81,6 +81,8 @@ class Cron extends Command
 
 		$this->hostModule($config);// 主机暂停、删除
 		$output->writeln('自动暂停、删除结束:'.date('Y-m-d H:i:s'));
+
+		hook('five_minute_cron');// 每五分钟执行一次定时任务钩子
 		$this->configurationUpdate('cron_lock_five_minute_last_time',time());
 	}
 	//主机续费提醒	
@@ -101,7 +103,19 @@ class Cron extends Command
 			->where('billing_cycle', '<>', 'free')
 			->where('billing_cycle', '<>', 'onetime')
 			->select()->toArray();
-			foreach($renewal_first_host as $h){			
+			foreach($renewal_first_host as $h){
+				try {
+					hook('before_host_renewal_first',$h);
+				} catch (\Exception $e) {
+					$result['status'] = 'Failed';
+					$result['msg'] = $e->getMessage();				
+					//continue;
+				}	
+				$host = Db::name('host')->where('id', $h['id'])->find();
+				if($host['due_time']<=$time_renewal_first_start || $host['due_time']>=$time_renewal_first_end){
+					continue;
+				}
+
 				add_task([
 					'type' => 'email',
 					'description' => '#host#'.$h['id'].'#第一次客户续费提醒,发送邮件',

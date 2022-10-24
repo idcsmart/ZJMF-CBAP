@@ -2,6 +2,7 @@
 
 namespace app\home\controller;
 
+use app\admin\model\PluginModel;
 use app\common\logic\UploadLogic;
 use app\common\model\CountryModel;
 use app\common\logic\VerificationCodeLogic;
@@ -180,6 +181,7 @@ class CommonController extends HomeBaseController
      * @return string website_name - 网站名称
      * @return string website_url - 网站域名地址
      * @return string terms_service_url - 服务条款地址
+     * @return string terms_privacy_url - 隐私条款地址
      * @return string login_phone_verify 1 手机号登录短信验证开关 1开启，0关闭
      * @return string captcha_client_register 1 客户注册图形验证码开关  1开启，0关闭
      * @return string captcha_client_login 1 客户登录图形验证码开关  1开启，0关闭
@@ -194,6 +196,7 @@ class CommonController extends HomeBaseController
      * @return string currency_prefix ￥ 货币符号
      * @return string currency_suffix 元 货币后缀
      * @return string code_client_email_register 0 邮箱注册数字验证码开关:1开启0关闭
+     * @return string system_logo 系统LOGO
      */
     public function common()
     {
@@ -209,6 +212,7 @@ class CommonController extends HomeBaseController
             'website_name',
             'website_url',
             'terms_service_url',
+            'terms_privacy_url',
             'login_phone_verify',
             'captcha_client_register',
             'captcha_client_login',
@@ -222,6 +226,7 @@ class CommonController extends HomeBaseController
             'currency_prefix',
             'currency_suffix',
             'code_client_email_register',
+            'system_logo',
         ];
 
         //$data = configuration($setting);

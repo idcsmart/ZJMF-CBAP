@@ -32,6 +32,7 @@
       },
       mounted () {
         this.initTemplate()
+        document.title = lang.email_notice + '-' + lang.template_manage + '-' + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         setContent () {
@@ -63,7 +64,7 @@
             plugins: 'link lists image code table colorpicker textcolor wordcount contextmenu fullpage',
             toolbar:
               'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image fullpage code | removeformat',
-            // images_upload_url: 'http://' + str + 'v1/upload',
+            images_upload_url: 'http://' + str + 'v1/upload',
             convert_urls: false,
             // images_upload_url: 'http://' + str + 'v1/upload',
             // images_upload_handler: function (blobInfo, success, failure) {
@@ -95,7 +96,7 @@
             images_upload_handler: this.handlerAddImg
           });
         },
-        handlerAddImg (blobInfo, success) {
+        handlerAddImg (blobInfo, success, failure) {
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
@@ -106,27 +107,17 @@
             }).then(res => {
               const json = {}
               if (res.status !== 200) {
-                failure('HTTP Error: ' + res.msg)
+                failure('HTTP Error: ' + res.data.msg)
                 return
               }
               // json = JSON.parse(res)
-              json.location = res.data.data.image_base64
-
+              json.location = res.data.data?.image_url
               if (!json || typeof json.location !== 'string') {
-                failure('Invalid JSON: ' + res)
+                failure('Error:' + res.data.msg)
                 return
               }
               success(json.location)
             })
-            // this.$api.addPicture(formData).then(res => { // 上传api 
-            //   if (res.code === 200) {
-            //     resolve('https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ffile03.16sucai.com%2F2017%2F1100%2F16sucai_p20161119050_0fe.JPG&refer=http%3A%2F%2Ffile03.16sucai.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1664341021&t=7bcac9962924f3d12102b1417f6a67d7')
-            //   } else {
-            //     reject(res?.msg)
-            //   }
-            // }).catch(res => {
-            //   reject(res)
-            // })
           })
         },
         close () {

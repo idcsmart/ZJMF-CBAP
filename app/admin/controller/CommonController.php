@@ -128,6 +128,7 @@ class CommonController extends AdminBaseController
      * @return string currency_prefix ￥ 货币符号
      * @return string currency_suffix 元 后缀
      * @return string website_name 智简魔方 网站名称
+     * @return string system_logo 系统LOGO
      * @return array lang_admin - 后台语言列表
      * @return array lang_home - 前台语言列表
      */
@@ -138,6 +139,7 @@ class CommonController extends AdminBaseController
             'currency_prefix',
             'currency_suffix',
             'website_name',
+            'system_logo',
         ];
 		
 		$lang = [ 

@@ -35,6 +35,7 @@ class BackupConfigValidate extends Validate{
         'create' => ['product_id','num','price','type'],
         'edit'   => ['id','num','price'],
         'buy'    => ['id','type','num'],
+        'save'   => ['num', 'price'],
     ];
 
 }

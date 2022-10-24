@@ -18,15 +18,14 @@
                 this.getHostDetail()
                 // 获取实例磁盘
                 this.getDiskList()
-                // 获取其他配置
-                this.getConfigData()
+
             },
             data() {
                 return {
                     commonData: {},
                     // 实例id
                     id: null,
-                    hostData:{},
+                    hostData: {},
                     // 产品id
                     product_id: 0,
                     // 实例磁盘列表
@@ -367,6 +366,8 @@
                             this.hostData = res.data.data.host
                             this.product_id = this.hostData.product_id
 
+                            // 获取其他配置
+                            this.getConfigData()
                         }
                     })
                 },

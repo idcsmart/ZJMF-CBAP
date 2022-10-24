@@ -38,8 +38,8 @@
         <t-tag class="status" v-if="row.status===4" variant="light">{{lang.submitted}}</t-tag>
       </template>
       <template #type="{row}">
-        <span v-if="row.type === 1">{{lang.personal}}</span>
-        <span v-if="row.type === 2">{{lang.business}}</span>
+        <span v-if="row.type === 1">{{lang.personal_way}}</span>
+        <span v-if="row.type === 2">{{lang.business_way}}</span>
         <span v-if="row.type === 3">{{lang.personal_to_business}}</span>
       </template>
       <template #create_time="{row}">

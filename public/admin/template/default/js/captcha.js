@@ -101,6 +101,7 @@
             timer = null
           }, 300)
         }
+        document.title = lang.captcha_manage + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         // 获取列表

@@ -40,6 +40,9 @@
         </span>
       </template>
       <template #op="{row}">
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+          <t-icon name="edit" size="18px" @click="updateFlow(row)" class="common-look"></t-icon>
+        </t-tooltip>
         <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
           <t-icon name="delete" size="18px" @click="delteFlow(row)" class="common-look"></t-icon>
         </t-tooltip>
@@ -48,7 +51,7 @@
     <t-pagination v-if="total" :total="total" :page-size="params.limit" :current="params.page" :page-size-options="pageSizeOptions" :on-change="changePage" />
   </t-card>
   <!-- 新增流水 -->
-  <t-dialog :header="lang.new_flow" :visible.sync="flowModel" :footer="false">
+  <t-dialog :header="optTitle" :visible.sync="flowModel" :footer="false">
     <t-form :data="formData" ref="form" @submit="onSubmit" :rules="rules">
       <t-form-item :label="lang.money" name="amount">
         <t-input v-model="formData.amount" type="tel" :label="currency_prefix" :placeholder="lang.input+lang.money"></t-input>

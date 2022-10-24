@@ -2,6 +2,7 @@
 namespace server\idcsmart_common\logic;
 
 # 逻辑类
+use app\common\model\CountryModel;
 use app\common\model\HostModel;
 use app\common\model\ProductModel;
 use app\common\model\ServerModel;
@@ -16,12 +17,6 @@ class IdcsmartCommonLogic
 {
     public $systemCycles = [
         'onetime' => '一次性',
-        'monthly' => '月',
-        'quarterly' => '季',
-        'semaiannually' => '半年',
-        'annually' => '一年',
-        'biennially' => '两年',
-        'triennianlly' => '三年'
     ];
 
     # 初始化验证
@@ -94,14 +89,22 @@ class IdcsmartCommonLogic
     }
 
     # 自定义周期时长s
-    public function customCycleTime($cycle_time,$cycle_unit='hour')
+    public function customCycleTime($cycle_time,$cycle_unit='hour',$begin_time=0)
     {
         if ($cycle_unit == 'hour'){
             $time = $cycle_time * 3600;
         }elseif ($cycle_unit == 'day'){
             $time = $cycle_time * 3600 * 24;
+        }elseif ($cycle_unit == 'month'){
+            # 换算为天数
+            $totalDay = 0;
+            for ($i=1;$i<=$cycle_time;$i++){
+                $day = date("t",strtotime(date('Y-m-d H:i:s',$begin_time+$totalDay*3600*24)));
+                $totalDay += $day;
+            }
+            $time = 3600*24*$totalDay;
         }else{
-            $time = $cycle_time * 3600 * 24 * 30;
+            $time = 0;
         }
 
         return $time;
@@ -112,18 +115,6 @@ class IdcsmartCommonLogic
     {
         if ($cycle == 'onetime'){
             $time = 0;
-        }elseif ($cycle == 'monthly'){
-            $time = 3600 * 24 * 30;
-        }elseif ($cycle == 'quarterly'){
-            $time = 3600 * 24 * 30 * 3;
-        }elseif ($cycle == 'semaiannually'){
-            $time = 3600 * 24 * 30 * 6;
-        }elseif ($cycle == 'annually'){
-            $time = 3600 * 24 * 30 * 12;
-        }elseif ($cycle == 'biennially'){
-            $time = 3600 * 24 * 30 * 24;
-        }elseif ($cycle == 'triennianlly'){
-            $time = 3600 * 24 * 30 * 36;
         }else{
             $time = 0;
         }
@@ -196,7 +187,7 @@ class IdcsmartCommonLogic
             }
             $price = $sum + $price;
         }
-        return $price;
+        return bcsub($price,0,2);
     }
 
     /*
@@ -226,7 +217,7 @@ class IdcsmartCommonLogic
         # 总价
         $price = 0;
 
-        $description = [];
+        $description = $preview = [];
 
         $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
 
@@ -237,11 +228,11 @@ class IdcsmartCommonLogic
 
         if (!empty($customCycle)){ # 自定义周期
             $cycleName = $customCycle['name']??'';
-            $cycleTime = $this->customCycleTime($customCycle['cycle_time'],$customCycle['cycle_unit']);
+            $cycleTime = $this->customCycleTime($customCycle['cycle_time'],$customCycle['cycle_unit'],time());
 
             # 配置项价格
             foreach ($configoptions as $key=>$value){
-                $tmp = $IdcsmartCommonProductConfigoptionModel->field('option_name,option_type,fee_type,allow_repeat,max_repeat')->where('id',$key)->find();
+                $tmp = $IdcsmartCommonProductConfigoptionModel->field('option_name,option_type,fee_type,allow_repeat,max_repeat,unit')->where('id',$key)->find();
                 $optionType = $tmp['option_type']??'';
                 $feeType = $tmp['fee_type']??'qty';
 
@@ -261,24 +252,35 @@ class IdcsmartCommonLogic
                             ->find();
 
                         if (!empty($quantityType)){
-                            if ($k>=1){
-                                $description[] = $tmp['option_name'] . $k . '=>' . $item;
-                            }else{
-                                $description[] = $tmp['option_name'] . '=>' . $item;
-                            }
-
                             # 阶梯计费
                             if ($feeType == 'stage'){
-                                $price = bcadd($price,$this->quantityStagePrice($key,$item,$param['cycle'],0,true),2);
+                                $subPrice = $this->quantityStagePrice($key,$item,$param['cycle'],0,true);
+                                $price = bcadd($price,$subPrice,2);
                             }else{ # 数量计费
-                                $price = bcadd($price,$quantityType['amount'] * $item,2);
+                                $subPrice = bcmul($quantityType['amount'],$item,2);
+                                $price = bcadd($price,$subPrice,2);
+                            }
+                            if ($k>=1){
+                                $description[] = $tmp['option_name'] . $k . '=>' . $item . '=>' . $tmp['unit'] . '=>' . $subPrice;
+                                $preview[] = [
+                                    'name' => $tmp['option_name'] . $k,
+                                    'value' => $item . $tmp['unit'],
+                                    'price' => $subPrice
+                                ];
+                            }else{
+                                $description[] = $tmp['option_name'] . '=>' . $item . '=>' . $tmp['unit'] . '=>' . $subPrice;
+                                $preview[] = [
+                                    'name' => $tmp['option_name'],
+                                    'value' => $item . $tmp['unit'],
+                                    'price' => $subPrice
+                                ];
                             }
                         }
                     }
 
                 }elseif($this->checkMultiSelect($optionType)){ # 多选
                     $configoptionPrices = $IdcsmartCommonProductConfigoptionModel->alias('pc')
-                        ->field('pc.option_name,pcs.option_name as sub_name,ccp.amount')
+                        ->field('pc.option_name,pcs.option_name as sub_name,ccp.amount,pc.unit')
                         ->leftJoin('module_idcsmart_common_product_configoption_sub pcs','pcs.product_configoption_id=pc.id')
                         ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.rel_id=pcs.id AND ccp.type=\'configoption\'')
                         ->where('pc.hidden',0)
@@ -289,12 +291,18 @@ class IdcsmartCommonLogic
                         ->select()
                         ->toArray();
                     foreach ($configoptionPrices as $configoptionPrice){
-                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'];
-                        $price = bcadd($price,isset($configoptionPrice['amount']) && $configoptionPrice['amount']>=0?$configoptionPrice['amount']:0,2);
+                        $subPrice = isset($configoptionPrice['amount']) && $configoptionPrice['amount']>=0?$configoptionPrice['amount']:0;
+                        $price = bcadd($price,$subPrice,2);
+                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'] . '=>' . $configoptionPrice['unit'] . '=>' . $subPrice;
+                        $preview[] = [
+                            'name' => $configoptionPrice['option_name'],
+                            'value' => $configoptionPrice['sub_name'] . $tmp['unit'],
+                            'price' => $subPrice
+                        ];
                     }
                 }else{
                     $configoptionPrice = $IdcsmartCommonProductConfigoptionModel->alias('pc')
-                        ->field('pc.option_name,pcs.option_name as sub_name,ccp.amount')
+                        ->field('pc.option_name,pcs.option_name as sub_name,ccp.amount,pc.unit,pcs.country')
                         ->leftJoin('module_idcsmart_common_product_configoption_sub pcs','pcs.product_configoption_id=pc.id')
                         ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.rel_id=pcs.id AND ccp.type=\'configoption\'')
                         ->where('pc.hidden',0)
@@ -303,27 +311,43 @@ class IdcsmartCommonLogic
                         ->where('pcs.id',$value)
                         ->where('ccp.custom_cycle_id',$param['cycle'])
                         ->find();
+                    $subPrice = isset($configoptionPrice['amount']) && $configoptionPrice['amount']>=0?$configoptionPrice['amount']:0;
+                    $price = bcadd($price,$subPrice,2);
+
                     if (!empty($configoptionPrice)){
-                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'];
+                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'] . '=>' . $configoptionPrice['unit'] . '=>' . $subPrice;
+
+                        if ($optionType=='area'){
+                            $CountryModel = new CountryModel();
+                            $country = $CountryModel->where('iso',$configoptionPrice['country'])->find();
+                        }
+
+                        $preview[] = [
+                            'name' => $configoptionPrice['option_name'],
+                            'value' => $optionType=='area'?$country['name_zh'] ." ".$configoptionPrice['sub_name']:$configoptionPrice['sub_name'] . $configoptionPrice['unit'],
+                            'price' => $subPrice
+                        ];
                     }
-                    $price = bcadd($price,isset($configoptionPrice['amount']) && $configoptionPrice['amount']>=0?$configoptionPrice['amount']:0,2);
 
                 }
             }
 
+            # 基础价格
+            $basePrice = $customCycle['amount'];
 
             # 商品价格
-            $price = bcadd($price,$customCycle['amount'],2);
+            $price = bcadd($price,$basePrice,2);
 
 
-        }else{ # 系统周期
+        }
+        else{ # 系统周期(一次性)
             $cycleName = $this->systemCycles[$param['cycle']]??'';
             $cycleTime = $this->systemCycleTime($param['cycle']);
 
             # 配置项价格
             foreach ($configoptions as $key=>$value){
 
-                $tmp = $IdcsmartCommonProductConfigoptionModel->field('option_name,option_type,fee_type,allow_repeat,max_repeat')->where('id',$key)->find();
+                $tmp = $IdcsmartCommonProductConfigoptionModel->field('option_name,option_type,fee_type,allow_repeat,max_repeat,unit')->where('id',$key)->find();
                 $optionType = $tmp['option_type']??'';
                 $feeType = $tmp['fee_type']??'qty';
 
@@ -342,22 +366,34 @@ class IdcsmartCommonLogic
                             ->order('pcs.id','acs')
                             ->find();
                         if (!empty($quantityType)){
-                            if ($k>=1){
-                                $description[] = $tmp['option_name'] . $k . '=>' . $item;
-                            }else{
-                                $description[] = $tmp['option_name'] . '=>' . $item;
-                            }
                             # 阶梯计费
                             if ($feeType == 'stage'){
-                                $price = bcadd($price,$this->quantityStagePrice($key,$item,$param['cycle']),2);
+                                $subPrice = $this->quantityStagePrice($key,$item,$param['cycle']);
+                                $price = bcadd($price,$subPrice,2);
                             }else{ # 数量计费
-                                $price = bcadd($price,$quantityType[$param['cycle']] * $item,2);
+                                $subPrice = bcmul($quantityType[$param['cycle']],$item,2);
+                                $price = bcadd($price,$subPrice,2);
+                            }
+                            if ($k>=1){
+                                $description[] = $tmp['option_name'] . $k . '=>' . $item . '=>' . $tmp['unit'] . '=>' . $subPrice;
+                                $preview[] = [
+                                    'name' => $tmp['option_name'] . $k,
+                                    'value' => $item . $tmp['unit'],
+                                    'price' => $subPrice
+                                ];
+                            }else{
+                                $description[] = $tmp['option_name'] . '=>' . $item . '=>' . $tmp['unit'] . '=>' . $subPrice;
+                                $preview[] = [
+                                    'name' => $tmp['option_name'],
+                                    'value' => $item . $tmp['unit'],
+                                    'price' => $subPrice
+                                ];
                             }
                         }
                     }
                 }elseif($this->checkMultiSelect($optionType)){ # 多选
                     $configoptionPrices = $IdcsmartCommonProductConfigoptionModel->alias('pc')
-                        ->field('pc.option_name,pcs.option_name as sub_name,p.onetime,p.monthly,p.quarterly,p.semaiannually,p.annually,p.biennially,p.triennianlly')
+                        ->field('pc.option_name,pcs.option_name as sub_name,p.onetime,pc.unit')
                         ->leftJoin('module_idcsmart_common_product_configoption_sub pcs','pcs.product_configoption_id=pc.id')
                         ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=pcs.id AND p.type=\'configoption\'')
                         ->where('pc.hidden',0)
@@ -367,12 +403,18 @@ class IdcsmartCommonLogic
                         ->select()
                         ->toArray();
                     foreach ($configoptionPrices as $configoptionPrice){
-                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'];
-                        $price = bcadd($price,isset($configoptionPrice[$param['cycle']]) && $configoptionPrice[$param['cycle']]>=0?$configoptionPrice[$param['cycle']]:0,2);
+                        $subPrice = isset($configoptionPrice[$param['cycle']]) && $configoptionPrice[$param['cycle']]>=0?$configoptionPrice[$param['cycle']]:0;
+                        $price = bcadd($price,$subPrice,2);
+                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'] . '=>' . $configoptionPrice['unit'] . '=>' . $subPrice;
+                        $preview[] = [
+                            'name' => $configoptionPrice['option_name'],
+                            'value' => $configoptionPrice['sub_name'] . $tmp['unit'],
+                            'price' => $subPrice
+                        ];
                     }
                 }else{ # 非数量类型
                     $configoptionPrice = $IdcsmartCommonProductConfigoptionModel->alias('pc')
-                        ->field('pc.option_name,pcs.option_name as sub_name,p.onetime,p.monthly,p.quarterly,p.semaiannually,p.annually,p.biennially,p.triennianlly')
+                        ->field('pc.option_name,pcs.option_name as sub_name,p.onetime,pc.unit')
                         ->leftJoin('module_idcsmart_common_product_configoption_sub pcs','pcs.product_configoption_id=pc.id')
                         ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=pcs.id AND p.type=\'configoption\'')
                         ->where('pc.hidden',0)
@@ -380,11 +422,17 @@ class IdcsmartCommonLogic
                         ->where('pc.id',$key)
                         ->where('pcs.id',$value)
                         ->find();
-                    if (!empty($configoptionPrice)){
-                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'];
-                    }
+                    $subPrice = isset($configoptionPrice[$param['cycle']]) && $configoptionPrice[$param['cycle']]>=0?$configoptionPrice[$param['cycle']]:0;
+                    $price = bcadd($price,$subPrice,2);
 
-                    $price = bcadd($price,isset($configoptionPrice[$param['cycle']]) && $configoptionPrice[$param['cycle']]>=0?$configoptionPrice[$param['cycle']]:0,2);
+                    if (!empty($configoptionPrice)){
+                        $description[] = $configoptionPrice['option_name'] . '=>' . $configoptionPrice['sub_name'] . '=>' . $configoptionPrice['unit'] . '=>' . $subPrice;
+                        $preview[] = [
+                            'name' => $configoptionPrice['option_name'],
+                            'value' => $configoptionPrice['sub_name'] . $tmp['unit'],
+                            'price' => $subPrice
+                        ];
+                    }
                 }
             }
 
@@ -393,7 +441,8 @@ class IdcsmartCommonLogic
             $productPricing = $IdcsmartCommonPricingModel->where('type','product')
                 ->where('rel_id',$productId)
                 ->find();
-            $price = bcadd($price,isset($productPricing[$param['cycle']]) && $productPricing[$param['cycle']]>0?$productPricing[$param['cycle']]:0,2);
+            $basePrice = isset($productPricing[$param['cycle']]) && $productPricing[$param['cycle']]>0?$productPricing[$param['cycle']]:0;
+            $price = bcadd($price,$basePrice,2);
         }
 
         $result = [
@@ -401,10 +450,13 @@ class IdcsmartCommonLogic
             'msg'=>lang_plugins('success_message'),
             'data'=>[
                 'price'=>$param['cycle']=='free'?0:$price,
+                'renew_price'=>$param['cycle']=='free'?0:$price,
                 'billing_cycle'=>$param['cycle']=='free'?lang_plugins('free'):$cycleName,
                 'duration'=>$param['cycle']=='free'?0:$cycleTime,
                 'description'=>implode("\n",$description),
-                'content'=>implode("\n",$description)
+                'content'=>implode("\n",$description),
+                'preview'=>$preview,
+                'base_price' => $basePrice
             ]
         ];
 
@@ -480,18 +532,13 @@ class IdcsmartCommonLogic
     public function currentDurationPrice($host_id)
     {
         $HostModel = new HostModel();
+
         $host = $HostModel->find($host_id);
         if (empty($host)){
             return ['status'=>400,'msg'=>lang_plugins('host_is_not_exist')];
         }
+
         $productId = $host['product_id'];
-
-        $IdcsmartCommonPricingModel = new IdcsmartCommonPricingModel();
-        $pricing = $IdcsmartCommonPricingModel->where('type','product')
-            ->where('rel_id',$productId)
-            ->find();
-
-        $systemCycles = array_keys($this->systemCycles);
 
         $IdcsmartCommonHostConfigoptionModel = new IdcsmartCommonHostConfigoptionModel();
         $configoptions = $IdcsmartCommonHostConfigoptionModel->alias('hc')
@@ -502,48 +549,6 @@ class IdcsmartCommonLogic
             ->toArray();
 
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
-
-        $cycles = [];
-        foreach ($systemCycles as $systemCycle){
-            if ($pricing[$systemCycle]==-1){
-                unset($pricing[$systemCycle]);
-            }else{
-                $cycleFee = $pricing[$systemCycle]??0;
-
-                foreach ($configoptions as $configoption){
-                    if ($this->checkQuantity($configoption['option_type'])){
-                        # 找子项
-                        $qtySub = $IdcsmartCommonProductConfigoptionSubModel
-                            ->where('product_configoption_id',$configoption['id'])
-                            ->where('qty_min','<=',$configoption['qty'])
-                            ->where('qty_max','>=',$configoption['qty'])
-                            ->order('order','asc')
-                            ->find();
-                        if (!empty($qtySub)){
-                            # 阶梯计费
-                            if ($configoption['fee_type'] == 'stage'){
-                                $cycleFee = bcadd($cycleFee,$this->quantityStagePrice($configoption['id'],$configoption['qty'],$systemCycle),2);
-                            }else{ # 数量计费
-                                $cycleFee = bcadd($cycleFee,$qtySub[$systemCycle] * $configoption['qty'],2);
-                            }
-                            
-                        }
-
-                    }else{
-                        $sub = $IdcsmartCommonPricingModel->where('type','configoption')
-                            ->where('rel_id',$configoption['configoption_sub_id'])
-                            ->find();
-                        if (!empty($sub)){
-                            $cycleFee = bcadd($cycleFee,$sub[$systemCycle]>=0?$sub[$systemCycle]:0,2);
-                        }
-                    }
-                }
-
-
-                $cycles[$systemCycle] = $cycleFee;
-            }
-        }
-
 
         # 自定义周期及价格
         $IdcsmartCommonCustomCycleModel = new IdcsmartCommonCustomCycleModel();
@@ -575,13 +580,18 @@ class IdcsmartCommonLogic
                         if ($configoption['fee_type'] == 'stage'){
                             $customCycleAmount = bcadd($customCycleAmount,$this->quantityStagePrice($configoption['id'],$configoption['qty'],$customCycle['id'],0,true),2);
                         }else{ # 数量计费
-                            $customCycleAmount = bcadd($customCycleAmount,$qtySub[$systemCycle] * $configoption['qty'],2);
+                            # 当前子项的价格 * 数量
+                            $amount = $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])
+                                ->where('rel_id',$qtySub['id'])
+                                ->where('type','configoption')
+                                ->value('amount')??0;
+                            $customCycleAmount = bcadd($customCycleAmount,$amount * $configoption['qty'],2);
                         }
 
                     }
                 }else{
                     $amount = $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])
-                        ->where('rel_id',$configoption['id'])
+                        ->where('rel_id',$configoption['configoption_sub_id'])
                         ->where('type','configoption')
                         ->value('amount');
                     $customCycleAmount = bcadd($customCycleAmount,!is_null($amount) && $amount>=0?$amount:0,2);
@@ -591,16 +601,10 @@ class IdcsmartCommonLogic
         }
 
         $duration = [];
-        foreach ($cycles as $key=>$item){
-            $duration[] = [
-                'duration' => $this->systemCycleTime($key),
-                'price' => $item,
-                'billing_cycle' => $this->systemCycles[$key]
-            ];
-        }
+
         foreach ($customCycles as $item1){
             $duration[] = [
-                'duration' => $this->customCycleTime($item1['cycle_time'],$item1['cycle_unit']),
+                'duration' => $this->customCycleTime($item1['cycle_time'],$item1['cycle_unit'],$host['due_time']),
                 'price' => $item1['cycle_amount'],
                 'billing_cycle' => $item1['name']
             ];

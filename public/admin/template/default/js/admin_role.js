@@ -128,6 +128,7 @@
             timer = null
           }, 300)
         }
+        document.title = lang.group_setting + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
         // 切换分页

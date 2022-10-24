@@ -8,7 +8,7 @@
     <t-icon name="chevron-right"></t-icon>
     <a href="notice_email.html">{{lang.email_notice}}</a>
     <t-icon name="chevron-right"></t-icon>
-    <span class="cur">{{lang.email_temp_manage}}</span>
+    <span class="cur">{{lang.template_manage}}</span>
   </div>
   <t-card class="list-card-container">
     <!-- <ul class="common-tab">
@@ -28,7 +28,7 @@
           <t-button theme="primary">{{lang.create_template}}</t-button>
           <span class="txt">{{lang.create_template}}</span>
         </div>
-        <t-button theme="default" class="add">{{lang.get_more_interface}}</t-button>
+        <!-- <t-button theme="default" class="add">{{lang.get_more_interface}}</t-button> -->
         <t-button theme="default" @click="back" class="add">{{lang.back}}</t-button>
       </div>
       <!-- <div class="search">

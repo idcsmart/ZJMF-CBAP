@@ -65,6 +65,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('order/:id', 'admin/order/index'); # 获取单个订单
     Route::post('order', 'admin/order/create'); # 添加订单
     Route::put('order/:id/amount', 'admin/order/updateAmount'); # 修改订单金额
+    Route::put('order/item/:id', 'admin/order/updateOrderItem'); # 编辑人工调整的订单子项
     Route::put('order/:id/status/paid', 'admin/order/paid'); # 标记支付
     Route::delete('order/:id', 'admin/order/delete'); # 删除订单
     Route::post('order/upgrade/amount', 'admin/order/getUpgradeAmount'); # 获取升降级订单金额
@@ -85,6 +86,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     #交易流水管理
     Route::get('transaction', 'admin/transaction/transactionList'); # 交易流水列表
     Route::post('transaction', 'admin/transaction/create'); # 添加交易流水
+    Route::put('transaction/:id', 'admin/transaction/update'); # 编辑交易流水
     Route::delete('transaction/:id', 'admin/transaction/delete'); # 删除交易流水
 
     #任务管理
@@ -110,8 +112,6 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::put('configuration/cron', 'admin/Configuration/cronUpdate'); # 保存定时任务
     Route::get('configuration/theme', 'admin/Configuration/themeList'); # 获取主题设置
     Route::put('configuration/theme', 'admin/Configuration/themeUpdate'); # 保存主题设置
-    Route::get('configuration/certification', 'admin/Configuration/certificationList'); # 获取主题设置
-    Route::put('configuration/certification', 'admin/Configuration/certificationUpdate'); # 保存主题设置
 	
 	# 邮件模板管理
     Route::get('notice/email/template', 'admin/NoticeEmail/emailTemplateList'); # 获取邮件模板
@@ -165,6 +165,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('product/:id/config_option', 'admin/product/moduleAdminConfigOption'); # 商品配置页面
     Route::post('product/:id/config_option', 'admin/product/moduleCalculatePrice'); # 修改配置计算价格
     Route::get('product/:id/all_config_option', 'admin/product/moduleAllConfigOption'); # 获取商品所有配置项
+    Route::get('module/:module/product', 'admin/product/moduleProductList'); # 根据模块获取商品
 
     # 公共接口
     Route::get('gateway', 'admin/common/gateway'); # 支付接口
@@ -203,12 +204,6 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('menu/home', 'admin/menu/getHomeMenu'); # 新建接口分组
     Route::put('menu/admin', 'admin/menu/saveAdminMenu'); # 修改接口分组
     Route::put('menu/home', 'admin/menu/saveHomeMenu'); # 删除接口分组
-
-    # 实名认证
-    Route::get('certification', 'admin/certification/certificationList'); # 实名认证列表
-    Route::put('certification/:id/approve', 'admin/certification/approve'); # 实名认证通过
-    Route::put('certification/:id/reject', 'admin/certification/reject'); # 实名认证驳回
-    Route::get('certification/:id', 'admin/certification/index'); # 实名认证详情
 
 })  
     ->allowCrossDomain([

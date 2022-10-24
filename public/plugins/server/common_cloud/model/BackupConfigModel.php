@@ -242,6 +242,84 @@ class BackupConfigModel extends Model{
         return $result;
     }
 
+    /**
+     * 时间 2022-10-12
+     * @title 保存商品备份/快照配置
+     * @desc 保存商品备份/快照配置
+     * @author hh
+     * @version v1
+     * @param   int $product_id - 商品ID
+     * @param   array $data     - 数据数组
+     */
+    public function saveBackupConfig($product_id, $data, $type = 'backup'){
+        $old = $this->field('num,price')
+                    ->where('product_id', $product_id)
+                    ->where('type', $type)
+                    ->select()
+                    ->toArray();
+        $old = array_column($old, 'price', 'num');
+
+        $backup_data = [];
+        foreach($data as $v){
+            $backup_data[] = [
+                'num'=>$v['num'],
+                'type'=>$type,
+                'price'=>$v['price'],
+                'product_id'=>$product_id,
+            ];
+        }
+
+        $typeDes = [
+            'snap'=>lang_plugins('snap'),
+            'backup'=>lang_plugins('backup'),
+        ];
+
+        $this->startTrans();
+        try{
+            $this->where('product_id', $product_id)->where('type', $type)->delete();
+            $this->insertAll($backup_data);
+
+            $this->commit();
+        }catch(\Exception $e){
+            $this->rollback();
+            return ['status'=>400, 'msg'=>lang_plugins('update_failed')];
+        }
+
+        $description = '';
+        foreach($backup_data as $v){
+            if(isset($old[$v['num']])){
+                if($v['price'] != $old[$v['num']]){
+                    $description .= lang_plugins('modify_backup_price', [
+                        '{type}'=>$typeDes[$type],
+                        '{num}'=>$v['num'],
+                        '{old_price}'=>$old[$v['num']],
+                        '{new_price}'=>$v['price'],
+                    ]);
+                }
+                unset($old[$v['num']]);
+            }else{
+                $description .= lang_plugins('add_backup_num', [
+                    '{type}'=>$typeDes[$type],
+                    '{num}'=>$v['num'],
+                ]);
+            }
+        }
+
+        if(!empty($old)){
+            $description .= lang_plugins('del_backup_num', [
+                '{type}'=>$typeDes[$type],
+                '{num}'=>implode(',', array_keys($old)),
+            ]);
+        }
+        return ['status'=>200, 'msg'=>lang_plugins('success_message'), 'data'=>['desc'=>$description] ];
+    }
+
+
+
+
+
+
+
 
 
 

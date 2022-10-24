@@ -9,7 +9,7 @@
     <t-icon name="chevron-right"></t-icon>
     <a href="notice_email.html">{{lang.email_notice}}</a>
     <t-icon name="chevron-right"></t-icon>
-    <a href="notice_email_template.html">{{lang.email_temp_manage}}</a>
+    <a href="notice_email_template.html">{{lang.template_manage}}</a>
     <t-icon name="chevron-right"></t-icon>
     <span class="cur">{{lang.edit_template}}</span>
   </div>
@@ -23,7 +23,7 @@
         <t-form-item :label="lang.title" name="subject">
           <t-input v-model="formData.subject" :placeholder="lang.input+lang.title"></t-input>
         </t-form-item>
-        <t-form-item :label="lang.content" name="message">
+        <t-form-item :label="lang.content" name="message" class="emailTemp">
           <textarea id="emailTemp" :value="formData.message" :placeholder="lang.input+lang.content"></textarea>
         </t-form-item>
         <div class="com-f-btn">

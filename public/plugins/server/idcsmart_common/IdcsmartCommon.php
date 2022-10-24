@@ -47,7 +47,7 @@ class IdcsmartCommon
   `custom_cycle_id` int(11) NOT NULL DEFAULT '0' COMMENT '自定义周期ID',
   `rel_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联ID:如商品ID,配置项ID',
   `type` enum('product','configoption') NOT NULL DEFAULT 'product' COMMENT '价格类型:product商品,configoption配置项',
-  `amount` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '自定义周期金额:-1表示前台不显示此周期,>=0时表示此周期金额,默认为-1',
+  `amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '自定义周期金额',
   PRIMARY KEY (`id`),
   KEY `type_rel_id` (`rel_id`,`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",
@@ -65,13 +65,7 @@ class IdcsmartCommon
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `type` enum('configoption','product') NOT NULL DEFAULT 'product' COMMENT '对应类型:product商品(默认),configoption配置项',
   `rel_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联ID:如商品ID',
-  `onetime` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '一次性金额:-1表示前台不显示此周期,>=0时表示此周期金额,默认为-1；以下周期同',
-  `monthly` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '月',
-  `quarterly` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '季',
-  `semaiannually` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '半年',
-  `annually` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '一年',
-  `biennially` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '两年',
-  `triennianlly` decimal(10,2) NOT NULL DEFAULT '-1.00' COMMENT '三年',
+  `onetime` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '一次性金额',
   PRIMARY KEY (`id`),
   KEY `type_rel_id` (`type`,`rel_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",
@@ -134,7 +128,7 @@ class IdcsmartCommon
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;",
-            "CREATE TABLE `idcsmart_module_idcsmart_common_product_custom_field_vaule` (
+            "CREATE TABLE `idcsmart_module_idcsmart_common_product_custom_field_value` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `host_id` int(11) NOT NULL DEFAULT '0' COMMENT '产品ID',
   `field_id` int(11) NOT NULL DEFAULT '0' COMMENT '自定义字段ID',
@@ -165,7 +159,7 @@ class IdcsmartCommon
             "DROP TABLE IF EXISTS `idcsmart_module_idcsmart_common_product_configoption`;",
             "DROP TABLE IF EXISTS `idcsmart_module_idcsmart_common_product_configoption_sub`;",
             "DROP TABLE IF EXISTS `idcsmart_module_idcsmart_common_product_custom_field`;",
-            "DROP TABLE IF EXISTS `idcsmart_module_idcsmart_common_product_custom_field_vaule`;",
+            "DROP TABLE IF EXISTS `idcsmart_module_idcsmart_common_product_custom_field_value`;",
         ];
 
 		foreach($sql as $v){
@@ -313,10 +307,48 @@ class IdcsmartCommon
 	 * @author wyh
 	 * @version v1
 	 */
-	public function clientArea()
+	public function clientArea($params)
     {
-		return '';
+    	$res = [
+			'template'=>'template/clientarea/product_detail.php',
+		];
+
+		return $res;
 	}
+
+	/**
+	 * 时间 2022-10-13
+	 * @title 产品列表
+	 * @author hh
+	 * @version v1
+	 * @param   [type] $params [description]
+	 * @return  [type]         [description]
+	 */
+	public function hostList($params){
+		$res = [
+			'template'=>'template/clientarea/product_list.php',
+		];
+
+		return $res;
+	}
+
+	/**
+	 * 时间 2022-10-13
+	 * @title 前台购买
+	 * @author hh
+	 * @version v1
+	 * @param   string x       -             x
+	 * @param   [type] $params [description]
+	 * @return  [type]         [description]
+	 */
+	public function clientProductConfigOption($params){
+		$res = [
+			'template'=>'template/clientarea/goods.php',
+		];
+
+		return $res;
+	}
+
 
 	/**
 	 * 时间 2022-09-27

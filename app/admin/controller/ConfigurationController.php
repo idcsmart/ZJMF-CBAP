@@ -31,6 +31,8 @@ class ConfigurationController extends AdminBaseController
      * @return  string website_name - 网站名称
      * @return  string website_url - 网站域名地址
      * @return  string terms_service_url - 服务条款地址
+     * @return  string terms_privacy_url - 隐私条款地址
+     * @return  string system_logo - 系统LOGO
      */
     public function systemList()
     {
@@ -63,6 +65,8 @@ class ConfigurationController extends AdminBaseController
      * @param  string website_name - 网站名称
      * @param  string website_url - 网站域名地址
      * @param  string terms_service_url - 服务条款地址
+     * @param  string terms_privacy_url - 隐私条款地址
+     * @param  string system_logo - 系统LOGO
      */
     public function systemUpdate()
     {

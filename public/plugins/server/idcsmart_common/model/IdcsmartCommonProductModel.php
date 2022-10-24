@@ -3,8 +3,9 @@ namespace server\idcsmart_common\model;
 
 use app\common\model\HostModel;
 use app\common\model\ProductModel;
+use app\common\model\MenuModel;
 use server\idcsmart_common\logic\IdcsmartCommonLogic;
-use think\facade\Db;
+use think\Db;
 use think\db\Query;
 use think\Model;
 
@@ -42,18 +43,12 @@ class IdcsmartCommonProductModel extends Model
      * @return int common_product.auto_support - 是否自动化支持:1是，0否
      * @return  object pricing - 周期信息(注意显示)
      * @return  float pricing.onetime - 一次性,价格(当pay_type=='onetime'时,只显示此价格)
-     * @return  float pricing.monthly - 月，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.quarterly - 季，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.semaiannually - 半年，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.annually - 一年，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.biennially - 两年，价格(当pay_type!=onetime时,显示)
-     * @return  float pricing.triennianlly - 三年，价格(当pay_type!=onetime时,显示)
      * @return object custom_cycle - 自定义周期
      * @return int custom_cycle.id - 自定义周期ID
      * @return string custom_cycle.name - 名称
      * @return int custom_cycle.cycle_time - 时长
      * @return string custom_cycle.cycle_unit - 时长单位
-     * @return float custom_cycle.amount - 金额,-1不显示出，留空
+     * @return float custom_cycle.amount - 金额
      */
     public function indexProduct($param)
     {
@@ -67,20 +62,31 @@ class IdcsmartCommonProductModel extends Model
             ->where('product_id',$productId)
             ->find();
 
+        # 插入默认数据
+        if (empty($commonProduct)){
+            $this->insert([
+                'product_id' => $productId,
+                'order_page_description' => '',
+                'allow_qty' => 0,
+                'auto_support' => 0,
+                'create_time' => time()
+            ]);
+            $commonProduct = $this->field('product_id,order_page_description,allow_qty,auto_support')
+                ->where('product_id',$productId)
+                ->find();
+        }
+
         if (!empty($commonProduct)){
             $commonProduct['order_page_description'] = htmlspecialchars_decode($commonProduct['order_page_description']);
         }
 
-        # 是否有默认价格数据
+        # 一次性价格
         $IdcsmartCommonPricingModel = new IdcsmartCommonPricingModel();
         $pricing = $IdcsmartCommonPricingModel->where('type','product')
             ->where('rel_id',$productId)
             ->find();
         if (empty($pricing)){
-            $IdcsmartCommonPricingModel->insert([
-                'type' => 'product',
-                'rel_id' => $productId
-            ]);
+            $IdcsmartCommonPricingModel->commonInsert([],$productId,'product');
         }
 
         $pricing = $IdcsmartCommonPricingModel
@@ -97,10 +103,21 @@ class IdcsmartCommonProductModel extends Model
             ->where('ccp.rel_id',$productId)
             ->select()
             ->toArray();
+        # 自定义周期为空,预设月-三年的周期
+        if (empty($customCycle)){
+            $IdcsmartCommonCustomCycleModel->preSetCycle($productId);
+
+            $customCycle = $IdcsmartCommonCustomCycleModel->alias('cc')
+                ->field('cc.id,cc.name,cc.cycle_time,cc.cycle_unit,ccp.amount')
+                ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.custom_cycle_id=cc.id AND ccp.type=\'product\'')
+                ->where('ccp.rel_id',$productId)
+                ->select()
+                ->toArray();
+        }
 
         $data = [
             'pay_type' => $product['pay_type'],
-            'common_product' => $commonProduct??['product_d'=>$productId,'order_page_description'=>'','allow_qty'=>0,'auto_support'=>0],
+            'common_product' => $commonProduct,
             'pricing' => $pricing??[],
             'custom_cycle' => $customCycle??[]
         ];
@@ -124,14 +141,8 @@ class IdcsmartCommonProductModel extends Model
      * @param string order_page_description - 订购页描述
      * @param int allow_qty - 是否允许选择数量:1是，0否默认
      * @param int auto_support - 自动化支持:开启后所有配置选项都可输入参数
-     * @param object pricing - 周期价格,格式:{"onetime":0.1,"monthly":-1,"quarterly":1.0}
-     * @param float pricing.onetime - 一次性价格:删除时，传此周期价格为-1
-     * @param float pricing.monthly - 月:删除时，传此周期价格为-1
-     * @param float pricing.quarterly - 季:删除时，传此周期价格为-1
-     * @param float pricing.semaiannually - 半年:删除时，传此周期价格为-1
-     * @param float pricing.annually - 一年:删除时，传此周期价格为-1
-     * @param float pricing.biennially - 两年:删除时，传此周期价格为-1
-     * @param float pricing.triennianlly - 三年:删除时，传此周期价格为-1
+     * @param object pricing - 周期价格,格式:{"onetime":0.1}
+     * @param float pricing.onetime - 一次性价格
      */
     public function createProduct($param)
     {
@@ -162,7 +173,6 @@ class IdcsmartCommonProductModel extends Model
             $IdcsmartCommonPricingModel = new IdcsmartCommonPricingModel();
 
             $IdcsmartCommonPricingModel->commonInsert($param['pricing']??[],$productId);
-
 
             $this->commit();
         }catch (\Exception $e){
@@ -206,7 +216,7 @@ class IdcsmartCommonProductModel extends Model
             ->where('rel_id',$productId)
             ->find();
 
-        $customCycle['amount'] = $customCyclePricing['amount']??-1;
+        $customCycle['amount'] = $customCyclePricing['amount']??0;
 
         return ['status'=>200,'msg'=>lang_plugins('success_message'),'data'=>['custom_cycle'=>$customCycle??(object)[]]];
     }
@@ -243,8 +253,32 @@ class IdcsmartCommonProductModel extends Model
                 'custom_cycle_id' => $customCycleId,
                 'rel_id' => $productId,
                 'type' => 'product',
-                'amount' => $param['amount']??-1,
+                'amount' => $param['amount']??0,
             ]);
+
+            # 默认增加配置子项价格
+            $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+
+            $configoptionsId = $IdcsmartCommonProductConfigoptionModel->where('product_id',$productId)->column('id');
+
+            $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+
+            $configoptionSubs = $IdcsmartCommonProductConfigoptionSubModel->whereIn('product_configoption_id',$configoptionsId)
+                ->select()
+                ->toArray();
+            $customCyclePricingArray = [];
+            foreach ($configoptionSubs as $configoptionSub){
+                $customCyclePricingArray[] = [
+                    'custom_cycle_id' => $customCycleId,
+                    'rel_id' => $configoptionSub['id'],
+                    'type' => 'configoption',
+                    'amount' => 0,
+                ];
+            }
+            $IdcsmartCommonCustomCyclePricingModel->insertAll($customCyclePricingArray);
+
+            # 更新商品最低价格
+            $this->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -301,16 +335,19 @@ class IdcsmartCommonProductModel extends Model
                 ->find();
             if (!empty($customCyclePricing)){
                 $customCyclePricing->save([
-                    'amount' => $param['amount']??-1,
+                    'amount' => $param['amount']??0,
                 ]);
             }else{
                 $IdcsmartCommonCustomCyclePricingModel->insert([
                     'custom_cycle_id' => $id,
                     'rel_id' => $productId,
                     'type' => 'product',
-                    'amount' => $param['amount']??-1,
+                    'amount' => $param['amount']??0,
                 ]);
             }
+
+            # 更新商品最低价格
+            $this->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -355,6 +392,20 @@ class IdcsmartCommonProductModel extends Model
                 ->where('rel_id',$productId)
                 ->delete();
 
+            # 删除配置子项价格
+            $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+            $configoptionSubsId = $IdcsmartCommonProductConfigoptionModel->alias('pc')
+                ->leftJoin('module_idcsmart_common_product_configoption_sub pcs','pcs.product_configoption_id=pc.id')
+                ->where('pc.product_id',$productId)
+                ->column('pcs.id');
+            $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$id)
+                ->whereIn('rel_id',$configoptionSubsId)
+                ->where('type','configoption')
+                ->delete();
+
+            # 更新商品最低价格
+            $this->updateProductMinPrice($productId);
+
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -375,6 +426,7 @@ class IdcsmartCommonProductModel extends Model
      * @version v1
      * @param   int product_id - 商品ID require
      * @return  object common_product - 商品基础信息
+     * @return  string common_product.name - 商品名称
      * @return  string common_product.order_page_description - 订购页面html
      * @return  string common_product.allow_qty - 是否允许选择数量:1是，0否默认
      * @return  string common_product.pay_type - 付款类型(免费free，一次onetime，周期先付recurring_prepayment,周期后付recurring_postpaid
@@ -404,7 +456,7 @@ class IdcsmartCommonProductModel extends Model
         $productId = $param['product_id']??0;
 
         $commonProduct = $this->alias('cp')
-            ->field('cp.order_page_description,cp.allow_qty,p.pay_type')
+            ->field('p.name,cp.order_page_description,cp.allow_qty,p.pay_type')
             ->leftJoin('product p','p.id=cp.product_id')
             ->where('cp.product_id',$productId)
             ->find();
@@ -414,31 +466,29 @@ class IdcsmartCommonProductModel extends Model
             ->where('rel_id',$productId)
             ->find();
 
-        $systemCycles = [
-            'onetime',
-            'monthly',
-            'quarterly',
-            'semaiannually',
-            'annually',
-            'biennially',
-            'triennianlly'
-        ];
+        $IdcsmartCommonLogic = new IdcsmartCommonLogic();
+        $systemCycles = array_keys($IdcsmartCommonLogic->systemCycles);
 
         $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
         $configoptions = $IdcsmartCommonProductConfigoptionModel->field('id,product_id,option_name,option_type,qty_min,qty_max,unit,allow_repeat,max_repeat,description')
             ->where('product_id',$productId)
             ->where('hidden',0)
+            ->order('order','asc') # 升序
+            ->order('id','asc')
             ->select()
             ->toArray();
-        # TODO 最低配置子项价格(取第一个)
+        # 配置子项价格(取第一个)
         $minSubPricings = [];
         foreach ($configoptions as &$configoption){
             $subs = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
-                ->field('pcs.id,pcs.option_name,pcs.qty_min,pcs.qty_max,pcs.country')/*,p.onetime,p.monthly,p.quarterly,p.semaiannually,p.annually,p.biennially,p.triennianlly*/
+                ->field('pcs.id,pcs.option_name,pcs.qty_min,pcs.qty_max,pcs.country,pc.option_type,pc.fee_type,pcs.product_configoption_id')
+                ->leftJoin('module_idcsmart_common_product_configoption pc','pc.id=pcs.product_configoption_id')
                 ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=pcs.id AND p.type=\'configoption\'')
                 ->where('pcs.product_configoption_id',$configoption['id'])
                 ->where('pcs.hidden',0)
+                ->order('pcs.order','asc')
+                ->order('pcs.id','asc')
                 ->select()
                 ->toArray();
             $configoption['subs'] = $subs??[];
@@ -450,7 +500,7 @@ class IdcsmartCommonProductModel extends Model
 
         $cycles = [];
         foreach ($systemCycles as $systemCycle){
-            if ($pricing[$systemCycle]==-1){
+            if ($pricing[$systemCycle]<0){
                 unset($pricing[$systemCycle]);
             }else{
                 $cycleFee = $pricing[$systemCycle]??0;
@@ -474,19 +524,32 @@ class IdcsmartCommonProductModel extends Model
             ->select()
             ->toArray();
         $IdcsmartCommonCustomCyclePricingModel = new IdcsmartCommonCustomCyclePricingModel();
-        foreach ($customCycles as &$customCycle){
-
+        foreach ($customCycles as $key=>$customCycle){
             $customCycleAmount = $customCycle['amount']??0;
 
             # 配置子项的自定义价格
             foreach ($minSubPricings as $minSubPricing){
-                $amount = $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])
-                    ->where('rel_id',$minSubPricing['id'])
-                    ->where('type','configoption')
-                    ->value('amount');
+                if ($IdcsmartCommonLogic->checkQuantity($minSubPricing['option_type'])){
+                    # 阶梯计费
+                    if ($minSubPricing['fee_type'] == 'stage'){
+                        $amount = $IdcsmartCommonLogic->quantityStagePrice($minSubPricing['product_configoption_id'],$minSubPricing['qty_min'],$customCycle['id'],0,true);
+                    }else{ # 数量计费
+                        $amount = $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])
+                            ->where('rel_id',$minSubPricing['id'])
+                            ->where('type','configoption')
+                            ->value('amount');
+                        $amount = $amount * $minSubPricing['qty_min'];
+                    }
+
+                }else{
+                    $amount = $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])
+                        ->where('rel_id',$minSubPricing['id'])
+                        ->where('type','configoption')
+                        ->value('amount');
+                }
                 $customCycleAmount = bcadd($customCycleAmount,$amount??0);
             }
-            $customCycle['cycle_amount'] = $customCycleAmount;
+            $customCycles[$key]['cycle_amount'] = $customCycleAmount;
         }
 
         if (empty($commonProduct) || (!empty($commonProduct) && $commonProduct['pay_type'] == 'free')){
@@ -499,6 +562,50 @@ class IdcsmartCommonProductModel extends Model
             'configoptions' => $configoptions??(object)[],
             'cycles' => $cycles??(object)[],
             'custom_cycles' => $customCycles??(object)[]
+        ];
+
+        return [
+            'status' => 200,
+            'msg' => lang_plugins('success_message'),
+            'data' => $data
+        ];
+    }
+
+    public function cartConfigoptionCalculate($param)
+    {
+        $param['configoption'] = $param['config_options']['configoption']??[];
+
+        $productId = $param['product_id']??0;
+
+        $IdcsmartCommonLogic = new IdcsmartCommonLogic();
+
+        # 自定义周期及价格
+        $IdcsmartCommonCustomCycleModel = new IdcsmartCommonCustomCycleModel();
+        $customCycles = $IdcsmartCommonCustomCycleModel->alias('cc')
+            ->field('cc.id,cc.name,cc.cycle_time,cc.cycle_unit,ccp.amount')
+            ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.custom_cycle_id=cc.id AND ccp.type=\'product\'')
+            ->where('cc.product_id',$productId)
+            ->where('ccp.rel_id',$productId)
+            ->where('ccp.amount','>=',0) # 可显示出得周期
+            ->select()
+            ->toArray();
+        foreach ($customCycles as &$customCycle){
+            $param['cycle'] = $customCycle['id'];
+            $result = $IdcsmartCommonLogic->cartCalculatePrice($param);
+            $customCycle['cycle_amount'] = $result['data']['price']??bcsub(0,0,2);
+        }
+
+        $cycles = [];
+        $systemCycles = array_keys($IdcsmartCommonLogic->systemCycles);
+        foreach ($systemCycles as $systemCycle){
+            $param['cycle'] = $systemCycle;
+            $result = $IdcsmartCommonLogic->cartCalculatePrice($param);
+            $cycles[$systemCycle] = $result['data']['price']??bcsub(0,0,2);
+        }
+
+        $data = [
+            'custom_cycles' => $customCycles,
+            'cycles' => $cycles
         ];
 
         return [
@@ -627,6 +734,7 @@ class IdcsmartCommonProductModel extends Model
      */
     public function hostList($param)
     {
+        $param['m'] = $param['m'] ?? 0;
         $param['client_id'] = get_client_id();
         $param['keywords'] = $param['keywords'] ?? '';
         $param['status'] = $param['status'] ?? '';
@@ -637,15 +745,29 @@ class IdcsmartCommonProductModel extends Model
             $param['orderby'] = 'h.'.$param['orderby'];
         }
 
+        $menu = MenuModel::find($param['m']);
+        if(!empty($menu)){
+            $param['product_id'] = json_decode($menu['product_id'], true);
+        }else{
+            $param['product_id'] = [];
+        }
+
         $where = function (Query $query) use($param) {
+            if(!empty($param['product_id'])){
+                $query->whereIn('h.product_id', $param['product_id']);
+            }
             if(!empty($param['client_id'])){
-                $query->where('h.client_id', $param['client_id']);
+                $query->where('h.client_id', $param['client_id'])->where('h.status', '<>', 'Cancelled');
             }
             if(!empty($param['keywords'])){
                 $query->where('h.id|p.name|h.name|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
             }
             if(!empty($param['status'])){
-                $query->where('h.status', $param['status']);
+                if($param['status'] == 'Pending'){
+                    $query->whereIn('h.status',['Pending','Failed']);
+                }else{
+                    $query->where('h.status', $param['status']);
+                }
             }
             $query->where('s.module|ss.module','idcsmart_common');
         };
@@ -668,6 +790,12 @@ class IdcsmartCommonProductModel extends Model
             ->leftjoin('client c', 'c.id=h.client_id')
             ->leftjoin('order o', 'o.id=h.order_id')
             ->where($where)
+            ->withAttr('status',function ($value){
+                if ($value=='Failed'){
+                    return 'Pending';
+                }
+                return $value;
+            })
             ->limit($param['limit'])
             ->page($param['page'])
             ->order($param['orderby'], $param['sort'])
@@ -684,5 +812,225 @@ class IdcsmartCommonProductModel extends Model
         }
 
         return ['list' => $hosts, 'count' => $count];
+    }
+
+    # 删除商品时实现钩子
+    public function deleteProduct($param)
+    {
+        $productId = $param['id']??0;
+
+        $this->startTrans();
+
+        try{
+            $this->where('product_id',$productId)->delete();
+
+            $IdcsmartCommonPricingModel = new IdcsmartCommonPricingModel();
+            $IdcsmartCommonPricingModel->where('type','product')->where('rel_id',$productId)->delete();
+
+            $IdcsmartCommonCustomCycleModel = new IdcsmartCommonCustomCycleModel();
+            $IdcsmartCommonCustomCycleModel->where('product_id',$productId)->delete();
+
+            $IdcsmartCommonCustomCyclePricingModel = new IdcsmartCommonCustomCyclePricingModel();
+            $IdcsmartCommonCustomCyclePricingModel->where('type','product')->where('rel_id',$productId)->delete();
+
+            $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+            $configoptions = $IdcsmartCommonProductConfigoptionModel->where('product_id',$productId)
+                ->select()
+                ->toArray();
+            $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+            foreach ($configoptions as $configoption){
+                $configoptionSubsId = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$configoption['id'])
+                    ->column('id');
+                $IdcsmartCommonCustomCyclePricingModel->whereIn('rel_id',$configoptionSubsId)
+                    ->where('type','configoption')
+                    ->delete();
+
+                $IdcsmartCommonPricingModel->whereIn('rel_id',$configoptionSubsId)
+                    ->where('type','configoption')
+                    ->delete();
+
+                $IdcsmartCommonProductConfigoptionSubModel->whereIn('id',$configoptionSubsId)->delete();
+                $IdcsmartCommonProductConfigoptionModel->where('id',$configoption['id'])->delete();
+            }
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    # 更新商品最低配置价格数据
+    public function updateProductMinPrice($product_id)
+    {
+        $price = $this->productMinPrice($product_id);
+
+        $ProductModel = new ProductModel();
+
+        $ProductModel->where('id',$product_id)->update([
+            'price' => $price
+        ]);
+
+        return true;
+    }
+
+    # 获取商品最低配置价格数据
+    public function productMinPrice($product_id)
+    {
+        $ProductModel = new ProductModel();
+        $product = $ProductModel->find($product_id);
+
+        $IdcsmartCommonLogic = new IdcsmartCommonLogic();
+
+        $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+
+        $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+
+        if ($product['pay_type']=='free'){
+            $price = 0;
+        }elseif ($product['pay_type']=='onetime'){
+            $IdcsmartCommonPricingModel = new IdcsmartCommonPricingModel();
+            $commonPricing = $IdcsmartCommonPricingModel->where('type','product')
+                ->where('rel_id',$product_id)
+                ->where('onetime','>=',0)
+                ->find();
+            $customPrice = $commonPricing['onetime']??0;
+
+            $configoptions = $IdcsmartCommonProductConfigoptionModel->field('id,product_id,option_name,option_type,qty_min,qty_max,unit,allow_repeat,max_repeat,description,fee_type')
+                ->where('product_id',$product_id)
+                ->where('hidden',0)
+                ->order('order','asc') # 升序
+                ->order('id','asc')
+                ->select()
+                ->toArray();
+            foreach ($configoptions as $configoption){
+                if ($IdcsmartCommonLogic->checkQuantity($configoption['option_type'])){
+                    if ($configoption['fee_type']=='stage') { # 阶梯计费 数量选最小
+                        $qtyMin = $configoption['qty_min'];
+                        if ($qtyMin>0){
+                            $subPricing = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
+                                ->leftJoin('module_idcsmart_common_pricing cp','cp.rel_id=pcs.id AND cp.type=\'configoption\'')
+                                ->where('pcs.product_configoption_id',$configoption['id'])
+                                ->where('pcs.qty_min',$qtyMin)
+                                ->where('cp.onetime','>=',0) # 金额>=0
+                                ->find();
+                            $customPrice += ($subPricing['onetime']??0) * $qtyMin;
+                        }
+                    }else{ # 数量计费 价格总价最小
+                        $subPricings = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
+                            ->leftJoin('module_idcsmart_common_pricing cp','cp.rel_id=pcs.id AND cp.type=\'configoption\'')
+                            ->where('pcs.product_configoption_id',$configoption['id'])
+                            ->where('cp.onetime','>=',0) # 金额>=0
+                            ->select()
+                            ->toArray();
+                        $qtyPriceArray = [];
+                        foreach ($subPricings as $subPricing){
+                            $qtyPriceArray[] = $subPricing['onetime'] * $subPricing['qty_min'];
+                        }
+                        if (!empty($qtyPriceArray)){
+                            $customPrice += min($qtyPriceArray);
+                        }
+                    }
+                }elseif ($IdcsmartCommonLogic->checkMultiSelect($configoption['option_type'])){ # 多选不选
+                    $customPrice += 0;
+                }else{
+                    $amount = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
+                        ->leftJoin('module_idcsmart_common_pricing cp','cp.rel_id=pcs.id AND cp.type=\'configoption\'')
+                        ->where('pcs.product_configoption_id',$configoption['id'])
+                        ->where('pcs.hidden',0)
+                        ->where('cp.onetime','>=',0)
+                        ->order('pcs.order','asc') # 升序
+                        ->order('pcs.id','asc')
+                        ->min('cp.onetime');
+
+                    $customPrice += $amount;
+                }
+            }
+
+            $price = $customPrice;
+
+        }else{
+            $IdcsmartCommonCustomCycleModel = new IdcsmartCommonCustomCycleModel();
+            $customCycles = $IdcsmartCommonCustomCycleModel->alias('cc')
+                ->field('cc.id,cc.name,cc.cycle_time,cc.cycle_unit,ccp.amount')
+                ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.custom_cycle_id=cc.id AND ccp.type=\'product\'')
+                ->where('cc.product_id',$product_id)
+                ->where('ccp.rel_id',$product_id)
+                ->where('ccp.amount','>=',0) # 可显示出得周期
+                ->select()
+                ->toArray();
+
+            $configoptions = $IdcsmartCommonProductConfigoptionModel->field('id,product_id,option_name,option_type,qty_min,qty_max,unit,allow_repeat,max_repeat,description,fee_type')
+                ->where('product_id',$product_id)
+                ->where('hidden',0)
+                ->order('order','asc') # 升序
+                ->order('id','asc')
+                ->select()
+                ->toArray();
+
+            $priceArray = [];
+
+            foreach ($customCycles as $customCycle){
+
+                $customPrice = $customCycle['amount']??0;
+
+                foreach ($configoptions as $configoption){
+                    if ($IdcsmartCommonLogic->checkQuantity($configoption['option_type'])){
+                        if ($configoption['fee_type']=='stage'){ # 阶梯计费 数量选最小
+                            $qtyMin = $configoption['qty_min'];
+                            if ($qtyMin>0){
+                                $subPricing = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
+                                    ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.rel_id=pcs.id AND ccp.type=\'configoption\'')
+                                    ->where('pcs.product_configoption_id',$configoption['id'])
+                                    ->where('pcs.qty_min',$qtyMin)
+                                    ->where('ccp.custom_cycle_id',$customCycle['id'])
+                                    ->where('ccp.amount','>=',0) # 金额>=0
+                                    ->find();
+                                $customPrice += ($subPricing['amount']??0) * $qtyMin;
+                            }
+                        }else{ # 数量计费 价格总价最小
+                            $subPricings = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
+                                ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.rel_id=pcs.id AND ccp.type=\'configoption\'')
+                                ->where('pcs.product_configoption_id',$configoption['id'])
+                                ->where('ccp.custom_cycle_id',$customCycle['id'])
+                                ->where('ccp.amount','>=',0) # 金额>=0
+                                ->select()
+                                ->toArray();
+                            $qtyPriceArray = [];
+                            foreach ($subPricings as $subPricing){
+                                $qtyPriceArray[] = $subPricing['amount'] * $subPricing['qty_min'];
+                            }
+                            if (!empty($qtyPriceArray)){
+                                $customPrice += min($qtyPriceArray);
+                            }
+
+                        }
+
+                    }elseif ($IdcsmartCommonLogic->checkMultiSelect($configoption['option_type'])){ # 多选不选
+                        $customPrice += 0;
+                    }else{ # 价格最小的配置项
+                        $amount = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
+                            ->leftJoin('module_idcsmart_common_custom_cycle_pricing ccp','ccp.rel_id=pcs.id AND ccp.type=\'configoption\'')
+                            ->where('pcs.product_configoption_id',$configoption['id'])
+                            ->where('ccp.custom_cycle_id',$customCycle['id'])
+                            ->where('pcs.hidden',0)
+                            ->where('ccp.amount','>=',0) # 金额>=0
+                            ->order('pcs.order','asc') # 升序
+                            ->order('pcs.id','asc')
+                            ->min('ccp.amount');
+                        $customPrice += $amount;
+
+                    }
+                }
+
+                $priceArray[] = $customPrice;
+            }
+
+            $price = !empty($priceArray) ? min($priceArray) : 0;
+        }
+
+        return $price;
     }
 }

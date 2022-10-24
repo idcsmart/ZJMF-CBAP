@@ -12,6 +12,9 @@
     <li>
       <a href="configuration_theme.html">{{lang.theme_setting}}</a>
     </li>
+    <li>
+        <a href="configuration_upgrade.html">{{lang.system_upgrade}}</a>
+    </li>
   </ul>
   <div class="box">
     <t-form :data="formData" :label-width="80" label-align="top"

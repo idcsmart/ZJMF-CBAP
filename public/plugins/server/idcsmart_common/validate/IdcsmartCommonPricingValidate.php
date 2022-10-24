@@ -9,13 +9,7 @@ use think\Validate;
 class IdcsmartCommonPricingValidate extends Validate
 {
 	protected $rule = [
-		'onetime' => 'float',
-		'monthly' => 'require|float',
-		'quarterly' => 'require|float',
-		'semaiannually' => 'require|float',
-		'annually' => 'require|float',
-		'biennially' => 'require|float',
-		'triennianlly' => 'require|float',
+		'onetime' => 'float|egt:0',
     ];
 
     protected $message  =   [

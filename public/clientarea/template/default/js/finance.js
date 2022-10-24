@@ -8,6 +8,7 @@
                 asideMenu,
                 topMenu,
                 pagination,
+                payDialog,
             },
             mounted() {
                 window.addEventListener('scroll', this.computeScroll)
@@ -36,6 +37,7 @@
                     gatewayList: [],
                     // 错误提示信息
                     errText: "",
+                    deleteObj: {},
                     // 待退款金额
                     unAmount: 0,
                     commonData: {},
@@ -48,6 +50,7 @@
                     // 支付弹窗相关 开始
                     // 支付弹窗控制
                     isShowZf: false,
+                    isShowDeOrder: false,
                     // 是否展示第三方支付
                     isShowPay: true,
                     zfData: {
@@ -590,6 +593,9 @@
                         }
                     }, 2000)
                 },
+                getRowKey(row) {
+                    return row.id + '-' + row.host_id
+                },
                 // 订单记录订单详情
                 load(tree, treeNode, resolve) {
                     // 获取订单详情
@@ -603,6 +609,26 @@
                     })
                     // this.getOrderDetailsList(id)
                 },
+                // 打开删除弹窗
+                openDeletaDialog(row, index) {
+                    this.isShowDeOrder = true
+                    this.deleteObj = {
+                        id: row.id,
+                        index: index
+                    }
+                },
+                // 删除订单
+                handelDeleteOrder() {
+                    delete_order(this.deleteObj.id).then((res) => {
+                        this.dataList1.splice(this.deleteObj.index, 1)
+                        this.params1.total = Number(this.params1.total) - 1
+                        this.$message.success('删除成功')
+                        this.isShowDeOrder = false
+                    }).catch(() => {
+                        this.isShowDeOrder = false
+                    })
+
+                },
                 // 交易记录订单详情
                 rowClick(orderId) {
                     this.isDetail = true
@@ -612,38 +638,50 @@
                 // 支付弹窗相关
                 // 点击去支付
                 showPayDialog(row) {
-                    if (this.timer) {  // 清除定时器
-                        clearInterval(this.timer)
-                    }
-                    const params = {
-                        id: row.id,
-                        use: 0
-                    }
-                    creditPay(params).then(res => {
+                    const orderId = row.id
+                    const amount = row.amount
+                    this.$refs.payDialog.showPayDialog(orderId, amount)
 
+                    // if (this.timer) {  // 清除定时器
+                    //     clearInterval(this.timer)
+                    // }
+                    // const params = {
+                    //     id: row.id,
+                    //     use: 0
+                    // }
+                    // creditPay(params).then(res => {
+                    //     this.errText = ""
+                    //     // 默认不使用余额
+                    //     this.zfData.checked = false
+                    //     // 重置支付倒计时5分钟
+                    //     this.time = 300000
+                    //     // 获取余额
+                    //     this.getAccount()
+                    //     // 获取订单金额 和 订单id
+                    //     this.zfData.orderId = Number(row.id)
+                    //     this.zfData.amount = Number(row.amount)
+                    //     // 展示支付 dialog
+                    //     this.isShowZf = true
+                    //     // 默认拉取第一种支付方式
+                    //     this.zfData.gateway = this.gatewayList[0].name
+                    //     this.zfSelectChange()
+                    //     // 轮询支付
+                    //     this.pollingStatus(this.zfData.orderId)
 
-                        this.errText = ""
-                        // 默认不使用余额
-                        this.zfData.checked = false
-                        // 重置支付倒计时5分钟
-                        this.time = 300000
-                        // 获取余额
-                        this.getAccount()
-                        // 获取订单金额 和 订单id
-                        this.zfData.orderId = Number(row.id)
-                        this.zfData.amount = Number(row.amount)
-                        // 展示支付 dialog
-                        this.isShowZf = true
-                        // 默认拉取第一种支付方式
-                        this.zfData.gateway = this.gatewayList[0].name
-                        this.zfSelectChange()
-                        // 轮询支付
-                        this.pollingStatus(this.zfData.orderId)
+                    // }).catch(error => { })
 
-                    }).catch(error => { })
-
-
-
+                },
+                // 支付成功回调
+                paySuccess(e) {
+                    console.log(e);
+                    this.getCreditList()
+                    this.getorderList()
+                    this.getAccount()
+                    this.getUnAmount()
+                },
+                // 取消支付回调
+                payCancel(e) {
+                    console.log(e);
                 },
                 // 支付方式切换
                 zfSelectChange() {

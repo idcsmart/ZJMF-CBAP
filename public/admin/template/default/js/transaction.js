@@ -69,7 +69,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 80
+              width: 100
             }
           ],
           orderColumns: [
@@ -152,12 +152,12 @@
                 pattern: /^-?\d+(\.\d{0,2})?$/, message: lang.verify10, type: 'warning'
               },
               {
-                validator: val => val != 0,message: lang.verify10, type: 'warning'
+                validator: val => val != 0, message: lang.verify10, type: 'warning'
               }
             ],
             gateway: [{ required: true, message: lang.select + lang.pay_way, type: 'error' }],
             transaction_number: [
-              { pattern: /^[A-Za-z0-9]+$/, message: lang.verify9, type: 'warning'}
+              { pattern: /^[A-Za-z0-9]+$/, message: lang.verify9, type: 'warning' }
             ],
             client_id: [{ required: true, message: lang.select + lang.user, type: 'error' }]
           },
@@ -166,7 +166,7 @@
           userParams: {
             keywords: '',
             page: 1,
-            limit: 20,
+            limit: 1000,
             orderby: 'id',
             sort: 'desc'
           },
@@ -175,7 +175,9 @@
           ],
           expandedRowKeys: [],
           isShow: false,
-          maxHeight: ''
+          maxHeight: '',
+          optType: 'add',
+          optTitle: ''
         }
       },
       mounted () {
@@ -261,19 +263,27 @@
             this.loading = false
           }
         },
-        // 新增流水
         addFlow () {
           this.flowModel = true
           this.formData.amount = ''
           this.formData.gateway = ''
           this.formData.transaction_number = ''
+          this.optTitle = lang.new_flow
+          this.optType = 'add'
           this.$refs.form.reset()
+        },
+        updateFlow (row) {
+          this.flowModel = true
+          this.optTitle = lang.update_flow
+          this.optType = 'update'
+          this.formData = JSON.parse(JSON.stringify(row))
+          this.formData.gateway = this.payList.filter(item=> item.title === row.gateway)[0].name
         },
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               this.addLoading = true
-              await addFlow(this.formData).then(res => {
+              await addAndUpdateFlow(this.optType, this.formData).then(res => {
                 this.$message.success(res.data.msg)
                 this.addLoading = false
                 this.flowModel = false

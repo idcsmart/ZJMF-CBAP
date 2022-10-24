@@ -4,12 +4,20 @@ use think\facade\Route;
 
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
 
+// 不需要登录
+Route::group('console/v1',function (){
+    Route::get('idcsmart_common/product/:product_id/configoption', "\\server\\idcsmart_common\\controller\\home\\IdcsmartCommonProductController@cartConfigoption");
+    Route::post('idcsmart_common/product/:product_id/configoption/calculate', "\\server\\idcsmart_common\\controller\\home\\IdcsmartCommonProductController@cartConfigoptionCalculate");
+})->allowCrossDomain([
+    'Access-Control-Allow-Origin'        => $origin,
+    'Access-Control-Allow-Credentials'   => 'true',
+    'Access-Control-Max-Age'             => 600,
+])->middleware(\app\http\middleware\Check::class);
 
 // 前台需要登录的接口
 Route::group('console/v1',function (){
     
 	Route::get('idcsmart_common/host', "\\server\\idcsmart_common\\controller\\home\\IdcsmartCommonProductController@hostList");
-	Route::get('idcsmart_common/product/:product_id/configoption', "\\server\\idcsmart_common\\controller\\home\\IdcsmartCommonProductController@cartConfigoption");
 
     Route::get('idcsmart_common/host/:host_id/configoption', "\\server\\idcsmart_common\\controller\\home\\IdcsmartCommonProductController@hostConfigotpion");
 })->allowCrossDomain([

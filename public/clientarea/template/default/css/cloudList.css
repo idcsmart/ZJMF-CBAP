@@ -66,6 +66,15 @@
     margin-right: .4rem;
 }
 
+.center-option-label {
+    display: flex;
+    align-items: center;
+}
+
+.center-option-label img {
+    margin-right: .1rem;
+}
+
 .search-btn {
     width: .8rem;
     height: .4rem;

@@ -40,13 +40,7 @@ class IdcsmartCommonProductConfigoptionSubController extends BaseController
      * @param   int id - 配置子项ID require
      * @return object configoption_sub - 子项信息
      * @return int configoption_sub.id -
-     * @return  float configoption_sub.onetime - 一次性,价格(值为-1时显示空)
-     * @return  float configoption_sub.monthly - 月，价格(值为-1时显示空)
-     * @return  float configoption_sub.quarterly - 季，价格(值为-1时显示空)
-     * @return  float configoption_sub.semaiannually - 半年，价格(值为-1时显示空)
-     * @return  float configoption_sub.annually - 一年，价格(值为-1时显示空)
-     * @return  float configoption_sub.biennially - 两年，价格(值为-1时显示空)
-     * @return  float configoption_sub.triennianlly - 三年，价格(值为-1时显示空)
+     * @return  float configoption_sub.onetime - 一次性,价格
      * @return array configoption_sub.custom_cycle - 自定义周期
      * @return array configoption_sub.custom_cycle.id - 自定义周期ID
      * @return array configoption_sub.custom_cycle.name - 名称
@@ -77,15 +71,9 @@ class IdcsmartCommonProductConfigoptionSubController extends BaseController
      * @param   int qty_min - 最小值：类型为数量的时候quantity,quantity_range选择
      * @param   int qty_max - 最大值：类型为数量的时候quantity,quantity_range选择
      * @param   string country - 国家:类型为区域时选择
-     * @param   float onetime - 一次性价格：不填时传-1,
-     * @param   float monthly - 月：不填时传-1,
-     * @param   float quarterly - 季：不填时传-1,
-     * @param   float semaiannually - 半年：不填时传-1,
-     * @param   float annually - 一年：不填时传-1,
-     * @param   float biennially - 两年：不填时传-1,
-     * @param   float triennianlly - 三年：不填时传-1,
+     * @param   float onetime - 一次性价格
      * @param   object custom_cycle - 自定义周期及价格格式：{"{自定义周期ID}":"{金额}"}
-     * @param   float custom_cycle.1 - 自定义周期及价格：留空传-1(所有价格都是如此，留空传-1)
+     * @param   float custom_cycle.1 - 自定义周期及价格
      */
     public function create()
     {
@@ -119,15 +107,9 @@ class IdcsmartCommonProductConfigoptionSubController extends BaseController
      * @param   int qty_max - 最大值：类型为数量的时候quantity,quantity_range选择
      * @param   string country - 国家:类型为区域时选择
      * @param   string country - 国家:类型为区域时选择
-     * @param   float onetime - 一次性价格：不填时传-1,
-     * @param   float monthly - 月：不填时传-1,
-     * @param   float quarterly - 季：不填时传-1,
-     * @param   float semaiannually - 半年：不填时传-1,
-     * @param   float annually - 一年：不填时传-1,
-     * @param   float biennially - 两年：不填时传-1,
-     * @param   float triennianlly - 三年：不填时传-1,
+     * @param   float onetime - 一次性价格
      * @param   object custom_cycle - 自定义周期及价格格式：{"{自定义周期ID}":"{金额}"}
-     * @param   float custom_cycle.1 - 自定义周期及价格：留空传-1(所有价格都是如此，留空传-1)
+     * @param   float custom_cycle.1 - 自定义周期及价格
      */
     public function update()
     {

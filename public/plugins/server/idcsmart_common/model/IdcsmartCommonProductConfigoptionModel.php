@@ -1,6 +1,7 @@
 <?php 
 namespace server\idcsmart_common\model;
 
+use app\common\model\HostModel;
 use server\idcsmart_common\logic\IdcsmartCommonLogic;
 use think\db\Query;
 use think\Model;
@@ -81,13 +82,7 @@ class IdcsmartCommonProductConfigoptionModel extends Model
      * @return  string configoption.description - 说明
      * @return array configoption_sub - 子项信息
      * @return int configoption_sub.id -
-     * @return  float configoption_sub.onetime - 一次性,价格(值为-1时显示空)
-     * @return  float configoption_sub.monthly - 月，价格(值为-1时显示空)
-     * @return  float configoption_sub.quarterly - 季，价格(值为-1时显示空)
-     * @return  float configoption_sub.semaiannually - 半年，价格(值为-1时显示空)
-     * @return  float configoption_sub.annually - 一年，价格(值为-1时显示空)
-     * @return  float configoption_sub.biennially - 两年，价格(值为-1时显示空)
-     * @return  float configoption_sub.triennianlly - 三年，价格(值为-1时显示空)
+     * @return  float configoption_sub.onetime - 一次性,价格
      * @return array configoption_sub.custom_cycle - 自定义周期
      * @return array configoption_sub.custom_cycle.id - 自定义周期ID
      * @return array configoption_sub.custom_cycle.name - 名称
@@ -109,7 +104,7 @@ class IdcsmartCommonProductConfigoptionModel extends Model
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
 
         $configoptionSubs = $IdcsmartCommonProductConfigoptionSubModel->alias('cs')
-            ->field('cs.id,cs.option_name,p.onetime,p.monthly,p.quarterly,p.semaiannually,p.annually,p.biennially,p.triennianlly,cs.qty_min,cs.qty_max')
+            ->field('cs.id,cs.option_name,p.onetime,cs.qty_min,cs.qty_max')
             ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=cs.id AND p.type=\'configoption\'')
             ->where('cs.product_configoption_id',$id)
             ->select()
@@ -188,6 +183,15 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                 'hidden' => $param['hidden']??0,
             ]);
 
+            if ($param['option_type'] == 'yes_no'){
+                $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+                $IdcsmartCommonProductConfigoptionSubModel->insertYesNo($id);
+            }
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
+
             $this->commit();
         }catch (\Exception $e){
 
@@ -230,15 +234,22 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                 throw new \Exception(lang_plugins('idcsmart_common_configoption_not_exist'));
             }
 
+            $IdcsmartCommonHostConfigoptionModel = new IdcsmartCommonHostConfigoptionModel();
+            $hostCount = $IdcsmartCommonHostConfigoptionModel->where('configoption_id',$id)->count();
+            if ($hostCount>0 && $configoption['option_type'] != $param['option_type']){
+                throw new \Exception(lang_plugins('idcsmart_common_configoption_cannot_update'));
+            }
+
             # 切换为不同类型,删除子项
+            $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
             if ($configoption['option_type'] != $param['option_type']){
-                $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+
                 $configoptionSubs = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$id)
                     ->select();
                 $IdcsmartCommonCustomCyclePricingModel = new IdcsmartCommonCustomCyclePricingModel();
                 $IdcsmartCommonPricingModel = new IdcsmartCommonPricingModel();
                 foreach ($configoptionSubs as $configoptionSub){
-                    # 删除子项价格
+                    # 删除子项一次性价格
                     $IdcsmartCommonPricingModel->where('rel_id',$configoptionSub['id'])
                         ->where('type','configoption')
                         ->delete();
@@ -250,6 +261,10 @@ class IdcsmartCommonProductConfigoptionModel extends Model
 
                     # 删除子项
                     $configoptionSub->delete();
+                }
+
+                if ($param['option_type']=='yes_no'){
+                    $IdcsmartCommonProductConfigoptionSubModel->insertYesNo($id);
                 }
             }
 
@@ -263,6 +278,10 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                 'max_repeat' => $param['max_repeat']??5,
                 'fee_type' => $param['fee_type']??'',
             ]);
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -292,6 +311,12 @@ class IdcsmartCommonProductConfigoptionModel extends Model
 
             $id = $param['id']??0;
 
+            $IdcsmartCommonHostConfigoptionModel = new IdcsmartCommonHostConfigoptionModel();
+            $hostCount = $IdcsmartCommonHostConfigoptionModel->where('configoption_id',$id)->count();
+            if ($hostCount>0){
+                throw new \Exception(lang_plugins('idcsmart_common_configoption_cannot_delete'));
+            }
+
             $configoption = $this->where('product_id',$productId)->where('id',$id)->find();
             if (empty($configoption)){
                 throw new \Exception(lang_plugins('idcsmart_common_configoption_not_exist'));
@@ -317,6 +342,10 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                     ->delete();
                 $configoptionSub->delete();
             }
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -362,6 +391,10 @@ class IdcsmartCommonProductConfigoptionModel extends Model
             $configoption->save([
                 'hidden' => intval($param['hidden'])
             ]);
+
+            # 更新商品最低价格
+            $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
+            $IdcsmartCommonProductModel->updateProductMinPrice($productId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -431,6 +464,15 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                     }
                     $configoptionsFilter[$configoptionId] = $qtyArr;
                 }else{
+                    # 不传或参数错误,默认取排序第一的子项的最小值
+                    $qtySub = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$configoptionId)
+                        ->order('order','asc')
+                        ->order('id','asc')
+                        ->find();
+                    if (!empty($qtySub)){
+                        $qtyMin = $qtySub['qty_min'];
+                    }
+
                     $configoptionsFilter[$configoptionId] = [$qtyMin];
                 }
             }elseif ($IdcsmartCommonLogic->checkMultiSelect($optionType)){
@@ -441,19 +483,11 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                             ->where('hidden',0)
                             ->where('id',$v2)
                             ->find();
-                        if (!empty($multiSub)){
+                        if (!empty($multiSub)){ # 过滤掉不存在的子项
                             $multiArr[] = $v2;
-                        }else{
-                            $sub = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$configoptionId)
-                                ->where('hidden',0)
-                                ->where('order','asc')
-                                ->where('id','asc')
-                                ->find();
-                            if (!empty($sub)){
-                                $multiArr[] = $sub['id'];
-                            }
                         }
                     }
+
                     $configoptionsFilter[$configoptionId] = $multiArr;
                 }else{
                     $configoptionsFilter[$configoptionId] = [];
@@ -464,23 +498,15 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                         ->where('hidden',0)
                         ->where('id',$configoptions[$configoptionId])
                         ->find();
-                    if (!empty($otherSub)){
-                        $configoptionsFilter[$configoptionId] = $otherSub['id'];
-                    }else{
-                        $sub = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$configoptionId)
-                            ->where('hidden',0)
-                            ->where('order','asc')
-                            ->where('id','asc')
-                            ->find();
-                        if (!empty($sub)){
-                            $configoptionsFilter[$configoptionId] = $sub['id'];
-                        }
-                    }
+                }
+
+                if (!empty($otherSub)){
+                    $configoptionsFilter[$configoptionId] = $otherSub['id'];
                 }else{
                     $sub = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$configoptionId)
                         ->where('hidden',0)
-                        ->where('order','asc')
-                        ->where('id','asc')
+                        ->order('order','asc')
+                        ->order('id','asc')
                         ->find();
                     if (!empty($sub)){
                         $configoptionsFilter[$configoptionId] = $sub['id'];

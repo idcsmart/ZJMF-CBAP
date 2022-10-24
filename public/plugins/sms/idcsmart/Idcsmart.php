@@ -191,13 +191,12 @@ class Idcsmart extends Plugin
 	]
 	*/
     public function sendCnSms($params)
-    {	
-    	
+    {
         $content=$this->templateParam($params['content'],$params['templateParam']);
         $param['to']=trim($params['mobile']);
 		$param['content']=$this->templateSign($params['config']['sign']).$content;
         $resultTemplate= $this->APIHttpRequestCURL('cn',"send",$param,$params['config'],'POST');
-		if($resultTemplate['status']==200){
+        if($resultTemplate['status']==200){
 			$data['status']="success";
 			$data['content']=$content;
 		}else{

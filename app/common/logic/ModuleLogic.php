@@ -4,6 +4,7 @@ namespace app\common\logic;
 use app\common\model\HostModel;
 use app\common\model\ProductModel;
 use app\common\model\ServerModel;
+use app\admin\model\PluginModel;
 use think\facade\View;
 
 /**
@@ -314,6 +315,9 @@ class ModuleLogic
 	 * @return  int data.duration - 周期时长
 	 * @return  string data.description - 订单子项描述
 	 * @return  string data.content - 购物车配置显示,支持模板
+	 * @return  string data.preview[].name - 名称
+	 * @return  string data.preview[].value - 值
+	 * @return  string data.preview[].price - 价格
 	 */
 	public function cartCalculatePrice($ProductModel, $params = [], $qty=1)
 	{
@@ -325,6 +329,9 @@ class ModuleLogic
 			if(method_exists($ImportModule, 'cartCalculatePrice')){
 				// 获取模块通用参数
 				$result = call_user_func([$ImportModule, 'cartCalculatePrice'], ['product'=>$ProductModel, 'custom'=>$params, 'qty'=>$qty]);
+				if(isset($result['status']) && $result['status'] == 200 && !isset($result['data']['preview'])){
+					$result['data']['preview'] = [];
+				}
 				// TODO 是否判断返回/格式化
 				// if(!isset($result['status']) || !isset($result['data']['price']) || !isset($result['data']['billing_cycle']) || !isset($result['data']['duration']) || !isset($result['data']['description']) || !isset($result['data']['content'])){
 					
@@ -383,6 +390,31 @@ class ModuleLogic
 				call_user_func([$ImportModule, 'productSave'], ['product'=>$ProductModel, 'custom'=>$params]);
 			}
 		}
+	}
+
+	/**
+	 * 时间 2022-05-16
+	 * @title 产品列表页内容
+	 * @desc 产品列表页内容
+	 * @author hh
+	 * @version v1
+	 * @param   HostModel HostModel - 产品模型
+	 * @return  string
+	 */
+	public function hostList($module, $params): string
+	{
+		$res = '';
+		// 模块调用
+		// $module = $HostModel->getModule();
+		if($ImportModule = $this->importModule($module)){
+			if(method_exists($ImportModule, 'hostList')){
+				// 获取模块通用参数
+				// $params = $HostModel->getModuleParams();
+				$res = call_user_func([$ImportModule, 'hostList'], $params);
+				$res = $this->formatTemplate($module, $res);
+			}
+		}
+		return $res;
 	}
 
 	/**
@@ -483,7 +515,7 @@ class ModuleLogic
 
 	/**
 	 * 时间 2022-05-31
-	 * @title 前台产品升降级配置输出(暂时未用)
+	 * @title 前台产品升降级配置输出
 	 * @desc 前台产品升降级配置输出
 	 * @author hh
 	 * @version v1
@@ -774,6 +806,11 @@ class ModuleLogic
 		return $res;
 	}
 
+
+
+
+
+
 	/**
 	 * 时间 2022-06-08
 	 * @title 验证模块名称是否正确
@@ -833,9 +870,13 @@ class ModuleLogic
 			// ]
 			$template_file = $this->path . $module . '/' . $res['template'];
 			if(file_exists($template_file)){
-				if(!empty($res['vars'])){
-					View::assign($res['vars']);
-				}
+				$PluginModel=new PluginModel();
+              	$addons = $PluginModel->plugins('addon')['list'];
+
+              	$vars = isset($res['vars']) && !empty($res['vars']) && is_array($res['vars']) ? $res['vars'] : [];
+				$vars['addons'] = $addons;
+
+				View::assign($vars);
 				// 调用方法变量
 				$html = View::fetch($template_file);
 			}else{

@@ -19,8 +19,6 @@
                 this.getSnapshotList()
                 // 备份列表
                 this.getBackupList()
-                // 获取其他配置
-                this.getConfigData()
                 // 获取该实例的磁盘
                 this.getDiskList()
             },
@@ -458,7 +456,8 @@
                         if (res.data.status === 200) {
                             this.hostData = res.data.data.host
                             this.product_id = this.hostData.product_id
-
+                            // 获取其他配置
+                            this.getConfigData()
                         }
                     })
                 },

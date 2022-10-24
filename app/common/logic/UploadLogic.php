@@ -66,6 +66,7 @@ class UploadLogic
 
             if (is_image(UPLOAD_DEFAULT . $saveName)){
                 $data['image_base64'] = base64_encode_image(UPLOAD_DEFAULT . $saveName);
+                $data['image_url'] = request()->domain() . '/upload/common/default/' . $saveName;
             }
 
             return ['status'=>200,'msg'=>lang('upload_success'),'data'=>$data];

@@ -42,6 +42,16 @@ function settle(params) {
 }
 
 // 应用优惠码
-function promoCode(params){
-    return Axios.post(`/promo_code/apply`,params)
+function promoCode(params) {
+    return Axios.post(`/promo_code/apply`, params)
+}
+
+// 获取商品折扣金额
+function clientLevelAmount(params) {
+    return Axios.get(`/client_level/product/${params.id}/amount`, { params });
+}
+
+// 获取套餐所有周期价格
+function duration(params) {
+    return Axios.post(`/product/${params.id}/common_cloud/duration`, params)
 }

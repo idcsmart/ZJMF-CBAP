@@ -260,10 +260,10 @@ class DataCenterModel extends Model{
             return ['status'=>400, 'msg'=>lang_plugins('data_center_not_found')];
         }
         // TODO 不能删除的情况
-        $use = HostLinkModel::where('data_center_id', $id)->find();
-        if($use){
-            return ['status'=>400, 'msg'=>lang_plugins('data_center_is_using')];
-        }
+        // $use = HostLinkModel::where('data_center_id', $id)->find();
+        // if($use){
+        //     return ['status'=>400, 'msg'=>lang_plugins('data_center_is_using')];
+        // }
         // 套餐正在使用
         $use = PackageModel::where('data_center_id', $id)->find();
         if($use){
@@ -352,11 +352,14 @@ class DataCenterModel extends Model{
             'msg'=>lang_plugins('success_message'),
             'data'=>[]
         ];
-        $where = function(Query $query) use ($param){
-            if(!empty($param['id'])){
-                $query->where('product_id', $param['id']);
-            }
-        };
+
+        $param['id'] = $param['id'] ?: 0;
+
+        $where = [];
+
+        if($param['id']>0){
+            $where[] = ['product_id', '=', $param['id']];
+        }
 
         $country = $this
                 ->where($where)
@@ -364,6 +367,37 @@ class DataCenterModel extends Model{
 
         if(empty($country)){
             return $result;
+        }
+        
+        // 有商品ID,限制获取
+        if(!empty($param['id'])){
+
+            $ProductModel = ProductModel::find($param['id']);
+
+            $wherePackage = [];
+            $wherePackage[] = ['product_id', '=', $param['id']];
+
+            if($ProductModel['pay_type'] == 'free'){
+                // $wherePackage[] = ['onetime_fee|month_fee|quarter_fee|year_fee|two_year|three_year', '<>', ''];
+            }else if($ProductModel['pay_type'] == 'onetime'){
+                $wherePackage[] = ['onetime_fee', '<>', ''];
+            }else{
+                $wherePackage[] = ['month_fee|quarter_fee|year_fee|two_year|three_year', '<>', ''];
+            }
+
+            $dataCenterId = PackageModel::where($wherePackage)
+                        ->field('DISTINCT data_center_id')
+                        ->select()
+                        ->toArray();
+
+            if(empty($dataCenterId)){
+                return $result;
+            }
+
+            $where[] = ['id', 'IN', array_column($dataCenterId, 'data_center_id')];
+        }else{
+
+
         }
 
         $country = CountryModel::field('id,iso,name_zh')
@@ -413,7 +447,7 @@ class DataCenterModel extends Model{
 
         $CountryModel = CountryModel::find($DataCenterModel['country_id']);
 
-        return $CountryModel['name_zh'].$DataCenterModel['country_id'];
+        return ($CountryModel['name_zh'] ?? '').$DataCenterModel['city'];
     }
 
 

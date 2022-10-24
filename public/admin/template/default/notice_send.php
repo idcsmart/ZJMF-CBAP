@@ -17,20 +17,23 @@
     <div class="common-header">
       <div class="header-left">
         <span class="tit">{{lang.system_default_setting}}</span>
-        <t-form layout="inline" label-align="left" :data="formData" :rules="rules">
-          <t-form-item :label="lang.sms_global_name" name="send_sms_global">
-            <t-select v-model="formData.configuration.send_sms_global" class="demo-select-base" clearable>
+        <t-form layout="inline" label-align="left" :data="formData" :rules="rules" ref="sendForm">
+          <t-form-item :label="lang.sms_global_name" name="configuration.send_sms_global">
+            <t-select v-model="formData.configuration.send_sms_global" class="demo-select-base" clearable 
+            :placeholder="lang.select + lang.sms_global_name">
               <t-option v-for="item in smsInterList" :value="item.name" :label="item.title" :key="item.id">
               </t-option>
             </t-select>
           </t-form-item>
-          <t-form-item :label="lang.home_sms_interface" name="send_sms">
-            <t-select v-model="formData.configuration.send_sms" class="demo-select-base" clearable>
+          <t-form-item :label="lang.home_sms_interface" name="configuration.send_sms">
+            <t-select v-model="formData.configuration.send_sms" class="demo-select-base" clearable
+            :placeholder="lang.select + lang.home_sms_interface">
               <t-option v-for="item in smsList" :value="item.name" :label="item.title" :key="item.id"></t-option>
             </t-select>
           </t-form-item>
-          <t-form-item :label="lang.email_interface" name="send_email">
-            <t-select v-model="formData.configuration.send_email" class="demo-select-base" clearable>
+          <t-form-item :label="lang.email_interface" name="configuration.send_email">
+            <t-select v-model="formData.configuration.send_email" class="demo-select-base" clearable
+            :placeholder="lang.select + lang.email_interface">
               <t-option v-for="item in emailList" :value="item.name" :label="item.title" :key="item.id">
               </t-option>
             </t-select>
@@ -42,26 +45,35 @@
       <template #name="{row}">
         {{row.name_lang}}
       </template>
-      <template #sms_global_name="{row}">
-        <t-select v-model="formData[row.name].sms_global_name">
-          <t-option v-for="item in smsInterList" :value="item.name" :label="item.title" :key="item.id"></t-option>
-        </t-select>
+      <template #sms_global_name="{row,rowIndex}">
+        <div :id="`sms_global_name${rowIndex}`">
+          <t-select v-model="formData[row.name].sms_global_name" clearable @change="changeInter(row)" :popup-props="{ attach: `#sms_global_name${rowIndex}` }">
+            <t-option v-for="item in smsInterList" :value="item.name" :label="item.title" :key="item.id"></t-option>
+          </t-select>
+        </div>
       </template>
-      <template #sms_global_template="{row}">
-        <t-select v-model="formData[row.name].sms_global_template" :disabled="!row.sms_global_name">
-          <!-- 国际短信模板 -->
-          <t-option v-for="item in interTempObj[row.sms_global_name+'_interTemp']" :value="item.id" :label="item.title" :key="item.id"></t-option>
-        </t-select>
+      <!-- 国际短信模板 -->
+      <template #sms_global_template="{row,rowIndex}">
+        <div :id="`sms_global_template${rowIndex}`" :class="{required: formData[row.name].sms_global_name && !formData[row.name].sms_global_template , none_pop: !formData[row.name].sms_global_name }">
+          <t-select v-model="formData[row.name].sms_global_template" clearable :disabled="!row.sms_global_name" ref='sms_global_template'
+           :popup-props="{ attach: `#sms_global_template${rowIndex}` }">
+            <t-option v-for="item in interTempObj[row.sms_global_name+'_interTemp']" :value="item.id" :label="item.title" :key="item.id"></t-option>
+          </t-select>
+        </div>
       </template>
-      <template #sms_name="{row}">
-        <t-select v-model="formData[row.name].sms_name">
-          <t-option v-for="item in smsList" :value="item.id" :label="item.title" :key="item.id"></t-option>
-        </t-select>
+      <template #sms_name="{row,rowIndex}">
+        <div :id="`sms_name${rowIndex}`">
+          <t-select v-model="formData[row.name].sms_name" clearable @change="changeHome(row)" :popup-props="{ attach: `#sms_name${rowIndex}` }">
+            <t-option v-for="item in smsList" :value="item.name" :label="item.title" :key="item.id"></t-option>
+          </t-select>
+        </div>
       </template>
-      <template #sms_template="{row}">
-        <t-select v-model="formData[row.name].sms_template" :disabled="!row.sms_name">
-          <t-option v-for="item in tempObj[row.sms_name+'_temp']" :value="item.id" :label="item.title" :key="item.id"></t-option>
-        </t-select>
+      <template #sms_template="{row,rowIndex}">
+        <div :id="`sms_template${rowIndex}`" :class="{required: formData[row.name].sms_name && !formData[row.name].sms_template, none_pop: !formData[row.name].sms_name  }">
+          <t-select v-model="formData[row.name].sms_template" clearable :disabled="!row.sms_name" :popup-props="{ attach: `#sms_template${rowIndex}` }">
+            <t-option v-for="item in tempObj[row.sms_name+'_temp']" :value="item.id" :label="item.title" :key="item.id"></t-option>
+          </t-select>
+        </div>
       </template>
       <template #sms_enable="{row}">
         <t-switch size="large" v-model="formData[row.name].sms_enable" :custom-value="[1,0]"></t-switch>
@@ -69,23 +81,22 @@
       <template #email_enable="{row}">
         <t-switch size="large" v-model="formData[row.name].email_enable" :custom-value="[1,0]"></t-switch>
       </template>
-      <template #sms_name="{row}">
-        <t-select v-model="formData[row.name].sms_name">
-          <t-option v-for="item in smsList" :value="item.name" :label="item.title" :key="item.id"></t-option>
-        </t-select>
+      <template #email_name="{row, rowIndex}">
+        <div :id="`email_name${rowIndex}`">
+          <t-select v-model="formData[row.name].email_name" clearable :popup-props="{ attach: `#email_name${rowIndex}` }">
+            <t-option v-for="item in emailList" :value="item.name" :label="item.title" :key="item.id"></t-option>
+          </t-select>
+        </div>
       </template>
-      <template #email_name="{row}">
-        <t-select v-model="formData[row.name].email_name">
-          <t-option v-for="item in emailList" :value="item.name" :label="item.title" :key="item.id"></t-option>
-        </t-select>
-      </template>
-      <template #email_template="{row}">
-        <t-select v-model="formData[row.name].email_template" :disabled="!row.email_name">
-          <t-option v-for="item in emailTemplateList" :value="item.id" :label="item.name" :key="item.id"></t-option>
-        </t-select>
+      <template #email_template="{row, rowIndex}">
+        <div :id="`email_template${rowIndex}`" :class="{required: formData[row.name].email_name && !formData[row.name].email_template }">
+          <t-select v-model="formData[row.name].email_template" clearable :disabled="!row.email_name" :popup-props="{ attach: `#email_template${rowIndex}` }">
+            <t-option v-for="item in emailTemplateList" :value="item.id" :label="item.name" :key="item.id"></t-option>
+          </t-select>
+        </div>
       </template>
     </t-table>
-    <t-button @click="save" class="add">{{lang.hold}}</t-button>
+    <t-button @click="save" class="add" :loading="submitLoading">{{lang.hold}}</t-button>
   </t-card>
 </div>
 <!-- =======页面独有======= -->

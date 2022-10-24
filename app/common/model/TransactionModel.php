@@ -199,6 +199,82 @@ class TransactionModel extends Model
     }
 
     /**
+     * 时间 2022-10-11
+     * @title 编辑交易流水
+     * @desc 编辑交易流水
+     * @author theworld
+     * @version v1
+     * @param float param.id - 交易流水ID required
+     * @param float param.amount - 金额 required
+     * @param string param.gateway - 支付方式 required
+     * @param string param.transaction_number - 交易流水号 required
+     * @param int param.client_id - 用户ID required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function updateTransaction($param)
+    {
+        //验证交易流水ID
+        $transaction = $this->find($param['id']);
+        if (empty($transaction)){
+            return ['status'=>400, 'msg'=>lang('transaction_is_not_exist')];
+        }
+
+        //验证用户ID
+        $client = ClientModel::find($param['client_id']);
+        if (empty($client)){
+            return ['status'=>400, 'msg'=>lang('client_is_not_exist')];
+        }
+
+        //验证支付方式
+        $gateway = PluginModel::where('module', 'gateway')->where('name', $param['gateway'])->find();
+        if (empty($gateway)){
+            return ['status'=>400, 'msg'=>lang('gateway_is_not_exist')];
+        }
+
+        $this->startTrans();
+        try {
+            # 日志详情
+            $description = [];
+            if ($transaction['amount'] != $param['amount']){
+                $description[] = lang('old_to_new',['{old}'=>lang('transaction_amount').$transaction['amount'], '{new}'=>$param['amount']]);
+            }
+            if ($transaction['gateway'] != $param['gateway']){
+                $oldGateway = PluginModel::where('module', 'gateway')->where('name', $transaction['gateway'])->find();
+                $description[] = lang('old_to_new',['{old}'=>lang('transaction_gateway').($oldGateway['title'] ?? ''), '{new}'=>$gateway['title']]);
+            }
+            if ($transaction['transaction_number'] != $param['transaction_number']){
+                $description[] = lang('old_to_new',['{old}'=>lang('transaction_transaction_number').$transaction['transaction_number'], '{new}'=>$param['transaction_number']]);
+            }
+            if ($transaction['client_id'] != $param['client_id']){
+                $oldClient = ClientModel::find($transaction['client_id']);
+                $description[] = lang('old_to_new',['{old}'=>lang('transaction_client').($oldClient['username'] ?? ''), '{new}'=>$client['username']]);
+            }
+            
+            $description = implode(',', $description);
+
+            $transaction = $this->update([
+                'amount' => $param['amount'],
+                'gateway' => $param['gateway'],
+                'gateway_name' => $gateway['title'],
+                'transaction_number' => $param['transaction_number'] ?? '',
+                'client_id' => $param['client_id'],
+            ], ['id' => $param['id']]);
+
+            # 记录日志
+            active_log(lang('admin_edit_transaction', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client->username.'#', '{transaction}'=>'#'.$transaction->id, '{description}'=>$description]), 'transaction', $transaction->id);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+
+    /**
      * 时间 2022-05-17
      * @title 删除交易流水
      * @desc 删除交易流水

@@ -245,6 +245,8 @@ class PluginModel extends Model
             }
             $PluginHookModel->insertAll($insert);
 
+            lang_plugins('success_message', [], true);
+
             # 插入导航
             if (!array_key_exists('noNav',get_class_vars($class))){
                 $this->pluginInsertNav($module,$name,false);
@@ -303,7 +305,7 @@ class PluginModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('plugin_install_fail') . ':' . $e->getMessage()];
         }
-
+        lang_plugins('success_message', [], true);
         hook('after_plugin_install',['name'=>$name,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('plugin_install_success')];
@@ -350,6 +352,7 @@ class PluginModel extends Model
                     throw new \Exception(lang('plugin_uninstall_pre_fail'));
                 }
             }
+            lang_plugins('success_message', [], true);
 
             # 删除插件导航
             $NavModel = new NavModel();
@@ -382,7 +385,7 @@ class PluginModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('plugin_uninstall_fail') . ":" . $e->getMessage()];
         }
-
+        lang_plugins('success_message', [], true);
         hook('after_plugin_uninstall',['name'=>$param['name']]);
 
         return ['status'=>200,'msg'=>lang('plugin_uninstall_success')];
@@ -769,6 +772,7 @@ class PluginModel extends Model
                         'parent_id' => $menuPluginListParentId,
                         'order' => $maxOrder+1,
                         'create_time' => time(),
+                        'product_id' => ''
                     ]);
                 }
             }

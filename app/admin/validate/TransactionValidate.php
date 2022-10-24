@@ -9,6 +9,7 @@ use think\Validate;
 class TransactionValidate extends Validate
 {
 	protected $rule = [
+        'id'                            => 'require|integer|gt:0',
 		'amount' 						=> 'require|float',
 		'gateway' 						=> 'require',
         'transaction_number' 			=> 'alphaNum',
@@ -16,6 +17,9 @@ class TransactionValidate extends Validate
     ];
 
     protected $message  =   [
+        'id.require'                    => 'id_error',
+        'id.integer'                    => 'id_error',
+        'id.gt'                         => 'id_error',
     	'amount.require'    			=> 'please_enter_amount',
         'amount.float'    				=> 'amount_formatted_incorrectly',
         'gateway.require'        		=> 'please_select_gateway',
@@ -26,6 +30,7 @@ class TransactionValidate extends Validate
     ];
 
     protected $scene = [
-        'update' => ['amount', 'gateway', 'transaction_number', 'client_id']
+        'create' => ['amount', 'gateway', 'transaction_number', 'client_id'],
+        'update' => ['id', 'amount', 'gateway', 'transaction_number', 'client_id']
     ];
 }

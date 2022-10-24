@@ -97,6 +97,33 @@
                     isShowSure: false,
                     isShowQuit: false,
                     isRescue: false,
+                    powerList: [
+                        {
+                            id: 1,
+                            label: '开机',
+                            value: "on"
+                        },
+                        {
+                            id: 2,
+                            label: '关机',
+                            value: "off"
+                        },
+                        {
+                            id: 3,
+                            label: '重启',
+                            value: "rebot"
+                        },
+                        {
+                            id: 4,
+                            label: '强制重启',
+                            value: "hardRebot"
+                        },
+                        {
+                            id: 5,
+                            label: '强制关机',
+                            value: "hardOff"
+                        },
+                    ]
 
                 }
             },
@@ -410,9 +437,11 @@
 
                             // 当前套餐的周期
                             let duration = this.cloudData.duration
+                            // 当前产品套餐id
+                            const packageId = this.cloudData.package.id
                             // 过滤升降级套餐中不支持该套餐周期的
                             this.upgradeList = this.upgradeList.filter(item => {
-                                return item[duration] != ''
+                                return (item[duration] != '') && (item.id != packageId)
                             })
                             // 默认获取 过滤后的第一个套餐
                             this.upgradePackageId = this.upgradeList[0].id
@@ -445,7 +474,6 @@
                             }
                             // 获取升降级价格
                             this.getUpgradePrice()
-
                         }
                     })
                     this.errText = ''
@@ -502,6 +530,11 @@
                     }
                     upgradePackagePrice(params).then(res => {
                         if (res.data.status === 200) {
+                            let price = res.data.data.price
+                            if (price < 0) {
+                                this.upPrice = 0
+                                return
+                            }
                             this.upPrice = res.data.data.price
                         }
                     })
@@ -523,8 +556,13 @@
                             package_id: data.id
                         }
                         upgradeOrder(params).then(res => {
-                            this.$message.success("生成升降级订单成功")
-                            this.isShowUpgrade = false
+                            if (res.data.status === 200) {
+                                this.$message.success("生成升降级订单成功")
+                                this.isShowUpgrade = false
+                                const orderId = res.data.data.id
+                                // 调支付弹窗
+                            }
+
                         }).catch(err => {
                             this.errText = err.data.msg
                         })
@@ -584,12 +622,78 @@
                 },
                 // topcloud传回的实例状态
                 getPowerStatus(e) {
-                    console.log("e", this.powerStatus);
-                    console.log("powerStatus", this.powerStatus);
                     if (e == 'on') {
+                        this.powerList = [
+                            {
+                                id: 2,
+                                label: '关机',
+                                value: "off"
+                            },
+                            {
+                                id: 5,
+                                label: '强制关机',
+                                value: "hardOff"
+                            },
+                            {
+                                id: 3,
+                                label: '重启',
+                                value: "rebot"
+                            },
+                            {
+                                id: 4,
+                                label: '强制重启',
+                                value: "hardRebot"
+                            },
+                        ]
                         this.powerStatus = 'off'
-                    } else {
+                    } else if (e == 'off') {
+                        this.powerList = [
+                            {
+                                id: 1,
+                                label: '开机',
+                                value: "on"
+                            },
+                            {
+                                id: 3,
+                                label: '重启',
+                                value: "rebot"
+                            },
+                            {
+                                id: 4,
+                                label: '强制重启',
+                                value: "hardRebot"
+                            },
+
+                        ]
                         this.powerStatus = 'on'
+                    } else {
+                        this.powerList = [
+                            {
+                                id: 1,
+                                label: '开机',
+                                value: "on"
+                            },
+                            {
+                                id: 2,
+                                label: '关机',
+                                value: "off"
+                            },
+                            {
+                                id: 3,
+                                label: '重启',
+                                value: "rebot"
+                            },
+                            {
+                                id: 4,
+                                label: '强制重启',
+                                value: "hardRebot"
+                            },
+                            {
+                                id: 5,
+                                label: '强制关机',
+                                value: "hardOff"
+                            },
+                        ]
                     }
 
 
