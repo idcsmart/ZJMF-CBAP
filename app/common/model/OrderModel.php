@@ -164,7 +164,7 @@ class OrderModel extends Model
             // 获取产品计费周期
             $billingCycles[$orderItem['order_id']][] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : '';
             // 获取商品名称
-            if(in_array($orderItem['type'], ['addon_idcsmart_promo_code'])){
+            if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code'])){
                 $productNames[$orderItem['order_id']][] = $orderItem['description'];
             }else if(!empty($orderItem['product_name'])){
                 $productNames[$orderItem['order_id']][] = $orderItem['product_name'];
@@ -285,7 +285,7 @@ class OrderModel extends Model
             $orderItems[$key]['billing_cycle'] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : ''; // 处理空数据
             $orderItems[$key]['host_status'] = $orderItem['host_status'] ?? ''; // 处理空数据
 
-            if($orderItem['type']=='addon_idcsmart_promo_code'){
+            if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code'])){
                 $orderItems[$key]['product_name'] = $orderItem['description'];
                 $orderItems[$key]['host_name'] = '';
             }
@@ -323,6 +323,14 @@ class OrderModel extends Model
      */
     public function createOrder($param)
     {
+        $result = hook('get_client_parent_id',['client_id'=>$param['client_id']]);
+
+        foreach ($result as $value){
+            if ($value){
+                $param['client_id'] = (int)$value;
+            }
+        }
+
         // 验证用户ID
         $client = ClientModel::find($param['client_id']);
         if (empty($client)){
@@ -449,6 +457,10 @@ class OrderModel extends Model
                         'due_time' => $product['pay_type']!='onetime' ? $time : 0,
                         'create_time' => $time
                     ]);
+
+                    // 产品和对应自定义字段
+                    $param['customfield']['host_customfield'][] = ['id'=>$host->id, 'customfield' => $value['customfield'] ?? []];
+
                     $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
                     $orderItem[] = [
                         'order_id' => $order->id,
@@ -467,6 +479,11 @@ class OrderModel extends Model
             // 创建订单子项
             $OrderItemModel = new OrderItemModel();
             $OrderItemModel->saveAll($orderItem);
+
+            hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
+            # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
+            $amount = $this->where('id',$order->id)->value('amount');
 
             if($amount<=0){
                 $this->processPaidOrder($order->id);
@@ -739,9 +756,13 @@ class OrderModel extends Model
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
 
+            # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
+            $amount = $this->where('id',$order->id)->value('amount');
+            
             if($amount<=0){
+                $this->processPaidOrder($order->id);
                 // 获取接口
-                if($product['type']=='server_group'){
+                /*if($product['type']=='server_group'){
                     $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
                     $serverId = $server['id'] ?? 0;
                 }else{
@@ -762,7 +783,7 @@ class OrderModel extends Model
                 ],['id' => $host['id']]);
                 $ModuleLogic = new ModuleLogic();
                 $host = HostModel::find($host['id']);
-                $ModuleLogic->changeProduct($host, $param['product']['config_options']);
+                $ModuleLogic->changeProduct($host, $param['product']['config_options']);*/
 
                 // 退款到余额
                 if($amount<0 && $param['upgrade_refund']==1){
@@ -880,15 +901,20 @@ class OrderModel extends Model
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
 
+            # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
+            $amount = $this->where('id',$order->id)->value('amount');
+
             if($amount<=0){
-                HostModel::update([
+                $this->processPaidOrder($order->id);
+                
+                /*HostModel::update([
                     'first_payment_amount' => $upgrade['price'],
                     'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? (($host['renew_amount']+$param['renew_price_difference'])>0 ? ($host['renew_amount']+$param['renew_price_difference']) : 0) : 0,
                 ],['id' => $host['id']]);
 
                 $ModuleLogic = new ModuleLogic();
                 $host = HostModel::find($host['id']);
-                $ModuleLogic->changePackage($host, $param['config_options']);
+                $ModuleLogic->changePackage($host, $param['config_options']);*/
 
                 // 退款到余额
                 if($amount<0 && $param['upgrade_refund']==1){
@@ -958,7 +984,7 @@ class OrderModel extends Model
         $param['type'] = $param['type'] ?? 'new';
         $param['amount'] = $param['amount'] ?? 0;
         $param['credit'] = $param['credit'] ?? 0;
-        $param['status'] = $param['status'] ?? 'Unpaid';
+        $param['status'] = $param['amount']>0 ? ($param['status'] ?? 'Unpaid') : 'Paid';
         $param['gateway'] = $param['gateway'] ?? '';
         $param['client_id'] = $param['client_id'] ?? 0;
         $param['items'] = $param['items'] ?? [];
@@ -1040,6 +1066,13 @@ class OrderModel extends Model
         $order['amount_unpaid'] +=  $param['amount'];
         if($order['amount_unpaid']<0){
             return ['status'=>400, 'msg'=>lang('order_amount_adjustment_failed')];
+        }
+
+        $hookRes = hook('before_update_amount',['id'=>$param['id']]);
+        foreach($hookRes as $v){
+            if(isset($v['status']) && $v['status'] == 400){
+                return $v;
+            }
         }
 
         $this->startTrans();
@@ -1245,6 +1278,7 @@ class OrderModel extends Model
             $this->update(['status' => 'Paid', 'credit' => $order['credit'], 'amount_unpaid'=>0, 'pay_time' => time(), 'update_time' => time()], ['id' => $param['id']]);
 
             // 处理已支付订单
+
             $this->processPaidOrder($param['id']);
 
             $client = ClientModel::find($order->client_id);
@@ -1359,6 +1393,13 @@ class OrderModel extends Model
             return ['status'=>400, 'msg'=>lang('order_host_not_unpaid')];
         }
 
+        $hookRes = hook('before_order_cancel',['id'=>$id]);
+        foreach($hookRes as $v){
+            if(isset($v['status']) && $v['status'] == 400){
+                return $v;
+            }
+        }
+
         $this->startTrans();
         try {
             $client = ClientModel::find($clientId);
@@ -1437,6 +1478,7 @@ class OrderModel extends Model
 				],		
 			]);			
 		}
+
         foreach($orderItems as $orderItem){
             $type = $orderItem['type'];
 			

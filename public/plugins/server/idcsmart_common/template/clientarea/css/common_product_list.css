@@ -71,6 +71,10 @@ tbody tr:hover {
   justify-content: center;
   cursor: pointer;
 }
+.search-btn:hover {
+  background: #0058FF;
+  color: #fff;
+}
 .main-card-table {
   margin-top: 0.4rem;
   border: 1px solid #E6E7EB;

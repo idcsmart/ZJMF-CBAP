@@ -37,12 +37,13 @@ class AccountController extends HomeBaseController
      * @return string account.language - 语言 
      * @return string account.notes - 备注 
      * @return string account.credit - 余额 
+     * @return object account.customfiled - 自定义字段 
      */
     public function index()
     {
         // 接收参数
         $param = $this->request->param();
-        $id = get_client_id(); // 获取用户ID
+        $id = get_client_id(false); // 获取用户ID
         
         // 实例化模型类
         $ClientModel = new ClientModel();
@@ -139,7 +140,7 @@ class AccountController extends HomeBaseController
     {
         // 接收参数
         $param = $this->request->param();
-        $param['id'] = get_client_id(); // 获取用户ID用于验证
+        $param['id'] = get_client_id(false); // 获取用户ID用于验证
 
         // 参数验证
         if (!$this->validate->scene('update_phone')->check($param)){
@@ -199,7 +200,7 @@ class AccountController extends HomeBaseController
     {
         // 接收参数
         $param = $this->request->param();
-        $param['id'] = get_client_id(); // 获取用户ID用于验证
+        $param['id'] = get_client_id(false); // 获取用户ID用于验证
 
         // 参数验证
         if (!$this->validate->scene('update_email')->check($param)){
@@ -302,8 +303,11 @@ class AccountController extends HomeBaseController
      * @desc 余额变更记录列表
      * @author theworld
      * @version v1
-     * @url /admin/v1/credit
+     * @url /console/v1/credit
      * @method  GET
+     * @param int start_time - 开始时间，时间戳(s)
+     * @param int end_time - 结束时间，时间戳(s)
+     * @param string type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund 
      * @param string keywords - 关键字:记录ID,备注
      * @param string type - 类型:人工Artificial,充值Recharge,应用至订单Applied,退款Refund,提现Withdraw
      * @param int page - 页数

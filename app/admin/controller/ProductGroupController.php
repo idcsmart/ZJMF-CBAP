@@ -167,6 +167,7 @@ class ProductGroupController extends AdminBaseController
      * @param int first_product_group_id 1 一级分组ID required
      * @param int pre_product_group_id 1 移动后前一个分组ID(没有则传0) required
      * @param int pre_first_product_group_id 1 移动后的一级分组ID required
+     * @param int backward 1 是否向后移动:1是,0否 required
      */
     public function order()
     {
@@ -192,6 +193,7 @@ class ProductGroupController extends AdminBaseController
      * @version v1
      * @param int id 1 一级分组ID required
      * @param int pre_first_product_group_id 1 移动后前一个一级分组ID(没有则传0) required
+     * @param int backward 1 是否向后移动:1是,0否 required
      */
     public function orderFirst()
     {

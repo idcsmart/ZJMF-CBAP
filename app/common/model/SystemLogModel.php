@@ -77,7 +77,7 @@ class SystemLogModel extends Model
 
 		        if(!empty($param['client_id'])){
                     if($app=='home'){
-                        $query->where('user_type', 'client')->where('user_id', $param['client_id']);
+                        $query->whereIn('user_type', ['client', 'api'])->where('client_id', $param['client_id']);
                     }else{
                         $query->where('client_id', $param['client_id']);
                     }
@@ -96,7 +96,7 @@ class SystemLogModel extends Model
     			}
 		        if(!empty($param['client_id'])){
                     if($app=='home'){
-                        $query->where('user_type', 'client')->where('user_id', $param['client_id']);
+                        $query->whereIn('user_type', ['client', 'api'])->where('client_id', $param['client_id']);
                     }else{
                         $query->where('client_id', $param['client_id']);
                     }
@@ -223,6 +223,13 @@ class SystemLogModel extends Model
             $userType = 'client';
             $userId = $clientId;
             $userName = request()->client_name;
+            if($clientId!=get_client_id(false)){
+                $userName = $userName.lang('sub_account');
+                $userId = get_client_id(false);
+                if(!empty($description) && $description!=''){
+                    $description = '#'.$userId.$userName.$description;
+                }
+            }
         }else if(empty($adminId) && !empty($clientId) && !empty(request()->api_id)){
             $userType = 'api';
             $userId = request()->api_id;

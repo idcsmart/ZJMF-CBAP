@@ -21,4 +21,29 @@ class PluginHookModel extends Model
         'module'          => 'string',
         'order'           => 'int',
     ];
+
+    // 缓存插件钩子
+    public function cacheHook()
+    {
+        $systemHookPlugins = $this->field('name,plugin')
+            ->where('status',1)
+            ->where('module','addon') # 仅插件
+            ->select()->toArray();
+
+        cache('system_plugin_hooks',$systemHookPlugins);
+
+        return $systemHookPlugins;
+    }
+
+    // 获取插件钩子
+    public function getCacheHook()
+    {
+        if (empty(cache('system_plugin_hooks'))){
+            $systemHookPlugins = $this->cacheHook();
+        }else{
+            $systemHookPlugins = cache('system_plugin_hooks');
+        }
+
+        return $systemHookPlugins;
+    }
 }

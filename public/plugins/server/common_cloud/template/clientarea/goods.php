@@ -3,12 +3,12 @@
 <div class="template">
     <!-- 自己的东西 -->
     <div class="main-card">
-        <div class="order-name">魔方云服务器</div>
+        <div class="order-name">{{name}}</div>
         <div class="order-main">
             <div class="order-left">
                 <!-- 区域 -->
                 <div class="order-item">
-                    <div class="label">区域</div>
+                    <div class="label">{{lang.common_cloud_label1}}</div>
                     <div class="area-content">
                         <div class="area-item" :class="item.id==orderData.centerId?'active':null" v-for="item in centerData" :key="item.id" @click="centerChange(item)">
                             <img class="country-img" :src="'/upload/common/country/' + item.iso + '.png'" alt="">
@@ -20,7 +20,7 @@
                 </div>
                 <!-- 套餐选择 -->
                 <div class="order-item">
-                    <div class="label">选择套餐</div>
+                    <div class="label">{{lang.common_cloud_label2}}</div>
                     <div class="package-content" v-loading="packageLoading">
                         <div class="package-item" :class="item.id==orderData.packageId?'active':null" v-for="item in packageDataPage" :key="item.id" @click="packageItemClick(item)">
                             <div class="money">
@@ -40,13 +40,13 @@
                 <!-- 额外数据盘 -->
                 <div class="order-item disk-item" v-if="configData.buy_data_disk == 1">
                     <div class="left">
-                        <span class="left-text">额外数据盘</span>
+                        <span class="left-text">{{lang.common_cloud_label3}}</span>
                         <el-switch v-model="isMoreDisk" active-color="#0052D9" @change="diskChange">
                         </el-switch>
                     </div>
                     <div class="right" v-show="isMoreDisk" style="align-items: flex-start;">
                         <div class="right-item" v-for="item in moreDiskData" :key="item.id">
-                            <span class="item-name">数据盘{{item.index}}</span>
+                            <span class="item-name">{{lang.common_cloud_text1}}{{item.index}}</span>
                             <span class="item-min-size">{{configData.disk_min_size}}</span>
                             <el-slider :step="10" :min="configData.disk_min_size" :max="configData.disk_max_size" v-model="item.size" @change="sliderChange(item.id,item.size)"></el-slider>
                             <span class="item-max-size">{{configData.disk_max_size}}</span>
@@ -60,12 +60,12 @@
                 <!-- 备份 -->
                 <div class="order-item bs-item" v-if="configData.backup_enable == 1">
                     <div class="left">
-                        <span class="left-text">备份功能</span>
+                        <span class="left-text">{{lang.common_cloud_label4}}</span>
                         <el-switch v-model="isBack" active-color="#0052D9">
                         </el-switch>
                     </div>
                     <div class="right" v-show="isBack">
-                        <span class="text">开启创建{{backNum}}个备份</span>
+                        <span class="text">{{lang.common_cloud_text2}}{{backNum}}{{lang.common_cloud_text3}}</span>
                         <!-- 只有一个备份选择时直接显示 -->
                         <!-- <span class="num-price">{{backNum + '个备份' + commonData.currency_prefix + backPrice}}</span> -->
                         <!-- 有多个时下拉框选择 -->
@@ -77,12 +77,12 @@
                 <!-- 快照 -->
                 <div class="order-item bs-item" v-if="configData.snap_enable == 1">
                     <div class="left">
-                        <span class="left-text">快照功能</span>
+                        <span class="left-text">{{lang.common_cloud_label5}}</span>
                         <el-switch v-model="isSnapshot" active-color="#0052D9">
                         </el-switch>
                     </div>
                     <div class="right" v-show="isSnapshot">
-                        <span class="text">开启创建{{snapNum}}个快照</span>
+                        <span class="text">{{lang.common_cloud_text2}}{{snapNum}}{{lang.common_cloud_text4}}</span>
                         <!-- 只有一个备份选择时直接显示 -->
                         <!-- <span class="num-price">{{snapNum + '个快照' + commonData.currency_prefix + snapPrice}}</span> -->
                         <!-- 有多个时下拉框选择 -->
@@ -93,11 +93,11 @@
                 </div>
                 <!-- 操作系统 -->
                 <div class="order-item os-item">
-                    <div class="label">操作系统</div>
+                    <div class="label">{{lang.common_cloud_label6}}</div>
                     <div class="os-content">
                         <!-- 镜像组选择框 -->
                         <el-select class="os-select os-group-select" v-model="orderData.osGroupId" @change="osSelectGroupChange">
-                            <img class="os-group-img" :src="osIcon" slot="prefix" alt="">
+                            <img v-if="osIcon" class="os-group-img" :src="osIcon" slot="prefix" alt="">
                             <el-option v-for="item in osData" :key='item.id' :value="item.id" :label="item.name">
                                 <div class="option-label">
                                     <img class="option-img" :src="'/plugins/server/common_cloud/view/img/' + item.name + '.png'" alt="">
@@ -116,20 +116,20 @@
                     {foreach $addons as $addon}
                     {if ($addon.name=='IdcsmartSshKey')}
                     <div class="item-top" v-if="configData.support_ssh_key == 1">
-                        <el-radio v-model="isPassOrKey" label="pass">密码</el-radio>
+                        <el-radio v-model="isPassOrKey" label="pass">{{lang.common_cloud_label7}}</el-radio>
                         <el-radio v-model="isPassOrKey" label="key">SSH KEY</el-radio>
                     </div>
                     {/if}
                     {/foreach}
                     <div class="item-bottom">
                         <div class="pass" v-show="isPassOrKey == 'pass'">
-                            <div class="pass-label">密码</div>
+                            <div class="pass-label">{{lang.common_cloud_label7}}</div>
                             <el-input class="pass-input" v-model="orderData.password" placeholder="请输入内容">
-                                <div class="pass-btn" slot="suffix" @click="autoPass">随机生成</div>
+                                <div class="pass-btn" slot="suffix" @click="autoPass">{{lang.common_cloud_btn1}}</div>
                             </el-input>
                             <div class="text">
                                 <!-- <span class="text-1">英文开头;</span> -->
-                                <span class="text-2">英文开头;长度5-15个字符；支持英文和数字；必须含有特殊字符</span>
+                                <span class="text-2">{{lang.common_cloud_tip1}}{{lang.common_cloud_tip2}}{{lang.common_cloud_tip3}}{{lang.common_cloud_tip4}}</span>
                             </div>
                         </div>
                         <div class="key" v-show="isPassOrKey == 'key'">
@@ -138,14 +138,14 @@
                                 <el-select v-model="orderData.key">
                                     <el-option v-for="item in sshKeyData" :key="item.id" :value="item.id" :label="item.name"></el-option>
                                 </el-select>
-                                <div class="key-btn" @click="toCreateSshKey">上传新KEY</div>
+                                <div class="key-btn" @click="toCreateSshKey">{{lang.common_cloud_btn2}}</div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- 付款周期 -->
                 <div class="order-item pay-item">
-                    <div class="label">付款周期</div>
+                    <div class="label">{{lang.common_cloud_label8}}</div>
                     <div class="pay-content">
                         <div class="more-time">
                             <!-- <div class="pay-content-item" v-for="item in showCircleData" :key="item.duration" :class="orderData.duration == item.duration?'active':''" @click="feeItemClick(item)">
@@ -170,7 +170,7 @@
             <div class="order-right">
                 <div class="right-main">
                     <div class="right-title">
-                        配置预览
+                        {{lang.common_cloud_title2}}
                     </div>
                     <!-- <div class="right-country-os">
                                         <div class="row">
@@ -190,17 +190,17 @@
                                 <el-popover placement="top-start" width="100" trigger="hover">
                                     <div class="show-config-list" v-html="payCircleData.description">
                                     </div>
-                                    <i class="el-icon-warning-outline" v-show="item.name=='套餐'" slot="reference"></i>
+                                    <i class="el-icon-warning-outline" v-show="item.name== lang.common_cloud_text7" slot="reference"></i>
                                 </el-popover>
                                 <el-popover placement="top-start" width="100" trigger="hover">
                                     <div style="display: flex;flex-direction:column;align-items:center">
                                         <div class="item" v-for="item in moreDiskData">
-                                            数据盘{{item.size}}G:{{commonData.currency_prefix}}{{(item.size/10)*configData.price}}
+                                            {{lang.common_cloud_text1}}{{item.size}}G:{{commonData.currency_prefix}}{{(item.size/10)*configData.price}}
                                         </div>
                                     </div>
-                                    <i class="el-icon-warning-outline" v-show="item.name=='数据盘'" slot="reference"></i>
+                                    <i class="el-icon-warning-outline" v-show="item.name== lang.common_cloud_text1" slot="reference"></i>
                                 </el-popover>
-                                {{item.value}}{{commonData.currency_prefix}}{{item.price}}/{{priceData.billing_cycle}}
+                                {{item.value}}{{commonData.currency_prefix}}{{item.price}}/{{item.name== lang.common_cloud_text5? lang.common_cloud_text6: priceData.billing_cycle}}
                             </div>
                         </div>
                         <!-- 套餐 -->
@@ -249,9 +249,9 @@
                     </div>
                     <div class="order-right-item">
                         <div class="row">
-                            <div class="label">小计</div>
+                            <div class="label">{{lang.common_cloud_label9}}</div>
                             <div class="value" v-loading="priceLoading">
-                                {{commonData.currency_prefix}}{{ onePrice }}
+                                {{commonData.currency_prefix}}{{ onePrice | filterMoney }}
                             </div>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
                     <!-- 数量 -->
                     <div class="order-right-item" style="border-bottom: none;">
                         <div class="row">
-                            <div class="label">数量</div>
+                            <div class="label">{{lang.common_cloud_label10}}</div>
                             <div class="value del-add">
                                 <span class="del" @click="delQty">-</span>
                                 <el-input-number class="num" :controls="false" v-model="orderData.qty" :min="1"></el-input-number>
@@ -273,26 +273,30 @@
                     </div>
                     <!-- 合计 -->
                     <div class="footer-total">
-                        <div class="left">合计</div>
-
-
-                        <div class="right" v-loading="priceLoading">
-
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
+                        <div class="left">{{lang.common_cloud_label11}}</div>
+                        <div class="right" v-loading="priceLoading" v-if="commonData.currency_prefix">
+                            <span>{{commonData.currency_prefix}} {{ totalPrice | filterMoney}}</span>
+                            <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode)">
                                 <div class="show-config-list">
-                                    用户折扣金额：{{commonData.currency_prefix + clDiscount}}
+                                    <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ clDiscount | filterMoney }}</p>
+                                    <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ code_discount | filterMoney }}</p>
                                 </div>
                                 <i class="el-icon-warning-outline total-icon" slot="reference"></i>
                             </el-popover>
-                            {/if}
-                            {/foreach}
-                            <span> {{commonData.currency_prefix + totalPrice}}</span>
+                            <p class="original-price" v-if="totalPrice != original_price">{{commonData.currency_prefix}} {{original_price | filterMoney}}</p>
+                            <!-- 优惠码 -->
+                            <div class="discount-box" v-show="isShowPromo && !customfield.promo_code">
+                                <discount-code @get-discount="getDiscount(arguments)" scene='new' :product_id='id' :qty="orderData.qty" :amount="onePrice" :billing_cycle_time="billing_cycle_time">
+                                <discount-code>
+                            </div>
+                            <div v-show="customfield.promo_code" class="discount-codeNumber">
+                                {{ customfield.promo_code }}
+                                <i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i>
+                            </div>
                         </div>
                     </div>
-                    <!-- 优惠码 -->
-                    <div class="footer-code" v-if="false">
+
+                    <!-- <div class="footer-code" v-if="false">
                         <div class="code-main">
                             <el-popover trigger="click" placement="bottom" v-model="codeVisible">
                                 <div class="code-input-btn">
@@ -311,7 +315,7 @@
                                 <i class="el-icon-circle-close btn" @click="delCode(item.name)"></i>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <!-- 需读 -->
                     <!-- <div class="read">
                         <el-checkbox v-model="isRead">已阅读并同意</el-checkbox>
@@ -322,12 +326,12 @@
 
                     <!-- 确认修改 -->
                     <div class="bottom-btns" v-if="backConfig.duration">
-                        <el-button class="buy-btn" type="primary" style="width:100%;margin-left:0" @click="changeCart" :loading="submitLoading">确认修改</el-button>
+                        <el-button class="buy-btn" type="primary" style="width:100%;margin-left:0" @click="changeCart" :loading="submitLoading">{{lang.common_cloud_btn3}}</el-button>
                     </div>
                     <!-- 购买按钮 -->
                     <div class="bottom-btns" v-else>
-                        <el-button class="car-btn" @click="addCart" v-loading="cartBtnLoading">加入购物车</el-button>
-                        <el-button class="buy-btn" type="primary" @click="buyNow">立即购买</el-button>
+                        <el-button class="car-btn" @click="addCart" v-loading="cartBtnLoading">{{lang.common_cloud_btn4}}</el-button>
+                        <el-button class="buy-btn" type="primary" @click="buyNow">{{lang.common_cloud_btn5}}</el-button>
                     </div>
 
                 </div>
@@ -338,10 +342,10 @@
 
         <!-- 加入购物车成功弹窗 -->
         <el-dialog title="" :visible.sync="cartDialog" custom-class="cartDialog" :show-close="false">
-            <span class="tit">您已成功加入购物车！</span>
+            <span class="tit">{{lang.common_cloud_tip5}}</span>
             <span slot="footer" class="dialog-footer" v-if="">
-                <el-button type="primary" @click="cartDialog = false">继续购物</el-button>
-                <el-button @click="goToCart">去购物车结算</el-button>
+                <el-button type="primary" @click="cartDialog = false">{{lang.common_cloud_btn6}}</el-button>
+                <el-button @click="goToCart">{{lang.common_cloud_btn7}}</el-button>
             </span>
         </el-dialog>
     </div>
@@ -351,4 +355,3 @@
 <script src="/plugins/server/common_cloud/template/clientarea/api/order.js"></script>
 <script src="/plugins/server/common_cloud/template/clientarea/utils/util.js"></script>
 <script src="/plugins/server/common_cloud/template/clientarea/js/order.js"></script>
-<script src="/plugins/server/common_cloud/template/clientarea/components/payDialog/payDialog.js"></script>

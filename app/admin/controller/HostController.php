@@ -339,6 +339,38 @@ class HostController extends AdminBaseController
     }
 
 
+    /**
+     * 时间 2022-10-26
+     * @title 获取用户所有产品
+     * @desc 获取用户所有产品
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/client/:id/host/all
+     * @method  GET
+     * @param int id - 用户ID required
+     * @return array list - 产品
+     * @return int list[].id - 产品ID 
+     * @return int list[].product_id - 商品ID 
+     * @return string list[].product_name - 商品名称 
+     * @return string list[].name - 标识 
+     * @return int count - 产品总数
+     */
+    public function clientHost()
+    {
+        $param = $this->request->param();
 
+        // 实例化模型类
+        $HostModel = new HostModel();
+
+        // 获取用户产品
+        $data = $HostModel->clientHost($param);
+
+        $result = [
+            'status' => 200,
+            'msg' => lang_plugins('success_message'),
+            'data' => $data
+        ];
+        return json($result);
+    }
 
 }

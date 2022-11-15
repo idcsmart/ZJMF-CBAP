@@ -4,7 +4,7 @@
 <div class="template">
     <!-- 自己的东西 -->
     <div class="main-card">
-        <div class="order-name">DCIM产品（套餐）</div>
+        <div class="order-name">{{name}}</div>
         <div class="order-main">
             <div class="order-left">
                 <!-- 区域 -->
@@ -97,7 +97,7 @@
                     <div class="os-content">
                         <!-- 镜像组选择框 -->
                         <el-select class="os-select os-group-select" v-model="orderData.osGroupId" @change="osSelectGroupChange">
-                            <img class="os-group-img" :src="osIcon" slot="prefix" alt="">
+                            <img v-if="osIcon" class="os-group-img" :src="osIcon" slot="prefix" alt="">
                             <el-option v-for="item in osData" :key='item.id' :value="item.id" :label="item.name">
                                 <div class="option-label">
                                     <img class="option-img" :src="'/plugins/server/common_cloud/view/img/' + item.name + '.png'" alt="">
@@ -171,7 +171,7 @@
                     <div class="order-right-item">
                         <div class="row" v-for="item in priceData.preview">
                             <div class="label">{{item.name}}</div>
-                            <div class="value">{{item.value}}{{commonData.currency_prefix}}{{item.price}}/{{priceData.billing_cycle}}</div>
+                            <div class="value">{{item.value}}{{commonData.currency_prefix}}{{item.price}}/{{item.name=='系统'?'一次性': priceData.billing_cycle}}</div>
                         </div>
 
                     </div>
@@ -179,7 +179,7 @@
                         <div class="row">
                             <div class="label">小计</div>
                             <div class="value" v-loading="priceLoading">
-                                {{commonData.currency_prefix}}{{ onePrice }}
+                                {{commonData.currency_prefix}}{{ onePrice | filterMoney}}
                             </div>
                         </div>
                     </div>
@@ -201,20 +201,25 @@
                     <!-- 合计 -->
                     <div class="footer-total">
                         <div class="left">合计</div>
-
-
-                        <div class="right" v-loading="priceLoading">
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">
-                                    用户折扣金额：{{commonData.currency_prefix + clDiscount}}
+                        <div class="right" v-loading="priceLoading" v-if="commonData.currency_prefix">
+                            <span>{{commonData.currency_prefix }} {{ totalPrice | filterMoney}}</span>
+                                <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode)">
+                                    <div class="show-config-list">
+                                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ clDiscount | filterMoney}}</p>
+                                        <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ code_discount | filterMoney}}</p>
+                                    </div>
+                                     <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                                </el-popover>
+                                <p class="original-price" v-if="original_price != totalPrice">{{commonData.currency_prefix}} {{original_price.toFixed(2) | filterMoney}}</p>
+                                <!-- 优惠码 -->
+                                <div class="discount-box" v-show=" isShowPromo && !customfield.promo_code">
+                                    <discount-code @get-discount="getDiscount(arguments)" scene='new' :product_id='id' :qty="orderData.qty" :amount="onePrice" :billing_cycle_time="billing_cycle_time">
+                                    <discount-code>
                                 </div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                            </el-popover>
-                            {/if}
-                            {/foreach}
-                            {{commonData.currency_prefix + totalPrice}}
+                                <div v-show="customfield.promo_code" class="discount-codeNumber">
+                                    {{ customfield.promo_code }}
+                                    <i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i>
+                                </div>
                         </div>
                     </div>
                     <!-- 优惠码 -->

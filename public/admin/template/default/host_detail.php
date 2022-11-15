@@ -102,6 +102,24 @@
                 <t-button @click="renew">续费</t-button>
               </t-form-item> -->
             </div>
+            <!-- 优惠码 -->
+            <template v-if="hasPlugin">
+              <p class="com-tit"><span>{{lang.promo_code}}</span></p>
+              <t-table row-key="id" :data="promoList" size="medium" :columns="recordColumns" :hover="hover" bordered :loading="recordLoading" :table-layout="tableLayout ? 'auto' : 'fixed'">
+                <template #create_time="{row}">
+                  {{row.create_time ? moment(row.create_time * 1000).format('YYYY/MM/DD HH:mm') : '--'}}
+                </template>
+                <template #scene="{row}">
+                  {{lang[row.scene]}}
+                </template>
+                <template #order_id="{row}">
+                  <a class="jump" @click="jumpOrder(row)">{{row.order_id}}</a>
+                </template>
+                <template #promo="{row}">
+                  {{row.code}}：-{{currency_prefix}}{{row.discount}}
+                </template>
+              </t-table>
+            </template>
           </t-col>
           <t-col :xs="12" :xl="6">
             <div class="config-area" v-html="config"></div>

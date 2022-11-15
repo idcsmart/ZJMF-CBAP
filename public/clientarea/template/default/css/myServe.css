@@ -1,0 +1,41 @@
+.myserve-content header {
+  font-size: 0.28rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #171725;
+  line-height: 0.25rem;
+  margin-bottom: 0.6rem;
+}
+.myserve-content .top-search {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+}
+.myserve-content .top-search .create-btn,
+.myserve-content .top-search .search-btn {
+  background: #0058ff;
+  color: #fff;
+  height: 46px;
+}
+.myserve-content .top-search .search-left {
+  margin-bottom: 0.2rem;
+}
+.myserve-content .top-search .search-left .el-button {
+  background-color: #0058ff;
+}
+.myserve-content .top-search .search-right {
+  margin-bottom: 0.2rem;
+  display: flex;
+  flex-direction: row;
+}
+.myserve-content .top-search .search-right .el-select,
+.myserve-content .top-search .search-right .el-input {
+  width: 2.55rem;
+  height: 46px;
+  margin-right: 0.1rem;
+}
+.myserve-content .top-search .search-right .el-select .el-input__inner,
+.myserve-content .top-search .search-right .el-input .el-input__inner {
+  height: 100%;
+}

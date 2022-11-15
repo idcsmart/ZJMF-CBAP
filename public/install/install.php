@@ -702,7 +702,7 @@ location / {
                 $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
                 break;
         }
-        mt_srand((double)microtime()*1000000*getmypid());
+        mt_srand((int)microtime()*1000000*getmypid());
         while(strlen($password)<$len){
             $tmp =substr($chars,(mt_rand()%strlen($chars)),1);
             if(($is_numer <> 1 && is_numeric($tmp) && $tmp > 0 )|| $format == 'CHAR'){

@@ -29,7 +29,7 @@ Route::group('console/v1',function (){
     // 购物车
     Route::get('product/group/first', 'home/product/productGroupFirstList'); // 获取商品一级分组
     Route::get('product/group/second', 'home/product/productGroupSecondList'); // 获取商品二级分组
-    Route::get('product', 'home/product/productList'); // 商品列表
+    Route::get('product', 'home/product/list'); // 商品列表
     Route::get('product/:id', 'home/product/index'); // 商品详情
     Route::get('product/:id/config_option', 'home/product/moduleClientConfigOption'); // 商品配置页面
     Route::post('product/:id/config_option', 'home/product/moduleCalculatePrice'); // 修改配置计算价格
@@ -69,25 +69,27 @@ Route::group('console/v1',function (){
     Route::get('credit', 'home/account/creditList'); // 余额变更记录列表
 
 	// 产品管理
-	Route::get('host', 'home/host/hostList'); // 产品列表
+	Route::get('host', 'home/host/list'); // 产品列表
     Route::get('menu/:id/host', 'home/host/menuHostList'); // 自定义导航产品列表
     Route::get('host/:id', 'home/host/index'); // 产品详情
     Route::get('host/:id/view', 'home/host/clientArea'); // 产品内页模块
     Route::get('host/:id/upgrade/config_option', 'home/host/changeConfigOption'); // 产品升降级配置
     Route::post('host/:id/upgrade/config_option', 'home/host/changeConfigOptionCalculatePrice'); // 产品升降级配置计算价格
+    Route::get('module', 'home/module/moduleList'); // 模块列表
 	Route::rule('module/:module/:controller/:method', 'home/module/customFunction', 'GET|POST'); // 模块自定义方法
     Route::put('host/:id/notes', 'home/host/updateHostNotes'); // 修改产品备注
+    Route::get('host/all', 'home/host/clientHost'); // 获取用户所有产品
 
 	// 订单管理
-	Route::get('order', 'home/order/orderList'); // 订单列表
+	Route::get('order', 'home/order/list'); // 订单列表
 	Route::get('order/:id', 'home/order/index'); // 订单详情
     Route::delete('order/:id', 'home/order/delete'); // 删除订单
 
 	// 消费管理
-	Route::get('transaction', 'home/transaction/transactionList'); // 消费记录
+	Route::get('transaction', 'home/transaction/list'); // 消费记录
 
 	// 日志管理
-	Route::get('log', 'home/log/logList'); // 操作日志
+	Route::get('log', 'home/log/list'); // 操作日志
 
     // 支付
     Route::post('pay', 'home/pay/pay'); // 支付
@@ -107,6 +109,7 @@ Route::group('console/v1',function (){
 
     // 公共接口
     Route::get('global_search', 'home/common/globalSearch'); # 全局搜索
+    Route::get('auth', 'home/common/authList'); # 权限列表
 
 })->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,

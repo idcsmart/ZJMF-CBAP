@@ -137,6 +137,7 @@ class OrderController extends AdminBaseController
      * @param object products[].config_options - 自定义配置
      * @param int products[].qty - 数量
      * @param float products[].price - 商品价格
+     * @param object products[].customfield - 自定义字段
      * @param int host_id - 产品ID 类型为升降级订单时需要
      * @param object product - 升降级商品 类型为升降级订单时需要
      * @param int product.product_id - 商品ID
@@ -145,6 +146,7 @@ class OrderController extends AdminBaseController
      * @param float amount - 金额 类型为人工订单时需要
      * @param string description - 描述 类型为人工订单时需要
      * @param int client_id - 用户ID required
+     * @param object customfield - 自定义字段
      */
 	public function create()
     {

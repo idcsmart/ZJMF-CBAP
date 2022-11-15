@@ -3,7 +3,8 @@
 return [
 	'display_name' => '中文简体',//用于在语言切换下拉中显示
 	'display_flag' => 'CN',//用于显示图片，使用国家代码大写
-	
+	'not_found' => '页面找不到了',
+
 
     'success_message' => '请求成功',
     'fail_message' => '请求失败',
@@ -250,6 +251,7 @@ return [
 
 
     # 日志
+    'admin_delete_user' => '{admin}删除用户{client}',
     'admin_modify_user_profile' => '{admin}将{client}的{description}',
     'admin_delete_user_host' => '{admin}将{client}的{host}删除',
     'admin_adjust_user_order_price' => '{admin}将{client}的{order}的价格{old}改为{new}',
@@ -277,6 +279,7 @@ return [
     'admin_sms_template_log_update' => '{admin}短信接口"{sms_name}"模板修改：{description}',
     'admin_sms_template_log_delete' => '{admin}短信接口"{sms_name}"模板删除"{sms_title}"成功',
     'admin_notice_send_log_update' => '{admin}发送设置，{description}',
+    'sub_account' => '(子账户)',
 
     'client_username' => '姓名',
     'client_email' => '邮箱',
@@ -287,6 +290,7 @@ return [
     'client_address' => '地址',
     'client_language' => '语言',
     'client_notes' => '备注',
+
 
     # 通用描述
     'log_admin_update_description' => '{field}{old}为{new}',

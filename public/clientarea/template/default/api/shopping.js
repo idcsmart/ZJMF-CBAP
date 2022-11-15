@@ -38,6 +38,10 @@ function product_settle(params) {
 function payLisy() {
     return Axios.get(`/gateway`)
 }
+// 修改购物车
+function updateCart(params) {
+    return Axios.put(`/cart/${params.position}`, params);
+}
 
 // 商品列表
 function productDetail(id) {

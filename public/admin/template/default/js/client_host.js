@@ -161,11 +161,11 @@
       methods: {
         async getPlugin () {
           try {
-            const res = await getAddon()
-            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartRenew')[0]
-            if (cur.status === 1) {
-              this.hasPlugin = true
-            }
+            const res = await getAddon() 
+            this.hasPlugin = res.data.data.list.reduce((all, cur) => {
+              all.push(cur.name)
+              return all
+            }, []).includes('IdcsmartRenew')
           } catch (error) {
 
           }

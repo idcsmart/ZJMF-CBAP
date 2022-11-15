@@ -112,6 +112,8 @@ class CartModel extends Model
             $productStock = array_column($product, 'stock_control', 'id');
             $productQty = array_column($product, 'qty', 'id');
             foreach ($cartData as $key => $value) {
+                $cartData[$key]['config_options'] = !empty($value['config_options']) ? $value['config_options'] : (object)[];
+                $cartData[$key]['customfield'] = !empty($value['customfield']) ? $value['customfield'] : (object)[];
                 $cartData[$key]['name'] = $productName[$value['product_id']] ?? '';
                 $cartData[$key]['description'] = $productDesc[$value['product_id']] ?? '';
                 $cartData[$key]['stock_control'] = $productStock[$value['product_id']] ?? 0;
@@ -162,6 +164,7 @@ class CartModel extends Model
             'product_id' => $param['product_id'],
             'config_options' => $param['config_options'] ?? [],
             'qty' => $param['qty'],
+            'customfield' => $param['customfield'] ?? [],
         ];
         //self::$cartData[] = $data;
         array_unshift(self::$cartData, $data);
@@ -211,6 +214,7 @@ class CartModel extends Model
             'product_id' => $param['product_id'],
             'config_options' => $param['config_options'] ?? [],
             'qty' => $param['qty'],
+            'customfield' => $param['customfield'] ?? [],
         ];
         if(isset(self::$cartData[$position])){
             self::$cartData[$position] = $data;
@@ -419,6 +423,10 @@ class CartModel extends Model
                         'create_time' => $time
                     ]);
                     $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+
+                    // 产品和对应自定义字段
+                    $customfield['host_customfield'][] = ['id'=>$host->id, 'customfield' => $value['customfield'] ?? []];
+
                     $orderItem[] = [
                         'order_id' => $order->id,
                         'client_id' => $clientId,

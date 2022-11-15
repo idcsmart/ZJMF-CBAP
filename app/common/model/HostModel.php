@@ -96,6 +96,18 @@ class HostModel extends Model
             $param['orderby'] = 'h.'.$param['orderby'];  
         }
 
+        $res = hook('get_client_host_id', ['client_id' => get_client_id(false)]);
+        $res = array_values(array_filter($res ?? []));
+        foreach ($res as $key => $value) {
+            if(isset($value['status']) && $value['status']==200){
+                $hostId = $value['data']['host'];
+                if(empty($hostId)){
+                    return ['list' => [], 'count' => 0];
+                }
+            }
+        }
+        $param['host_id'] = $hostId ?? [];
+
         $count = $this->alias('h')
             ->field('h.id')
             ->leftjoin('product p', 'p.id=h.product_id')
@@ -116,6 +128,9 @@ class HostModel extends Model
                     }else{
                         $query->where('h.status', $param['status']);
                     }
+                }
+                if(!empty($param['host_id'])){
+                    $query->whereIn('h.id', (int)$param['host_id']);
                 }
             })
             ->count();
@@ -140,6 +155,9 @@ class HostModel extends Model
                     }else{
                         $query->where('h.status', $param['status']);
                     }
+                }
+                if(!empty($param['host_id'])){
+                    $query->whereIn('h.id', (int)$param['host_id']);
                 }
             })
             ->limit($param['limit'])
@@ -186,6 +204,17 @@ class HostModel extends Model
         if(empty($param['client_id'])){
             return ['list' => [], 'count' => 0];
         }
+        $res = hook('get_client_host_id', ['client_id' => get_client_id(false)]);
+        $res = array_values(array_filter($res ?? []));
+        foreach ($res as $key => $value) {
+            if(isset($value['status']) && $value['status']==200){
+                $hostId = $value['data']['host'];
+                if(empty($hostId)){
+                    return ['list' => [], 'count' => 0];
+                }
+            }
+        }
+        $param['host_id'] = $hostId ?? [];
 
         $count = $this->alias('h')
             ->field('h.id')
@@ -195,6 +224,9 @@ class HostModel extends Model
                 $query->whereIn('h.status', ['Pending', 'Active', 'Suspended', 'Failed']);
                 if(!empty($param['client_id'])){
                     $query->where('h.client_id', (int)$param['client_id']);
+                }
+                if(!empty($param['host_id'])){
+                    $query->whereIn('h.id', $param['host_id']);
                 }
             })
             ->count();
@@ -208,6 +240,9 @@ class HostModel extends Model
                 $query->whereIn('h.status', ['Pending', 'Active', 'Suspended', 'Failed']);
                 if(!empty($param['client_id'])){
                     $query->where('h.client_id', (int)$param['client_id']);
+                }
+                if(!empty($param['host_id'])){
+                    $query->whereIn('h.id', $param['host_id']);
                 }
             })
             ->limit(10)
@@ -839,6 +874,16 @@ class HostModel extends Model
         if(empty($host) || $host['client_id'] != get_client_id()){
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
+        $res = hook('get_client_host_id', ['client_id' => get_client_id(true)]);
+        $res = array_values(array_filter($res ?? []));
+        foreach ($res as $key => $value) {
+            if(isset($value['status']) && $value['status']==200){
+                $hostId = $value['data']['host'];
+            }
+        }
+        if(isset($hostId) && !in_array($id, $hostId)){
+            return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+        }
         
         $ModuleLogic = new ModuleLogic();
         $content = $ModuleLogic->clientArea($host);
@@ -1057,6 +1102,57 @@ class HostModel extends Model
             return ['status' => 400, 'msg' => lang('update_fail')];
         }
         return ['status' => 200, 'msg' => lang('update_success')];
+    }
+
+    /**
+     * 时间 2022-10-26
+     * @title 获取用户所有产品
+     * @desc 获取用户所有产品
+     * @author theworld
+     * @version v1
+     * @return array list - 产品
+     * @return int list[].id - 产品ID 
+     * @return int list[].product_id - 商品ID 
+     * @return string list[].product_name - 商品名称 
+     * @return string list[].name - 标识 
+     * @return int count - 产品总数
+     */
+    public function clientHost($param)
+    {
+        // 获取当前应用
+        $app = app('http')->getName();
+        if($app=='home'){
+            $param['client_id'] = get_client_id();
+        }else{
+            $param['client_id'] = isset($param['id']) ? intval($param['id']) : 0;
+        }
+        if(empty($param['client_id'])){
+            return ['list' => [], 'count' => 0];
+        }
+
+        $count = $this->alias('h')
+            ->field('h.id')
+            ->leftjoin('product p', 'p.id=h.product_id')
+            ->where(function ($query) use($param) {
+                $query->where('h.status', '<>', 'Cancelled');
+                if(!empty($param['client_id'])){
+                    $query->where('h.client_id', (int)$param['client_id']);
+                }
+            })
+            ->count();
+        $hosts = $this->alias('h')
+            ->field('h.id,h.product_id,p.name product_name,h.name')
+            ->leftjoin('product p', 'p.id=h.product_id')
+            ->where(function ($query) use($param) {
+                $query->where('h.status', '<>', 'Cancelled');
+                if(!empty($param['client_id'])){
+                    $query->where('h.client_id', (int)$param['client_id']);
+                }
+            })
+            ->select()
+            ->toArray();
+
+        return ['list' => $hosts, 'count' => $count];
     }
 
 }

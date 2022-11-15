@@ -8,6 +8,7 @@
     new Vue({
       data () {
         return {
+          id: '',
           rootRul: url,
           data: [],
           tableLayout: false,
@@ -126,6 +127,10 @@
           curInfo: {},
           optType: '' // order,sub
         }
+      },
+      created () {
+        this.params.keywords = location.href.split('?')[1]?.split('=')[1]
+        this.getClientList()
       },
       mounted () {
         this.maxHeight = document.getElementById('content').clientHeight - 170
@@ -320,9 +325,6 @@
 
           }
         }
-      },
-      created () {
-        this.getClientList()
       }
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

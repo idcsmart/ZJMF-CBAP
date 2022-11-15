@@ -8,7 +8,8 @@
         content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title></title>
     <!-- element 样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+    <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/element.css">
     <!-- 模板样式 -->
     <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/common.css">
     <link rel="stylesheet" href="/upload/common/iconfont/iconfont.css">
@@ -18,4 +19,4 @@
     </script>
     <script src="/{$template_catalog}/template/{$themes}/js/common/lang.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/common/common.js"></script>
-    <script src="/{$template_catalog}/template/{$themes}/js/common/layout.js"></script>
+    

@@ -129,8 +129,11 @@ class EmailLogic
 				'order_create_time' => $index_order['create_time'],
 				'order_amount' => $index_order['amount'],
 			];	
-			$client_id = $param['client_id'] = $index_order['client_id'];	
-			
+			if(isset($param['client_id']) && !empty($param['client_id'])){
+				$client_id = $param['client_id'];
+			}else{
+				$client_id = $param['client_id'] = $index_order['client_id'];
+			}
 		}
 		//产品
         if(!empty($param['host_id'])){	
@@ -150,7 +153,11 @@ class EmailLogic
 				'renewal_first' => $config['cron_due_renewal_first_day'],
 				'renewal_second' => $config['cron_due_renewal_second_day'],
 			];	
-			$client_id = $param['client_id'] = $index_host['client_id'];		
+			if(isset($param['client_id']) && !empty($param['client_id'])){
+				$client_id = $param['client_id'];
+			}else{
+				$client_id = $param['client_id'] = $index_host['client_id'];
+			}		
 		}
 		//客户
         if(!empty($param['client_id'])){

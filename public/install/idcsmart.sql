@@ -356,6 +356,7 @@ insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (12,3);
 insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (14,4);
 insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (13,6);
 insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (15,7);
+insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (78,7);
 insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (103,7);
 insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (16,8);
 insert  into `idcsmart_auth_rule_link`(`auth_rule_id`,`auth_id`) values (18,10);
@@ -1089,7 +1090,7 @@ CREATE TABLE `idcsmart_nav` (
   `plugin` varchar(100) NOT NULL DEFAULT '' COMMENT '插件',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `parent_id` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='默认导航表';
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='默认导航表';
 
 /*Data for the table `idcsmart_nav` */
 
@@ -1119,10 +1120,10 @@ insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (24,'admin','nav_auto','cron.html','',21,25,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (25,'admin','nav_plugin','','control-platform',0,43,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (26,'admin','nav_plugin_list','plugin.html','',25,27,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','menu3',0,1,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','menu4',0,2,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (27,'home','nav_finance_info','finance.html','icon-a-4',0,1,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (28,'home','nav_account_info','account.html','icon-a-20',0,2,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (29,'admin','nav_navigation','navigation.html','',11,28,'','');
-insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (30,'home','nav_goods_list','goodsList.html','menu11',0,3,'','');
+insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (30,'home','nav_goods_list','goodsList.html','icon-a-7',0,3,'','');
 insert  into `idcsmart_nav`(`id`,`type`,`name`,`url`,`icon`,`parent_id`,`order`,`module`,`plugin`) values (31,'home','nav_security','security.html','icon-a-19',0,4,'','');
 
 /*Table structure for table `idcsmart_notice_setting` */
@@ -1606,6 +1607,137 @@ CREATE TABLE `idcsmart_client_custom_field` (
   KEY `client_id` (`client_id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户自定义字段表';
+
+/*Table structure for table `idcsmart_clientarea_auth` */
+
+DROP TABLE IF EXISTS `idcsmart_clientarea_auth`;
+
+CREATE TABLE `idcsmart_clientarea_auth` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '会员中心权限ID',
+  `title` varchar(1000) NOT NULL DEFAULT '' COMMENT '权限标题,存语言的键',
+  `url` varchar(1000) NOT NULL DEFAULT '' COMMENT '页面地址',
+  `order` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '父权限ID',
+  `module` varchar(100) NOT NULL DEFAULT '' COMMENT '插件模块路径,如:gateway支付接口/sms短信接口/mail邮件接口/addon插件',
+  `plugin` varchar(100) NOT NULL DEFAULT '' COMMENT '插件',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COMMENT='会员中心权限表';
+
+/*Data for the table `idcsmart_clientarea_auth` */
+
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (1,'clientarea_auth_basic_auth','',1,0,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (2,'clientarea_auth_order_product','goodsList.html',2,1,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (3,'clientarea_auth_payment','',3,1,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (4,'clientarea_auth_account_info','account.html',4,1,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (5,'clientarea_auth_outline','',5,4,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (6,'clientarea_auth_view_log','',6,4,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (7,'clientarea_auth_finance_info','finance.html',7,1,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (8,'clientarea_auth_order_record','',8,7,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (9,'clientarea_auth_transaction','',9,7,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (10,'clientarea_auth_balance_record','',10,7,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (11,'clientarea_auth_security_center','security.html',11,1,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (12,'clientarea_auth_api','',12,11,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (13,'clientarea_auth_api_log','',13,11,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (14,'clientarea_auth_resource_center','',14,0,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (15,'clientarea_auth_product_auth','',15,0,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (16,'clientarea_auth_on_off_restart','',16,15,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (17,'clientarea_auth_refund_renew_upgrade','',17,15,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (18,'clientarea_auth_control_reinstall_rescue_reset_set_mount','',18,15,'','');
+insert  into `idcsmart_clientarea_auth`(`id`,`title`,`url`,`order`,`parent_id`,`module`,`plugin`) values (19,'clientarea_auth_delete','',19,15,'','');
+
+/*Table structure for table `idcsmart_clientarea_auth_rule` */
+
+DROP TABLE IF EXISTS `idcsmart_clientarea_auth_rule`;
+
+CREATE TABLE `idcsmart_clientarea_auth_rule` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '会员中心权限规则ID',
+  `name` varchar(150) NOT NULL DEFAULT '' COMMENT '规则唯一英文标识,全小写',
+  `title` varchar(1000) NOT NULL DEFAULT '' COMMENT '规则描述',
+  `module` varchar(100) NOT NULL DEFAULT '' COMMENT '插件模块路径,如:gateway支付接口/sms短信接口/mail邮件接口/addon插件',
+  `plugin` varchar(100) NOT NULL DEFAULT '' COMMENT '插件',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='会员中心权限规则表';
+
+/*Data for the table `idcsmart_clientarea_auth_rule` */
+
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (1,'app\\home\\controller\\AccountController::index','clientarea_auth_rule_account_index','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (2,'app\\home\\controller\\AccountController::update','clientarea_auth_rule_account_update','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (3,'app\\home\\controller\\AccountController::verifyOldPhone','clientarea_auth_rule_account_verify_old_phone','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (4,'app\\home\\controller\\AccountController::updatePhone','clientarea_auth_rule_account_update_phone','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (5,'app\\home\\controller\\AccountController::verifyOldEmail','clientarea_auth_rule_account_verify_old_email','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (6,'app\\home\\controller\\AccountController::updateEmail','clientarea_auth_rule_account_update_email','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (7,'app\\home\\controller\\AccountController::updatePassword','clientarea_auth_rule_account_update_password','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (8,'app\\home\\controller\\AccountController::codeUpdatePassword','clientarea_auth_rule_account_code_update_password','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (9,'app\\home\\controller\\AccountController::creditList','clientarea_auth_rule_account_credit_list','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (10,'app\\home\\controller\\ApiController::list','clientarea_auth_rule_api_list','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (11,'app\\home\\controller\\ApiController::create','clientarea_auth_rule_api_create','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (12,'app\\home\\controller\\ApiController::whiteListSetting','clientarea_auth_rule_api_white_list_setting','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (13,'app\\home\\controller\\ApiController::delete','clientarea_auth_rule_api_delete','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (14,'app\\home\\controller\\CartController::index','clientarea_auth_rule_cart_index','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (15,'app\\home\\controller\\CartController::create','clientarea_auth_rule_cart_create','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (16,'app\\home\\controller\\CartController::update','clientarea_auth_rule_cart_update','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (17,'app\\home\\controller\\CartController::updateQty','clientarea_auth_rule_cart_update_qty','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (18,'app\\home\\controller\\CartController::delete','clientarea_auth_rule_cart_delete','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (19,'app\\home\\controller\\CartController::batchDelete','clientarea_auth_rule_cart_batch_delete','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (20,'app\\home\\controller\\CartController::clear','clientarea_auth_rule_cart_clear','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (21,'app\\home\\controller\\CartController::settle','clientarea_auth_rule_cart_settle','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (22,'app\\home\\controller\\LogController::list','clientarea_auth_rule_log_list','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (23,'app\\home\\controller\\OrderController::list','clientarea_auth_rule_order_list','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (24,'app\\home\\controller\\OrderController::index','clientarea_auth_rule_order_index','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (25,'app\\home\\controller\\OrderController::delete','clientarea_auth_rule_order_delete','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (26,'app\\home\\controller\\PayController::pay','clientarea_auth_rule_pay_pay','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (27,'app\\home\\controller\\PayController::status','clientarea_auth_rule_pay_status','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (28,'app\\home\\controller\\PayController::recharge','clientarea_auth_rule_pay_recharge','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (29,'app\\home\\controller\\PayController::credit','clientarea_auth_rule_pay_credit','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (30,'app\\home\\controller\\ProductController::settle','clientarea_auth_rule_product_settle','','');
+insert  into `idcsmart_clientarea_auth_rule`(`id`,`name`,`title`,`module`,`plugin`) values (31,'app\\home\\controller\\TransactionController::list','clientarea_auth_rule_transaction_list','','');
+
+/*Table structure for table `idcsmart_clientarea_auth_rule_link` */
+
+DROP TABLE IF EXISTS `idcsmart_clientarea_auth_rule_link`;
+
+CREATE TABLE `idcsmart_clientarea_auth_rule_link` (
+  `clientarea_auth_rule_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员中心权限规则ID',
+  `clientarea_auth_id` int(11) NOT NULL DEFAULT '0' COMMENT '会员中心权限ID',
+  KEY `clientarea_auth_rule_id` (`clientarea_auth_rule_id`),
+  KEY `clientarea_auth_id` (`clientarea_auth_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='会员中心权限规则对应表';
+
+/*Data for the table `idcsmart_clientarea_auth_rule_link` */
+
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (14,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (15,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (16,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (17,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (18,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (19,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (20,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (21,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (30,2);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (26,3);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (27,3);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (28,3);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (29,3);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (1,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (2,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (3,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (4,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (5,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (6,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (7,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (8,5);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (22,6);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (23,8);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (24,8);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (25,8);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (31,9);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (9,10);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (10,12);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (11,12);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (12,12);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (13,12);
+insert  into `idcsmart_clientarea_auth_rule_link`(`clientarea_auth_rule_id`,`clientarea_auth_id`) values (22,13);
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

@@ -59,9 +59,22 @@ function get_admin_id()
  * @version v1
  * @return int
  */
-function get_client_id()
+function get_client_id($origin = true)
 {
-    return intval(request()->client_id);
+    if($origin===true){
+        $result = hook('get_client_parent_id',['client_id'=>request()->client_id]);
+
+        foreach ($result as $value){
+            if ($value){
+                return (int)$value;
+            }
+        }
+        
+        return intval(request()->client_id);
+    }else{
+        return intval(request()->client_id);
+    }
+    
 }
 
 /**
@@ -207,15 +220,20 @@ function local_api($cmd,$data=[]){
  * @param string controller - 控制器前缀 require
  * @param string action - 方法 require
  * @param array param - 传入的参数
+ * @param boolean admin - 是否后台
  * @return array
  */
-function plugin_api($addon,$controller,$action,$param=[])
+function plugin_api($addon,$controller,$action,$param=[],$admin=false)
 {
     $addon = parse_name($addon);
 
     $controller = ucwords($controller);
+    if ($admin){
+        $class = "addon\\{$addon}\\controller\\{$controller}Controller";
+    }else{
+        $class = "addon\\{$addon}\\controller\\clientarea\\{$controller}Controller";
+    }
 
-    $class = "addon\\{$addon}\\controller\\{$controller}Controller";
     if (!class_exists($class)){
         return [];
     }
@@ -795,6 +813,7 @@ function rand_str($len=8,$format='ALL'){
     if($is_numer <> 1 || $is_abc <> 1 || empty($password) ){
         $password = rand_str($len,$format);
     }
+
     return $password;
 }
 
@@ -1298,4 +1317,49 @@ function check_certification($client_id)
     }
 
     return false;
+}
+
+/**
+ * @title 导出EXCEL
+ * @desc 导出EXCEL
+ * @author theworld
+ * @version v1
+ * @param string filename - 文件名称
+ * @param array field - 导出字段,参数名对应显示名称
+ * @param array data - 导出数据,二维数组
+ */
+function export_excel(string $filename = '', array $field = [], array $data = [])
+{
+    require(IDCSMART_ROOT . 'vendor/excel/vendor/phpoffice/phpexcel/Classes/PHPExcel.php');
+    $enToCn = $field;
+    $cnToEn = array_flip($enToCn);
+    $intToCn = array_keys($cnToEn);
+    $intToEn = array_keys($enToCn);
+
+    $name = $filename;
+    $excel = new \PHPExcel();
+    iconv('UTF-8', 'gb2312', $name); //针对中文名转码
+    $excel->setActiveSheetIndex(0);
+    $sheel = $excel->getActiveSheet();
+    $sheel->setTitle($name); //设置表名
+    $sheel->getDefaultRowDimension()->setRowHeight(14.25);//设置默认行高
+    $sheel->getDefaultColumnDimension()->setWidth(18);//设置默认列宽
+    $letterArr = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK'];
+    foreach ($intToEn as $k => $v) {
+        $sheel->setCellValue($letterArr[$k] . 1, $enToCn[$v]);
+    }
+    // 写入内容
+    for($i=0; $i<count($data); $i++){
+        $j = $i+2;
+        foreach ($intToEn as $k => $v) {
+            $sheel->setCellValue($letterArr[$k] . $j, $data[$i][$v]."\t");
+        }
+    }
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment;filename='.$name.'.xlsx');
+    header('Cache-Control: max-age=0');
+    $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+
+    $objWriter->save('php://output');
+    exit;
 }

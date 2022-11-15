@@ -9,6 +9,7 @@
                 topMenu,
             },
             created() {
+                localStorage.frontMenusActiveId = "";
                 this.getCommonData()
                 this.getGateway();
             },
@@ -29,6 +30,7 @@
                 return {
                     addons_js_arr: [], // 插件数组
                     commonData: {},
+                    showRight: false,
                     account: {}, // 个人信息
                     certificationObj: {},// 认证信息
                     percentage: 0,
@@ -61,6 +63,10 @@
                         amount: "",
                         gateway: '',
                     },
+                    isOpen: true,
+                    promoterData: {},
+                    openVisible: false,
+
                 }
             },
             filters: {
@@ -81,6 +87,9 @@
                 }
             },
             methods: {
+                toReferral(val) {
+                    location.href = `/plugin/${val}/recommend.html`
+                },
                 handelAttestation(val) {
                     location.href = `/plugin/${val}/authentication_select.html`
                 },
@@ -95,6 +104,9 @@
                 },
                 goGoodsList() {
                     location.href = `/goodsList.html`
+                },
+                goProductPage(id) {
+                    location.href = `/productdetail.html?id=${id}`
                 },
                 initData() {
                     const arr = this.addons_js_arr.map((item) => {
@@ -140,6 +152,10 @@
                         newsList({ page: 1, limit: 3 }).then((res) => {
                             this.homeNewList = res.data.data.list.slice(0, 3)
                         })
+                    }
+                    if (arr.includes('IdcsmartRecommend')) {
+                        this.showRight = true
+                        this.getPromoterInfo();
                     }
                     this.nameLoading = true
                     indexData().then((res) => {
@@ -357,14 +373,57 @@
                 },
                 // 获取通用配置
                 getCommonData() {
-                    getCommon().then(res => {
-                        if (res.data.status === 200) {
-                            this.commonData = res.data.data
-                            localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-                            document.title = this.commonData.website_name + '-首页'
+                    this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+                    document.title = this.commonData.website_name + '-首页'
+
+                },
+                // 获取推广者基础信息
+                getPromoterInfo() {
+                    promoterInfo().then(res => {
+                        if (res.data.status == 200) {
+                            this.promoterData = res.data.data.promoter
+                            if (JSON.stringify(this.promoterData) == '{}') {
+                                this.isOpen = false
+                            } else {
+                                this.isOpen = true
+                            }
                         }
                     })
-                }
+                },
+                // 开启推介计划
+                openReferral() {
+                    openRecommend().then(res => {
+                        if (res.data.status == 200) {
+                            this.$message.success(res.data.msg)
+                            this.getPromoterInfo()
+                            this.openVisible = false
+                        }
+                    }).catch(error => {
+                        this.$message.error(error.data.msg)
+                    })
+                },
+                // 复制
+                copyUrl(text) {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        // navigator clipboard 向剪贴板写文本
+                        this.$message.success('复制成功')
+                        return navigator.clipboard.writeText(text)
+                    } else {
+                        // 创建text area
+                        const textArea = document.createElement('textarea')
+                        textArea.value = text
+                        // 使text area不在viewport，同时设置不可见
+                        document.body.appendChild(textArea)
+                        // textArea.focus()
+                        textArea.select()
+                        this.$message.success('复制成功')
+                        return new Promise((res, rej) => {
+                            // 执行复制命令并移除文本框
+                            document.execCommand('copy') ? res() : rej()
+                            textArea.remove()
+                        })
+                    }
+                },
             },
 
         }).$mount(template)

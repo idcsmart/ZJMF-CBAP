@@ -43,6 +43,7 @@ class TaskWaitModel extends Model
     public function createTaskWait($param)
     {
 		try {
+			hook('before_task_create', $param);
 			$time = time();
 			if($param['type']=='email' || $param['type']=='sms'){
 				$ip_port=[

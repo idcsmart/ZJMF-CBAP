@@ -336,6 +336,17 @@
   background: #c4c4c4;
 }
 /* host-detail */
+.host-detail .t-row {
+  width: auto;
+}
+.host-detail .t-table td,
+.host-detail .t-table th {
+  padding: 12px 24px;
+}
+.host-detail .jump {
+  color: var(--td-brand-color-active);
+  cursor: pointer;
+}
 .host-detail .renew-dialog .t-dialog {
   width: 720px !important;
 }
@@ -357,7 +368,7 @@
 .host-detail .renew-dialog .swiper-item {
   width: 180px;
   box-sizing: border-box;
-  border: 1px solid #DCDCDC;
+  border: 1px solid #dcdcdc;
   margin: 0 10px;
   cursor: pointer;
   display: none;
@@ -368,13 +379,13 @@
   height: 110px;
   font-size: 16px;
   color: rgba(0, 0, 0, 0.6);
-  font-family: 'PingFang SC';
+  font-family: "PingFang SC";
 }
 .host-detail .renew-dialog .swiper-item p {
   margin: 0;
 }
 .host-detail .renew-dialog .swiper-item.active {
-  border-color: #0052D9;
+  border-color: #0052d9;
 }
 .host-detail .renew-dialog .swiper-item.card {
   display: flex;
@@ -392,10 +403,10 @@
 }
 .host-detail .com-f-btn .price {
   font-size: 18px;
-  color: #FF0000;
+  color: #ff0000;
 }
 .host-detail .com-f-btn .price span {
-  color: #FF0000;
+  color: #ff0000;
   font-size: 16px;
 }
 .host-detail .renew-btn {
@@ -438,4 +449,15 @@
 }
 .com-no-child {
   margin-left: 5px !important;
+}
+.chlid-box .t-table__header tr {
+  background-color: #eeeeee;
+}
+.chlid-box .t-table th,
+.chlid-box .t-table thead td {
+  color: black;
+}
+.chlid-box .edit-text {
+  color: #1482c5;
+  cursor: pointer;
 }

@@ -82,6 +82,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('host/:id/module', 'admin/host/adminArea'); # 产品内页模块
     Route::get('host/:id/upgrade/config_option', 'admin/host/changeConfigOption'); # 产品升降级配置
     Route::post('host/:id/upgrade/config_option', 'admin/host/changeConfigOptionCalculatePrice'); # 产品升降级配置计算价格
+    Route::get('client/:id/host/all', 'admin/host/clientHost'); # 获取用户所有产品
 
     #交易流水管理
     Route::get('transaction', 'admin/transaction/transactionList'); # 交易流水列表
@@ -179,6 +180,8 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::post('upload', 'admin/common/upload'); # 上传文件
     Route::get('global_search', 'admin/common/globalSearch'); # 全局搜索
     Route::get('menu', 'admin/common/adminMenu'); # 获取导航
+    Route::get('active_plugin', 'admin/common/activePluginList'); # 获取已激活插件
+    Route::get('clientarea_auth', 'admin/common/clientareaAuthList'); # 权限列表 
 
     # 接口管理
     Route::get('server/group', 'admin/serverGroup/serverGroupList'); # 接口分组列表
@@ -204,7 +207,6 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('menu/home', 'admin/menu/getHomeMenu'); # 新建接口分组
     Route::put('menu/admin', 'admin/menu/saveAdminMenu'); # 修改接口分组
     Route::put('menu/home', 'admin/menu/saveHomeMenu'); # 删除接口分组
-
 })  
     ->allowCrossDomain([
             'Access-Control-Allow-Origin'        => $origin,

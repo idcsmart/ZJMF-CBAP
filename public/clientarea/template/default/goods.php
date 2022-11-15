@@ -31,5 +31,5 @@
   <script src="/{$template_catalog}/template/{$themes}/api/product.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/js/goods.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
-
+  <script src="/{$template_catalog}/template/{$themes}/components/discountCode/discountCode.js"></script>
   {include file="footer"}

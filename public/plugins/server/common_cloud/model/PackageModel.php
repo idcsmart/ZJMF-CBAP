@@ -535,6 +535,11 @@ class PackageModel extends Model{
         $param = $params['custom'];
 
         $duration = [
+            'free'=>[
+                'name'=>lang_plugins('免费'),
+                'num'=>1,
+                'time'=>0,
+            ],
             'onetime_fee'=>[
                 'name'=>lang_plugins('onetime_fee'),
                 'num'=>1,
@@ -894,7 +899,8 @@ class PackageModel extends Model{
             'config_options' => [
                 'type'       => 'change_package',
                 'package_id' => $param['package_id'],
-            ]
+            ],
+            'customfield' => $param['customfield'] ?? [],
         ];
         return $OrderModel->createOrder($data);
     }

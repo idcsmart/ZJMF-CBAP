@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 use think\Request;
 use think\facade\View;
+use think\template\exception\TemplateNotFoundException;
 
 class ViewController extends AdminBaseController
 {
@@ -36,7 +37,7 @@ class ViewController extends AdminBaseController
 			//View::config(['view_path' => $tpl]);		
 			//return View::fetch('/'.$tplName,$data);
 		}else{
-			exit('not found template');
+            throw new TemplateNotFoundException(lang('not_found'), $tpl);
 		}
 		
     }

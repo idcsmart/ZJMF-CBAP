@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title></title>
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+    <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/element.css">
     <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/regist.css">
     <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/common.css">
     <script>
@@ -100,6 +101,12 @@
                                     {{lang.tip3}}<a @click="toService">{{lang.read_service}}</a>{{lang.read_and}}<a @click="toPrivacy">{{lang.read_privacy}}</a>
                                     </el-checkbox>
                                 </div>
+                                <div class="form-item read-item">
+                                    <el-checkbox v-model="checked1">{{lang.tip4}}</el-checkbox>
+                                 </div>
+                                <div class="read-item" v-if="checked1">
+                                 <el-input :placeholder="lang.tip5" v-model="costomfield.sale_number"></el-input>
+                                </div>
                                 <div class="read-item" v-if="errorText.length !== 0">
                                     <el-alert :title="errorText" type="error" show-icon :closable="false">
                                     </el-alert>
@@ -119,7 +126,8 @@
 
     <!-- =======公共======= -->
     <script src="/{$template_catalog}/template/{$themes}/js/common/vue.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+    <script src="/{$template_catalog}/template/{$themes}/js/common/element.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/common/axios.min.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/request.js"></script>
     <!-- =======页面独有======= -->

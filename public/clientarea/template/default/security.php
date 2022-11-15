@@ -14,15 +14,15 @@
     </div>
     <div class="template">
         <el-container>
-            <aside-menu></aside-menu>
+            <aside-menu  @getruleslist="getRule"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
                     <!-- 自己的东西 -->
-                    <div class="main-card">
+                    <div class="main-card" >
                         <div class="main-card-title">{{lang.security_title}}</div>
                         <el-tabs v-model="activeName" @tab-click="handleClick">
-                            <el-tab-pane label="API" name="1">
+                            <el-tab-pane label="API" name="1" v-if="isShowAPI">
                                 <div class="content-table">
                                     <div class="content_searchbar">
                                         <div class="left-btn" @click="showCreateApi">
@@ -48,17 +48,17 @@
                                                     <!-- 已开启白名单 -->
                                                     <div class="open-show">
                                                         <!-- 未开启白名单 -->
-                                                        <div class="un-open" v-if="scope.row.status == 0">未开启</div>
-                                                        <div class="open" v-else>已开启</div>
-                                                        <span class="setting" @click="showWhiteIp(scope.row)">设置</span>
+                                                        <div class="un-open" v-if="scope.row.status == 0">{{lang.security_text2}}</div>
+                                                        <div class="open" v-else>{{lang.security_text1}}</div>
+                                                        <span class="setting" @click="showWhiteIp(scope.row)">{{lang.security_btn3}}</span>
                                                     </div>
                                                 </template>
                                             </el-table-column>
-                                            <el-table-column prop="type" label="操作" width="100" align="left">
+                                            <el-table-column prop="type" :label="lang.security_label3" width="100" align="left">
                                                 <template slot-scope="scope">
                                                     <el-popover placement="top-start" trigger="hover">
                                                         <div class="operation">
-                                                            <div class="operation-item" @click="deleteItem(scope.row)">删除</div>
+                                                            <div class="operation-item" @click="deleteItem(scope.row)">{{lang.security_btn4}}</div>
                                                         </div>
                                                         <span class="more-operation" slot="reference">
                                                             <div class="dot"></div>
@@ -77,7 +77,7 @@
                             <el-tab-pane :label="lang.security_tab1" name="2"></el-tab-pane>
                             {/if}
                             {/foreach}
-                            <el-tab-pane :label="lang.security_tab2" name="3"></el-tab-pane>
+                            <el-tab-pane :label="lang.security_tab2" name="3" v-if="isShowAPILog"></el-tab-pane>
                         </el-tabs>
 
                         <!-- 创建API弹窗 -->
@@ -87,14 +87,14 @@
                                     {{lang.security_btn1}}
                                 </div>
                                 <div class="dialog-main">
-                                    <div class="label">名称</div>
+                                    <div class="label">{{lang.security_label1}}</div>
                                     <el-input v-model="apiName"></el-input>
                                     <el-alert class="alert-text" :title="errText" v-show="errText" type="error" show-icon :closable="false">
                                     </el-alert>
                                 </div>
                                 <div class="dialog-footer">
-                                    <div class="btn-ok" @click="cjSub">提交</div>
-                                    <div class="btn-no" @click="cjClose">取消</div>
+                                    <div class="btn-ok" @click="cjSub">{{lang.security_btn5}}</div>
+                                    <div class="btn-no" @click="cjClose">{{lang.security_btn6}}</div>
                                 </div>
                             </el-dialog>
                         </div>
@@ -103,12 +103,12 @@
                         <div class="create-api-dialog">
                             <el-dialog width="6.8rem" :visible.sync="isShowCj2" :show-close=false @close="cj2Close">
                                 <div class="dialog-title">
-                                    创建API
+                                    {{lang.security_title2}}
                                 </div>
                                 <div class="dialog-main">
                                     <div class="content-msg">
                                         <div class="msg-item">
-                                            <div class="item-label">名称:</div>
+                                            <div class="item-label">{{lang.security_label1}}:</div>
                                             <div class="item-vlaue">{{apiData.name}}</div>
                                         </div>
                                         <div class="msg-item">
@@ -117,17 +117,17 @@
                                         </div>
                                         <div class="msg-item">
                                             <div class="item-label">Token:</div>
-                                            <div class="item-vlaue">{{apiData.token}} <span class="copy" @click="copyToken(apiData.token)">复制</span></div>
+                                            <div class="item-vlaue">{{apiData.token}} <span class="copy" @click="copyToken(apiData.token)">{{lang.security_btn7}}</span></div>
                                         </div>
                                         <div class="msg-item">
-                                            <div class="item-label">创建时间:</div>
+                                            <div class="item-label">{{lang.security_label4}}:</div>
                                             <div class="item-vlaue">{{apiData.create_time | formateTime}}</div>
                                         </div>
                                     </div>
                                     <el-checkbox v-model="checked">
                                         <span>
-                                            为了保证数据安全，DNSPod不会存储你的原始密钥，
-                                            <span class="yellow">以上信息仅在创建时候显示一次，请务必妥善保存。</span>
+                                            {{lang.security_tips}}
+                                            <span class="yellow">{{lang.security_tips2}}</span>
                                         </span>
 
                                     </el-checkbox>
@@ -135,7 +135,7 @@
                                     </el-alert>
                                 </div>
                                 <div class="dialog-footer">
-                                    <div class="btn-ok" @click="cj2Sub">我已保存</div>
+                                    <div class="btn-ok" @click="cj2Sub">{{lang.security_btn8}}</div>
                                 </div>
                             </el-dialog>
                         </div>
@@ -144,14 +144,14 @@
                         <div class="delete-dialog">
                             <el-dialog width="6.8rem" :visible.sync="isShowDel" :show-close=false @close="delClose">
                                 <div class="del-dialog-title">
-                                    <i class="el-icon-warning-outline del-icon"></i>删除API？
+                                    <i class="el-icon-warning-outline del-icon"></i>{{lang.security_title3}}?
                                 </div>
                                 <div class="del-dialog-main">
-                                    删除API:{{delName}}
+                                    {{lang.security_title3}}:{{delName}}
                                 </div>
                                 <div class="del-dialog-footer">
-                                    <div class="btn-ok" @click="delSub">确认删除</div>
-                                    <div class="btn-no" @click="delClose">取消</div>
+                                    <div class="btn-ok" @click="delSub">{{lang.security_btn9}}</div>
+                                    <div class="btn-no" @click="delClose">{{lang.security_btn6}}</div>
                                 </div>
                             </el-dialog>
                         </div>
@@ -160,22 +160,22 @@
                         <div class="white-ip-dialog">
                             <el-dialog width="6.8rem" :visible.sync="isShowWhiteIp" :show-close=false @close="whiteIpClose" :destroy-on-close=true>
                                 <div class="dialog-title">
-                                    IP白名单设置
+                                    {{lang.security_title4}}
                                 </div>
                                 <div class="dialog-main">
-                                    <el-alert class="info-alert" title="IP白名单功能可以指定IP地址进行API调用，以保证密钥安全" type="info">
+                                    <el-alert class="info-alert" :title="lang.security_tips3" type="info">
                                     </el-alert>
                                     <div class="ip-status">
-                                        <div class="ip-status-text">开启状态</div>
-                                        <el-switch v-model="whiteIpData.status" active-color="#0058FF" inactive-color="#8692B0" active-value="1" inactive-value="0" active-text="开" inactive-text="关">
+                                        <div class="ip-status-text">{{lang.security_label5}}</div>
+                                        <el-switch v-model="whiteIpData.status" active-color="#0058FF" inactive-color="#8692B0" active-value="1" inactive-value="0" :active-text="lang.security_text3" :inactive-text="lang.security_text3">
                                         </el-switch>
                                     </div>
                                     <div class="status-remind">
-                                        开启后可指定IP地址进行API调试
+                                        {{lang.security_tips4}}
                                     </div>
                                     <div v-show="whiteIpData.status == '1'">
-                                        <div class="label">允许访问的IP</div>
-                                        <el-input type="textarea" :rows="3" placeholder="请输入IP地址,每行一段，如：&#10;1.1.1.1&#10;1.1.1.1-2.2.2.2" v-model="whiteIpData.ip">
+                                        <div class="label">{{lang.security_label6}}</div>
+                                        <el-input type="textarea" :rows="3" :placeholder="lang.security_tips5 + `&#10;1.1.1.1&#10;1.1.1.1-2.2.2.2`" v-model="whiteIpData.ip">
                                         </el-input>
                                     </div>
 
@@ -183,8 +183,8 @@
                                     </el-alert>
                                 </div>
                                 <div class="dialog-footer">
-                                    <div class="btn-ok" @click="whiteIpSub">提交</div>
-                                    <div class="btn-no" @click="whiteIpClose">取消</div>
+                                    <div class="btn-ok" @click="whiteIpSub">{{lang.security_btn5}}</div>
+                                    <div class="btn-no" @click="whiteIpClose">{{lang.security_btn6}}</div>
                                 </div>
                             </el-dialog>
                         </div>

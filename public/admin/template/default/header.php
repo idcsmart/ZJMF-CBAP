@@ -52,8 +52,7 @@
                   <ul>
                     <li v-for="item in global.clients" :key="item.id">
                       <a :href="`client_detail.html?client_id=${item.id}`">
-                        <p class="s-tit">{{item.username}}<span class="company" v-if="item.company">{{'(' + item.company
-                            + ')'}}</span></p>
+                        <p class="s-tit">{{item.username}}<span class="company" v-if="item.company">{{'(' + item.company + ')'}}</span></p>
                         <p class="phone" v-if="item.phone">{{item.phone}}</p>
                       </a>
                     </li>

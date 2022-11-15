@@ -77,14 +77,29 @@ class MenuModel extends Model
         }
         $plugins = array_values($plugins);
 
+        $where = [];
+        $where[] = ['type', '=', 'admin'];
+
         $menus = $this->field('id,menu_type type,name,language,url,icon,nav_id,parent_id')
-            ->where('type', 'admin')
+            ->where($where)
             ->order('order','asc')
             ->select()
             ->toArray();
         if(empty($menus)){
+
+            $hookRes = hook('hide_nav');
+            $hideId = [];
+            foreach($hookRes as $v){
+                if(!empty($v)){
+                    $hideId[] = $v;
+                }
+            }
+            if(!empty($hideId)){
+                $where[] = ['id', 'NOT IN', $hideId];
+            }
+
             $menus = NavModel::field('id,name,url,icon,id nav_id,parent_id,module')
-                ->where('type', 'admin')
+                ->where($where)
                 ->order('order','asc')
                 ->select()
                 ->toArray();
@@ -95,6 +110,7 @@ class MenuModel extends Model
                 unset($menus[$key]['module']);
             }
         }
+
         // 将数组转换成树形结构
         $tree = [];
         if (is_array($menus)) {
@@ -575,15 +591,16 @@ class MenuModel extends Model
         $idcsmartTicketPlugins = NavModel::where('plugin', 'IdcsmartTicket')->where('type', 'home')->select()->toArray();
         $idcsmartTicketPlugins = array_column($idcsmartTicketPlugins, 'id', 'name');
 
-        $idcsmartHelpPlugins = NavModel::where('plugin', 'IdcsmartHelp')->where('type', 'home')->select()->toArray();
-        $idcsmartHelpPlugins = array_column($idcsmartHelpPlugins, 'id', 'name');
-        if(isset($idcsmartHelpPlugins['nav_plugin_addon_idcsmart_help_source'])){
-            $source = $idcsmartHelpPlugins['nav_plugin_addon_idcsmart_help_source'];
+        
+        $idcsmartNewsPlugins = NavModel::where('plugin', 'IdcsmartNews')->where('type', 'home')->select()->toArray();
+        $idcsmartNewsPlugins = array_column($idcsmartNewsPlugins, 'id', 'name');
+        if(isset($idcsmartNewsPlugins['nav_plugin_addon_idcsmart_news_source'])){
+            $source = $idcsmartNewsPlugins['nav_plugin_addon_idcsmart_news_source'];
         }else{
-            $idcsmartNewsPlugins = NavModel::where('plugin', 'IdcsmartNews')->where('type', 'home')->select()->toArray();
-            $idcsmartNewsPlugins = array_column($idcsmartNewsPlugins, 'id', 'name');
-            if(isset($idcsmartNewsPlugins['nav_plugin_addon_idcsmart_news_source'])){
-                $source = $idcsmartNewsPlugins['nav_plugin_addon_idcsmart_news_source'];
+            $idcsmartHelpPlugins = NavModel::where('plugin', 'IdcsmartHelp')->where('type', 'home')->select()->toArray();
+            $idcsmartHelpPlugins = array_column($idcsmartHelpPlugins, 'id', 'name');
+            if(isset($idcsmartHelpPlugins['nav_plugin_addon_idcsmart_help_source'])){
+                $source = $idcsmartHelpPlugins['nav_plugin_addon_idcsmart_help_source'];
             }else{
                 $idcsmartFileDownloadPlugins = NavModel::where('plugin', 'IdcsmartFileDownload')->where('type', 'home')->select()->toArray();
                 $idcsmartFileDownloadPlugins = array_column($idcsmartFileDownloadPlugins, 'id', 'name');

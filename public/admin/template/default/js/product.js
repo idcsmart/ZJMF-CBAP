@@ -131,7 +131,8 @@
             id: 0,
             first_product_group_id: '',
             pre_product_group_id: '',
-            pre_first_product_group_id: ''
+            pre_first_product_group_id: '',
+            backward: 1
           },
           maxHeight: '',
           isFilter: false // 是否过滤其他分组
@@ -326,14 +327,15 @@
           return true
         },
         onAbnormalDragSort (params) {
-          if (params.code === 1001) {
-            this.$message.warning('不同层级的元素，不允许调整顺序');
-          }
+          // if (params.code === 1001) {
+          //   this.$message.warning('不同层级的元素，不允许调整顺序');
+          // }
         },
         // 拖动商品移动分组
         async changeSort ({ currentIndex, current, targetIndex, target }) {
           try {
-            this.firstMove.backward = targetIndex - currentIndex > 0 ? 1 : 0
+            const tempForward = targetIndex - currentIndex > 0 ? 1 : 0  // 1向下拖动，0向上拖动
+            this.firstMove.backward = tempForward
             // 一级分组移动
             if ((current.key.indexOf('f') !== -1) && (target.key.indexOf('f') !== -1)) {
               this.firstMove.id = current.id
@@ -342,28 +344,49 @@
             }
             // 移动整个二级分组
             if ((current.key.indexOf('s') !== -1) && (target.key.indexOf('s') !== -1)) {
-              console.log("current:", current, "target:", target)
               this.secondGroupForm.id = current.id
-              this.secondGroupForm.first_product_group_id = current.id
+              this.secondGroupForm.first_product_group_id = current.parent_id
               this.secondGroupForm.pre_product_group_id = target.id
               this.secondGroupForm.pre_first_product_group_id = target.parent_id
+              this.secondGroupForm.backward = tempForward
               this.movePorductGroup()
             }
             // 移动商品到其他二级分组
             if ((current.key.indexOf('t') !== -1) && (target.key.indexOf('t') !== -1)) {
-              console.log("current:", current.id, "target:", target.product_group_id_second)
               this.dragForm.id = current.id
               this.dragForm.pre_product_id = target.id
               this.dragForm.product_group_id = target.product_group_id_second
+              this.dragForm.backward = tempForward
               this.movePorductHandel()
             }
-            // this.moveData.id = current.id
-            // // this.moveData.pre_product_id = target.id
-            // this.moveData.product_group_id = target.product_group_id_second
-            // const res = await changeOrder(this.moveData)
-            // this.$message.success(res.data.msg)
-            // this.getProductList()
+            // 特殊情况：拖动二级到无二级栏目的一级栏目下
+            if ((current.key.indexOf('s') !== -1) && (target.key.indexOf('f') !== -1)) {
+              const index = this.data.findIndex(item => item.key === target.key)
+              this.secondGroupForm.id = current.id
+              this.secondGroupForm.first_product_group_id = current.parent_id
+              // 目标节点对应的数组
+              const _temp = this.data[tempForward ? index : index - 1]
+              this.secondGroupForm.pre_product_group_id = _temp.children.length > 0 ? _temp.children.at(-1).id : 0
+              this.secondGroupForm.backward = _temp.children.length > 0 ? 1 : tempForward
+              this.secondGroupForm.pre_first_product_group_id = _temp.children.length > 0 ? _temp.children.at(-1).parent_id : _temp.id
+              this.movePorductGroup()
+            }
+            // 特殊情况：拖动商品到无商品二级栏目下
+            if ((current.key.indexOf('t') !== -1) && (target.key.indexOf('s') !== -1)) {
+             // console.log('@@@@', target.children.length > 0, target)
+              const pArr = this.data.filter(item=> item.id === target.parent_id)[0]
+              console.log('~~~~~', pArr.children)
+              const index = pArr.children.findIndex(item => item.key === target.key)
+              this.dragForm.id = current.id
+              // // 目标节点对应的数组
+              const _temp = pArr.children[tempForward ? index : index - 1] || { children: [], id: target.id}
+              this.dragForm.pre_product_id = _temp.children.length > 0 ? _temp.children.at(-1).id : 0
+              this.dragForm.product_group_id = _temp.children.length > 0 ? _temp.children.at(-1).product_group_id_second : _temp.id
+              this.dragForm.backward = _temp.children.length > 0 ? 1 : tempForward
+              this.movePorductHandel()
+            }
           } catch (error) {
+            console.log('AAAA', error)
             this.$message.error(error.data.msg)
           }
         },

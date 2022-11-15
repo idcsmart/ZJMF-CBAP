@@ -1,0 +1,99 @@
+.main-card .main-card-title {
+  font-size: 0.28rem;
+  line-height: 0.28rem;
+}
+.main-card .main-card-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+  align-items: flex-end;
+}
+.main-card .main-card-top ul li {
+  list-style: none;
+  font-size: 0.16rem;
+  line-height: 0.16rem;
+  color: #1E2736;
+  padding-left: 0.11rem;
+  border-left: 3px solid #E6E7EB;
+  cursor: pointer;
+}
+.main-card .main-card-top ul li:last-child {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+.main-card .main-card-top ul .top-menu-item-active {
+  color: #0058FF;
+  border-left: 3px solid #0058FF;
+}
+.main-card .main-card-content {
+  margin-top: 0.2rem;
+  display: flex;
+  flex-direction: row;
+}
+.main-card .main-card-content .content-left {
+  width: 3.37rem;
+  height: 100%;
+  border-radius: 3px;
+  border: 1px solid #E6E7EB;
+  margin-left: 0.2rem;
+}
+.main-card .main-card-content .content-left .content-left-text {
+  width: calc(100% - 0.2rem);
+  height: 0.57rem;
+  background: #F7F7F7;
+  border-radius: 3px 3px 0 0;
+  font-size: 0.24rem;
+  line-height: 0.3rem;
+  color: #1E2736;
+  padding-top: 0.25rem;
+  padding-left: 0.2rem;
+}
+.main-card .main-card-content .content-left .content-left-menu .el-menu-item {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.main-card .main-card-content .content-right {
+  width: 9.33rem;
+  height: 100%;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+  padding: 0.36rem 0.5rem;
+  margin-left: 0.4rem;
+  overflow-x: auto;
+}
+.main-card .main-card-content .content-right .right-title {
+  font-size: 0.28rem;
+  font-weight: bold;
+  line-height: 0.28rem;
+  color: #1E2736;
+}
+.main-card .main-card-content .content-right .right-keywords-time {
+  display: flex;
+  flex-direction: row;
+}
+.main-card .main-card-content .content-right .right-keywords-time .right-time,
+.main-card .main-card-content .content-right .right-keywords-time .right-keywords {
+  font-size: 0.14rem;
+  color: #8692B0;
+  margin-top: 0.14rem;
+}
+.main-card .main-card-content .content-right .right-keywords-time .right-keywords {
+  margin-left: 0.2rem;
+}
+.main-card .main-card-content .content-right .right-content {
+  word-wrap: break-word;
+  word-break: normal;
+  margin-top: 0.42rem;
+}
+.main-card .main-card-content .content-right .right-attachment {
+  margin-top: 0.42rem;
+  display: flex;
+  flex-direction: row;
+}
+.main-card .main-card-content .content-right .right-attachment .right-attachment-item {
+  margin-right: 0.2rem;
+  color: #1890ff;
+  cursor: pointer;
+}

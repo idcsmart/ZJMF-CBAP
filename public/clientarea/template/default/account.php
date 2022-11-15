@@ -15,7 +15,7 @@
     </div>
     <div id="account" class="template">
         <el-container>
-            <aside-menu :menu-active-id="2"></aside-menu>
+            <aside-menu :menu-active-id="2" @getruleslist="getRule"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
@@ -24,7 +24,7 @@
                         <div class="main-card-title">{{lang.account_title1}}</div>
                         <div class="content-box">
                             <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                <el-tab-pane :label="lang.account_menu1" name="1">
+                                <el-tab-pane :label="lang.account_menu1" name="1"  v-if="showAccountController">
                                     <div class="box-top">
                                         <div class="right-name">
                                             <span class="name-text">{{userName}}</span>
@@ -178,7 +178,7 @@
                                     </div>
                                 </el-tab-pane>
                                 <!-- 操作日志开始 -->
-                                <el-tab-pane :label="lang.account_menu2" name="2">
+                                <el-tab-pane :label="lang.account_menu2" name="2"  v-if="showLogController">
                                     <div class="searchbar com-search">
                                         <el-input v-model="params.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange" clearable @clear="getAccountList">
                                             <i class="el-icon-search input-search" slot="suffix" @Click="inputChange"></i>

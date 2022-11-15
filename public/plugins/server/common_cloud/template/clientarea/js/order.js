@@ -5,7 +5,8 @@ new Vue({
     components: {
         asideMenu,
         topMenu,
-        payDialog
+        payDialog,
+        discountCode
     },
     created() {
         this.getBackConfig()
@@ -27,11 +28,31 @@ new Vue({
         }
 
     },
+    mounted() {
+        this.addons_js_arr = JSON.parse(document.querySelector('#addons_js').getAttribute('addons_js')) // 插件列表
+        const arr = this.addons_js_arr.map((item) => {
+            return item.name
+        })
+        if (arr.includes('PromoCode')) {
+            // 开启了优惠码插件
+            this.isShowPromo = true
+        }
+        if (arr.includes('IdcsmartClientLevel')) {
+            // 开启了等级优惠
+            this.isShowLevel = true
+        }
+    },
     data() {
         return {
+            name: "魔方云服务器",
             commonData: {},
+            addons_js_arr: [], // 插件数组
+            isShowPromo: false, // 是否开启优惠码
+            isShowLevel: false, // 是否开启等级优惠
+            isUseDiscountCode: false, // 是否使用优惠码
             // 商品id
             id: 0,
+            billing_cycle_time: '', // 当前周期
             // 数据中心列表
             centerData: [],
             // 套餐数据
@@ -47,6 +68,7 @@ new Vue({
             },
             // 其它配置
             configData: {},
+            customfield: {}, // 自定义字段
             // 镜像数据
             osData: [],
             // 是否额外磁盘
@@ -114,8 +136,11 @@ new Vue({
             snapNum: 0,
             // 当前选择的快照的价格
             snapPrice: 0,
-            // 商品总价格
+            // 商品现总价
             totalPrice: 0,
+            // 商品原总价
+            original_price: 0,
+            // 商品原单价
             onePrice: 0,
             timerId: null,
             // 镜像价格
@@ -139,8 +164,10 @@ new Vue({
                 num: 1
             },
             priceLoading: false,
-            // 客户折扣金额
+            // 客户等级折扣金额
             clDiscount: 0,
+            // 优惠码折扣金额
+            code_discount: 0,
             // 套餐所有周期价格
             durationPrice: [],
             priceData: {},
@@ -249,6 +276,14 @@ new Vue({
             if (this.pageData.durationName == '三年') {
                 return (price * 36).toFixed(2)
             }
+        },
+        filterMoney(money) {
+            if (isNaN(money)) {
+                return '0.00'
+            } else {
+                const temp = `${money}`.split('.')
+                return parseInt(temp[0]).toLocaleString() + '.' + (temp[1] || '00')
+            }
         }
 
     },
@@ -317,6 +352,8 @@ new Vue({
             let getqyinfo = url.split('?')[1]
             let getqys = new URLSearchParams('?' + getqyinfo)
             let id = getqys.get('id')
+            let name = getqys.get('name')
+            this.name = name
             this.id = id
 
             let product_information = sessionStorage.getItem("product_information")
@@ -326,19 +363,20 @@ new Vue({
                 let config_options = JSON.parse(sessionStorage.getItem("product_information")).config_options
                 this.position = JSON.parse(sessionStorage.getItem("product_information")).position
                 this.orderData.qty = JSON.parse(sessionStorage.getItem("product_information")).qty
-
+                this.customfield = JSON.parse(sessionStorage.getItem("product_information")).customfield
                 this.backConfig = config_options
             }
         },
+        removeDiscountCode() {
+            this.isUseDiscountCode = false
+            this.customfield.promo_code = ''
+            this.code_discount = 0
+            this.getConfigPrice()
+        },
         // 获取通用配置
         getCommonData() {
-            getCommon().then(res => {
-                if (res.data.status === 200) {
-                    this.commonData = res.data.data
-                    localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-                    document.title = this.commonData.website_name + '-订购'
-                }
-            })
+            this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+            document.title = this.commonData.website_name + '-订购'
         },
         // 获取数据中心
         getDataCenter() {
@@ -483,7 +521,7 @@ new Vue({
             // 免费
             if (this.pageType == 'free') {
                 showCircleData.push({
-                    duration: 'onetime_fee',
+                    duration: 'free',
                     money: '免费',
                     durationName: '永久',
                     num: 1
@@ -679,13 +717,13 @@ new Vue({
             sshKey(params).then(res => {
                 if (res.data.status === 200) {
                     this.sshKeyData = res.data.data.list
-
-
                     if (this.backConfig.ssh_key_id) {
                         this.orderData.key = this.backConfig.ssh_key_id
                         this.isPassOrKey = 'key'
                     } else {
-                        this.orderData.key = this.sshKeyData[0].id
+                        if (this.sshKeyData[0]) {
+                            this.orderData.key = this.sshKeyData[0].id
+                        }
                     }
                 }
             })
@@ -782,13 +820,19 @@ new Vue({
             this.orderData.duration = item.duration
             this.pageData = item
         },
+        // 使用优惠码
+        getDiscount(data) {
+            this.customfield.promo_code = data[1]
+            this.isUseDiscountCode = true
+            this.getConfigPrice()
+        },
         // 通过配置获取价格
         getConfigPrice() {
             if (this.timerId) {
                 clearTimeout(this.timerId)
             }
+            this.priceLoading = true
             this.timerId = setTimeout(() => {
-                this.priceLoading = true
                 let data_disk = []
 
                 if (this.isMoreDisk) {
@@ -796,74 +840,78 @@ new Vue({
                         data_disk.push(item.size)
                     })
                 }
-                let params = {}
+                const params = {
+                    id: this.id,
+                    config_options: {
+                        data_center_id: this.orderData.centerId,
+                        package_id: this.orderData.packageId,
+                        image_id: this.orderData.osId,
+                        duration: this.orderData.duration,
+                        data_disk,
+                        backup_num_id: this.isBack ? this.orderData.backId : '',
+                        snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
+                    }
+                }
                 if (this.isPassOrKey == 'pass') {
-                    params = {
-                        id: this.id,
-                        config_options: {
-                            data_center_id: this.orderData.centerId,
-                            package_id: this.orderData.packageId,
-                            image_id: this.orderData.osId,
-                            duration: this.orderData.duration,
-                            password: this.orderData.password,
-                            data_disk,
-                            backup_num_id: this.isBack ? this.orderData.backId : '',
-                            snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
-                        }
-                    }
+                    params.config_options.password = this.orderData.password
                 } else {
-                    params = {
-                        id: this.id,
-                        config_options: {
-                            data_center_id: this.orderData.centerId,
-                            package_id: this.orderData.packageId,
-                            image_id: this.orderData.osId,
-                            duration: this.orderData.duration,
-                            ssh_key_id: this.orderData.key,
-                            data_disk,
-                            backup_num_id: this.isBack ? this.orderData.backId : '',
-                            snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
-                        }
-                    }
+                    params.config_options.ssh_key_id = this.orderData.key
                 }
                 this.prcieId = this.prcieId + 1
                 const priceId = this.prcieId
                 // 获取所有周期价格
                 this.getDuration()
                 // 修改配置计算价格
-                configPrice(params).then(res => {
+                configPrice(params).then(async (res) => {
                     if (res.data.status == 200 && this.prcieId == priceId) {
                         console.log("当前返回的价格id", priceId, this.prcieId);
-                        let price = res.data.data.price * this.orderData.qty
-                        price = price.toFixed(2)
-                        // this.totalPrice = res.data.data.price * this.orderData.qty
-                        // this.totalPrice = this.totalPrice.toFixed(2)
-                        this.onePrice = res.data.data.price
-                        this.discountList = []
-                        this.priceData = res.data.data
-                        // 获取抵扣价格
-                        // this.doClientLevelAmount()
-
+                        this.billing_cycle_time = res.data.data.duration
+                        let price = res.data.data.price * this.orderData.qty // 商品的原总价
+                        this.original_price = res.data.data.price * this.orderData.qty
+                        this.onePrice = res.data.data.price  // 商品原单价
+                        this.discountList = [] // 优惠码数组
+                        this.priceData = res.data.data // 价格信息数组
                         const discountParams = {
                             id: this.id,
                             amount: price
                         }
-                        clientLevelAmount(discountParams).then(res2 => {
-                            if (res2.data.status === 200) {
-                                this.clDiscount = res2.data.data.discount
-                                // this.totalPrice = (this.totalPrice - this.clDiscount).toFixed(2)
-                                this.totalPrice = (price - this.clDiscount).toFixed(2)
-                                this.priceLoading = false
-
-                            }
-                        }).catch(error => {
-                            this.clDiscount = 0
-                            this.totalPrice = price
-                            this.priceLoading = false
-                        })
-
+                        // 开启了等级折扣插件
+                        if (this.isShowLevel) {
+                            // 获取等级抵扣价格
+                            await clientLevelAmount(discountParams).then(res2 => {
+                                if (res2.data.status === 200) {
+                                    this.clDiscount = res2.data.data.discount  // 客户等级优惠金额
+                                }
+                            }).catch(error => {
+                                this.clDiscount = 0
+                                this.totalPrice = price
+                            })
+                        }
+                        // 开启了优惠码插件
+                        if (this.isShowPromo && this.customfield.promo_code) {
+                            // 更新优惠码
+                            await applyPromoCode({ // 开启了优惠券
+                                scene: 'new',
+                                product_id: this.id,
+                                amount: this.onePrice,
+                                billing_cycle_time: this.billing_cycle_time,
+                                promo_code: this.customfield.promo_code,
+                                qty: this.orderData.qty,
+                            }).then((resss) => {
+                                this.isUseDiscountCode = true
+                                this.code_discount = Number(resss.data.data.discount)
+                            }).catch((err) => {
+                                this.$message.error(err.data.msg)
+                                this.removeDiscountCode()
+                            })
+                        }
+                        this.totalPrice = ((price * 1000 - this.clDiscount * 1000 - this.code_discount * 1000) / 1000) > 0 ? ((price * 1000 - this.clDiscount * 1000 - this.code_discount * 1000) / 1000).toFixed(2) : 0
+                        this.priceLoading = false
+                    } else {
+                        this.totalPrice = 0.00
+                        this.onePrice = 0.00
+                        this.priceLoading = false
                     }
-
                 }).catch(err => {
                     this.totalPrice = 0.00
                     this.onePrice = 0.00
@@ -873,10 +921,6 @@ new Vue({
         },
         // 添加购物车
         addCart() {
-            // if (!this.isRead) {
-            //     this.$message.error("请先阅读并勾选协议")
-            //     return false
-            // }
             this.cartBtnLoading = true
             let data_disk = []
             if (this.isMoreDisk) {
@@ -884,42 +928,25 @@ new Vue({
                     data_disk.push(item.size)
                 })
             }
-
-
-            let params = {}
-            if (this.isPassOrKey == 'pass') {
-                params = {
-                    product_id: this.id,
-                    config_options: {
-                        data_center_id: this.orderData.centerId,
-                        package_id: this.orderData.packageId,
-                        image_id: this.orderData.osId,
-                        duration: this.orderData.duration,
-                        password: this.orderData.password,
-                        data_disk,
-                        backup_num_id: this.isBack ? this.orderData.backId : '',
-                        snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
-                    },
-                    qty: this.orderData.qty
-                }
-            } else {
-                params = {
-                    product_id: this.id,
-                    config_options: {
-                        data_center_id: this.orderData.centerId,
-                        package_id: this.orderData.packageId,
-                        image_id: this.orderData.osId,
-                        duration: this.orderData.duration,
-                        ssh_key_id: this.orderData.key,
-                        data_disk,
-                        backup_num_id: this.isBack ? this.orderData.backId : '',
-                        snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
-                    },
-                    qty: this.orderData.qty
-                }
+            const params = {
+                product_id: this.id,
+                config_options: {
+                    data_center_id: this.orderData.centerId,
+                    package_id: this.orderData.packageId,
+                    image_id: this.orderData.osId,
+                    duration: this.orderData.duration,
+                    data_disk,
+                    backup_num_id: this.isBack ? this.orderData.backId : '',
+                    snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
+                },
+                qty: this.orderData.qty,
+                customfield: this.customfield // 自定义参数
             }
-
-
+            if (this.isPassOrKey == 'pass') {
+                params.config_options.password = this.orderData.password
+            } else {
+                params.config_options.ssh_key_id = this.orderData.key
+            }
             cart(params).then(res => {
                 if (res.data.status === 200) {
                     this.cartDialog = true
@@ -967,10 +994,8 @@ new Vue({
                     backup_num_id: this.isBack ? this.orderData.backId : '',
                     snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
                 },
-                customfield: {
-                    promo_code: codes
-                },
-                qty: this.orderData.qty
+                qty: this.orderData.qty,
+                customfield: this.customfield
             }
             // 直接传配置到结算页面
             sessionStorage.setItem('product_information', JSON.stringify(params))
@@ -1082,24 +1107,8 @@ new Vue({
         toPrivacy() {
             window.open(this.commonData.terms_privacy_url);
         },
-        // 获取商品折扣金额
-        doClientLevelAmount() {
-            const params = {
-                id: this.id,
-                amount: this.totalPrice
-            }
-            clientLevelAmount(params).then(res => {
-                if (res.data.status === 200) {
-                    this.clDiscount = res.data.data.discount
-                }
-            }).catch(error => {
-                this.clDiscount = 0
-            })
-
-        },
         // 获取套餐所有周期价格
         getDuration() {
-
             let data_disk = []
             if (this.isMoreDisk) {
                 this.moreDiskData.forEach(item => {
@@ -1125,7 +1134,7 @@ new Vue({
                         })
                     } else if (this.pageType == 'free') {
                         data = data.filter(item => {
-                            return item.duration == 'onetime_fee'
+                            return item.duration == 'free'
                         })
                     } else {
                         data = data.filter(item => {
@@ -1205,7 +1214,8 @@ new Vue({
                         backup_num_id: this.isBack ? this.orderData.backId : '',
                         snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
                     },
-                    qty: this.orderData.qty
+                    qty: this.orderData.qty,
+                    customfield: this.customfield
                 }
             } else {
                 params = {
@@ -1221,7 +1231,8 @@ new Vue({
                         backup_num_id: this.isBack ? this.orderData.backId : '',
                         snap_num_id: this.isSnapshot ? this.orderData.snapId : ''
                     },
-                    qty: this.orderData.qty
+                    qty: this.orderData.qty,
+                    customfield: this.customfield
                 }
             }
             this.submitLoading = true

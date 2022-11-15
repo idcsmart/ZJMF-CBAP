@@ -243,7 +243,7 @@ class TpCaptchaLogic
                 top: 0px;
                 height: 100vh;
                 width:100vw;
-                z-index: 20;
+                z-index: 2002;
                 filter: alpha(opacity=60);
             '>
                 <div class='captcha-content' style=''>

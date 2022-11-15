@@ -13,7 +13,7 @@ class CartValidate extends Validate
         'data_center_id'     => 'integer',
         'package_id'         => 'require|integer',
         'image_id'           => 'require|integer',   // 镜像ID,暂时必须
-        'duration'           => 'require|in:onetime_fee,month_fee,quarter_fee,half_year_fee,year_fee,two_year,three_year',
+        'duration'           => 'require|in:free,onetime_fee,month_fee,quarter_fee,half_year_fee,year_fee,two_year,three_year',
         'password'           => 'require|checkPassword:thinkphp',
     ];
 

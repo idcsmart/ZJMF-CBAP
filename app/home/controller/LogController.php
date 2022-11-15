@@ -31,7 +31,7 @@ class LogController extends HomeBaseController
      * @return string list[].ip - IP 
      * @return int count - 操作日志总数
      */
-	public function logList()
+	public function list()
     {
 		// 合并分页参数
         $param = array_merge($this->request->param(), ['page' => $this->request->page, 'limit' => $this->request->limit, 'sort' => $this->request->sort]);

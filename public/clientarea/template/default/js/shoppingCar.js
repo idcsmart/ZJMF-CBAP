@@ -7,17 +7,15 @@
             components: {
                 asideMenu,
                 topMenu,
+                discountCode
             },
             created() {
+                localStorage.frontMenusActiveId = "";
                 this.getCommonData()
-                this.getCartList()
             },
             mounted() {
-                // 关闭loading
-                // document.getElementById('mainLoading').style.display = 'none';
-                // document.getElementsByClassName('template')[0].style.display = 'block'
-
-
+                this.addons_js_arr = JSON.parse(document.querySelector('#addons_js').getAttribute('addons_js')) // 插件列表
+                this.getCartList()
             },
             updated() {
                 // 关闭loading
@@ -33,10 +31,13 @@
                     commonData: {},
                     searchVal: '',
                     checkedCities: [],
-                    checkAll: false,
+                    checkAll: false, // 是否全选
                     visible: false,
                     showList: [],
-                    shoppingList: []
+                    addons_js_arr: [],// 插件列表
+                    shoppingList: [],
+                    isShowPromo: false, // 是否开启优惠码
+                    isShowLevel: false // 是否开启等级优惠
                 }
             },
 
@@ -47,69 +48,164 @@
                     } else {
                         return "--"
                     }
+                },
+                filterMoney(money) {
+                    if (isNaN(money)) {
+                        return '0.00'
+                    } else {
+                        const temp = `${money}`.split('.')
+                        return parseInt(temp[0]).toLocaleString() + '.' + (temp[1] || '00')
+                    }
                 }
             },
             computed: {
                 totalPrice() {
-                    return this.checkedCities.reduce((pre, cur) => {
-                        return pre + (cur.unitPrice * cur.qty)
+                    const arr = []
+                    this.checkedCities.forEach((position) => {
+                        this.showList.forEach((item) => {
+                            if (position === item.position) {
+                                arr.push(item)
+                            }
+                        })
+                    })
+                    return arr.reduce((pre, cur) => {
+                        return pre + (((cur.price * cur.qty) * 1000 - cur.level_discount * 1000 - cur.code_discount * 1000) / 1000)
                     }, 0)
                 },
-
             },
             methods: {
                 // 获取购物车列表
                 getCartList() {
+                    const arr = this.addons_js_arr.map((item) => {
+                        return item.name
+                    })
+                    if (arr.includes('PromoCode')) {
+                        // 开启了优惠码插件
+                        this.isShowPromo = true
+                    }
+                    if (arr.includes('IdcsmartClientLevel')) {
+                        // 开启了等级优惠
+                        this.isShowLevel = true
+                    }
                     this.listLoding = true
                     cartList().then((res) => {
                         this.shoppingList = res.data.data.list
-                        this.shoppingList.forEach((item) => {
-                            item.isLoading = true
-                        })
                         this.listLoding = false
-                        this.showList = [...this.shoppingList]
-                        for (let index = 0; index < this.shoppingList.length; index++) {
-                            const item = this.shoppingList[index]
-                            item.position = index
+                        this.showList = []
+                        this.shoppingList.forEach((item, index) => {
+                            item.price = 0 // 商品单价
+                            item.code_discount = 0 // 商品优惠码抵扣金额
+                            item.level_discount = 0 // 商品等级优惠折扣金额
+                            item.isUseDiscountCode = false // 商品是否使用优惠码
+                            item.position = index // 商品所在购物车位置
+                            item.isShowTips = false // 是否提示商品库存不足
+                            item.priceLoading = true // 商品价格loading
                             if (item.stock_control === 1 && item.qty > item.stock_qty) {
                                 item.isShowTips = true
                                 item.qty = item.stock_qty
-                            } else {
-                                item.isShowTips = false
                             }
+                            item.isLoading = true // 商品loading
+                            this.showList = [...this.shoppingList]
                             configOption(item.product_id, item.config_options).then((ress) => {
                                 item.info = ress.data.data
-                                item.preview = ress.data.data.preview
-                                item.price = Number(ress.data.data.price)
-                                clientLevelAmount({ id: item.product_id, amount: item.price }).then(resss => {
-                                    if (resss.data.status === 200) {
-                                        item.unitPrice = (Number(item.price) * 1000 - Number(resss.data.data.discount) * 1000) / 1000 // 实际单价 = 原单价 - 优惠价格
+                                item.preview = ress.data.data.preview // 配置信息
+                                item.price = Number(ress.data.data.price) // 商品价格
+                                item.priceLoading = false
+                                if (this.isShowLevel) {
+                                    clientLevelAmount({ id: item.product_id, amount: item.price * item.qty }).then(resss => {
+                                        if (resss.data.status === 200) {
+                                            item.level_discount = Number(resss.data.data.discount) // 获取商品等级折扣金额
+                                            item.isLoading = false
+                                            this.showList = [...this.shoppingList]
+                                            if (this.shoppingList.length === 1) {
+                                                this.checkedCities = [this.shoppingList[0].position]
+                                                this.checkAll = true
+                                            }
+                                        }
+                                    }).catch(error => {
                                         item.isLoading = false
                                         this.showList = [...this.shoppingList]
-                                        if (this.shoppingList.length === 1) {
-                                            this.checkedCities = [...this.shoppingList]
-                                            this.checkAll = true
-                                        }
-                                    }
-                                }).catch(error => {
-                                    item.unitPrice = Number(item.price)
+                                    })
+                                } else {
                                     item.isLoading = false
                                     this.showList = [...this.shoppingList]
-                                })
+                                }
+                                if (this.isShowPromo && item.customfield.promo_code) {
+                                    item.isUseDiscountCode = true
+                                    // 更新优惠码
+                                    applyPromoCode({
+                                        scene: 'new',
+                                        product_id: item.product_id,
+                                        amount: item.price,
+                                        billing_cycle_time: item.info.duration,
+                                        promo_code: item.customfield.promo_code,
+                                        qty: item.qty,
+                                    }).then((res) => {
+                                        item.priceLoading = false
+                                        item.code_discount = Number(res.data.data.discount)
+                                        this.showList = [...this.shoppingList]
+                                    }).catch((err) => {
+                                        this.$message.error(err.data.msg)
+                                        item.priceLoading = false
+                                        this.showList = [...this.shoppingList]
+                                    })
+                                }
+
                             }).catch(() => {
                                 item.preview = []
                                 item.invalid = true
                                 item.isLoading = false
+                                item.priceLoading = false
                                 this.showList = [...this.shoppingList]
                             })
-                        }
-
+                        })
                     }).catch(() => {
                         this.listLoding = false
                     })
                 },
-                subtotal(unitprice, discount, qty) {
-                    return ((unitprice * 1000 - discount * 1000) / 1000) * qty
+                // 使用优惠码
+                getDiscount(data) {
+                    this.showList.forEach((item) => {
+                        if (item.position === data[2]) {
+                            item.code_discount = data[0]
+                            item.customfield.promo_code = data[1]
+                            item.isUseDiscountCode = true
+                            const params = {
+                                position: data[2],
+                                product_id: item.product_id,
+                                config_options: item.config_options, // 配置信息
+                                qty: item.qty,   // 商品数量
+                                customfield: item.customfield
+                            }
+                            updateCart(params).then((res) => {
+                                console.log(res.data.data);
+                            })
+                            this.$forceUpdate()
+                        }
+                    })
+                },
+                // 删除优惠码
+                removeDiscountCode(item) {
+                    item.code_discount = 0
+                    item.customfield.promo_code = ''
+                    item.isUseDiscountCode = false
+                    let i;
+                    this.shoppingList.forEach((items, index) => {
+                        if (items.position === item.position) {
+                            i = index
+                        }
+                    })
+                    const params = {
+                        position: i,
+                        product_id: item.product_id,
+                        config_options: item.config_options, // 配置信息
+                        qty: item.qty,   // 商品数量
+                        customfield: item.customfield
+                    }
+                    updateCart(params).then((res) => {
+                        console.log(res.data.data);
+                    })
+                    this.$forceUpdate()
                 },
                 // 搜索
                 searchValChange(value) {
@@ -133,7 +229,10 @@
                     const arr = this.showList.filter((item) => {
                         return item.info
                     })
-                    this.checkedCities = val ? arr : [];
+                    const arrr = arr.map((item) => {
+                        return item.position
+                    })
+                    this.checkedCities = val ? arrr : [];
                 },
                 // 编辑商品数量
                 handelEditGoodsNum(index, num) {
@@ -145,7 +244,8 @@
                         const obj = {
                             config_options: item.config_options, // 配置信息
                             position: item.position, // 修改接口要用的位置信息
-                            qty: item.qty   // 商品数量
+                            qty: item.qty,   // 商品数量
+                            customfield: item.customfield
                         }
                         sessionStorage.setItem('product_information', JSON.stringify(obj))
                     }
@@ -173,11 +273,24 @@
                 // 点击删除按钮
                 handelDeleteGoods(item, index) {
                     // 调用删除接口
-                    this.deleteGoodsList([item.position])
+                    const p = item.position
+                    let shoppingList_index = 0
+                    let checkedCities_index = 0
                     // 删除列表中对应的商品
                     this.showList.splice(index, 1)
-                    this.shoppingList.splice(this.shoppingList.indexOf(item), 1)
-                    this.checkedCities.splice(this.checkedCities.indexOf(item), 1)
+                    this.shoppingList.forEach((item, index) => {
+                        if (item.position === p) {
+                            i = index
+                        }
+                    })
+                    this.checkedCities.forEach((item, index) => {
+                        if (item.position === p) {
+                            checkedCities_index = index
+                        }
+                    })
+                    this.shoppingList.splice(shoppingList_index, 1)
+                    this.checkedCities.splice(checkedCities_index, 1)
+                    this.deleteGoodsList([shoppingList_index])
                 },
                 // 删除选中的商品
                 deleteCheckGoods() {
@@ -185,11 +298,7 @@
                         this.$message.warning('请先选择您要删除的商品')
                         return
                     } else {
-                        const arr = []
-                        this.checkedCities.forEach((item) => {
-                            arr.push(item.position)
-                        })
-                        this.deleteGoodsList(arr, true)
+                        this.deleteGoodsList(this.checkedCities, true)
                         this.checkedCities = []
                     }
                 },
@@ -203,14 +312,47 @@
                         clearTimeout(this.timer1)
                         this.timer1 = null
                     }
+                    this.$set(this.showList, index, { ...this.showList[index], priceLoading: true })
                     this.timer1 = setTimeout(() => {
-                        this.handelEditGoodsNum(index, n).then((ress) => {
+                        this.handelEditGoodsNum(index, n).then(() => {
+                            // 更新等级优惠金额
+                            if (this.isShowLevel) {
+                                this.$set(this.showList, index, { ...this.showList[index], priceLoading: true })
+                                clientLevelAmount({ id: item.product_id, amount: item.price * item.qty }).then(resss => {
+                                    if (resss.data.status === 200) {
+                                        item.level_discount = Number(resss.data.data.discount) // 获取商品等级折扣金额
+                                        this.$set(this.showList, index, { ...this.showList[index], priceLoading: false })
+                                        this.$set(this.showList, index, { ...this.showList[index], level_discount: Number(resss.data.data.discount) })
+                                    }
+                                }).catch(error => {
+                                    this.$set(this.showList, index, { ...this.showList[index], priceLoading: false })
+                                })
+                            }
+                            // 更新优惠码优惠金额
+                            if (this.isShowPromo && item.isUseDiscountCode) {
+                                this.$set(this.showList, index, { ...this.showList[index], priceLoading: true })
+                                // 更新优惠码
+                                applyPromoCode({
+                                    scene: 'new',
+                                    product_id: item.product_id,
+                                    amount: item.price,
+                                    billing_cycle_time: item.info.duration,
+                                    promo_code: item.customfield.promo_code,
+                                    qty: item.qty,
+                                }).then((res) => {
+                                    this.$set(this.showList, index, { ...this.showList[index], priceLoading: false })
+                                    this.$set(this.showList, index, { ...this.showList[index], code_discount: Number(res.data.data.discount) })
+                                }).catch((err) => {
+                                    this.$message.error(err.data.msg)
+                                    this.$set(this.showList, index, { ...this.showList[index], priceLoading: false })
+                                })
+                            }
                         }).catch((err) => {
                             err.data.msg && this.$message.error(err.data.msg)
                         }).finally(() => {
                             clearTimeout(this.timer1)
                             this.timer1 = null
-                            // this.getCartList()
+                            this.$set(this.showList, index, { ...this.showList[index], priceLoading: false })
                         })
 
                     }, 500)
@@ -222,25 +364,21 @@
                         this.$message.warning('请先选择您要购买的商品')
                         return
                     }
-                    const arr = []
+                    const arr = [] // 装的是被选中的商品在购物位置的索引
                     this.shoppingList.forEach((item, index) => {
                         this.checkedCities.forEach((items) => {
-                            if (items.position == item.position) {
+                            if (items == item.position) {
                                 arr.push(index)
                             }
                         })
                     })
-                    location.href = `./settlement.html?arr=${arr.toString()}`
+                    sessionStorage.shoppingCartList = JSON.stringify(arr)
+                    location.href = `./settlement.html?cart=1`
                 },
                 // 获取通用配置
                 getCommonData() {
-                    getCommon().then(res => {
-                        if (res.data.status === 200) {
-                            this.commonData = res.data.data
-                            localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-                            document.title = this.commonData.website_name + '-商城'
-                        }
-                    })
+                    this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+                    document.title = this.commonData.website_name + '-商城'
                 },
             },
         }).$mount(template)

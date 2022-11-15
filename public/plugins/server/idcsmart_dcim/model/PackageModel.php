@@ -276,14 +276,6 @@ class PackageModel extends Model{
                 $param['data_center_id'] = 0;
             }
         }
-        $nameExist = $this
-                    ->where('name', $param['name'])
-                    ->where('product_id', $package['product_id'])
-                    ->where('id', '<>', $param['id'])
-                    ->find();
-        if(!empty($nameExist)){
-            return ['status'=>400, 'msg'=>lang_plugins('package_name_is_using')];
-        }
 
         $oldDataCenter = DataCenterModel::find($package['data_center_id']);
 
@@ -519,6 +511,10 @@ class PackageModel extends Model{
         $param = $params['custom'];
 
         $duration = [
+            'free'=>[
+                'name'=>lang_plugins('免费'),
+                'time'=>0,
+            ],
             'onetime_fee'=>[
                 'name'=>lang_plugins('onetime_fee'),
                 'time'=>0,

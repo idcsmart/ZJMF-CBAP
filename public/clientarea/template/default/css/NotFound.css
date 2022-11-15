@@ -1,0 +1,32 @@
+.content-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-box {
+  width: 2.91rem;
+  height: 2.08rem;
+}
+
+.img-box img {
+  width: 100%;
+  height: 100%;
+}
+
+.tips-box {
+  text-align: center;
+  color: #666B80;
+  font-size: 0.16rem;
+  margin-top: 0.5rem;
+}
+
+.tran-again {
+  margin-top: 0.06rem;
+  cursor: pointer;
+  color: #0058FF;
+  font-size: 0.16rem;
+}

@@ -61,7 +61,7 @@ Axios.interceptors.response.use(
         case 406:
           break
         case 409: // 该管理没有该客户, 跳转首页
-          location.href = ''
+          location.href = 'index.html'
           break
         case 410:
           break
@@ -167,7 +167,7 @@ installAxios.interceptors.response.use(
         case 406:
           break
         case 409: // 该管理没有该客户, 跳转首页
-          location.href = ''
+          location.href = 'index.html'
           break
         case 410:
           break

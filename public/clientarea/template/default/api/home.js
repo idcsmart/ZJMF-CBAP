@@ -23,3 +23,13 @@ function newsList(params) {
 function promoter_statistic() {
     return Axios.get(`/referral/promoter/statistic`)
 }
+
+
+// 开启推介计划
+function openRecommend() {
+    return Axios.post(`recommend/promoter`)
+}
+// 推广者基础信息
+function promoterInfo() {
+    return Axios.get(`/recommend/promoter`)
+}

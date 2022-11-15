@@ -346,7 +346,7 @@ if (!function_exists('echo_value')) {
         <div class="info"><h1><?php echo htmlentities($message); ?></h1></div>
     </div>
     <?php } ?>
-    
+
     <?php if (!empty($datas)) { ?>
     <div class="exception-var">
         <h2>Exception Datas</h2>
@@ -394,8 +394,8 @@ if (!function_exists('echo_value')) {
     <?php } ?>
 
     <div class="copyright">
-        <a title="官方网站" href="http://www.thinkphp.cn">ThinkPHP</a> 
-        <span>V<?php echo \think\facade\App::version(); ?></span> 
+        <a title="官方网站" href="http://www.thinkphp.cn">ThinkPHP</a>
+        <span>V<?php echo \think\facade\App::version(); ?></span>
         <span>{ 十年磨一剑-为API开发设计的高性能框架 }</span>
         <span>- <a title="官方手册" href="https://www.kancloud.cn/manual/thinkphp6_0/content">官方手册</a></span>
     </div>
@@ -426,7 +426,7 @@ if (!function_exists('echo_value')) {
             return elements;
 
             function get_elements_by_class(search_class, node, tag) {
-                var elements = [], eles, 
+                var elements = [], eles,
                     pattern  = new RegExp('(^|\\s)' + search_class + '(\\s|$)');
 
                 node = node || document;
@@ -445,18 +445,18 @@ if (!function_exists('echo_value')) {
 
         $.getScript = function(src, func){
             var script = document.createElement('script');
-            
+
             script.async  = 'async';
             script.src    = src;
             script.onload = func || function(){};
-            
+
             $('head')[0].appendChild(script);
         }
 
         ;(function(){
             var files = $('.toggle');
             var ol    = $('ol', $('.prettyprint')[0]);
-            var li    = $('li', ol[0]);   
+            var li    = $('li', ol[0]);
 
             // 短路径和长路径变换
             for(var i = 0; i < files.length; i++){

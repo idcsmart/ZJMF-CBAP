@@ -67,8 +67,10 @@ Route::group('console/v1',function (){
     'Access-Control-Allow-Origin'        => $origin,
     'Access-Control-Allow-Credentials'   => 'true',
     'Access-Control-Max-Age'             => 600,
-])->middleware(\app\http\middleware\CheckHome::class)
-->middleware(\app\http\middleware\ParamFilter::class);
+])
+->middleware(\app\http\middleware\CheckHome::class)
+->middleware(\app\http\middleware\ParamFilter::class)
+->middleware(\server\common_cloud\middleware\CheckAuthMiddleware::class);
 
 
 # 后台,可登录不可登录的接口

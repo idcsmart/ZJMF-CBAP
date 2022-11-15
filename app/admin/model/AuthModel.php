@@ -148,7 +148,7 @@ class AuthModel extends Model
             $auths = $this->select()->toArray();
         }else{
             $auths = $this->alias('au')
-                ->field('au.id,au.title,au.url,au.order,au.parent_id')
+                ->field('au.id,au.title,au.url,au.order,au.parent_id,au.module')
                 ->leftjoin('auth_link al', 'al.auth_id=au.id')
                 ->leftjoin('admin_role adr', 'adr.id=al.admin_role_id')
                 ->leftjoin('admin_role_link adrl', 'adrl.admin_role_id=adr.id')
@@ -164,7 +164,7 @@ class AuthModel extends Model
         if (is_array($auths)) {
             $refer = [];
             foreach ($auths as $key => $data) {
-                $auths[$key]['title'] = lang($data['title']);
+                $auths[$key]['title'] = !empty($data['module']) ? lang_plugins($data['title']) : lang($data['title']);
                 $auths[$key]['rules'] = $ruleList[$data['id']] ?? [];
                 $rules = array_merge($rules, $auths[$key]['rules']);
                 $refer[$data['id']] = &$auths[$key];
@@ -200,9 +200,11 @@ class AuthModel extends Model
             'plugin' => parse_name($name,1)
         ]);
 
+        $AuthRuleModel = new AuthRuleModel();
+        $AuthRuleLinkModel = new AuthRuleLinkModel();
+
         # 插入auth_rule
         if (isset($auth['auth_rule']) && !empty($auth['auth_rule']) && is_string($auth['auth_rule'])){
-            $AuthRuleModel = new AuthRuleModel();
 
             $authRule = $AuthRuleModel->create([
                 'name' => "{$module}\\{$name}\\controller\\".$auth['auth_rule'],
@@ -211,11 +213,26 @@ class AuthModel extends Model
                 'plugin' => parse_name($name,1)
             ]);
 
-            $AuthRuleLinkModel = new AuthRuleLinkModel();
             $AuthRuleLinkModel->create([
                 'auth_rule_id' => $authRule->id,
                 'auth_id' => $object->id,
             ]);
+        }else if (isset($auth['auth_rule']) && !empty($auth['auth_rule']) && is_array($auth['auth_rule'])){
+            foreach ($auth['auth_rule'] as $key => $value) {
+                if(isset($auth['auth_rule_title'][$key])){
+                    $authRule = $AuthRuleModel->create([
+                        'name' => "{$module}\\{$name}\\controller\\".$value,
+                        'title' => $auth['auth_rule_title'][$key],
+                        'module' => $module,
+                        'plugin' => parse_name($name,1)
+                    ]);
+
+                    $AuthRuleLinkModel->create([
+                        'auth_rule_id' => $authRule->id,
+                        'auth_id' => $object->id,
+                    ]);
+                }
+            }
         }
 
         $child = $auth['child']??[];

@@ -11,7 +11,9 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading" :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" @sort-change="sortChange" class="user-order" :hide-sort-tips="true" :max-height="maxHeight">
+    <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading"
+    :key="new Date().getTime()"
+     :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" @sort-change="sortChange" class="user-order" :hide-sort-tips="true" :max-height="maxHeight">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -113,8 +115,8 @@
           <t-tooltip :content="lang.update_price" :show-arrow="false" theme="light">
             <t-icon name="money-circle" class="common-look" @click="updatePrice(row, 'order')" v-if="row.status!=='Paid' && row.status!=='Cancelled'"></t-icon>
           </t-tooltip>
-          <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light">
-            <t-icon name="discount" class="common-look" :class="{disable:row.status==='Paid'}" @click="signPay(row)" v-if="row.status!=='Paid' && row.status!=='Cancelled'"></t-icon>
+          <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light" v-show="row.status!=='Paid' && row.status!=='Cancelled'">
+            <t-icon name="discount" class="common-look" :class="{disable:row.status==='Paid'}" @click="signPay(row)" ></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
             <t-icon name="delete" class="common-look" @click="delteOrder(row)"></t-icon>

@@ -41,33 +41,54 @@ const topMenu = {
                 </el-autocomplete>
             </div>
             <div class="header-right">
-                <div class="right-item" @click="logOut()" >
-                    <img src="${url}/img/common/exit.png">
+                
+                <div class="header-right-item car-item">
+                    <div v-if="isShowCart" class="right-item" @click="goShoppingCar">
+                        <el-badge :value="shoppingCarNum" class="item" :hidden="shoppingCarNum === 0 ? true : false">
+                            <img src="${url}/img/common/cart.png">
+                        </el-badge>
+                    </div>
                 </div>
-                <div class="right-item item-cur">
-                    <el-dropdown @command="changeLang">
-                        <img :src="curSrc" alt="">
+
+                <div class="header-right-item">
+                    <el-dropdown @command="changeLang" trigger="click">
+                        <div class="el-dropdown-country">
+                            <img :src="curSrc" alt="">
+                            <i class="right-icon el-icon-arrow-down el-icon--right"></i>
+                        </div>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="zh-cn">{{lang.chinese}}</el-dropdown-item>
+                            <el-dropdown-item v-for="item in commonData.lang_list" :key="item.display_flag" :command="item.display_lang">{{item.display_name}}</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </div>
-                <div v-if="isShowMore" class="right-item item-bell">
-                    <img src="${url}/img/common/bell.png">
-                    <span class="bell-num">2</span>
+
+                <div class="header-right-item cloum-line-item">
+                    <div class="cloum-line"></div>
                 </div>
-                <div class="right-item head-box" ref="headBoxRef" @click="goAccountpage" v-show="firstName">{{firstName}}</div>
-                <div v-if="isShowCart" class="right-item" @click="goShoppingCar">
-                    <el-badge :value="shoppingCarNum" class="item" :hidden="shoppingCarNum === 0 ? true : false">
-                    <img src="${url}/img/common/cart.png">
-                    </el-badge>
+
+                <div class="header-right-item">
+                    <el-dropdown @command="handleCommand" trigger="click">
+                        <div class="el-dropdown-header">
+                            <div class="right-item head-box" ref="headBoxRef" v-show="firstName">{{firstName}}</div>
+                            <i class="right-icon el-icon-arrow-down el-icon--right"></i>
+                        </div>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="account">账户信息</el-dropdown-item>
+                            <el-dropdown-item command="quit">退出登录</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </div>
+
             </div>
         </el-header>
         </div>
 
     `,
     data() {
+
+
+
+
         return {
             topInput: "",
             // curSrc: url+'/img/common/'+lang_obj.countryImg+'.png' ,
@@ -80,7 +101,10 @@ const topMenu = {
             produclData: [],
             selectValue: '',
             shoppingCarNum: 0,
-            headBgcList: ['#3699FF', '#57C3EA', '#5CC2D7', '#EF8BA2', '#C1DB81', '#F1978C', '#F08968']
+            headBgcList: ['#3699FF', '#57C3EA', '#5CC2D7', '#EF8BA2', '#C1DB81', '#F1978C', '#F08968'],
+            commonData: {
+                lang_list: []
+            },
         }
     },
     props: {
@@ -109,6 +133,7 @@ const topMenu = {
         this.doGetMenu()
         this.setActiveMenu()
         this.getCartList()
+        this.getCommonSetting()
     },
     methods: {
         // 退出登录
@@ -122,7 +147,7 @@ const topMenu = {
                 Axios.post('/logout').then(res => {
                     localStorage.removeItem("jwt")
                     setTimeout(() => {
-                        location.href = 'login.html'
+                        location.href = '/login.html'
                     }, 300)
                 })
             }).catch(() => { })
@@ -135,7 +160,7 @@ const topMenu = {
         },
         GetIndexData() {
             indexData().then((res) => {
-                this.firstName = res.data.data.account.username.substring(0, 1)
+                this.firstName = res.data.data.account.username.substring(0, 1).toUpperCase()
                 if (sessionStorage.headBgc) {
                     this.$refs.headBoxRef.style.background = sessionStorage.headBgc
                 } else {
@@ -160,6 +185,15 @@ const topMenu = {
                 }
                 localStorage.setItem('lang', e)
             }
+        },
+        handleCommand(e) {
+            if (e == 'account') {
+                this.goAccountpage()
+            }
+            if (e == 'quit') {
+                this.logOut()
+            }
+            console.log(e);
         },
         // 全局搜索
         querySearchAsync(queryString, cb) {
@@ -244,24 +278,15 @@ const topMenu = {
         toPage(e) {
             location.href = '/' + e.url
         },
-        // 单项商品点击
-        itemClick(item) {
-            console.log(item);
-        },
-        toOrder() {
-            console.log(this.selectValue);
-            const id = this.selectValue
-            this.produclData.map(item => {
-                if (item.id == id) {
-                    if (item.module == 'common_cloud' || item.module1 == 'common_cloud') {
-                        location.href = `/order.html?id=${item.id}`
-                    }
 
-                    if (item.module1 == 'idcsmart_common' || item.module == 'idcsmart_common') {
-                        location.href = `/common_product.html?id=${item.id}`
-                    }
-                }
-            })
-        }
+        // 获取通用配置
+        async getCommonSetting() {
+            try {
+                const res = await getCommon()
+                this.commonData = res.data.data
+                localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
+            } catch (error) {
+            }
+        },
     },
 }

@@ -29,6 +29,7 @@ class CartController extends HomeBaseController
      * @return  int list[].product_id - 商品ID
      * @return  object list[].config_options - 自定义配置
      * @return  int list[].qty - 数量
+     * @return  object list[].customfield - 自定义参数
      * @return  string list[].name - 商品名称
      * @return  string list[].description - 商品描述
      * @return  int list[].stock_control - 库存控制0:关闭1:启用
@@ -55,6 +56,7 @@ class CartController extends HomeBaseController
      * @param  int product_id - 商品ID required
      * @param  object config_options - 自定义配置
      * @param  int qty - 数量 required
+     * @param  object customfield - 自定义参数
      */
 	public function create()
 	{
@@ -87,6 +89,7 @@ class CartController extends HomeBaseController
      * @param  int product_id - 商品ID required
      * @param  object config_options - 自定义配置
      * @param  int qty - 数量 required
+     * @param  object customfield - 自定义参数
      */
 	public function update()
 	{

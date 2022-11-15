@@ -72,6 +72,7 @@ new Vue({
           label: "已删除"
         }
       ],
+      submitLoading: false
     }
   },
   filters: {
@@ -92,11 +93,13 @@ new Vue({
         this.commonList = res.data.data.list
         this.params.total = res.data.data.count
         this.loading = false
+        this.submitLoading = false
       } catch (error) {
         this.loading = false
       }
     },
     inputChange () {
+      this.submitLoading = true
       this.params.page = 1
       this.getList()
     },
@@ -128,13 +131,9 @@ new Vue({
 
     // 获取通用配置
     getCommonData () {
-      getCommon().then(res => {
-        if (res.data.status === 200) {
-          this.commonData = res.data.data
-          localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-          document.title = this.commonData.website_name + '-通用产品'
-        }
-      })
+      this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+      document.title = this.commonData.website_name + '-通用产品'
+
     }
   },
 

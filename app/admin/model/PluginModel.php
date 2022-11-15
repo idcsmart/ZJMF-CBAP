@@ -7,6 +7,9 @@ use think\db\Query;
 use think\Model;
 use think\Validate;
 use think\facade\Db;
+use app\home\model\ClientareaAuthModel;
+use think\facade\Event;
+
 /**
  * @title 插件模型
  * @desc 插件模型
@@ -308,6 +311,10 @@ class PluginModel extends Model
         lang_plugins('success_message', [], true);
         hook('after_plugin_install',['name'=>$name,'customfield'=>$param['customfield']??[]]);
 
+        # 缓存插件钩子
+        $PluginHookModel = new PluginHookModel();
+        $PluginHookModel->cacheHook();
+
         return ['status'=>200,'msg'=>lang('plugin_install_success')];
     }
 
@@ -343,6 +350,22 @@ class PluginModel extends Model
             $PluginHookModel = new PluginHookModel();
             $PluginHookModel->where('plugin',$plugin['name'])->delete();
 
+            $systemHookPlugins = Db::name('plugin_hook')
+                ->field('name,plugin')
+                ->where('status',1)
+                ->where('module','addon') # 仅插件
+                ->select()->toArray();
+            if (!empty($systemHookPlugins)) {
+                foreach ($systemHookPlugins as $hookPlugin) {
+                    $hookClass = get_plugin_class($hookPlugin['plugin'],'addon');
+                    if (!class_exists($hookClass)) { # 实例化插件失败忽略
+                        continue;
+                    }
+                    # 监听(注册)插件钩子
+                    Event::listen($hookPlugin['name'],[$hookClass,parse_name($hookPlugin['name'],1)]);
+                }
+            }
+
             if (class_exists($class)) {
                 $Plugin = new $class;
 
@@ -361,6 +384,9 @@ class PluginModel extends Model
             # 删除插件权限
             $AuthModel = new AuthModel();
             $AuthModel->deletePluginAuth($module,parse_name($param['name'],1));
+
+            $ClientareaAuthModel = new ClientareaAuthModel();
+            $ClientareaAuthModel->deletePluginAuth($module,parse_name($param['name'],1));
 			
             # 记录日志
             active_log(lang('log_admin_uninstall_plugin',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{module}'=>lang('log_admin_plugin_'.$module),'{name}'=>$param['name']]),'plugin',$plugin->id);
@@ -387,6 +413,9 @@ class PluginModel extends Model
         }
         lang_plugins('success_message', [], true);
         hook('after_plugin_uninstall',['name'=>$param['name']]);
+
+        # 缓存插件钩子
+        $PluginHookModel->cacheHook();
 
         return ['status'=>200,'msg'=>lang('plugin_uninstall_success')];
     }
@@ -427,7 +456,9 @@ class PluginModel extends Model
             $plugin->save();
 
             $PluginHookModel = new PluginHookModel();
-            $PluginHookModel->where('plugin',$plugin->name)->save(['status'=>$status]);
+            $PluginHookModel->where('plugin',$param['name'])->update([
+                'status'=>$status
+            ]);
 
             $this->commit();
         }catch (\Exception $e){
@@ -438,6 +469,9 @@ class PluginModel extends Model
                 return ['status'=>400,'msg'=>lang('disable_fail') . ":" . $e->getMessage()];
             }
         }
+
+        # 缓存插件钩子
+        $PluginHookModel->cacheHook();
 
         if ($status == 1){
             # 记录日志
@@ -858,6 +892,21 @@ class PluginModel extends Model
             }
         }
 
+        $ClientareaAuthModel = new ClientareaAuthModel();
+        if (file_exists(WEB_ROOT . "plugins/{$module}/{$name}/auth_clientarea.php")){
+            $auths = require WEB_ROOT . "plugins/{$module}/{$name}/auth_clientarea.php";
+
+            if (!empty($auths[0])){
+                foreach ($auths as $auth){
+                    if(isset($auth['parent'])){
+                        $auth['parent_id'] = $ClientareaAuthModel::where('name', $auth['parent'])->value('id');
+                    }
+
+                    $ClientareaAuthModel->createPluginAuth($auth,$module,$name);
+                }
+            }
+        }
+
         # 更改超级管理员分组权限为所有权限
         $supperAdminId = 1;
         $AuthLinkModel = new AuthLinkModel();
@@ -873,6 +922,17 @@ class PluginModel extends Model
         $AuthLinkModel->insertAll($all);
 
         return true;
+    }
+
+    # 已激活插件列表
+    public function activePluginList()
+    {
+        $list = $this->where('status', 1)
+            ->field('id,name,title')
+            ->select()
+            ->toArray();
+
+        return ['list' => $list];
     }
 
 }

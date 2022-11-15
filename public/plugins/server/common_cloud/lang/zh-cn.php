@@ -3,7 +3,7 @@
 return [
 	'change' => '变更',
 	'null' => '空',
-	'success_message'=>'获取成功',
+	'success_message'=>'请求成功',
 	'param_error'=>'参数错误',
 	'host_is_not_exist'=>'产品不存在',
 	'can_not_do_this'=>'不能执行该操作',

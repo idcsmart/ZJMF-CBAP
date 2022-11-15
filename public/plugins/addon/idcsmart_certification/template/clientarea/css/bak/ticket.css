@@ -1,0 +1,130 @@
+.main-card .main-card-title {
+  font-size: 0.28rem;
+  line-height: 0.28rem;
+}
+.main-card .main-card-top {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.main-card .main-card-top .top-item {
+  width: 3.32rem;
+  height: 1.63rem;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.main-card .main-card-top .top-item .top-item-text {
+  font-size: 0.16rem;
+  line-height: 0.16rem;
+  color: #8692B0;
+  margin-top: 0.2rem;
+  margin-left: 0.2rem;
+}
+.main-card .main-card-top .top-item .top-item-num {
+  font-size: 0.28rem;
+  font-family: PingFang SC;
+  font-weight: bold;
+  line-height: 0.28rem;
+  color: #1E2736;
+  margin-top: 0.2rem;
+  margin-left: 0.2rem;
+}
+.main-card .content_searchbar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+}
+.main-card .content_searchbar .new-ticket-btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #0058FF;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  font-weight: 400;
+  line-height: 0.46rem;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-card .content_searchbar .searchbar .el-input__suffix {
+  display: flex;
+  align-items: center;
+}
+.main-card .tabledata {
+  margin-top: 0.2rem;
+  padding-bottom: 0.23rem;
+  border: 1px solid #E6E7EB;
+}
+.main-card .tabledata .Pending,
+.main-card .tabledata .Handling,
+.main-card .tabledata .Reply,
+.main-card .tabledata .Replied,
+.main-card .tabledata .Closed,
+.main-card .tabledata .Resolved {
+  width: 0.59rem;
+  height: 0.26rem;
+  border-radius: 3px;
+  font-size: 0.13rem;
+  line-height: 0.13rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main-card .tabledata .Pending {
+  color: #3dd598;
+  background: rgba(61, 213, 152, 0.12);
+}
+.main-card .tabledata .Handling {
+  color: #f99600;
+  background: rgba(249, 150, 0, 0.12);
+}
+.main-card .tabledata .Reply {
+  color: #f0142f;
+  background: rgba(240, 20, 47, 0.12);
+}
+.main-card .tabledata .Replied,
+.main-card .tabledata .Resolved,
+.main-card .tabledata .Closed {
+  color: #757575;
+  background: rgba(117, 117, 117, 0.12);
+}
+.main-card .tabledata .more-operation {
+  width: 0.26rem;
+  height: 0.3rem;
+  color: #0058FF;
+  font-size: 0.3rem;
+  cursor: pointer;
+}
+.main-card .create-ticket .el-dialog {
+  margin-top: 5vh !important;
+}
+.main-card .create-ticket .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.main-card .create-ticket .el-dialog__body .el-form-item__label {
+  font-size: 0.16rem;
+}
+.main-card .create-ticket .el-dialog__body .dialog-title {
+  margin-bottom: 0.3rem;
+}
+.main-card .create-ticket .el-dialog__body .upload-btn .el-icon-upload2 {
+  font-size: 0.12rem;
+  margin-right: 0.02rem;
+}
+.el-popover {
+  min-width: 0.5rem !important;
+}
+.el-popover .operation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.el-popover .operation .operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  cursor: pointer;
+}

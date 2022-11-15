@@ -3,32 +3,34 @@
   .status {
     padding: 0 18px !important;
   }
-  .client-search{
+  .client-search {
     display: flex;
-    .t-select,.t-input{
+    .t-select,
+    .t-input {
       width: 280px;
       margin-right: 4px;
     }
-    .t-button{
+    .t-button {
       margin-left: 10px;
     }
-    .t-select__wrap,.t-input__wrap{
+    .t-select__wrap,
+    .t-input__wrap {
       width: auto;
     }
   }
-  .bg{
+  .bg {
     padding: 2px 4px;
     border-radius: 3px;
   }
-  table{
-    tbody tr{
-      &:hover{
+  table {
+    tbody tr {
+      &:hover {
         cursor: pointer;
       }
     }
   }
 }
-.t-input__prefix{
+.t-input__prefix {
   margin-right: 5px;
 }
 /* client-detail */
@@ -44,7 +46,7 @@
       background-color: transparent;
     }
   }
-  .t-row{
+  .t-row {
     width: auto;
   }
   .box {
@@ -54,7 +56,7 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-  .t-card__body{
+  .t-card__body {
     height: 100%;
   }
 
@@ -83,7 +85,7 @@
       width: 48%;
     }
 
-    .t-col{
+    .t-col {
       margin-bottom: 24px;
     }
     .item {
@@ -102,7 +104,7 @@
   }
   .textarea {
     margin-top: 25px !important;
-     width: 100% !important;
+    width: 100% !important;
   }
   .footer-btn {
     width: 100%;
@@ -143,12 +145,13 @@
     }
   }
 
-  .login-log {}
+  .login-log {
+  }
 }
 
 /* transaction */
 .transaction {
-  .t-table__tree-op-icon{
+  .t-table__tree-op-icon {
     display: none;
   }
   .user {
@@ -160,92 +163,92 @@
       margin-right: 4px;
     }
   }
-  .common-look{
+  .common-look {
     position: relative;
   }
 }
 
 /* client-order */
-.client-order{
-  .icon-width{
+.client-order {
+  .icon-width {
     padding: 12px 0;
   }
-  .common-dialog{
+  .common-dialog {
     margin-top: 30px;
   }
-  .t-table__tree-col{
+  .t-table__tree-col {
     position: relative;
   }
-  .t-table__tree-op-icon{
+  .t-table__tree-op-icon {
     display: none;
   }
-  .order-id{
+  .order-id {
     display: flex;
     cursor: pointer;
     justify-content: space-between;
     align-items: center;
     margin-left: -6px;
-    .t-icon{
+    .t-icon {
       margin-left: -5px;
     }
   }
-  .checkDelete{
+  .checkDelete {
     margin: 10px 0 0 100px;
-    .t-checkbox__label{
+    .t-checkbox__label {
       color: var(--td-text-color-placeholder);
     }
   }
-  .child{
+  .child {
     margin-left: -20px;
   }
-  .host-name{
+  .host-name {
     color: #b1b1bc;
   }
   // .child-name{
   //   padding-left: 20px;
   // }
 }
-.delDialog{
-  .t-dialog__body{
+.delDialog {
+  .t-dialog__body {
     color: #333;
   }
-  .check{
+  .check {
     display: flex;
     align-items: baseline;
-    .t-checkbox{
+    .t-checkbox {
       position: relative;
       top: 3px;
-      .t-checkbox__label{
+      .t-checkbox__label {
         margin-left: 3px;
       }
     }
-    .tips{
+    .tips {
       margin-bottom: 30px;
-      p{
+      p {
         margin: 0;
       }
-      .tip{
+      .tip {
         color: var(--td-text-color-placeholder);
       }
     }
   }
 }
-.sign_pay{
-  .t-input.t-input--prefix>.t-input__prefix{
+.sign_pay {
+  .t-input.t-input--prefix > .t-input__prefix {
     margin-right: 3px;
   }
 }
 
 /* create-order */
-.create-order{
+.create-order {
   .t-col {
     display: flex;
     justify-content: space-between;
   }
-  .item{
+  .item {
     width: 45%;
   }
-  .p-tit{
+  .p-tit {
     width: 100%;
     display: flex;
     line-height: 44px;
@@ -256,172 +259,187 @@
     background: var(--td-bg-color-page);
     padding: 0 10px;
     margin-bottom: 26px;
-    .t-icon{
+    .t-icon {
       color: #999;
       cursor: pointer;
     }
   }
-  .artificial{
-    .t-card__body{
+  .artificial {
+    .t-card__body {
       padding: 9px 30px 26px 30px;
     }
-    textarea{
+    textarea {
       height: 70px;
     }
-    .t-button{
+    .t-button {
       margin-top: 30px;
     }
-    .bot{
+    .bot {
       margin-top: 100px;
     }
   }
-  .new-order{
-    .t-col{
+  .new-order {
+    .t-col {
       flex-wrap: wrap;
     }
-    .pro-item{
+    .pro-item {
       width: 100%;
       margin-bottom: 30px;
-      .price{
-        .t-select__wrap{
+      .price {
+        .t-select__wrap {
           width: 70%;
           margin-right: 40px;
         }
       }
-      .com-tit{
+      .com-tit {
         font-size: 16px;
         font-weight: bold;
       }
     }
   }
-  .config-show{
+  .config-show {
     position: sticky;
     top: 0;
-    .t-card{
+    .t-card {
       padding: 30px;
     }
-    .t-card__body{
+    .t-card__body {
       padding: 0;
     }
-    .com-tit{
+    .com-tit {
       font-size: 16px;
       font-weight: bold;
     }
-    .total{
+    .total {
       display: flex;
       justify-content: space-between;
-      p{
+      p {
         margin: 0;
         line-height: 32px;
       }
-      .total-price{
+      .total-price {
         font-weight: bold;
       }
     }
-    .submit-new{
+    .submit-new {
       margin-top: 30px;
     }
   }
-  .price{
-   .t-form__controls-content {
-     &>span{
-       width: 100%;
-     }
-     .t-popup{
-       width: 100%;
-       transform: translate(0,0) !important;
-     }
-     .t-popup__content{
-      height: 300px;
-      overflow-y: auto;
-     }
-   }
+  .price {
+    .t-form__controls-content {
+      & > span {
+        width: 100%;
+      }
+      .t-popup {
+        width: 100%;
+        transform: translate(0, 0) !important;
+      }
+      .t-popup__content {
+        height: 300px;
+        overflow-y: auto;
+      }
+    }
   }
-  .t-input__suffix .t-icon{
-    transition: all .2s cubic-bezier(.38,0,.24,1);
-    &.active{
+  .t-input__suffix .t-icon {
+    transition: all 0.2s cubic-bezier(0.38, 0, 0.24, 1);
+    &.active {
       color: var(--td-brand-color);
       transform: rotateX(180deg);
     }
   }
 }
-.no-empty + ul + .t-select__empty{
+.no-empty + ul + .t-select__empty {
   display: none;
 }
 /* order */
-.order{
-  .common-dialog{
+.order {
+  .common-dialog {
     margin-top: 30px;
   }
-  .t-table__tree-col{
+  .t-table__tree-col {
     position: relative;
   }
-  .t-table__tree-op-icon{
+  .t-table__tree-op-icon {
     display: none;
   }
-  .icon-width{
+  .icon-width {
     padding: 12px 0;
   }
-  .order-id{
+  .order-id {
     display: flex;
     cursor: pointer;
     justify-content: space-between;
     align-items: center;
     margin-left: -6px;
-    .t-icon{
+    .t-icon {
       margin-left: -5px;
     }
   }
-  .checkDelete{
+  .hover,
+  .child-name {
+    cursor: pointer;
+  }
+  .checkDelete {
     margin: 10px 0 0 100px;
-    .t-checkbox__label{
+    .t-checkbox__label {
       color: var(--td-text-color-placeholder);
     }
   }
-  .child{
+  .child {
     margin-left: -20px;
   }
-  .host-name{
+  .host-name {
     color: #b1b1bc;
   }
   // .child-name{
   //   padding-left: 20px;
   // }
-  .text-overflow{
+  .text-overflow {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
-  .canceled{
+  .canceled {
     background: #c4c4c4;
   }
 }
 
 /* host-detail */
-.host-detail{
-  .renew-dialog{
-    .t-dialog{
+.host-detail {
+  .t-row {
+    width: auto;
+  }
+  .t-table td,
+  .t-table th {
+    padding: 12px 24px;
+  }
+  .jump {
+    color: var(--td-brand-color-active);
+    cursor: pointer;
+  }
+  .renew-dialog {
+    .t-dialog {
       width: 720px !important;
     }
-    .box{
+    .box {
       display: flex;
     }
-    .swiper{
+    .swiper {
       display: flex;
       align-items: center;
-      .t-icon{
+      .t-icon {
         font-size: 20px;
-        color: rgba(0,0,0,.6);
+        color: rgba(0, 0, 0, 0.6);
         cursor: pointer;
       }
     }
-    .m-box{
+    .m-box {
       display: flex;
     }
-    .swiper-item{
+    .swiper-item {
       width: 180px;
       box-sizing: border-box;
-      border: 1px solid #DCDCDC;
+      border: 1px solid #dcdcdc;
       margin: 0 10px;
       cursor: pointer;
       display: none;
@@ -431,79 +449,93 @@
       align-items: center;
       height: 110px;
       font-size: 16px;
-      color: rgba(0,0,0,.6);
-      font-family: 'PingFang SC';
-      p{
+      color: rgba(0, 0, 0, 0.6);
+      font-family: "PingFang SC";
+      p {
         margin: 0;
       }
-      &.active{
-        border-color: #0052D9;
+      &.active {
+        border-color: #0052d9;
       }
-      &.card{
+      &.card {
         display: flex;
       }
     }
-    .price{
+    .price {
       font-size: 26px;
       color: #333;
       font-weight: bold;
       margin-top: 10px !important;
-      span{
+      span {
         font-size: 14px;
         font-weight: normal;
-        color: rgba(0,0,0,.6);
+        color: rgba(0, 0, 0, 0.6);
       }
     }
   }
-  .com-f-btn{
-    .price{
+  .com-f-btn {
+    .price {
       font-size: 18px;
-      color: #FF0000;
-      span{
-        color: #FF0000;
+      color: #ff0000;
+      span {
+        color: #ff0000;
         font-size: 16px;
       }
     }
   }
-  .renew-btn{
+  .renew-btn {
     margin-bottom: 20px;
   }
-  .item{
+  .item {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    .t-form__item{
+    .t-form__item {
       width: 45%;
     }
   }
-  .box{
+  .box {
     height: calc(100% - 140px);
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
   }
-  .t-card__body{
+  .t-card__body {
     height: 100%;
   }
-  .t-select{
+  .t-select {
     height: 30px;
   }
-  .footer-btn{
+  .footer-btn {
     margin-top: 30px;
-    .t-button{
+    .t-button {
       margin-right: 20px;
     }
   }
-  .t-form:not(.t-form-inline) .t-form__item:last-of-type{
+  .t-form:not(.t-form-inline) .t-form__item:last-of-type {
     margin-bottom: 24px;
   }
-  .t-date-picker{
+  .t-date-picker {
     width: 100%;
   }
-  textarea{
+  textarea {
     height: 70px;
   }
 }
-.com-no-child{
+.com-no-child {
   margin-left: 5px !important;
+}
+// 子账户
+.chlid-box {
+  .t-table__header tr {
+    background-color: #eeeeee;
+  }
+  .t-table th,
+  .t-table thead td {
+    color: black;
+  }
+  .edit-text {
+    color: #1482c5;
+    cursor: pointer;
+  }
 }

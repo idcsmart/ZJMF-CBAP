@@ -122,6 +122,7 @@ class Think
      */
     public function fetch(string $template, array $data = []): void
     {
+
         if (empty($this->config['view_path'])) {
             $view = $this->config['view_dir_name'];
 

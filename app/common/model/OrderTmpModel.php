@@ -309,6 +309,15 @@ class OrderTmpModel extends Model
             if (!isset($param['client_id']) || empty($param['client_id'])){
                 return ['status'=>400,'msg'=>lang('param_error')];
             }
+
+            $result = hook('get_client_parent_id',['client_id'=>$param['client_id']]);
+
+            foreach ($result as $value){
+                if ($value){
+                    $param['client_id'] = (int)$value;
+                }
+            }
+
             $ClientModel = new ClientModel();
             $client = $ClientModel->find($param['client_id']);
             if (empty($client)){

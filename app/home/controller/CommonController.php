@@ -10,6 +10,7 @@ use app\home\validate\CommonValidate;
 use think\facade\Cache;
 use app\common\model\HostModel;
 use app\common\model\MenuModel;
+use app\home\model\ClientareaAuthModel;
 
 /**
  * @title 公共接口(前台,无需登录)
@@ -350,6 +351,46 @@ class CommonController extends HomeBaseController
             'status' => 200,
             'msg' => lang('success_message'),
             'data' => (new MenuModel())->homeMenu()
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-5-27
+     * @title 权限列表
+     * @desc 权限列表
+     * @author theworld
+     * @version v1
+     * @url /console/v1/auth
+     * @method  GET
+     * @return array list - 权限列表
+     * @return int list[].id - 权限ID
+     * @return string list[].title - 权限标题
+     * @return string list[].url - 地址
+     * @return int list[].order - 排序
+     * @return int list[].parent_id - 父级ID
+     * @return array list[].rules - 权限规则标题
+     * @return array list[].child - 权限子集
+     * @return int list[].child[].id - 权限ID
+     * @return string list[].child[].title - 权限标题
+     * @return string list[].child[].url - 地址
+     * @return int list[].child[].order - 排序
+     * @return int list[].child[].parent_id - 父级ID
+     * @return string list[].child[].rules - 权限规则标题
+     * @return array list[].child[].child - 权限子集
+     * @return int list[].child[].child[].id - 权限ID
+     * @return string list[].child[].child[].title - 权限标题
+     * @return string list[].child[].child[].url - 地址
+     * @return int list[].child[].child[].order - 排序
+     * @return int list[].child[].child[].parent_id - 父级ID
+     * @return string list[].child[].child[].rules - 权限规则标题
+     */
+    public function authList()
+    {
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => (new ClientareaAuthModel())->authList()
         ];
         return json($result);
     }

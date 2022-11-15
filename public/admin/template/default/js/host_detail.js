@@ -4,6 +4,9 @@
     const template = document.getElementsByClassName('host-detail')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
+    const host = location.host
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}/`
     new Vue({
       data () {
         return {
@@ -102,6 +105,27 @@
           showId: [1, 2, 3],
           curRenew: {},
           curStatus: '',
+          promoList: [],
+          recordColumns: [
+            {
+              colKey: 'create_time',
+              title: lang.use_time
+            },
+            {
+              colKey: 'scene',
+              title: lang.use_cycle
+            },
+            {
+              colKey: 'order_id',
+              title: lang.order_number
+            },
+            {
+              colKey: 'promo',
+              title: lang.promo_code,
+              width: 220
+            },
+          ],
+          recordLoading: false,
           hasPlugin: false
         }
       },
@@ -130,9 +154,11 @@
         this.getProList()
         this.getproModule()
         this.getPlugin()
+        this.getPromoList()
+        this.getPlugin()
         const navList = JSON.parse(localStorage.getItem('backMenus'))
         let tempArr = navList.reduce((all, cur) => {
-          all.push(...cur.child)
+          cur.child && all.push(...cur.child)
           return all
         }, [])
         const curValue = tempArr.filter(item => item.url === 'client.html')[0]?.id
@@ -146,14 +172,26 @@
       methods: {
         async getPlugin () {
           try {
-            const res = await getAddon()
-            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartRenew')[0]
-            if (cur.status === 1) {
-              this.hasPlugin = true
-            }
+            const res = await getAddon();
+            this.hasPlugin = res.data.data.list
+              .reduce((all, cur) => {
+                all.push(cur.name);
+                return all;
+              }, [])
+              .includes("PromoCode");
+          } catch (error) { }
+        },
+        // 获取优惠码使用记录
+        async getPromoList () {
+          try {
+            const res = await proPromoRecord({ id: this.id })
+            this.promoList = res.data.list
           } catch (error) {
-
+            console.log(error)
           }
+        },
+        jumpOrder (row) {
+          location.href = 'http://' + str + `order.html?order_id=${row.order_id}`
         },
         /* 续费 */
         renewDialog () {

@@ -70,7 +70,7 @@
 }
 
 .total-box {
-  width: 1rem;
+  min-width: 1.5rem;
 }
 
 .num-box {
@@ -92,8 +92,26 @@
 }
 
 .item-total {
+  font-size: 0.14rem;
   font-weight: bold;
   color: #171725;
+}
+
+.original-price {
+  text-decoration: line-through;
+  color: #999999;
+}
+
+.discount-codeNumber {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
+  font-weight: bold;
+  color: #F99600;
+}
+
+.remove-discountCode {
+  cursor: pointer;
+  margin-left: 0.09rem;
 }
 
 .shopping-goods {
@@ -240,6 +258,12 @@
 
 .red-text {
   color: #F0142F;
+}
+
+.discount-box {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
+  font-weight: 400;
 }
 
 @media screen and (max-width: 750px) {

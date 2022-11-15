@@ -42,7 +42,7 @@ class IndexController extends HomeBaseController
     {
         // 接收参数
         $param = $this->request->param();
-        $id = get_client_id(); // 获取用户ID
+        $id = get_client_id(false); // 获取用户ID
         
         // 实例化模型类
         $ClientModel = new ClientModel();

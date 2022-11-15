@@ -1,6 +1,7 @@
 {include file="header"}
-  <!-- 页面独有样式 -->
-  <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/shoppingCar.css">
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/shoppingCar.css">
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/loginDialog.css">
 </head>
 
 <body>
@@ -25,12 +26,12 @@
               <el-input :placeholder="lang.shoppingCar_tip_text" suffix-icon="el-icon-search" @change="searchValChange" v-model="searchVal">
               </el-input>
             </div>
-            <div class="goods-box"  v-loading="listLoding">
-              <div class="goods-item"  v-if="showList.length !== 0 || listLoding">
+            <div class="goods-box" v-loading="listLoding">
+              <div class="goods-item" v-if="showList.length !== 0 || listLoding">
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                   <div v-for="(item,index) in showList" :key="index" class="shopping-goods" v-loading="item.isLoading">
                     <div class="table-name">
-                      <el-checkbox :label="item" v-if="item.info">
+                      <el-checkbox :label="item.position" v-if="item.info">
                         <span class="goods-name">{{item.name}}</span>
                       </el-checkbox>
                       <span class="goods-name mar-left-24" v-else>{{item.name}}</span>
@@ -49,7 +50,7 @@
                           <tr v-if="item.info">
                             <td>
                               <div class="info-box">
-                              <div class="goods-info" v-if="item.info.base_price != '0'">
+                                <div class="goods-info" v-if="item.info.base_price != '0'">
                                   <span class="goodsInfo-type">
                                     <span class="goodsInfo-name">{{item.name}}</span>
                                     <span class="goodsInfo-val"></span>
@@ -73,18 +74,23 @@
                               <p v-if="item.stock_control === 1" :class="item.stock_qty === 0 ? 'red-text':''" class="qty-num">{{lang.shoppingCar_goods_tock_qty}}：{{ item.stock_qty }}</p>
                               <p v-if="item.isShowTips" class="qty-tips">{{lang.shoppingCar_tock_qty_tip}}</p>
                             </td>
-                            <td class="item-total">
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">
-                                    {{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ Math.round((Number(item.price) - item.unitPrice)*1000) / 1000 * item.qty }}
-                                </div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                            </el-popover>
-                            {/if}
-                            {/foreach}
-                            {{commonData.currency_prefix}} {{(item.unitPrice  * item.qty).toFixed(2)}}
+                            <td class="item-total" v-loading="item.priceLoading">
+                                <span>{{commonData.currency_prefix}} {{((item.price * item.qty) - item.code_discount - item.level_discount) > 0 ?  (((item.price * item.qty) - item.code_discount - item.level_discount)).toFixed(2) : 0 }}</span>
+                                <el-popover placement="top-start" width="180" trigger="hover" v-if="isShowLevel || (isShowPromo && item.isUseDiscountCode)">
+                                  <div class="show-config-list">
+                                    <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ item.level_discount | filterMoney }}</p>
+                                    <p v-if="isShowPromo && item.isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ item.code_discount | filterMoney }}</p>
+                                  </div>
+                                  <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                                </el-popover>
+                              <p class="original-price" v-if="item.code_discount != 0 || item.level_discount != 0 ">{{commonData.currency_prefix}} {{(item.price * item.qty).toFixed(2)}}</p>
+                              <div class="discount-box" v-show="item.customfield && !item.customfield.promo_code && isShowPromo">
+                                <discount-code @get-discount="getDiscount(arguments)" scene='new' :product_id='item.product_id' :qty="item.qty" :amount="item.price" :billing_cycle_time="item.info.duration" :shopping_index="item.position"><discount-code>
+                              </div>
+                              <div v-show="item.customfield && item.customfield.promo_code" class="discount-codeNumber">
+                                 {{ item.customfield.promo_code }}
+                                 <i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode(item)"></i>
+                              </div>
                             </td>
                             <td class="delete-btn" @click="handelDeleteGoods(item,index)">
                               <i class="el-icon-delete"></i>
@@ -137,4 +143,5 @@
   <script src="/{$template_catalog}/template/{$themes}/api/shopping.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/js/shoppingCar.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
+  <script src="/{$template_catalog}/template/{$themes}/components/discountCode/discountCode.js"></script>
   {include file="footer"}

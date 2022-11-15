@@ -8,24 +8,25 @@
                 asideMenu,
                 topMenu,
             },
-            created() {
+            created () {
                 window.addEventListener('scroll', this.scrollBottom)
                 this.getCommonData()
                 this.initData()
                 sessionStorage.removeItem("product_information")
             },
-            mounted() {
+            mounted () {
             },
-            updated() {
+            updated () {
                 // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
                 document.getElementsByClassName('template')[0].style.display = 'block'
             },
-            destroyed() {
+            destroyed () {
                 window.removeEventListener('scroll', this.scrollBottom)
             },
-            data() {
+            data () {
                 return {
+                    isShowView: false,
                     searchValue: '', // 搜索内容
                     searchLoading: false,
                     select_first_obj: {}, // 选中的一级分类对象 
@@ -47,7 +48,7 @@
                 }
             },
             filters: {
-                formateTime(time) {
+                formateTime (time) {
                     if (time && time !== 0) {
                         return formateDate(time * 1000)
                     } else {
@@ -56,14 +57,38 @@
                 }
             },
             methods: {
+                getRule (arr) {
+                    let isHave = this.showFun(arr, 'CartController::index')
+                    if (isHave) {
+                        this.isShowView = true
+                    }
+                    if (!this.isShowView) {
+                        // 没有权限
+                        location.href = "/noPermissions.html"
+                    }
+                },
+                showFun (arr, str) {
+                    if (typeof arr == "string") {
+                        return true;
+                    } else {
+                        let isShow = "";
+                        isShow = arr.find((item) => {
+                            let isHave = item.includes(str);
+                            if (isHave) {
+                                return isHave;
+                            }
+                        });
+                        return isShow;
+                    }
+                },
                 // 获取一级分类
-                getProductGroup_first() {
+                getProductGroup_first () {
                     productGroupFirst().then((res) => {
                         this.first_group_list = res.data.data.list
                     })
                 },
                 // 搜索
-                searchGoods() {
+                searchGoods () {
                     this.searchLoading = true
                     this.goodsParmas.keywords = this.searchValue
                     this.goodsParmas.id = ''
@@ -72,7 +97,7 @@
                     this.getProductGoodList()
                 },
                 // 获取二级分类
-                getProductGroup_second(id) {
+                getProductGroup_second (id) {
                     productGroupSecond(id).then((res) => {
                         this.secondLoading = false
                         this.second_group_list = res.data.data.list
@@ -84,7 +109,7 @@
                     })
                 },
                 // 获取商品列表
-                getProductGoodList() {
+                getProductGoodList () {
                     this.goodSLoading = true
                     productGoods(this.goodsParmas).then((res) => {
                         this.searchLoading = false
@@ -98,7 +123,7 @@
                     })
                 },
                 // 初始化
-                async initData() {
+                async initData () {
                     // 获取一级分类
                     await productGroupFirst().then((res) => {
                         this.first_group_list = res.data.data.list
@@ -110,17 +135,23 @@
                         await productGroupSecond(this.first_group_list[0].id).then((ress) => {
                             this.second_group_list = ress.data.data.list
                         })
-                        if (this.second_group_list[0].id) {
+                        if (this.second_group_list[0]) {
                             this.select_second_obj.id = this.second_group_list[0].id
                             this.goodsParmas.page = 1
                             this.goodsParmas.id = this.second_group_list[0].id
                             this.secondLoading = false
                             this.getProductGoodList()
+                        } else {
+                            this.goodSLoading = false
+                            this.goodsList = []
                         }
+                    } else {
+                        this.goodSLoading = false
+                        this.goodsList = []
                     }
                 },
                 // 点击一级分类
-                selectFirstType(val) {
+                selectFirstType (val) {
                     this.select_first_obj.id = val
                     this.secondLoading = true
                     this.goodsParmas.page = 1
@@ -130,7 +161,7 @@
                     this.goodsList = []
                 },
                 // 点击二级分类
-                selectSecondType(val) {
+                selectSecondType (val) {
                     this.select_second_obj.id = val
                     this.goodsParmas.id = val
                     this.goodsList = []
@@ -138,21 +169,16 @@
                     this.getProductGoodList()
                 },
                 // 获取通用配置
-                getCommonData() {
-                    getCommon().then(res => {
-                        if (res.data.status === 200) {
-                            this.commonData = res.data.data
-                            localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-                            document.title = this.commonData.website_name + '-商城'
-                        }
-                    })
+                getCommonData () {
+                    this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+                    document.title = this.commonData.website_name + '-商城'
                 },
                 // 点击购买
-                goOrder(item) {
-                    location.href = `goods.html?id=${item.id}`
+                goOrder (item) {
+                    location.href = `goods.html?id=${item.id}&name=${item.name}`
                 },
                 // 滚动计算
-                scrollBottom() {
+                scrollBottom () {
                     const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
                     const clientHeight = document.documentElement.clientHeight
                     const scrollHeight = document.documentElement.scrollHeight

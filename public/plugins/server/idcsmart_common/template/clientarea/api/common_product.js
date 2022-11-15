@@ -77,7 +77,7 @@ function calculate (params) {
 function updateCart (params) {
   return Axios.put(`/cart/${params.position}`, params);
 }
-// 获取商品折扣金额
+// 获取等级商品折扣金额
 function clientLevelAmount(params) {
   return Axios.get(`/client_level/product/${params.id}/amount`, { params });
 }

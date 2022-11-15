@@ -203,13 +203,8 @@
 
         // 获取通用配置
         getCommonData() {
-          getCommon().then(res => {
-            if (res.data.status === 200) {
-              this.commonData = res.data.data
-              localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-              document.title = this.commonData.website_name + '-通用产品'
-            }
-          })
+          this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+          document.title = this.commonData.website_name + '-通用产品'
         },
 
         // 显示续费弹窗

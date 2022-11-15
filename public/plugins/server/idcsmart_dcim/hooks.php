@@ -50,7 +50,7 @@ add_hook('daily_cron', function($param){
 			$Dcim = new Dcim($ServerModel);
 			$dcim[$v['server_id']] = $Dcim;
 		}else{
-			$Dcim = $dcim['id'];
+			$Dcim = $dcim[ $v['server_id'] ];
 		}
 		if($v['traffic_bill_type'] == 'last_30days'){
 			// 计算开通的日期

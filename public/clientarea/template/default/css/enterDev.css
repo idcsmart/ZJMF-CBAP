@@ -1,0 +1,55 @@
+.enterDev-content header {
+  font-size: 0.28rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #171725;
+  line-height: 0.25rem;
+}
+.enterDev-content .enterDev-main {
+  margin-top: 0.4rem;
+  display: flex;
+}
+.enterDev-content .enterDev-main .el-step__icon {
+  position: absolute !important;
+}
+.enterDev-content .enterDev-main .enterDev-right {
+  margin-top: 1.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 4.36rem;
+}
+.enterDev-content .enterDev-main .enterDev-right img {
+  width: 2.2rem;
+  height: 2.2rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.enterDev-content .enterDev-main .enterDev-right h1 {
+  font-size: 0.18rem;
+  font-family: PingFang SC-Bold, PingFang SC;
+  font-weight: bold;
+  color: #1e2736;
+  line-height: 0.24rem;
+  margin-bottom: 0.2rem;
+}
+.enterDev-content .enterDev-main .enterDev-right p {
+  font-size: 0.14rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #4e5259;
+  line-height: 0.21rem;
+  margin-bottom: 0.2rem;
+}
+.enterDev-content .enterDev-main .enterDev-right button {
+  width: 1.44rem;
+  height: 0.46rem;
+  background: #0058ff;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  font-size: 0.16rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 0.24rem;
+  border: none;
+}

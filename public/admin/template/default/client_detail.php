@@ -167,6 +167,19 @@
           </t-row>
         </t-col>
       </t-row>
+      <!-- 子账户 -->
+      <div class="login-log chlid-box" v-show="childList.length > 0" style="margin-bottom:40px">
+        <p class="com-tit"><span>子账户</span></p>
+        <t-table row-key="1" :data="childList" size="medium" :bordered="true" :columns="childColumns" :hover="hover" :loading="loading" table-layout="auto">
+          <template #last_action_time="{row}">
+            {{ row.last_action_time>0 ? moment(row.last_action_time * 1000).format('YYYY-MM-DD HH:mm:ss') : '--'}}
+          </template>
+          <template #caozuo="{row}">
+            <span class="edit-text" @click="goEdit(row.id)">编辑</span>
+          </template>
+        </t-table>
+        <t-pagination v-if="total" :total="total" :page-size="params.limit" :page-size-options="logSizeOptions" :on-change="changePage" />
+      </div>
       <!-- 登录日志 -->
       <div class="login-log">
         <p class="com-tit"><span>{{lang.login_record}}</span></p>

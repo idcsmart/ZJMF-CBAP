@@ -60,6 +60,10 @@
   margin-left: 30px;
 }
 
+.item-title {
+  margin-top: 5px;
+}
+
 .item-nums {
   margin-top: 18px;
   display: flex;
@@ -267,6 +271,7 @@
 .t-list-item__content {
   width: 100%;
 }
-.bottom-list .t-list__inner .t-list-item:nth-last-of-type(1){
+
+.bottom-list .t-list__inner .t-list-item:nth-last-of-type(1) {
   border: none;
 }

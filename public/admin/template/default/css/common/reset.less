@@ -84,6 +84,10 @@ a {
   padding: 12px 5px;
   min-width: 80px;
 }
+.t-radio-group{
+  overflow-x: visible;
+  overflow-y: visible;
+}
 
 /* 重置tag颜色 */
 .t-tag{
@@ -174,6 +178,7 @@ body {
 
     .t-select {
       width: 100%;
+      top: 8px;
     }
   }
 }
@@ -530,6 +535,11 @@ body {
         padding-left: 64px;
       }
     }
+    .com-crumb{
+      position: absolute;
+      bottom: -50px;
+      padding-left: 25px;
+    }
   }
 
   .cur-img {
@@ -620,6 +630,7 @@ body {
   margin-top: 20px;
 
   .img {
+    width: 30px;
     height: 20px;
     display: inline-block;
     vertical-align: middle;
@@ -652,7 +663,11 @@ body {
   }
 
   .setting-layout-drawer {
+    .t-radio-button__label{
+      height: 48px;
+    }
     .t-radio-button {
+      height: auto;
       display: inline-flex;
       max-height: 78px;
       padding: 8px;
@@ -666,6 +681,9 @@ body {
   }
 
   .theme {
+    .t-radio-button__label{
+      height: auto;
+    }
     &.no .t-radio-button {
       border-color: transparent;
     }
@@ -778,9 +796,11 @@ textarea {
 }
 
 .com-status {
-  padding: 0 15px !important;
+  padding: 0 10px !important;
   text-align: center;
   display: inline-block;
+  border-radius: 4px;
+  font-size: 12px;
 }
 
 .com-f-btn {
@@ -851,14 +871,19 @@ textarea {
 .cloud-config {
   padding: 24px;
 }
-
+// .t-table__body {
+//   tr{
+//     cursor: pointer;
+//   }
+// }
 
 /**** client_host *****/
 .common-look {
   color: var(--td-brand-color);
   cursor: pointer;
   margin-right: 6px;
-
+  position: relative;
+  z-index: 10;
   .t-icon {
     font-size: 18px;
   }

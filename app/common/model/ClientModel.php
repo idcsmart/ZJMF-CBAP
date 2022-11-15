@@ -185,6 +185,9 @@ class ClientModel extends Model
             unset($client['client_notes']);
         }else if($app=='home'){
             $client['notes'] = $client['client_notes'];
+            $client['customfiled'] = [
+                'is_sub_account' => get_client_id()!=get_client_id(false) ? 1 : 0
+            ];
             // 前台接口去除字段
             unset($client['client_notes'], $client['register_time'], $client['last_login_time'], $client['last_login_ip']);
         }
@@ -302,7 +305,7 @@ class ClientModel extends Model
         // 获取当前应用
         $app = app('http')->getName();
         if($app=='home'){
-            $param['id'] = get_client_id();
+            $param['id'] = get_client_id(false);
         }
 
 
@@ -450,6 +453,9 @@ class ClientModel extends Model
         }
     	$this->startTrans();
 		try {
+            # 记录日志
+            active_log(lang('admin_delete_user', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client['username'].'#']), 'client', $client->id);
+
 			$this->destroy($id);
             // 删除用户余额记录
             ClientCreditModel::destroy(function($query) use($id){
@@ -589,7 +595,7 @@ class ClientModel extends Model
     public function verifyOldPhone($param)
     {
         // 获取登录用户ID
-        $id = get_client_id();
+        $id = get_client_id(false);
         $client = $this->find($id);
         if (empty($client)){
             return ['status'=>400, 'msg'=>lang('fail_message')];
@@ -629,7 +635,7 @@ class ClientModel extends Model
     public function updateClientPhone($param)
     {
         // 获取登录用户ID
-        $id = get_client_id();
+        $id = get_client_id(false);
         $client = $this->find($id);
         if (empty($client)){
             return ['status'=>400, 'msg'=>lang('fail_message')];
@@ -705,7 +711,7 @@ class ClientModel extends Model
     public function verifyOldEmail($param)
     {
         // 获取登录用户ID
-        $id = get_client_id();
+        $id = get_client_id(false);
         $client = $this->find($id);
         if (empty($client)){
             return ['status'=>400, 'msg'=>lang('fail_message')];
@@ -745,7 +751,7 @@ class ClientModel extends Model
     public function updateClientEmail($param)
     {
         // 获取登录用户ID
-        $id = get_client_id();
+        $id = get_client_id(false);
         $client = $this->find($id);
         if (empty($client)){
             return ['status'=>400, 'msg'=>lang('fail_message')];
@@ -820,7 +826,7 @@ class ClientModel extends Model
     public function updateClientPassword($param)
     {
         // 获取登录用户ID
-        $id = get_client_id();
+        $id = get_client_id(false);
         $client = $this->find($id);
         if (empty($client)){
             return ['status'=>400, 'msg'=>lang('fail_message')];
@@ -905,7 +911,7 @@ class ClientModel extends Model
             return ['status'=>400,'msg'=>lang('verify_type_only_phone_or_email')];
         }
 
-        $param['id'] = get_client_id();
+        $param['id'] = get_client_id(false);
         $type = $param['type'];
         if ($type == 'phone'){
             return $this->phonePasswordUpdate($param);
@@ -980,7 +986,12 @@ class ClientModel extends Model
         if (!in_array($param['type'],['phone','email'])){
             return ['status'=>400,'msg'=>lang('register_type_only_phone_or_email')];
         }
-
+        $hookRes = hook('before_client_register', $param);
+        foreach($hookRes as $v){
+            if(isset($v['status']) && $v['status'] == 400){
+                return $v;
+            }
+        }
         # 图形验证码
         /*if (configuration('captcha_client_register')){
             if (!isset($param['captcha']) || empty($param['captcha'])){
@@ -1043,7 +1054,7 @@ class ClientModel extends Model
      */
     public function logout($param)
     {
-        $clientId = get_client_id();
+        $clientId = get_client_id(false);
 
         $client = $this->find($clientId);
         if (empty($client)){

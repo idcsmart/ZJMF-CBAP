@@ -493,7 +493,6 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
 }
 .main-card .order-main .order-right .order-right-footer .footer-total .left {
   color: #1E2736;
@@ -503,9 +502,22 @@
   font-family: Helvetica;
   font-weight: bold;
   color: #F0142F;
+  text-align: right;
 }
 .main-card .order-main .order-right .order-right-footer .footer-total .right .total-icon {
   font-size: 0.14rem;
+  color: #757575;
+}
+.main-card .order-main .order-right .order-right-footer .footer-total .original-price {
+  font-weight: 500;
+  font-size: 0.2rem;
+  text-decoration: line-through;
+  color: #999999;
+}
+.main-card .order-main .order-right .order-right-footer .footer-total .discount-codeNumber {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
+  font-weight: bold;
   color: #757575;
 }
 .main-card .order-main .order-right .order-right-footer .footer-code {
@@ -657,4 +669,12 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+.remove-discountCode {
+  cursor: pointer;
+  margin-left: 0.09rem;
+}
+.discount-box {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
 }

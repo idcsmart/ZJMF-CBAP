@@ -86,7 +86,7 @@ class ProductController extends HomeBaseController
      * @return string list[].price - 商品最低价格
      * @return int count - 商品总数
      */
-    public function productList()
+    public function list()
     {
         # 合并分页参数
         $param = array_merge($this->request->param(),['page'=>$this->request->page,'limit'=>$this->request->limit,'sort'=>$this->request->sort]);

@@ -218,10 +218,19 @@ class Handle
 
     protected function renderExceptionContent(Throwable $exception): string
     {
+
         ob_start();
         $data = $this->convertExceptionToArray($exception);
         extract($data);
-        include $this->app->config->get('app.exception_tmpl') ?: __DIR__ . '/../../tpl/think_exception.tpl';
+        if (APP_DEBUG){
+            include $this->app->config->get('app.exception_tmpl.debug') ?: __DIR__ . '/../../tpl/think_exception.tpl';
+        }else{
+            if (app('http')->getName()=='admin'){
+                include $this->app->config->get('app.exception_tmpl.admin') ?: __DIR__ . '/../../tpl/think_exception.tpl';
+            }else{
+                include $this->app->config->get('app.exception_tmpl.home') ?: __DIR__ . '/../../tpl/think_exception.tpl';
+            }
+        }
 
         return ob_get_clean();
     }

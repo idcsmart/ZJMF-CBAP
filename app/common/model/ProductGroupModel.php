@@ -310,20 +310,41 @@ class ProductGroupModel extends Model
                 if (empty($preProductGroup)){
                     throw new \Exception(lang('pre_product_group_is_not_exist'));
                 }
-                $tmps = $this->where('parent_id',$param['pre_first_product_group_id'])
-                    ->where('order','<=',$preProductGroup['order'])
-                    ->select()->toArray();
-                foreach ($tmps as $tmp){
-                    $this->update([
-                        'order' => $tmp['order']-1,
+
+                if (isset($param['backward']) && $param['backward']){
+                    $tmps = $this->where('parent_id',$param['pre_first_product_group_id'])
+                        ->where('order','>=',$preProductGroup['order'])
+                        ->where('id','<>',$param['id'])
+                        ->select()->toArray();
+                    foreach ($tmps as $tmp){
+                        $this->update([
+                            'order' => $tmp['order']+1,
+                            'update_time' => $time
+                        ],['id'=>$tmp['id']]);
+                    }
+                    $productGroup->save([
+                        'order' => $preProductGroup['order'],
+                        'parent_id' => $param['pre_first_product_group_id'],
                         'update_time' => $time
-                    ],['id'=>$tmp['id']]);
+                    ]);
+                }else{
+                    $tmps = $this->where('parent_id',$param['pre_first_product_group_id'])
+                        ->where('order','<=',$preProductGroup['order'])
+                        ->select()->toArray();
+                    foreach ($tmps as $tmp){
+                        $this->update([
+                            'order' => $tmp['order']-1,
+                            'update_time' => $time
+                        ],['id'=>$tmp['id']]);
+                    }
+                    $productGroup->save([
+                        'order' => $preProductGroup['order']+1,
+                        'parent_id' => $param['pre_first_product_group_id'],
+                        'update_time' => $time
+                    ]);
                 }
-                $productGroup->save([
-                    'order' => $preProductGroup['order'],
-                    'parent_id' => $param['pre_first_product_group_id'],
-                    'update_time' => $time
-                ]);
+
+
             }else{
                 $minOrder = $this->where('parent_id',$param['pre_first_product_group_id'])->min('order');
                 $productGroup->save([

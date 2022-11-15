@@ -38,7 +38,15 @@ function formateDate(time) {
     m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     return (Y + M + D + h + m);
 };
-
+function formateDate1(time) {
+  var date = new Date(time);
+  Y = date.getFullYear() + '.';
+  M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '.';
+  D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+  h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+  m = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+  return (Y + M + D);
+};
 /**
  * 生成密码字符串
  * 33~47：!~/

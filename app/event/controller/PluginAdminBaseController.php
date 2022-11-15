@@ -25,7 +25,7 @@ class PluginAdminBaseController extends PluginBaseController
             $AuthRuleModel = new AuthRuleModel();
             $name = $AuthRuleModel->getAuthName($rule);
             if(!empty($name)){
-                echo json_encode(['status'=>404, 'msg'=>lang('permission_denied', ['{name}'=>lang($name)])]);die;
+                echo json_encode(['status'=>404, 'msg'=>lang('permission_denied', ['{name}'=>lang_plugins($name)])]);die;
             }
 
         }

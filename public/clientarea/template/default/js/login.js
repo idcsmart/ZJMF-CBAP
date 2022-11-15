@@ -23,7 +23,9 @@ function captchaCheckCancel() {
       },
       data() {
         return {
-          isShowCaptcha: false, //登录是否需要验证码
+          // 登录是否需要验证
+          isCaptcha: false,
+          isShowCaptcha: false, //登录是否显示验证码弹窗
           checked: getCookie("checked") == "1" ? true : false,
           isEmailOrPhone: getCookie("isEmailOrPhone") == "1" ? true : false,  // true:电子邮件 false:手机号
           isPassOrCode: getCookie("isPassOrCode") == "1" ? true : false, // true:密码登录 false:验证码登录
@@ -65,6 +67,7 @@ function captchaCheckCancel() {
       methods: {
         // 验证码验证成功后的回调
         getData(captchaCode, token) {
+          this.isCaptcha = false
           console.log(captchaCode, token);
           this.token = token
           this.captcha = captchaCode
@@ -161,6 +164,12 @@ function captchaCheckCancel() {
           if (!this.checked) {
             isPass = false
             this.errorText = "请勾选服务协议书！"
+          }
+
+          if (isPass && this.isCaptcha) {
+            this.isShowCaptcha = true
+            this.$refs.captcha.doGetCaptcha()
+            return
           }
 
           // 验证通过
@@ -321,7 +330,7 @@ function captchaCheckCancel() {
                 this.$refs.phoneCodebtn.countDown()
               }
             }).catch(err => {
-              if (err.data.msg === "请输入图形验证码" || err.data.msg === "图形验证码错误") {
+              if (err.data.msg == "请输入图形验证码" || err.data.msg == "图形验证码错误") {
                 this.isShowCaptcha = true
                 this.$refs.captcha.doGetCaptcha()
               } else {
@@ -345,6 +354,9 @@ function captchaCheckCancel() {
             this.commonData = res.data.data
             if (this.commonData.login_phone_verify == 0) {
               this.isPassOrCode = true
+            }
+            if (this.commonData.captcha_client_login == 1) {
+              this.isCaptcha = true
             }
             document.title = this.commonData.website_name + '-登录'
             localStorage.setItem('common_set_before', JSON.stringify(res.data.data))

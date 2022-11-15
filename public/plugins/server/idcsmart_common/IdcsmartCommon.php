@@ -1,6 +1,7 @@
 <?php 
 namespace server\idcsmart_common;
 
+use app\admin\model\PluginModel;
 use server\idcsmart_common\logic\IdcsmartCommonLogic;
 use server\idcsmart_common\validate\IdcsmartCommonProductValidate;
 use think\facade\Db;
@@ -47,9 +48,11 @@ class IdcsmartCommon
   `custom_cycle_id` int(11) NOT NULL DEFAULT '0' COMMENT '自定义周期ID',
   `rel_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联ID:如商品ID,配置项ID',
   `type` enum('product','configoption') NOT NULL DEFAULT 'product' COMMENT '价格类型:product商品,configoption配置项',
-  `amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '自定义周期金额',
+  `amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '自定义周期金额:-1表示前台不显示此周期,>=0时表示此周期金额,默认为-1',
   PRIMARY KEY (`id`),
-  KEY `type_rel_id` (`rel_id`,`type`)
+  KEY `type_rel_id` (`rel_id`,`type`),
+  KEY `custom_cycle_id` (`custom_cycle_id`),
+  KEY `ctr` (`custom_cycle_id`,`rel_id`,`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",
             "CREATE TABLE `idcsmart_module_idcsmart_common_host_configoption` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '产品关联配置表',
@@ -97,7 +100,8 @@ class IdcsmartCommon
   `max_repeat` int(11) NOT NULL DEFAULT '5' COMMENT '最大允许重复数量',
   `fee_type` varchar(25) NOT NULL DEFAULT 'stage' COMMENT '数量的类型的计费方式：stage阶梯计费，qty数量计费(当前区间价格*数量)',
   `description` text COMMENT '说明',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",
             "CREATE TABLE `idcsmart_module_idcsmart_common_product_configoption_sub` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '配置子项表',
@@ -342,7 +346,14 @@ class IdcsmartCommon
 	 * @return  [type]         [description]
 	 */
 	public function clientProductConfigOption($params){
+        $PluginModel = new PluginModel();
+        $addons = $PluginModel->plugins('addon');
 		$res = [
+		    'vars' => [
+		        'template_catalog' => 'clientarea',
+                'themes' => configuration('clientarea_theme'),
+                'addons' => $addons['list']
+            ],
 			'template'=>'template/clientarea/goods.php',
 		];
 

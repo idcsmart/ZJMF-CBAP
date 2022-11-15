@@ -6,6 +6,10 @@
 .log-system .common-header .search {
   width: 360px;
 }
+.log-system .log-description-width img {
+  width: 140px;
+  height: 84px;
+}
 /* log-notice-sms */
 .log-notice-sms .common-header,
 .log-notice-email .common-header {
@@ -19,30 +23,7 @@
 .log-notice-email .common-header .search {
   width: 360px;
 }
-.messagePop .t-dialog {
-  max-height: 80% !important;
-  overflow-y: auto;
-  transform: translate(-50%, -10%) !important;
-}
-.messagePop .t-dialog__header {
-  position: sticky;
-  top: -28px;
-  line-height: 40px;
-  background: #fff;
-  z-index: 10;
-}
-.messagePop .t-dialog__header .messageHeader {
-  justify-content: space-between;
-  width: 100%;
-  display: flex;
-}
-.messagePop .t-dialog__header .messageHeader .t-icon {
-  cursor: pointer;
-}
 /* task */
-.task .t-form {
-  flex-wrap: nowrap;
-}
 .task .t-form .t-form__label {
   width: auto !important;
   padding-right: 10px !important;
@@ -66,19 +47,6 @@
 .task .task-icon {
   width: 14px;
   height: 14px;
-}
-.task .task-description > div {
-  display: flex;
-  align-items: center;
-}
-.task .f-btn.t-form__item {
-  margin-right: 0 !important;
-}
-.task .f-btn .t-form__controls {
-  width: auto;
-}
-.notice-width {
-  max-width: 300px !important;
 }
 @media screen and (max-width: 1400px) {
   .task .t-form .search .t-form__controls {

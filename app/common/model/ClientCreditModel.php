@@ -34,6 +34,9 @@ class ClientCreditModel extends Model
      * @desc 用户余额变更记录列表
      * @author theworld
      * @version v1
+     * @param int param.start_time - 开始时间，时间戳(s)
+     * @param int param.end_time - 结束时间，时间戳(s)
+     * @param string param.type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund 
      * @param int param.page - 页数
      * @param int param.limit - 每页条数
      * @param string param.orderby - 排序 id,username,phone,email
@@ -69,6 +72,9 @@ class ClientCreditModel extends Model
             if(!empty($param['type'])){
                 $query->where('cc.type', $param['type']);
             }
+            if(!empty($param['start_time']) && !empty($param['end_time'])){
+                $query->where('cc.create_time', '>=', $param['start_time'])->where('cc.create_time', '<=', $param['end_time']);
+            }   
         };
 
         $count = $this->alias('cc')

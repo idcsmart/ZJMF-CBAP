@@ -32,6 +32,13 @@
         <t-tooltip :content="filterName(row.custom_field)" :show-arrow="false" theme="light" :disabled="row.custom_field.length === 0 || !hasPlugin">
           <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" :class="{bg:row.custom_field.length > 0 && hasPlugin}" :style="{'background-color': filterColor(row.custom_field)}" v-if="authList.includes('ClientController::index')">{{row.username}}</a>
           <span v-else>{{row.username}}</span>
+          <t-tooltip v-show="row.parent_id" :show-arrow="false" theme="light">
+            <span @click="goDetail(row.parent_id)" slot="content" style="cursor: pointer">
+              #{{row.parent_id}} {{row.parent_name}}
+            </span>
+           <t-tag >子账户</t-tag>
+        </t-tooltip></template>
+          
         </t-tooltip>
       </template>
       <template #host_active_num="{row}">

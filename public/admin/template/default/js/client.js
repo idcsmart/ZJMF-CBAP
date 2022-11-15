@@ -1,16 +1,20 @@
 (function (window, undefined) {
-  var old_onload = window.onload
+  var old_onload = window.onload;
   window.onload = function () {
-    const template = document.getElementsByClassName('client')[0]
-    Vue.prototype.lang = window.lang
+    const template = document.getElementsByClassName("client")[0];
+    Vue.prototype.lang = window.lang;
     new Vue({
-      data () {
-        let checkPwd2 = (val => {
+      data() {
+        let checkPwd2 = (val) => {
           if (val !== this.formData.password) {
-            return { result: false, message: window.lang.password_tip, type: 'error' };
+            return {
+              result: false,
+              message: window.lang.password_tip,
+              type: "error",
+            };
           }
           return { result: true };
-        })
+        };
         return {
           data: [],
           tableLayout: false,
@@ -21,289 +25,335 @@
           hover: true,
           columns: [
             {
-              colKey: 'id',
-              title: 'ID',
+              colKey: "id",
+              title: "ID",
               width: 125,
-              sortType: 'all',
-              sorter: true
+              sortType: "all",
+              sorter: true,
             },
             {
-              colKey: 'username',
+              colKey: "username",
               title: lang.name,
               width: 200,
-              ellipsis: true
+              ellipsis: true,
             },
             {
-              colKey: 'phone',
+              colKey: "phone",
               title: lang.contact,
               width: 400,
-              ellipsis: true
+              ellipsis: true,
             },
             {
-              colKey: 'email',
+              colKey: "email",
               title: lang.email,
               width: 400,
-              ellipsis: true
+              ellipsis: true,
             },
             {
-              colKey: 'host_active_num',
+              colKey: "host_active_num",
               title: lang.host_active_product_num,
-              width: 140
+              width: 140,
             },
             {
-              colKey: 'status',
+              colKey: "status",
               title: lang.isOpen,
-              width: 120
+              width: 120,
             },
-            // {
-            //   colKey: 'op',
-            //   title: lang.operation,
-            //   width: 190,
-            //   fixed: 'right'
-            // },
+
           ],
           hideSortTips: true,
           params: {
-            keywords: '',
+            keywords: "",
             page: 1,
             limit: 20,
-            orderby: 'id',
-            sort: 'desc'
+            orderby: "id",
+            sort: "desc",
           },
-          curLevelId: '',
+          curLevelId: "",
           total: 0,
           pageSizeOptions: [20, 50, 100],
-          formData: { // 添加用户
-            username: '',
-            email: '',
+          formData: {
+            // 添加用户
+            username: "",
+            email: "",
             phone_code: 86,
-            phone: '',
-            password: '',
-            repassword: ''
+            phone: "",
+            password: "",
+            repassword: "",
           },
           rules: {
-            username: [{ required: true, message: lang.input + lang.name, type: 'error' }],
+            username: [
+              {
+                required: true,
+                message: lang.input + lang.name,
+                type: "error",
+              },
+            ],
             password: [
-              { required: true, message: lang.input + lang.password, type: 'error' },
-              { pattern: /^[\w@!#$%^&*()+-_]{6,32}$/, message: lang.verify8 + '6~32' + '，' + lang.verify14, type: 'warning' }
+              {
+                required: true,
+                message: lang.input + lang.password,
+                type: "error",
+              },
+              {
+                pattern: /^[\w@!#$%^&*()+-_]{6,32}$/,
+                message: lang.verify8 + "6~32" + "，" + lang.verify14,
+                type: "warning",
+              },
             ],
             repassword: [
-              { required: true, message: lang.input + lang.surePassword, type: 'error' },
-              { validator: checkPwd2, trigger: 'blur' }
+              {
+                required: true,
+                message: lang.input + lang.surePassword,
+                type: "error",
+              },
+              { validator: checkPwd2, trigger: "blur" },
             ],
           },
           loading: false,
           country: [],
-          delId: '',
+          delId: "",
           curStatus: 1,
-          statusTip: '',
-          maxHeight: '',
-          authList: JSON.parse(JSON.stringify(localStorage.getItem('backAuth'))),
+          statusTip: "",
+          maxHeight: "",
+          authList: JSON.parse(
+            JSON.stringify(localStorage.getItem("backAuth"))
+          ),
           /* 用户等级 */
           levelList: [],
-          hasPlugin: false
-        }
+          hasPlugin: false,
+        };
       },
       computed: {
-        filterColor () {
+        filterColor() {
           return (level) => {
             if (level) {
-              return this.levelList.filter(item=> item.id * 1 === level[0]?.value * 1)[0]?.background_color
+              return this.levelList.filter(
+                (item) => item.id * 1 === level[0]?.value * 1
+              )[0]?.background_color;
             }
-          }
+          };
         },
-        filterName () {
+        filterName() {
           return (level) => {
             if (level) {
-              return this.levelList.filter(item=> item.id * 1 === level[0]?.value * 1)[0]?.name || ''
+              return (
+                this.levelList.filter(
+                  (item) => item.id * 1 === level[0]?.value * 1
+                )[0]?.name || ""
+              );
             }
-          }
-        }
+          };
+        },
       },
-      mounted () {
-        this.maxHeight = document.getElementById('content').clientHeight - 170
-        let timer = null
+      mounted() {
+        this.maxHeight = document.getElementById("content").clientHeight - 170;
+        let timer = null;
         window.onresize = () => {
           if (timer) {
-            return
+            return;
           }
           timer = setTimeout(() => {
-            this.maxHeight = document.getElementById('content').clientHeight - 170
-            clearTimeout(timer)
-            timer = null
-          }, 300)
-        }
+            this.maxHeight =
+              document.getElementById("content").clientHeight - 170;
+            clearTimeout(timer);
+            timer = null;
+          }, 300);
+        };
       },
-      created () {
+      created() {
         // 权限相关
-        if (!this.authList.includes('ClientController::clientList')) {
-          return this.$message.error(lang.tip17 + ',' + lang.tip18)
+        if (!this.authList.includes("ClientController::clientList")) {
+          return this.$message.error(lang.tip17 + "," + lang.tip18);
         }
-        const href = location.href.split('?')[1]
+        const href = location.href.split("?")[1];
         if (href) {
-          this.curLevelId = location.href.split('?')[1]?.split('=')[1] * 1
+          this.curLevelId = location.href.split("?")[1]?.split("=")[1] * 1;
         }
-        this.getClientList()
-        this.getCountry()
-        this.getLevel()
-        this.getPlugin()
+        this.getClientList();
+        this.getCountry();
+        this.getLevel();
+        this.getPlugin();
       },
       methods: {
-        async getPlugin () {
+        async getPlugin() {
           try {
-            const res = await getAddon()
-            const cur = res.data.data.list.filter(item => item.name === 'IdcsmartClientLevel')[0]
-            if (cur.status === 1) {
-              this.hasPlugin = true
-            }
-          } catch (error) {
-
-          }
+            const res = await getAddon();
+            this.hasPlugin = res.data.data.list
+              .reduce((all, cur) => {
+                all.push(cur.name);
+                return all;
+              }, [])
+              .includes("IdcsmartClientLevel");
+          } catch (error) { }
         },
-        rowClick (e) {
-          location.href = `client_detail.html?client_id=${e.row.id}`
+        rowClick(e) {
+          location.href = `client_detail.html?client_id=${e.row.id}`;
         },
         /* 用户等级 */
-        async getLevel () {
+        async getLevel() {
           try {
-            const res = await getAllLevel()
-            this.levelList = res.data.data.list
-          } catch (error) {
-          }
+            const res = await getAllLevel();
+            this.levelList = res.data.data.list;
+          } catch (error) { }
         },
         // 输入邮箱的时候取消手机号验证
-        cancelPhone (val) {
+        cancelPhone(val) {
           if (val) {
-            this.$refs.userDialog.clearValidate(['phone'])
+            this.$refs.userDialog.clearValidate(["phone"]);
           }
         },
-        cancelEmail (val) {
+        cancelEmail(val) {
           if (val) {
-            this.$refs.userDialog.clearValidate(['email'])
+            this.$refs.userDialog.clearValidate(["email"]);
           }
         },
         // 获取列表
-        async getClientList () {
+        async getClientList() {
           try {
-            this.loading = true
-            const res = await getClientList(this.params, this.curLevelId)
-            this.loading = false
-            this.data = res.data.data.list
-            this.total = res.data.data.count
+            this.loading = true;
+            const res = await getClientList(this.params, this.curLevelId);
+            this.loading = false;
+            this.data = res.data.data.list;
+            idList = this.data.map((item) => item.id);
+            str = idList.join(",");
+            const result = await getAdminAccountApi({ id: str });
+            let arr = result.data.data.list;
+            console.log(arr);
+            this.data = this.data.map((item) => {
+              let isHave = arr.find((opt) => opt.id === item.id);
+              if (isHave) {
+                return {
+                  ...item,
+                  parent_id: isHave.parent_id,
+                  parent_name: isHave.username,
+                };
+              } else {
+                return item;
+              }
+            });
+
+            this.total = res.data.data.count;
           } catch (error) {
-            this.loading = false
-            this.$message.error(error.data.msg)
+            this.loading = false;
+            console.log(error.data && error.data.msg);
           }
         },
         // 切换分页
-        changePage (e) {
-          this.params.page = e.current
-          this.params.limit = e.pageSize
-          this.params.keywords = ''
-          this.getClientList()
+        changePage(e) {
+          this.params.page = e.current;
+          this.params.limit = e.pageSize;
+          this.params.keywords = "";
+          this.getClientList();
         },
         // 排序
-        sortChange (val) {
+        sortChange(val) {
           if (!val) {
-            this.params.orderby = 'id'
-            this.params.sort = 'desc'
+            this.params.orderby = "id";
+            this.params.sort = "desc";
           } else {
-            this.params.orderby = val.sortBy
-            this.params.sort = val.descending ? 'desc' : 'asc'
+            this.params.orderby = val.sortBy;
+            this.params.sort = val.descending ? "desc" : "asc";
           }
-          this.getClientList()
+          this.getClientList();
         },
-        clearKey () {
-          this.params.keywords = ''
-          this.seacrh()
+        clearKey() {
+          this.params.keywords = "";
+          this.seacrh();
         },
-        seacrh () {
-          this.params.page = 1
-          this.getClientList()
+        seacrh() {
+          this.params.page = 1;
+          this.getClientList();
         },
         // 获取国家列表
-        async getCountry () {
+        async getCountry() {
           try {
-            const res = await getCountry()
-            this.country = res.data.data.list
+            const res = await getCountry();
+            this.country = res.data.data.list;
           } catch (error) {
-            this.$message.error(error.data.msg)
+            this.$message.error(error.data.msg);
           }
         },
-        close () {
-          this.visible = false
-          this.$refs.userDialog.reset()
+        close() {
+          this.visible = false;
+          this.$refs.userDialog.reset();
         },
         // 添加用户
-        addUser () {
-          this.visible = true
+        addUser() {
+          this.visible = true;
         },
-        async onSubmit ({ validateResult, firstError }) {
+        async onSubmit({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
-              const res = await addClient(this.formData)
-              this.$message.success(res.data.msg)
-              this.getClientList()
-              this.visible = false
-              this.$refs.userDialog.reset()
+              const res = await addClient(this.formData);
+              this.$message.success(res.data.msg);
+              this.getClientList();
+              this.visible = false;
+              this.$refs.userDialog.reset();
             } catch (error) {
-              this.$message.error(error.data.msg)
+              this.$message.error(error.data.msg);
             }
           } else {
-            console.log('Errors: ', validateResult);
+            console.log("Errors: ", validateResult);
             this.$message.warning(firstError);
           }
         },
         // 查看用户详情
-        handleClickDetail (row) {
-          location.href = `client_detail.html?id=${row.id}`
+        handleClickDetail(row) {
+          location.href = `client_detail.html?id=${row.id}`;
         },
         // 停用/启用
-        changeStatus (row) {
-          event.stopPropagation()
-          this.delId = row.id
-          this.curStatus = row.status
-          this.statusTip = this.curStatus ? lang.sure_Close : lang.sure_Open
-          this.statusVisble = true
+        changeStatus(row) {
+          event.stopPropagation();
+          this.delId = row.id;
+          this.curStatus = row.status;
+          this.statusTip = this.curStatus ? lang.sure_Close : lang.sure_Open;
+          this.statusVisble = true;
         },
-        async sureChange () {
+        async sureChange() {
           try {
-            let tempStatus = this.curStatus === 1 ? 0 : 1
-            const res = await changeOpen(this.delId, { status: tempStatus })
-            this.$message.success(res.data.msg)
-            this.statusVisble = false
-            this.getClientList()
+            let tempStatus = this.curStatus === 1 ? 0 : 1;
+            const res = await changeOpen(this.delId, { status: tempStatus });
+            this.$message.success(res.data.msg);
+            this.statusVisble = false;
+            this.getClientList();
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         },
-        closeDialog () {
-          this.statusVisble = false
+        closeDialog() {
+          this.statusVisble = false;
         },
 
         // 删除用户
-        deleteUser (row) {
-          event.stopPropagation()
-          this.delVisible = true
-          this.delId = row.id
+        deleteUser(row) {
+          event.stopPropagation();
+          this.delVisible = true;
+          this.delId = row.id;
         },
-        async sureDel () {
+        async sureDel() {
           try {
-            await deleteClient(this.delId)
-            this.$message.success(window.lang.del_success)
-            this.params.page = this.data.length > 1 ? this.params.page : this.params.page - 1
-            this.delVisible = false
-            this.getClientList()
+            await deleteClient(this.delId);
+            this.$message.success(window.lang.del_success);
+            this.params.page =
+              this.data.length > 1 ? this.params.page : this.params.page - 1;
+            this.delVisible = false;
+            this.getClientList();
           } catch (error) {
-            this.delVisible = false
-            this.$message.error(error.data.msg)
+            this.delVisible = false;
+            this.$message.error(error.data.msg);
           }
         },
-        cancelDel () {
-          this.delVisible = false
+        cancelDel() {
+          this.delVisible = false;
         },
-      }
-    }).$mount(template)
-    typeof old_onload == 'function' && old_onload()
+        // 子账户
+        goDetail(id) {
+          console.log(111);
+          location.href = `client_detail.html?client_id=${id}`;
+        },
+      },
+    }).$mount(template);
+    typeof old_onload == "function" && old_onload();
   };
 })(window);

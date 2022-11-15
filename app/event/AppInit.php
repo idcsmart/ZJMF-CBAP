@@ -1,9 +1,9 @@
 <?php
 namespace app\event;
 
-use think\facade\Db;
 use think\facade\Route;
 use think\facade\Event;
+use think\facade\Db;
 
 /*
  * AppInit事件类
@@ -28,7 +28,6 @@ class  AppInit
 
         # 实名认证接口路由
         Route::any('certification/[:_plugin]/[:_controller]/[:_action]', "\\app\\event\\controller\\CertificationController@index");
-            #->middleware(\app\http\middleware\CheckHome::class);
 
         # 插件后台路由(官方默认路由需要登录才能访问)
         Route::any(DIR_ADMIN.'/addon', "\\app\\event\\controller\\AddonController@index")
@@ -48,25 +47,13 @@ class  AppInit
         $addonDir = WEB_ROOT . 'plugins/addon/';
         $addons = array_map('basename', glob($addonDir . '*', GLOB_ONLYDIR));
         foreach ($addons as $addon){
-            $parseName = parse_name($addon,1);
-            # 说明:存在一定的安全性,判断是否安装且启用的插件
-            $plugin = Db::name('plugin')->where('name',$parseName)
-                ->where('status',1)
-                ->find();
-            if (!empty($plugin) && is_file($addonDir . $addon . '/route.php')){
+            # 说明:存在一定的安全性,判断是否安装且启用的插件,20221108改,不做判断
+            if (is_file($addonDir . $addon . '/route.php')){
                 include_once $addonDir . $addon . '/route.php';
             }
         }
-
-        # 获取系统允许钩子
-        #$systemHook = get_system_hooks();
         # 获取插件注册钩子
-        $systemHookPlugins = Db::name('plugin_hook')
-            ->field('name,plugin')
-            ->where('status',1)
-            ->where('module','addon') # 仅插件
-            #->whereIn('name',$systemHook)
-            ->select()->toArray();
+        $systemHookPlugins = $this->getCacheHook();
         if (!empty($systemHookPlugins)) {
             foreach ($systemHookPlugins as $hookPlugin) {
                 $class = get_plugin_class($hookPlugin['plugin'],'addon');
@@ -90,6 +77,31 @@ class  AppInit
                 include_once  $serverDir . $server . '/route.php';
             }
         }
+    }
+
+    // 缓存插件钩子
+    public function cacheHook()
+    {
+        $systemHookPlugins = Db::name('plugin_hook')->field('name,plugin')
+            ->where('status',1)
+            ->where('module','addon') # 仅插件
+            ->select()->toArray();
+
+        cache('system_plugin_hooks',$systemHookPlugins);
+
+        return $systemHookPlugins;
+    }
+
+    // 获取插件钩子
+    public function getCacheHook()
+    {
+        if (empty(cache('system_plugin_hooks'))){
+            $systemHookPlugins = $this->cacheHook();
+        }else{
+            $systemHookPlugins = cache('system_plugin_hooks');
+        }
+
+        return $systemHookPlugins;
     }
 
 }

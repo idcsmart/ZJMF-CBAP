@@ -18,6 +18,7 @@ const payDialog = {
                   </span>
                   <span>还需支付：</span>
                   </span>
+                  
                 </div>
                 <p class="money" :class="{isCredit: !isShowPay}">
                   {{ commonData.currency_prefix}}
@@ -27,15 +28,21 @@ const payDialog = {
                           {{commonData.currency_code}}
                 </p>
 
-                <div class="pay-way" v-if="isShowPay">
-                  <div class="pay-img-content" v-loading="payLoading">
+                <div v-show="!isShowPay" v-loading="loading" style="min-height:100px">
+                   <img  style="width:1.5rem;height:1.5rem;margin-top:.25rem;margin-bottom:.25rem" v-show="!isShowPay" src="${url}/img/common/payloading.png" />
+                </div>
+                
+
+                <div class="pay-way" v-show="isShowPay" >
+                  <div class="pay-img-content" v-loading="payLoading || loading" style="min-height:100px">
                       <div class="pay-html" v-show="isShowimg" v-html="payHtml"></div>
                   </div>
-                  <el-select @change="zfSelectChange" v-model="zfData.gateway">
-                    <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
-                  </el-select>
                 </div>
+                <el-select style="width:2rem;margin:0 auto .6rem" :disabled="!isShowPay"  @change="zfSelectChange" v-model="zfData.gateway">
+                    <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
+                </el-select>
 
+    
                 <div class="f-btn" v-show="!isNotPayWay">
                   <span>
                     <span class="total">
@@ -51,16 +58,16 @@ const payDialog = {
         </el-dialog>
     `,
   // <div class="blue">二维码将在<span class="red">{{time | formateDownTime}}</span>后失效，请及时支付</div>
-  created () {
+  created() {
     // 获取支付方式列表
     this.getGateway()
     this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
   },
-  destroyed () {
+  destroyed() {
     clearInterval(this.timer)
     clearTimeout(this.balanceTimer)
   },
-  data () {
+  data() {
     return {
       // 显示弹窗
       isShowZf: false,
@@ -92,10 +99,11 @@ const payDialog = {
       isPaySuccess: false,
       isNotPayWay: false,
       doPayLoading: false,
+      loading: false,
     }
   },
   filters: {
-    formateDownTime (time) {
+    formateDownTime(time) {
       let minutes = Math.floor((time / 1000) / 60)
       let seconds = (time / 1000) % 60
       return minutes + '分' + seconds + '秒'
@@ -103,7 +111,7 @@ const payDialog = {
   },
   methods: {
     // 获取账户详情
-    getAccount () {
+    getAccount() {
       account().then(res => {
         if (res.data.status === 200) {
           this.balance = res.data.data.account.credit
@@ -111,7 +119,7 @@ const payDialog = {
       })
     },
     // 支付关闭
-    zfClose () {
+    zfClose() {
       if (!this.isPaySuccess) {
         this.$emit('paycancel', this.zfData.orderId)
       }
@@ -134,7 +142,7 @@ const payDialog = {
       }
     },
     // 获取支付方式列表
-    getGateway () {
+    getGateway() {
       gatewayList().then(res => {
         if (res.data.status === 200) {
           this.gatewayList = res.data.data.list
@@ -168,7 +176,7 @@ const payDialog = {
       })
     },
     // 支付方式切换
-    zfSelectChange () {
+    zfSelectChange() {
       if (this.zfData.gateway == 'credit') {
         this.zfData.checked = true
         this.useBalance()
@@ -199,12 +207,15 @@ const payDialog = {
       })
     },
     // 使用余额
-    useBalance () {
+    useBalance() {
       this.getAccount()
       if (this.balanceTimer) {
         clearTimeout(this.balanceTimer)
       }
       this.balanceTimer = setTimeout(() => {
+
+        this.loading = true
+
         creditPay({
           id: this.zfData.orderId,
           use: this.zfData.checked ? 1 : 0
@@ -214,6 +225,9 @@ const payDialog = {
           this.zfData.orderId = tempId
           // 获取新订单的详情
           orderDetails(tempId).then(result => {
+
+            this.loading = false
+
             const orderRes = result.data.data.order;
             if (this.zfData.checked) {    //使用余额
               if (Number(this.balance) >= Number(orderRes.amount)) {
@@ -237,6 +251,7 @@ const payDialog = {
           })
         }).catch(error => {
           this.errText = error.data.msg
+          this.loading = false
         })
       }, 500)
 
@@ -244,7 +259,7 @@ const payDialog = {
 
     },
     // 确认使用余额支付
-    handleOk () {
+    handleOk() {
       this.doPayLoading = true
       const params = {
         gateway: this.zfData.gateway,
@@ -257,7 +272,7 @@ const payDialog = {
       })
     },
     // 轮循支付状态
-    pollingStatus (id) {
+    pollingStatus(id) {
       if (this.timer) {
         clearInterval(this.timer)
       }
@@ -285,7 +300,7 @@ const payDialog = {
       }, 2000)
     },
     // 点击去支付
-    showPayDialog (orderId, amount, payType) {
+    showPayDialog(orderId, amount, payType) {
       this.isPaySuccess = false
       if (this.timer) {  // 清除定时器
         clearInterval(this.timer)
@@ -295,21 +310,42 @@ const payDialog = {
         use: 0
       }
 
-      creditPay(params).then(res => {
-        this.errText = ""
-        // 默认不使用余额
-        this.zfData.checked = false
-        // 重置支付倒计时5分钟
-        this.time = 300000
-        // 获取余额
-        this.getAccount()
 
-        orderDetails(orderId).then(detailRes => {
-          if (detailRes.data.status === 200) {
-            this.zfData.amount = detailRes.data.data.order.amount
-            // 获取订单金额 和 订单id
-            this.zfData.orderId = Number(orderId)
-            this.zfData.amount = detailRes.data.data.order.amount
+
+      orderDetails(orderId).then(detailRes => {
+        if (detailRes.data.status === 200) {
+          // 获取订单金额 和 订单id
+          this.zfData.orderId = Number(orderId)
+          this.zfData.amount = detailRes.data.data.order.amount
+
+          if (Number(this.zfData.amount) > 0) {
+            creditPay(params).then(res => {
+              this.errText = ""
+              // 默认不使用余额
+              this.zfData.checked = false
+              // 重置支付倒计时5分钟
+              this.time = 300000
+              // 获取余额
+              this.getAccount()
+
+              // 展示支付 dialog
+              this.isShowZf = true
+              // 默认拉取第一种支付方式
+              this.zfData.gateway = payType ? payType : this.gatewayList[0].name
+              this.zfSelectChange()
+              // 轮询支付
+              this.pollingStatus(this.zfData.orderId)
+
+            })
+          } else {
+            this.errText = ""
+            // 默认不使用余额
+            this.zfData.checked = false
+            // 重置支付倒计时5分钟
+            this.time = 300000
+            // 获取余额
+            this.getAccount()
+
             // 展示支付 dialog
             this.isShowZf = true
             // 默认拉取第一种支付方式
@@ -318,13 +354,12 @@ const payDialog = {
             // 轮询支付
             this.pollingStatus(this.zfData.orderId)
           }
-        })
 
 
 
-      }).catch(error => {
-        this.$message.error(error.data.msg)
+        }
       })
+
 
 
 

@@ -850,6 +850,7 @@
                             this.moduleList = res.data.data.module
                             // 语言列表
                             this.language = res.data.data.language
+                            console.log("language", this.language);
                             this.language.forEach(item => {
                                 this.formData[item.display_lang] = ""
                                 this.newFormData[item.display_lang] = ""
@@ -1116,7 +1117,7 @@
                             if (res.data.status === 200) {
                                 this.$message.success(res.data.msg)
                                 // 调用获取后台导航，保存到locastorage 并刷新页面
-                                leftMenu().then(res=>{
+                                leftMenu().then(res => {
                                     localStorage.setItem('backMenus', JSON.stringify(res.data.data.menu))
                                     location.reload();
                                 })
@@ -1197,10 +1198,10 @@
                     } else if (this.formData.type != 'module') {
 
                         // if (this.value == 1) {
-                            if (!this.formData.nav_id) {
-                                this.$message.warning("请选择页面")
-                                return false
-                            }
+                        if (!this.formData.nav_id) {
+                            this.$message.warning("请选择页面")
+                            return false
+                        }
                         // } else {
                         //     if (!this.formData.url) {
                         //         this.$message.warning("请选择页面")

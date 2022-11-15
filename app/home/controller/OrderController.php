@@ -40,7 +40,7 @@ class OrderController extends HomeBaseController
      * @return int list[].order_item_count - 订单子项数量
      * @return int count - 订单总数
      */
-	public function orderList()
+	public function list()
     {
 		// 合并分页参数
         $param = array_merge($this->request->param(), ['page' => $this->request->page, 'limit' => $this->request->limit, 'sort' => $this->request->sort]);

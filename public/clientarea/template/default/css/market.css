@@ -1,0 +1,187 @@
+.market .main-card .main-card-title {
+  font-size: 28px;
+  color: #171725;
+  margin-bottom: 0.4rem;
+}
+.market .main-card .top-search {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 0.3rem;
+}
+.market .main-card .top-search .create-btn,
+.market .main-card .top-search .search-btn {
+  background: #0058ff;
+  color: #fff;
+  height: 46px;
+}
+.market .main-card .top-search .search-left {
+  margin-bottom: 0.2rem;
+  display: flex;
+  flex-direction: row;
+}
+.market .main-card .top-search .search-left .el-select,
+.market .main-card .top-search .search-left .el-input {
+  width: 2.55rem;
+  height: 46px;
+  margin-right: 0.1rem;
+}
+.market .main-card .top-search .search-left .el-select .el-input__inner,
+.market .main-card .top-search .search-left .el-input .el-input__inner {
+  height: 100%;
+}
+.market .main-card .top-search .search-left .el-button {
+  background-color: #0058ff;
+}
+.market .main-card .top-search .search-right {
+  margin-bottom: 0.2rem;
+  display: flex;
+  flex-direction: row;
+}
+.market .main-card .top-search .search-right .el-select,
+.market .main-card .top-search .search-right .el-input {
+  width: 2.55rem;
+  height: 46px;
+  margin-right: 0.1rem;
+}
+.market .main-card .top-search .search-right .el-select .el-input__inner,
+.market .main-card .top-search .search-right .el-input .el-input__inner {
+  height: 100%;
+}
+.market .main-card .top-statistics {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.market .main-card .top-statistics .statistics-item {
+  width: 19%;
+  margin-top: 0.3rem;
+  box-shadow: 0px 1px 4px rgba(21, 34, 50, 0.08);
+  border-radius: 3px;
+  padding: 0.3rem 0.38rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.market .main-card .content-table {
+  border: 1px solid #e6e7eb;
+  border-radius: 3px;
+}
+.market .main-card .tx-box {
+  margin: 0.4rem 0;
+  display: flex;
+  justify-content: space-between;
+}
+.market .main-card .tx-box .tx-item {
+  width: 2.2rem;
+  height: 1.18rem;
+  background: #ffffff;
+  box-shadow: 0px 1px 0.04rem 0.01rem rgba(21, 34, 50, 0.08);
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  box-sizing: border-box;
+  padding: 0.2rem;
+}
+.market .main-card .tx-box .tx-item .tx-item-top {
+  margin-bottom: 0.15rem;
+  display: flex;
+  align-items: center;
+}
+.market .main-card .tx-box .tx-item .tx-item-top :nth-child(1) {
+  width: 0.14rem;
+  height: 0.14rem;
+  background: #ffffff;
+  opacity: 1;
+  border: 0.03rem solid #ff8524;
+  border-radius: 50%;
+}
+.market .main-card .tx-box .tx-item .tx-item-top :nth-child(2) {
+  font-size: 0.13rem;
+  margin: 0 0.04rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #9696a3;
+}
+.market .main-card .tx-box .tx-item .tx-item-top :nth-child(3) {
+  width: 0.32rem;
+  height: 0.21rem;
+  background: #0058ff;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  font-size: 0.12rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 0.2rem;
+  padding: 0 0.04rem;
+  cursor: pointer;
+}
+.market .main-card .tx-box .tx-item .tx-item-bom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.market .main-card .tx-box .tx-item .tx-item-bom p {
+  font-size: 0.28rem;
+  font-family: PingFang SC-Heavy, PingFang SC;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.9);
+}
+.market .main-card .tx-box .tx-item .tx-item-bom .question-icon {
+  margin-left: 0.05rem;
+  width: 0.16rem;
+  height: 0.16rem;
+  line-height: 0.15rem;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-size: 0.14rem;
+  border-radius: 50%;
+  color: #8692b0;
+  border: 0.01rem solid #8692b0;
+}
+.market .main-card .info-box .title {
+  padding-left: 0.04rem;
+  border-left: 0.03rem solid #0058ff;
+  border-radius: 0px 0px 0px 0px;
+  font-size: 0.18rem;
+  font-family: PingFang SC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #1e2736;
+  line-height: 0.25rem;
+  margin: 0.4rem 0;
+}
+.market .main-card .info-box .el-form .el-form-item {
+  margin-left: 0.4rem;
+}
+.market .main-card .info-box .el-form .el-form-item .el-form-item__content .text {
+  font-size: 0.15rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.24rem;
+  color: #8692b0;
+}
+.market .main-card .info-box .el-form .el-form-item .el-form-item__content .el-input,
+.market .main-card .info-box .el-form .el-form-item .el-form-item__content .el-textarea__inner {
+  width: 4.2rem;
+}
+.market .main-card .info-box .el-form .el-form-item .el-form-item__content .el-button {
+  width: 1.44rem;
+  height: 0.46rem;
+  background: #0058ff;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  font-size: 0.16rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 0.24rem;
+}
+.market .main-card .info-box .el-form .el-form-item .el-form-item__content .el-upload--picture-card {
+  width: 0.8rem;
+  height: 0.8rem;
+  line-height: 0.8rem;
+}
+.market .main-card .info-box .el-form .el-form-item .el-form-item__content .el-upload-list__item {
+  width: 0.8rem;
+  height: 0.8rem;
+  line-height: 0.8rem;
+}

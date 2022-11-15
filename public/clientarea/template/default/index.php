@@ -1,5 +1,5 @@
 {include file="header"}
-  <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/home.css">
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/home.css">
 </head>
 
 <body>
@@ -31,7 +31,7 @@
                       <p class="name">{{account.username}}</p>
                     </div>
                   </div>
-                  <el-divider  class="divider-box" direction="vertical"></el-divider>
+                  <el-divider class="divider-box" direction="vertical"></el-divider>
                   <div class="info-second" v-loading="nameLoading">
                     <div class="email-box">
                       <span><img src="/{$template_catalog}/template/{$themes}/img/home/email-icon.png" alt="">{{lang.index_email}}</span>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="statistics-box">
                   <h3 class="title-text">{{lang.index_text1}}</h3>
-                  <div class="statistics-content"  v-loading="nameLoading">
+                  <div class="statistics-content" v-loading="nameLoading">
                     <div class="money-box">
                       <div class="statistics-top">
                         <div class="statisticstop-left">
@@ -139,7 +139,7 @@
                         </tr>
                       </thead>
                       <tbody v-if="productList.length !== 0">
-                        <tr v-for="item in productList" :key="item.id">
+                        <tr v-for="item in productList" :key="item.id" class="product-item" @click="goProductPage(item.id)">
                           <td>{{item.product_name}}</td>
                           <td>{{item.type ? item.type : '--'}}</td>
                           <td>{{item.name}}</td>
@@ -156,24 +156,66 @@
                 </div>
               </div>
               <div class="right-box">
-                <div class="recommend-box">
-                  <img src="/{$template_catalog}/template/{$themes}/img/home/recommend-img.png" alt="">
-                  <h2>{{lang.index_text17}}</h2>
-                  <p>{{lang.index_text18}}</p>
-                  <div class="recommend-people" v-if="false">
-                    <div>
-                      <span class="recommend-text">{{lang.index_text19}}</span>
-                      <span class="recommend-people-num"></span>
-                      <span class="recommend-number">154.00</span>
+                <!-- 推介计划开始 -->
+                {foreach $addons as $addon}
+                {if ($addon.name=='IdcsmartRecommend')}
+                <div class="recommend-box-open" v-if="showRight && isOpen">
+                  <div class="recommend-top">
+                    <div class="left">
+                      <div class="row1">
+                        <div class="title-text">{{lang.referral_title1}}</div>
+                        <span class="reword" @click="toReferral({$addon.id})"><img src="/{$template_catalog}/template/{$themes}/img/home/reword.png" alt="">{{lang.referral_text14}}</span>
+                      </div>
+                      <div class="row2">{{lang.referral_title6}}</div>
+                      <div class="row3">{{lang.referral_text15}}</div>
+                      <div class="row4">{{lang.referral_text16}}</div>
                     </div>
-                    <div>
-                      <span class="recommend-text">{{lang.index_text20}}</span>
-                      <span class="recommend-money-num"></span>
-                      <span class="recommend-number">8642.00</span>
+                    <img class="right" src="/{$template_catalog}/template/{$themes}/img/home/credit-card.png" alt="">
+                  </div>
+                  <div class="url">
+                    <div class="url-text" :title="promoterData.url">{{promoterData.url}}</div>
+                    <div class="copy-btn" @click="copyUrl(promoterData.url)">{{lang.referral_btn2}}</div>
+                  </div>
+                  <div class="top-statistic">
+                    <div class="top-item">
+                      <div class="item-top">
+                        <div class="top-money">{{commonData.currency_prefix}}{{promoterData.withdrawable_amount}}</div>
+                        <div class="top-text">{{lang.referral_title2}}</div>
+                      </div>
+                      <img class="top-img" src="/{$template_catalog}/template/{$themes}/img/referral/top1.png" />
+                    </div>
+                    <div class="top-item">
+                      <div class="item-top">
+                        <div class="top-money">{{commonData.currency_prefix}}{{promoterData.pending_amount}}
+                          <!-- <div class="icon-help" :title="`${lang.referral_text7}：${commonData.currency_prefix}${promoterData.frozen_amount}`">?</div> -->
+                        </div>
+                        <div class="top-text">{{lang.referral_title4}}</div>
+                      </div>
+                      <img class="top-img" src="/{$template_catalog}/template/{$themes}/img/referral/top3.png" />
                     </div>
                   </div>
-                  <div class="no-recommend" v-else>{{lang.index_text21}}</div>
                 </div>
+                <div class="recommend-box" v-else>
+                  <img src="/{$template_catalog}/template/{$themes}/img/home/recommend-img.png" alt="">
+                    <div v-if="showRight">
+                      <h2>{{lang.index_text17}}</h2>
+                      <p>{{lang.index_text18}}</p>
+                      <div class="no-recommend" @click="openVisible = true">立刻开启</div>
+                    </div>
+                    <div v-else class="recommend-text">{{lang.index_text21}}</div>
+                </div>
+                {/if}
+                {/foreach}
+                <div class="recommend-box" v-if="!showRight || !isOpen">
+                  <img src="/{$template_catalog}/template/{$themes}/img/home/recommend-img.png" alt="">
+                    <div v-if="showRight">
+                      <h2>{{lang.index_text17}}</h2>
+                      <p>{{lang.index_text18}}</p>
+                      <div class="no-recommend" @click="openVisible = true">立刻开启</div>
+                    </div>
+                    <div v-else class="recommend-text">{{lang.index_text21}}</div>
+                </div>
+                <!-- 推介计划结束 -->
                 {foreach $addons as $addon}
                 {if ($addon.name=='IdcsmartTicket')}
                 <div class="WorkOrder-box" v-if="ticketList.length !==0 ">
@@ -201,7 +243,7 @@
                     <div class="more" @click="goNoticePage({$addon.id})">···</div>
                   </div>
                   <div class="WorkOrder-content">
-                    <div v-for="item in homeNewList" :key="item.id" class="notice-item" @click = "goNoticeDetail({$addon.id},item.id)">
+                    <div v-for="item in homeNewList" :key="item.id" class="notice-item" @click="goNoticeDetail({$addon.id},item.id)">
                       <div class="notice-item-left">
                         <h3 class="notice-time">{{item.create_time | formareDay}}</h3>
                         <h4 class="notice-title">{{item.title}}</h4>
@@ -220,28 +262,37 @@
           <div class="cz-dialog">
             <el-dialog width="6.8rem" :visible.sync="isShowCz" :show-close=false @close="czClose">
               <div class="dialog-title">{{lang.index_text24}}</div>
-                <div class="dialog-form">
-                  <el-form :model="czData" label-position="top">
-                    <el-form-item :label="lang.index_text25">
-                      <el-select v-model="czData.gateway" @change="czSelectChange" class="ty-select">
-                         <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option></el-select>
-                    </el-form-item>
-                    <el-form-item :label="lang.index_text26" @keyup.native="czData.amount=oninput(czData.amount)">
-                      <div class="cz-input">
-                        <el-input v-model="czData.amount"></el-input>
-                        <el-button class="btn-ok" @click="czInputChange">{{lang.index_text27}}</el-button>
-                      </div>
-                    </el-form-item>
-                    <el-form-item v-if="errText">
-                      <el-alert :title="errText" type="error" :closable="false" show-icon></el-alert>
-                    </el-form-item>
-                    <el-form-item v-loading="payLoading1">
-                      <div class="pay-html" v-show="isShowimg1" v-html="payHtml"></div>
-                    </el-form-item>
-                  </el-form>
+              <div class="dialog-form">
+                <el-form :model="czData" label-position="top">
+                  <el-form-item :label="lang.index_text25">
+                    <el-select v-model="czData.gateway" @change="czSelectChange" class="ty-select">
+                      <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item :label="lang.index_text26" @keyup.native="czData.amount=oninput(czData.amount)">
+                    <div class="cz-input">
+                      <el-input v-model="czData.amount"></el-input>
+                      <el-button class="btn-ok" @click="czInputChange">{{lang.index_text27}}</el-button>
+                    </div>
+                  </el-form-item>
+                  <el-form-item v-if="errText">
+                    <el-alert :title="errText" type="error" :closable="false" show-icon></el-alert>
+                  </el-form-item>
+                  <el-form-item v-loading="payLoading1">
+                    <div class="pay-html" v-show="isShowimg1" v-html="payHtml"></div>
+                  </el-form-item>
+                </el-form>
               </div>
             </el-dialog>
           </div>
+          <!-- 确认开启弹窗 -->
+          <el-dialog :title="lang.referral_title8" :visible.sync="openVisible" width="4.8rem" custom-class="open-dialog">
+            <span>{{lang.referral_tips7}}</span>
+            <span slot="footer" class="dialog-footer">
+              <el-button class="btn-ok" type="primary" @click="openReferral">{{lang.referral_btn6}}</el-button>
+              <el-button class="btn-no" @click="openVisible = false">{{lang.referral_btn7}}</el-button>
+            </span>
+          </el-dialog>
         </el-main>
       </el-container>
     </el-container>
@@ -253,4 +304,4 @@
   <script src="/{$template_catalog}/template/{$themes}/js/home.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
 
-{include file="footer"}
+  {include file="footer"}

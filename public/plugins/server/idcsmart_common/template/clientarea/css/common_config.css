@@ -7,6 +7,9 @@
 }
 .common-config .l-config {
   margin-right: 3.5rem;
+  width: 100%;
+  position: relative;
+  z-index: 10;
 }
 .common-config .pro-tit {
   line-height: 1;
@@ -35,6 +38,10 @@
 }
 .common-config .cycle .item .price {
   color: #0058FF;
+}
+.common-config .common-box {
+  display: flex;
+  justify-content: space-between;
 }
 .common-config .el-icon-check {
   display: none;
@@ -229,6 +236,7 @@
   background: #FFF;
   right: 0.2rem;
   top: 0;
+  overflow: hidden;
 }
 .common-config .order-right .subtotal {
   display: flex;
@@ -320,13 +328,12 @@
   margin-left: 0.04rem;
 }
 .common-config .order-right .order-right-footer {
-  padding-bottom: 0.1rem;
+  padding-bottom: 0.16rem;
 }
 .common-config .order-right .order-right-footer .footer-total {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
   margin-top: 0.2rem;
 }
 .common-config .order-right .order-right-footer .footer-total .left {
@@ -337,13 +344,16 @@
   font-family: Helvetica;
   font-weight: bold;
   color: #F0142F;
-  display: flex;
-  align-items: center;
+  text-align: right;
 }
 .common-config .order-right .order-right-footer .footer-total .total-icon {
   font-size: 20px !important;
   color: #999 !important;
   cursor: pointer;
+}
+.common-config .order-right .order-right-footer .footer-total .discount-box {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
 }
 .common-config .order-right .order-right-footer .footer-code {
   display: flex;

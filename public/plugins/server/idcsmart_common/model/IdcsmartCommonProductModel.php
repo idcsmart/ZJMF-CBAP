@@ -752,7 +752,20 @@ class IdcsmartCommonProductModel extends Model
             $param['product_id'] = [];
         }
 
+        // 获取子账户可见产品
+        $res = hook('get_client_host_id', ['client_id' => get_client_id(false)]);
+        $res = array_values(array_filter($res ?? []));
+        foreach ($res as $key => $value) {
+            if(isset($value['status']) && $value['status']==200){
+                $hostId = $value['data']['host'];
+            }
+        }
+        $param['host_id'] = $hostId ?? [];
+
         $where = function (Query $query) use($param) {
+            if(!empty($param['host_id'])){
+                $query->whereIn('h.id', $param['host_id']);
+            }
             if(!empty($param['product_id'])){
                 $query->whereIn('h.product_id', $param['product_id']);
             }
@@ -916,7 +929,7 @@ class IdcsmartCommonProductModel extends Model
                                 ->where('pcs.qty_min',$qtyMin)
                                 ->where('cp.onetime','>=',0) # 金额>=0
                                 ->find();
-                            $customPrice += ($subPricing['onetime']??0) * $qtyMin;
+                            $customPrice += ($subPricing['onetime']??0) * 1; # 阶梯计费,数量最小都按1个算
                         }
                     }else{ # 数量计费 价格总价最小
                         $subPricings = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
@@ -988,7 +1001,7 @@ class IdcsmartCommonProductModel extends Model
                                     ->where('ccp.custom_cycle_id',$customCycle['id'])
                                     ->where('ccp.amount','>=',0) # 金额>=0
                                     ->find();
-                                $customPrice += ($subPricing['amount']??0) * $qtyMin;
+                                $customPrice += ($subPricing['amount']??0) * 1; # 阶梯计费,数量最小都按1个算
                             }
                         }else{ # 数量计费 价格总价最小
                             $subPricings = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')

@@ -10,6 +10,7 @@ use app\common\model\ClientModel;
 use app\common\model\HostModel;
 use app\common\model\ProductModel;
 use app\common\model\MenuModel;
+use app\home\model\ClientareaAuthModel;
 
 /**
  * @title 公共接口
@@ -382,6 +383,71 @@ class CommonController extends AdminBaseController
             'status' => 200,
             'msg' => lang('success_message'),
             'data' => $data
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-5-16
+     * @title 获取已激活插件
+     * @desc 获取已激活插件
+     * @url /admin/v1/active_plugin
+     * @method  GET
+     * @author wyh
+     * @version v1
+     * @return array list - 插件列表
+     * @return int list[].id - ID
+     * @return string list[].title - 名称
+     * @return string list[].name - 标识
+     */
+    public function activePluginList()
+    {
+        $param = $this->request->param();
+
+        $result = [
+            'status'=>200,
+            'msg'=>lang('success_message'),
+            'data' =>(new PluginModel())->activePluginList()
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-5-27
+     * @title 会员中心权限列表
+     * @desc 会员中心权限列表
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/clientarea_auth
+     * @method  GET
+     * @return array list - 权限列表
+     * @return int list[].id - 权限ID
+     * @return string list[].title - 权限标题
+     * @return string list[].url - 地址
+     * @return int list[].order - 排序
+     * @return int list[].parent_id - 父级ID
+     * @return array list[].rules - 权限规则标题
+     * @return array list[].child - 权限子集
+     * @return int list[].child[].id - 权限ID
+     * @return string list[].child[].title - 权限标题
+     * @return string list[].child[].url - 地址
+     * @return int list[].child[].order - 排序
+     * @return int list[].child[].parent_id - 父级ID
+     * @return string list[].child[].rules - 权限规则标题
+     * @return array list[].child[].child - 权限子集
+     * @return int list[].child[].child[].id - 权限ID
+     * @return string list[].child[].child[].title - 权限标题
+     * @return string list[].child[].child[].url - 地址
+     * @return int list[].child[].child[].order - 排序
+     * @return int list[].child[].child[].parent_id - 父级ID
+     * @return string list[].child[].child[].rules - 权限规则标题
+     */
+    public function clientareaAuthList()
+    {
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => (new ClientareaAuthModel())->authList()
         ];
         return json($result);
     }

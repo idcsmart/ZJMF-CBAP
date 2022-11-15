@@ -864,21 +864,42 @@ class ProductModel extends Model
         try{
             if ($preProductId){
                 $preOrder = $preProduct['order'];
-                $products = $this->where('product_group_id',$productGroupId)
-                    ->where('order','<=',$preOrder)
-                    ->select();
-                foreach ($products as $v){
-                    $v->save([
-                        'order' => $v['order']-1,
+
+                if (isset($param['backward']) && $param['backward']){
+                    $products = $this->where('product_group_id',$productGroupId)
+                        ->where('order','>=',$preOrder)
+                        ->where('id','<>',$id)
+                        ->select();
+                    foreach ($products as $v){
+                        $v->save([
+                            'order' => $v['order']+1,
+                            'update_time' => time()
+                        ]);
+                    }
+
+                    $product->save([
+                        'order' => $preOrder,
+                        'product_group_id' => $productGroupId,
+                        'update_time' => time()
+                    ]);
+                }else{
+                    $products = $this->where('product_group_id',$productGroupId)
+                        ->where('order','<=',$preOrder)
+                        ->select();
+                    foreach ($products as $v){
+                        $v->save([
+                            'order' => $v['order']-1,
+                            'update_time' => time()
+                        ]);
+                    }
+
+                    $product->save([
+                        'order' => $preOrder+1,
+                        'product_group_id' => $productGroupId,
                         'update_time' => time()
                     ]);
                 }
 
-                $product->save([
-                    'order' => $preOrder,
-                    'product_group_id' => $productGroupId,
-                    'update_time' => time()
-                ]);
 
             }else{
                 $minOrder = $this->where('product_group_id',$productGroupId)->min('order');

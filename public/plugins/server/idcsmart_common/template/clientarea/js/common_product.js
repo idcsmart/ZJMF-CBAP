@@ -5,9 +5,10 @@ new Vue({
   components: {
     asideMenu,
     topMenu,
-    payDialog
+    payDialog,
+    discountCode
   },
-  created () {
+  created() {
     this.id = location.href.split('?')[1].split('=')[1]?.split('&')[0]
     this.getCommonData()
 
@@ -18,37 +19,50 @@ new Vue({
     if (temp && temp.config_options) {
       this.backfill = temp.config_options
       this.configForm.config_options = temp.config_options
+      this.customfield = temp.customfield
       this.cycle = temp.config_options.cycle
       this.orderData.qty = temp.qty
       this.position = temp.position
     }
-    this.getConfig()
     this.getCountryList()
 
   },
-  mounted () {
-
+  mounted() {
+    this.addons_js_arr = JSON.parse(document.querySelector('#addons_js').getAttribute('addons_js')) // 插件列表
+    const arr = this.addons_js_arr.map((item) => {
+      return item.name
+    })
+    if (arr.includes('PromoCode')) {
+      // 开启了优惠码插件
+      this.isShowPromo = true
+    }
+    if (arr.includes('IdcsmartClientLevel')) {
+      // 开启了等级优惠
+      this.isShowLevel = true
+    }
+    this.getConfig()
   },
-  updated () {
+  updated() {
     // 关闭loading
     document.getElementById('mainLoading').style.display = 'none';
     document.getElementsByClassName('template')[0].style.display = 'block'
+    this.isShowBtn = true
   },
-  destroyed () {
+  destroyed() {
 
   },
   computed: {
-    calStr () {
+    calStr() {
       const temp = this.basicInfo.order_page_description?.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&/g, '&').replace(/"/g, '"').replace(/'/g, "'");
       return temp
     },
-    calcDes () {
+    calcDes() {
       return (val) => {
         const temp = val.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&/g, '&').replace(/"/g, '"').replace(/'/g, "'");
         return temp
       }
     },
-    calcSwitch () {
+    calcSwitch() {
       return (item, type) => {
         if (type) {
           const arr = item.subs.filter(item => item.option_name === lang.com_config.yes)
@@ -59,22 +73,27 @@ new Vue({
         }
       }
     },
-    calcCountry () {
+    calcCountry() {
       return (val) => {
         return this.countryList.filter(item => val === item.iso)[0]?.name_zh
       }
     },
-    calcCity () {
+    calcCity() {
       return (id) => {
         return this.filterCountry[id].filter(item => item[0]?.country === this.curCountry[id])[0]
       }
     }
   },
-  data () {
+  data() {
     return {
       id: '',
       position: '',
+      addons_js_arr: [], // 插件数组
+      isShowPromo: false, // 是否开启优惠码
+      isShowLevel: false, // 是否开启等级优惠
+      isUseDiscountCode: false, // 是否使用优惠码
       backfill: {}, // 回填参数
+      customfield: {}, // 自定义字段
       submitLoading: false,
       commonData: {},
       // 订单数据
@@ -88,7 +107,13 @@ new Vue({
       // 右侧展示区域
       showInfo: [],
       base_price: '',
-      totalPrice: 0.00, // 总价
+      // 商品原单价
+      onePrice: 0,
+      // 商品现总价
+      totalPrice: 0,
+      // 商品原总价
+      original_price: 0,
+
       timerId: null, // 订单id
       basicInfo: {}, // 基础信息
       configoptions: [], // 配置项
@@ -101,6 +126,7 @@ new Vue({
       configForm: { // 自定义配置项
 
       },
+      isShowBtn: false,
       // 国家列表
       countryList: [],
       // 处理过后的国家列表
@@ -108,18 +134,21 @@ new Vue({
       curCountry: {}, // 当前国家，根据配置id存入对应的初始索引
       cartDialog: false,
       dataLoading: false,
-      discount: '0.00'
+      // 客户等级折扣金额
+      clDiscount: 0,
+      // 优惠码折扣金额
+      code_discount: 0,
     }
   },
   filters: {
-    formateTime (time) {
+    formateTime(time) {
       if (time && time !== 0) {
         return formateDate(time * 1000)
       } else {
         return "--"
       }
     },
-    filterMoney (money) {
+    filterMoney(money) {
       if (isNaN(money)) {
         return '0.00'
       } else {
@@ -130,7 +159,7 @@ new Vue({
   },
   methods: {
     // 解析url
-    getQuery (url) {
+    getQuery(url) {
       const str = url.substr(url.indexOf('?') + 1)
       const arr = str.split('&')
       const res = {}
@@ -140,14 +169,14 @@ new Vue({
       }
       return res
     },
-    async getCountryList () {
+    async getCountryList() {
       try {
         const res = await getCountry()
         this.countryList = res.data.data.list
       } catch (error) {
       }
     },
-    async getConfig () {
+    async getConfig() {
       try {
         const res = await getCommonDetail(this.id)
         const temp = res.data.data
@@ -186,7 +215,7 @@ new Vue({
       }
     },
     // 数组转树
-    toTree (data) {
+    toTree(data) {
       var temp = Object.values(data.reduce((res, item) => {
         res[item.country] ? res[item.country].push(item) : res[item.country] = [item]
         return res
@@ -194,11 +223,17 @@ new Vue({
       return temp
     },
     // 切换配置选项
-    changeItem () {
+    changeItem() {
+      this.changeConfig()
+    },
+    // 使用优惠码
+    getDiscount(data) {
+      this.customfield.promo_code = data[1]
+      this.isUseDiscountCode = true
       this.changeConfig()
     },
     // 更改配置计算价格
-    async changeConfig (bol = false) {
+    async changeConfig(bol = false) {
       try {
         if (bol) {
           /* 处理 quantity quantity_range  */
@@ -214,6 +249,7 @@ new Vue({
           this.curCycle = this.custom_cycles.findIndex(item => item.id * 1 === this.cycle * 1)
         }
         const temp = this.formatData()
+
         const params = {
           id: this.id,
           config_options: {
@@ -224,70 +260,101 @@ new Vue({
         }
         this.dataLoading = true
         const res = await calcPrice(params)
-        this.totalPrice = res.data.data.price
         this.base_price = res.data.data.base_price
         this.showInfo = res.data.data.preview
-        this.dataLoading = false
-        // 计算折扣金额
-        const discount = await clientLevelAmount({
-          id: this.id,
-          amount: (this.totalPrice * this.orderData.qty).toFixed(2)
-        })
-        this.discount = discount.data.data.discount
-
+        this.onePrice = res.data.data.price // 原单价
+        this.orderData.duration = res.data.data.duration
+        this.original_price = (this.onePrice * this.orderData.qty).toFixed(2) * 1 // 原总价
+        if (this.isShowLevel) {
+          // 计算折扣金额
+          const discount = await clientLevelAmount({
+            id: this.id,
+            amount: (this.onePrice * this.orderData.qty).toFixed(2)
+          })
+          this.clDiscount = Number(discount.data.data.discount)
+        }
+        if (this.isShowPromo && this.customfield.promo_code) {
+          // 更新优惠码
+          await applyPromoCode({ // 开启了优惠券
+            scene: 'new',
+            product_id: this.id,
+            amount: this.onePrice,
+            billing_cycle_time: this.orderData.duration,
+            promo_code: this.customfield.promo_code,
+            qty: this.orderData.qty,
+          }).then((resss) => {
+            this.isUseDiscountCode = true
+            this.code_discount = Number(resss.data.data.discount)
+          }).catch((err) => {
+            this.$message.error(err.data.msg)
+            this.isUseDiscountCode = false
+            this.customfield.promo_code = ''
+            this.code_discount = 0
+          })
+        }
         // 重新计算周期显示
         const result = await calculate(params)
         this.custom_cycles = result.data.data.custom_cycles
         this.onetime = result.data.data.cycles.onetime
+        this.totalPrice = ((this.original_price * 1000 - this.clDiscount * 1000 - this.code_discount * 1000) / 1000) > 0 ? (this.original_price * 1000 - this.clDiscount * 1000 - this.code_discount * 1000) / 1000 : 0
+        this.dataLoading = false
       } catch (error) {
-        console.log(error)
+        this.dataLoading = false
       }
     },
+    removeDiscountCode() {
+      this.isUseDiscountCode = false
+      this.customfield.promo_code = ''
+      this.code_discount = 0
+      this.changeConfig()
+    },
     // 切换国家
-    changeCountry (id, index) {
+    changeCountry(id, index) {
       this.$set(this.curCountry, id, index)
       this.configForm[id] = this.filterCountry[id][index][0]?.id
       this.changeConfig()
     },
     // 切换城市
-    changeCity (el, id) {
+    changeCity(el, id) {
       this.configForm[id] = el.id
       this.changeConfig()
     },
     // 切换单击选择
-    changeClick (id, el) {
+    changeClick(id, el) {
       this.configForm[id] = el.id
       this.changeConfig()
     },
     // 切换数量
-    changeNum (val, id) {
+    changeNum(val, id) {
       this.configForm[id] = [val * 1]
       this.changeConfig()
     },
     // 切换周期
-    changeCycle (item, index) {
+    changeCycle(item, index) {
       this.cycle = item.id
       this.curCycle = index
       this.changeConfig()
     },
     // 商品购买数量减少
-    delQty () {
+    delQty() {
       if (this.basicInfo.allow_qty === 0) {
         return false
       }
       if (this.orderData.qty > 1) {
         this.orderData.qty--
+        this.changeConfig()
       }
     },
     // 商品购买数量增加
-    addQty () {
+    addQty() {
       if (this.basicInfo.allow_qty === 0) {
         return false
       }
       this.orderData.qty++
+      this.changeConfig()
     },
 
-    formatData () {
+    formatData() {
       // 处理数量类型的转为数组
       const temp = JSON.parse(JSON.stringify(this.configForm))
       Object.keys(temp).forEach(el => {
@@ -301,7 +368,7 @@ new Vue({
       return temp
     },
     // 立即购买
-    async buyNow () {
+    async buyNow() {
       // if (!this.orderData.isRead) {
       //   this.$message.warning("请先阅读并勾选协议")
       //   return false
@@ -313,14 +380,15 @@ new Vue({
           configoption: temp,
           cycle: this.cycle
         },
-        qty: this.orderData.qty
+        qty: this.orderData.qty,
+        customfield: this.customfield
       }
       const enStr = encodeURI(JSON.stringify(params.config_options))
       console.log('enStr:', enStr)
       console.log('deStr:', decodeURI(enStr))
       // 直接传配置到结算页面
-     
-     // location.href = `settlement.html?id=${params.product_id}&name=${this.basicInfo.name}&config_options=${enStr}&qty=${params.qty}`
+
+      // location.href = `settlement.html?id=${params.product_id}&name=${this.basicInfo.name}&config_options=${enStr}&qty=${params.qty}`
       location.href = `settlement.html?id=${params.product_id}`
       sessionStorage.setItem('product_information', JSON.stringify(params))
       // try {
@@ -340,7 +408,7 @@ new Vue({
       // }
     },
     // 加入购物车
-    async addCart () {
+    async addCart() {
       // if (!this.orderData.isRead) {
       //   this.$message.warning("请先阅读并勾选协议")
       //   return false
@@ -353,7 +421,8 @@ new Vue({
             configoption: temp,
             cycle: this.cycle
           },
-          qty: this.orderData.qty
+          qty: this.orderData.qty,
+          customfield: this.customfield
         }
         const res = await addToCart(params)
         if (res.data.status === 200) {
@@ -366,7 +435,7 @@ new Vue({
       }
     },
     // 修改购物车
-    async changeCart () {
+    async changeCart() {
       try {
         const temp = this.formatData()
         const params = {
@@ -376,7 +445,8 @@ new Vue({
             configoption: temp,
             cycle: this.cycle
           },
-          qty: this.orderData.qty
+          qty: this.orderData.qty,
+          customfield: this.customfield
         }
         this.dataLoading = true
         const res = await updateCart(params)
@@ -389,31 +459,26 @@ new Vue({
         console.log('errore', error)
         this.$message.error(error.data.msg)
       }
-
     },
-    goToCart () {
+    goToCart() {
       location.href = `shoppingCar.html`
       this.cartDialog = false
     },
     // 支付成功回调
-    paySuccess (e) {
+    paySuccess(e) {
       this.submitLoading = false
       location.href = 'common_product_list.html'
     },
     // 取消支付回调
-    payCancel (e) {
+    payCancel(e) {
       this.submitLoading = false
       location.href = 'finance.html'
     },
     // 获取通用配置
-    getCommonData () {
-      getCommon().then(res => {
-        if (res.data.status === 200) {
-          this.commonData = res.data.data
-          localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-          document.title = this.commonData.website_name + '-订购'
-        }
-      })
+    getCommonData() {
+      this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+      document.title = this.commonData.website_name + '-订购'
+
     }
   },
 

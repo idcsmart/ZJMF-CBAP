@@ -1,0 +1,8 @@
+.invoice-address .operation-icon {
+  font-size: 18px;
+  color: #0052D9;
+  cursor: pointer;
+}
+.t-dialog__body__icon {
+  padding-bottom: 0;
+}

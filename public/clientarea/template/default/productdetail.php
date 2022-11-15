@@ -31,5 +31,6 @@
   <script src="/{$template_catalog}/template/{$themes}/api/product.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/js/productdetail.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
-
+  <script src="/{$template_catalog}/template/{$themes}/components/discountCode/discountCode.js"></script>
+  <script src="/{$template_catalog}/template/{$themes}/components/cashCoupon/cashCoupon.js"></script>
   {include file="footer"}

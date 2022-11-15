@@ -5,6 +5,8 @@ use think\exception\ValidateException;
 use think\facade\Config;
 use think\paginator\driver\Bootstrap;
 use app\exception\TemplateNotFoundException;
+use app\home\model\ClientareaAuthRuleModel;
+use think\facade\Cache;
 
 class PluginBaseController extends BaseController
 {
@@ -25,7 +27,64 @@ class PluginBaseController extends BaseController
             abort(404, lang('missing_route_paramters',['{param}'=>':_plugin']));
         }
 
+        if(!$this->checkClientareaAccess()){
+            $param = $this->request->param();
+            $module     = 'addon';
+            $plugin     = $param['_plugin']??'';
+            $controller = (isset($param['_controller']) && !empty($param['_controller']))?ucfirst(parse_name($param['_controller'],1)):'';
+            $action     = (isset($param['_action']) && !empty($param['_action']))?lcfirst(parse_name($param['_action'],1)):'';
+
+            $rule = $module.'\\'.$plugin .'\\controller\\'. $controller .'Controller::'. $action;
+
+            // 查找权限,未找到设置了则放行
+            $ClientareaAuthRuleModel = new ClientareaAuthRuleModel();
+            $name = $ClientareaAuthRuleModel->getAuthName($rule);
+            if(!empty($name)){
+                echo json_encode(['status'=>404, 'msg'=>lang('permission_denied', ['{name}'=>lang_plugins($name)])]);die;
+            }
+
+        }
+
         $this->view = $this->plugin->getView();
+    }
+
+    private function checkClientareaAccess()
+    {
+        $clientId = get_client_id(false);
+        if(empty($clientId)){
+            return true;
+        }
+
+        $param = $this->request->param();
+        $module     = 'addon';
+        $plugin     = $param['_plugin']??'';
+        $controller = (isset($param['_controller']) && !empty($param['_controller']))?ucfirst(parse_name($param['_controller'],1)):'';
+        $action     = (isset($param['_action']) && !empty($param['_action']))?lcfirst(parse_name($param['_action'],1)):'';
+
+        $rule = $module.'\\'.$plugin .'\\controller\\clientarea\\'. $controller .'Controller::'. $action;
+
+        // 先获取缓存的权限
+        if(Cache::has('home_auth_rule_'.$clientId)){
+            $auth = json_decode(Cache::get('home_auth_rule_'.$clientId), true);
+            if(!in_array($rule, $auth)){
+                return false;
+            }else{
+                return true;
+            }
+        }
+
+        $result = hook('home_check_access', ['rule' => $rule, 'client_id' => $clientId]);
+        $result = array_values(array_filter($result ?? []));
+        foreach ($result as $key => $value) {
+            if(isset($value['status'])){
+                if($value['status']==200){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 

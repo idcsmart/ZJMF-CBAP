@@ -1,0 +1,485 @@
+.ali-home {
+    width: 100%;
+    /* height: 100vh; */
+    font-size: .16rem;
+    font-family: PingFang SC;
+    font-weight: 400;
+    /* background: #F6F9FF; */
+    color: #171725;
+}
+
+.el-main {
+    padding: 0;
+}
+
+.top {
+    height: 70px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+}
+
+.top>img {
+    margin-left: 3.6rem;
+}
+
+/* banner 开始 */
+
+.banner {
+    height: 3.14rem;
+    width: 12.6rem;
+    margin: .58rem auto 0;
+    position: relative;
+}
+
+.banner-img {
+    height: 3.14rem;
+    width: 12.6rem;
+}
+
+.ali-text {
+    position: absolute;
+    top: .56rem;
+    left: .58rem;
+    display: flex;
+    flex-direction: column;
+    font-size: .36rem;
+    font-family: PingFang SC;
+    font-weight: 800;
+    line-height: .44rem;
+    color: #FE640D;
+    opacity: 1;
+}
+
+
+.center-text {
+    display: flex;
+    flex-direction: column;
+    font-family: Bahnschrift;
+    color: #FFFFFF;
+    position: absolute;
+    top: 1.1rem;
+    left: 3.6rem;
+}
+
+.center-text>.text-t {
+    font-size: .57rem;
+
+    line-height: .57rem;
+}
+
+.center-text>.text-b {
+    font-size: .16rem;
+    font-weight: normal;
+    line-height: .16rem;
+}
+
+.left-img {
+    width: .96rem;
+    position: absolute;
+    bottom: -0.14rem;
+    left: .78rem;
+}
+
+.right-img {
+    width: 3.06rem;
+    position: absolute;
+    bottom: .62rem;
+    right: 1.66rem;
+}
+
+.banner-search {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: .5rem;
+    left: .58rem;
+}
+
+.ali-tip-text {
+    font-size: .14rem;
+    margin-top: .14rem;
+}
+
+.banner-input {
+    width: 6.12rem;
+    height: .46rem;
+    background: none;
+    box-shadow: 0px 3px 6px rgba(111, 163, 209, 0.1600);
+    border-radius: .28rem;
+
+    /* position: absolute; */
+    /* bottom: 0;
+    transform: translateY(50%) translateX(calc((100vw - 160px - 11.97rem)/2)); */
+
+}
+
+
+.banner-input>.el-input__inner {
+    width: 6.12rem;
+    height: .46rem;
+    border: none;
+    text-align: center;
+    border-radius: .28rem;
+}
+
+
+
+.input-btn {
+    width: 1.12rem;
+    height: .46rem;
+    background: linear-gradient(95deg, #FF6A00 0%, #F4444F 100%);
+    border-radius: .28rem;
+    font-size: .16rem;
+    color: rgba(255, 255, 255, 0.9000);
+    /* margin-top: calc((.56rem - .46rem)/2); */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.el-input__suffix {
+    right: 0;
+}
+
+/* banner 结束 */
+
+/* main 开始 */
+
+.ali-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* padding: 0 1.11rem; */
+    margin-top: .58rem;
+}
+
+.top-tip {
+    margin: .48rem auto .39rem;
+    line-height: .16rem;
+    color: #F99600;
+
+}
+
+.ali-main-card {
+    background: #FFFFFF;
+    /* width: 100%; */
+    margin: auto;
+    /* height: 100%; */
+    display: flex;
+    flex-direction: column;
+}
+
+/* .card-title,
+.card-recharge,
+.card-choice {
+    margin-left: 2.51rem;
+} */
+
+.card-title {
+    font-size: 28px;
+    line-height: 25px;
+    margin-top: 0.34rem;
+}
+
+.card-recharge {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: .6rem;
+}
+
+.recharge-text {
+    line-height: .46rem;
+}
+
+.recharge-input {
+    width: 3.85rem;
+    margin-left: .17rem;
+}
+
+.recharge-btn-ok,
+.recharge-btn-old {
+    width: 1.12rem;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: .2rem;
+}
+
+.recharge-btn-ok {
+    background: #0058FF;
+    opacity: 1;
+    color: #FFFFFF;
+}
+
+.recharge-btn-old {
+    border: 1px solid #0058FF;
+    background: #FFFFFF;
+    color: #0052D9;
+}
+
+.card-choice {
+    display: flex;
+    flex-direction: row;
+    margin-top: .8rem;
+}
+
+.card-choice>.active {
+    background: #0058FF;
+    color: #FFFFFF;
+}
+
+.choice-item {
+    width: 2.77rem;
+    height: 1.6rem;
+    background: #F9FAFC;
+    border: 1px solid #D8DFEE;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+}
+
+.choice-item:not(:first-child) {
+    margin-left: .3rem;
+}
+
+.item-pre,
+.item-num {
+    font-size: .28rem;
+    font-family: PingFang SC;
+    font-weight: 800;
+    line-height: .28rem;
+}
+
+
+/* main 结束 */
+
+/* 充值弹窗 */
+.cz-dialog .el-dialog__body {
+    padding: .3rem .8rem;
+}
+
+/* el-form label 样式 */
+.el-form-item__label {
+    font-size: .16rem;
+    font-family: PingFang SC;
+    font-weight: 400;
+    color: #1E2736;
+}
+
+.el-form,
+.el-select {
+    width: 100%;
+}
+
+.pay-html {
+    display: flex;
+    justify-content: center;
+}
+
+.pay-html>img {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+.el-message-box__btns>.el-button {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.el-message-box__btns {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.el-input__prefix {
+    display: flex;
+    align-items: center;
+}
+
+.el-input--prefix .el-input__inner {
+    padding-left: .2rem;
+}
+
+.recharge-btn-ok,
+.recharge-btn-old {
+    display: block;
+}
+
+.mob-footer-btn {
+    display: none;
+}
+
+@media screen and (max-width: 750px) {
+    .el-main {
+        padding-top: .4rem;
+    }
+
+    .banner-img {
+        width: 100%;
+    }
+
+    .ali-text {
+        position: absolute;
+        top: .62rem;
+        left: .33rem;
+        display: flex;
+        flex-direction: row;
+        font-size: .54rem;
+
+    }
+
+    .banner-search {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        bottom: .8rem;
+        left: .33rem;
+    }
+
+
+
+    .banner-search {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        bottom: .5rem;
+        left: .58rem;
+    }
+
+    .ali-tip-text {
+        font-size: .22rem;
+        margin-top: .13rem;
+        color: #171725;
+    }
+
+    .banner-input {
+        width: 5.38rem;
+        height: .56rem;
+    }
+
+
+    .banner-input>.el-input__inner {
+        width: 5.38rem;
+        height: .56rem;
+        text-align: left;
+    }
+
+
+
+    .input-btn {
+        width: 1.34rem;
+        height: .55rem;
+        font-size: .23rem;
+    }
+
+    .el-input__suffix {
+        right: 0;
+    }
+
+    .ali-main-card {
+        padding-left: .3rem;
+        padding-right: .3rem;
+    }
+
+    .card-title {
+        margin-top: 0;
+        font-size: .4rem;
+    }
+
+    .card-recharge {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-choice {
+        flex-wrap: wrap;
+    }
+
+    .banner {
+        width: 100%;
+    }
+
+    .recharge-text {
+        font-size: .32rem;
+    }
+
+    .recharge-input {
+        width: 100%;
+        height: .8rem;
+        margin-left: 0;
+        margin-top: .2rem;
+    }
+
+    .recharge-btn-ok,
+    .recharge-btn-old {
+        display: none;
+    }
+
+    .card-choice {
+        margin-top: .3rem;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .choice-item {
+
+        width: 3.35rem;
+        height: 1.11rem;
+        border: 1px solid #D8DFEE;
+        opacity: 1;
+        margin-left: 0 !important;
+        margin-bottom: .2rem;
+    }
+
+    .el-input--prefix .el-input__inner {
+        padding-left: .4rem;
+    }
+
+    .recharge-input .el-input__prefix {
+        font-size: .3rem;
+    }
+
+    .mob-footer-btn {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.55rem;
+    }
+
+    .mob-recharge-btn-ok,
+    .mob-recharge-btn-old {
+        width: 3.35rem;
+        height: .8rem;
+        font-size: .34rem;
+        opacity: 1;
+        border-radius: 3px;
+    }
+
+    .mob-recharge-btn-ok {
+        border: 1px solid #0058FF;
+        color: #0058FF;
+        background: #FFFFFF;
+    }
+
+    .mob-recharge-btn-old {
+        background: #0058FF;
+        color: #FFFFFF;
+    }
+
+    .cz-dialog .dialog-title{
+        font-size: .32rem;
+    }
+    .cz-dialog .el-form-item__label{
+        font-size: .32rem;
+    }
+    .dialog-form .el-input__inner{
+        height: .8rem;
+    }
+}

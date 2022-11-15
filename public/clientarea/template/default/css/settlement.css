@@ -21,6 +21,8 @@
   margin-bottom: 0.1rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   font-size: 0.14rem;
 }
 
@@ -107,9 +109,10 @@
   padding-left: 2.1rem;
   padding-right: 1.2rem;
   box-sizing: border-box;
+  display: flex;
+  align-items: center;
   font-size: 0.18rem;
   box-shadow: 0rem 0rem 0.2rem rgba(0, 0, 0, 0.15);
-  height: 2.6rem !important;
   position: fixed;
   bottom: 0;
   background-color: #fff;
@@ -117,6 +120,7 @@
 }
 
 .footer-box {
+  width: 100%;
   height: 100%;
   margin: 0 auto;
   max-width: 1500px;
@@ -129,7 +133,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   /* white-space: nowrap; */
-  width: 80%;
   color: #1E2736;
 }
 
@@ -240,10 +243,43 @@
   color: #F0142F;
 }
 
+.original-price {
+  text-decoration: line-through;
+  color: #999999;
+}
+
+.discount-codeNumber {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
+  font-weight: bold;
+  color: #F99600;
+}
+
+.cash-box {
+  margin-top: 0.08rem;
+}
+
+.remove-discountCode {
+  margin-left: 0.09rem;
+}
+
+.cash-codeNumber {
+  margin-top: 0.08rem;
+  cursor: pointer;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: rgba(240, 20, 46, 0.12);
+  padding: 0 0.14rem;
+  color: #F0142F;
+  font-weight: bold;
+  font-size: 0.14rem;
+}
+
 @media screen and (max-width: 750px) {
   .el-footer {
     padding: 0 0.3rem;
     width: 100%;
+    height: auto !important;
   }
 
   .el-input .el-input__inner {
@@ -291,6 +327,10 @@
     font-size: 0.16rem;
     font-weight: 500;
     color: #FFFFFF;
+  }
+
+  .total-box {
+    min-width: 1.5rem;
   }
 
 }

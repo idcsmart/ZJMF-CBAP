@@ -30,28 +30,28 @@
                         {if ($addon.name=='IdcsmartRefund')}
                         <span class="refund">
                             <span class="refund-status" v-if="refundData && refundData.status != 'Cancelled' && refundData.status != 'Reject'">{{refundStatus[refundData.status]}}</span>
-                            <span class="refund-stop-btn" v-if="refundData && refundData.status=='Pending'" @click="quitRefund">取消停用</span>
-                            <span class="refund-btn" @click="showRefund" v-if="!refundData || (refundData && (refundData.status=='Reject')) || (refundData && (refundData.status=='Cancelled'))">申请停用</span>
+                            <span class="refund-stop-btn" v-if="refundData && (refundData.status=='Pending' || refundData.status=='Suspend' || refundData.status=='Suspending')" @click="quitRefund">{{lang.common_cloud_btn8}}</span>
+                            <span class="refund-btn" @click="showRefund" v-if="!refundData || (refundData && (refundData.status=='Reject')) || (refundData && (refundData.status=='Cancelled'))">{{lang.common_cloud_btn9}}</span>
                         </span>
                         {/if}
                         {/foreach}
                         <!-- 控制台 -->
-                        <img class="console-img" src="/plugins/server/common_cloud/template/clientarea/img/cloudDetail/console.png" title="前往控制台" @click="doGetVncUrl" v-show="status != 'operating'">
+                        <img class="console-img" src="/plugins/server/common_cloud/template/clientarea/img/cloudDetail/console.png" :title="lang.common_cloud_text8" @click="doGetVncUrl" v-show="status != 'operating'">
                         <!-- 开关机 -->
                         <span class="on-off">
                             <el-popover placement="bottom" v-model="onOffvisible" trigger="click">
                                 <div class="sure-remind">
-                                    <span class="text">是否确认 </span>
-                                    <span class="status">{{status == 'on'?'关机':'开机'}} </span>
+                                    <span class="text">{{lang.common_cloud_text9}}</span>
+                                    <span class="status">{{status == 'on'?lang.common_cloud_text11:lang.common_cloud_text10}} </span>
                                     <span>?</span>
                                     <!-- 关机确认 -->
-                                    <span class="sure-btn" v-if="status == 'on'" @click="doPowerOff">确认</span>
+                                    <span class="sure-btn" v-if="status == 'on'" @click="doPowerOff">{{lang.common_cloud_btn10}}</span>
                                     <!-- 开机确认 -->
-                                    <span class="sure-btn" v-else @click="doPowerOn">确认</span>
+                                    <span class="sure-btn" v-else @click="doPowerOn">{{lang.common_cloud_btn10}}</span>
                                 </div>
                                 <img :src="'/plugins/server/common_cloud/template/clientarea/img/cloudDetail/'+status+'.png'" :title="statusText" v-show="(status != 'operating') && (status != 'fault')" slot="reference">
                             </el-popover>
-                            <i class="el-icon-loading" title="操作中" v-show="status == 'operating'"></i>
+                            <i class="el-icon-loading" :title="lang.common_cloud_text12" v-show="status == 'operating'"></i>
                             <img :src="'/plugins/server/common_cloud/template/clientarea/img/cloudDetail/'+status+'.png'" :title="statusText" v-show="status == 'fault'">
                         </span>
 
@@ -59,19 +59,19 @@
                         <span class="restart">
                             <el-popover placement="bottom" v-model="rebotVisibel" trigger="click">
                                 <div class="sure-remind">
-                                    <span class="text">是否确认</span>
-                                    <span class="status">重启</span>
+                                    <span class="text">{{lang.common_cloud_text9}}</span>
+                                    <span class="status">{{lang.common_cloud_text13}}</span>
                                     <span>?</span>
-                                    <span class="sure-btn" @click="doReboot">确认</span>
+                                    <span class="sure-btn" @click="doReboot">{{lang.common_cloud_btn10}}</span>
                                 </div>
-                                <img src="/plugins/server/common_cloud/template/clientarea/img/cloudDetail/restart.png" title="重启" v-show="status != 'operating'" slot="reference">
+                                <img src="/plugins/server/common_cloud/template/clientarea/img/cloudDetail/restart.png" :title="lang.common_cloud_text13" v-show="status != 'operating'" slot="reference">
                             </el-popover>
 
-                            <i class="el-icon-loading" title="操作中" v-show="status == 'operating'"></i>
+                            <!-- <i class="el-icon-loading" :title="lang.common_cloud_text12" v-show="status == 'operating'"></i> -->
                         </span>
 
                         <!-- 救援模式 -->
-                        <img class="fault" src="/plugins/server/common_cloud/template/clientarea/img/cloudDetail/fault.png" v-show="isRescue && status != 'operating'" title="救援模式">
+                        <img class="fault" src="/plugins/server/common_cloud/template/clientarea/img/cloudDetail/fault.png" v-show="isRescue && status != 'operating'" :title="lang.common_cloud_text14">
                     </div>
                 </div>
                 <div class="operation-row3" v-show="hostData.status == 'Active'">
@@ -92,15 +92,15 @@
             <div class="refund-msg">
                 <!-- 停用成功 -->
                 <div class="refund-success" v-if="refundData && refundData.status == 'Suspending'">
-                    (产品于{{refundData.create_time | formateTime}}申请 {{refundData.type=='Expire'?'到期退款':'立即退款'}}，于 {{refundData.type=='Expire'?'到期后':'通过当天24点后'}} 自动删除)
+                    ({{lang.common_cloud_tip6}}{{refundData.create_time | formateTime}}{{lang.common_cloud_tip7}} {{refundData.type=='Expire'?lang.common_cloud_tip8:lang.common_cloud_tip9}}，{{lang.common_cloud_tip13}} {{refundData.type=='Expire'? lang.common_cloud_tip10:lang.common_cloud_tip11}} {{lang.common_cloud_tip12}})
                 </div>
                 <!-- 停用失败 -->
                 <div class="refund-fail" v-if="refundData && refundData.status == 'Reject'">
-                    (产品于{{refundData.create_time | formateTime}}申请 {{refundData.type=='Expire'?'到期退款':'立即退款'}} 失败，
+                    ({{lang.common_cloud_tip6}}{{refundData.create_time | formateTime}}{{lang.common_cloud_tip7}} {{refundData.type=='Expire'?lang.common_cloud_tip8:lang.common_cloud_tip9}} {{lang.common_cloud_tip14}}，
 
                     <el-popover placement="top-start" trigger="hover">
                         <span>{{refundData.reject_reason}}</span>
-                        <span class="reason-text" slot="reference">查看原因</span>
+                        <span class="reason-text" slot="reference">{{lang.common_cloud_text15}}</span>
                     </el-popover>
 
                     )
@@ -119,15 +119,15 @@
                         </span>
                         <div class="btn-port">
                             <div v-show="hostData.status == 'Active'" class="re-btn" @click="showReinstall">{{lang.cloud_os_btn}}</div>
-                            <div class="port">端口:{{rescueStatusData.port}}</div>
+                            <div class="port">{{lang.common_cloud_label13}}:{{rescueStatusData.port}}</div>
                         </div>
 
 
                         <div class="user-name-pass">
-                            <div class="user-name">用户名：
+                            <div class="user-name">{{lang.common_cloud_label14}}：
                                 <span> {{rescueStatusData.username}} </span>
                             </div>
-                            <div class="user-pass">密码：
+                            <div class="user-pass">{{lang.common_cloud_label7}}：
                                 <span v-show="isShowPass"> {{rescueStatusData.password}} </span>
                                 <span v-show="!isShowPass"> {{passHidenCode}} </span>
                                 <img class="eyes" :src="isShowPass?'/plugins/server/common_cloud/template/clientarea/img/cloud/pass-show.png':'/plugins/server/common_cloud/template/clientarea/img/cloud/pass-hide.png'" @click="isShowPass=!isShowPass" />
@@ -142,7 +142,7 @@
                         </div>
                         <div class="b-item">
                             <div class="item-label">{{lang.cloud_memery}}</div>
-                            <div class="item-val">{{(cloudData.package.memory/1024).toFixed(2) + 'G'}}</div>
+                            <div class="item-val">{{(cloudData.package.memory/1024).toFixed(2) + 'GB'}}</div>
                         </div>
                         <div class="b-item">
                             <div class="item-label">{{lang.cloud_bw}}</div>
@@ -150,7 +150,7 @@
                         </div>
                         <div class="b-item">
                             <div class="item-label">{{lang.cloud_disk}}</div>
-                            <div class="item-val">{{cloudData.package.system_disk_size + 'G'}}</div>
+                            <div class="item-val">{{cloudData.package.system_disk_size + 'GB'}}</div>
                         </div>
                     </div>
                 </div>
@@ -164,12 +164,12 @@
                         {foreach $addons as $addon}
                         {if ($addon.name=='IdcsmartRenew')}
                         <div class="r-t-r" v-show="hostData.status == 'Active'">
-                            <span>是否自动续费：</span>
+                            <span>{{lang.common_cloud_text16}}：</span>
                             <el-switch v-model="isShowPayMsg" active-color="#0052D9" @change="autoRenewChange">
                             </el-switch>
                             <el-popover placement="top" trigger="hover">
                                 <div class="sure-remind">
-                                    开启自动续费后，即将到期时不再发送续费通知，而是检测余额是否充足，余额充足时将自动续费
+                                    {{lang.common_cloud_tip15}}
                                 </div>
                                 <div class="help" slot="reference">?</div>
                             </el-popover>
@@ -191,7 +191,7 @@
                         <div class="row">
                             <div class="row-l">
                                 <div class="label">{{lang.cloud_pay_style}}:</div>
-                                <div class="value">{{hostData.billing_cycle_name + '付'}}</div>
+                                <div class="value">{{hostData.billing_cycle_name + lang.common_cloud_text17}}</div>
                             </div>
                             <div class="row-r">
                                 <div class="label">{{lang.cloud_first_pay}}:</div>
@@ -220,11 +220,11 @@
             </div>
 
             <el-tabs class="tabs" v-model="activeName" @tab-click="handleClick" v-show="hostData.status == 'Active'">
-                <el-tab-pane label="统计图表" name="1">
+                <el-tab-pane :label="lang.common_cloud_tab1" name="1">
                     <el-select class="time-select" v-model="chartSelectValue" @change="chartSelectChange">
-                        <el-option value='1' label="过去24H"></el-option>
-                        <el-option value='2' label="过去3天"></el-option>
-                        <el-option value='3' label="过去7天"></el-option>
+                        <el-option value='1' :label="lang.common_cloud_label15"></el-option>
+                        <el-option value='2' :label="lang.common_cloud_label16"></el-option>
+                        <el-option value='3' :label="lang.common_cloud_label17"></el-option>
                     </el-select>
 
                     <div class="echart-main">
@@ -238,7 +238,7 @@
                         <div id="memory-echart" class="my-echart" v-loading="echartLoading4"></div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="管理" name="2">
+                <el-tab-pane :label="lang.common_cloud_tab2" name="2">
                     <!-- 管理 -->
                     <div class="manage-content">
                         <!-- 第一行 -->
@@ -250,33 +250,33 @@
                                             <el-option v-for="item in powerList" :key="item.id" :value="item.value" :label="item.label"></el-option>
                                         </el-select>
                                         <div class="item-top-btn" @click="showPowerDialog" v-loading="loading1">
-                                            确定
+                                            {{lang.common_cloud_btn10}}
                                         </div>
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">对您的实例进行电源操作</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip16}}</div>
                                     </div>
                                 </div>
                             </el-col>
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" @click="getVncUrl" v-loading="loading2">
-                                        控制台
+                                        {{lang.common_cloud_btn11}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">通过实体显示器与鼠标键盘控制您的实例</div>
-                                        <div class="bottom-row">即使实例没有网络也能控制</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip17}}</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip18}}</div>
                                     </div>
                                 </div>
                             </el-col>
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" @click="showRePass">
-                                        重置密码
+                                        {{lang.common_cloud_btn12}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">如您忘记密码或密码无法进入</div>
-                                        <div class="bottom-row">可强制修改您的实例的root/administrator密码</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip19}}</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip20}}</div>
                                     </div>
                                 </div>
                             </el-col>
@@ -287,34 +287,34 @@
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" @click="showRescueDialog" v-if="!isRescue">
-                                        救援模式
+                                        {{lang.common_cloud_btn13}}
                                     </div>
                                     <div class="item-top-btn" @click="showQuitRescueDialog" v-else>
-                                        退出救援模式
+                                        {{lang.common_cloud_btn14}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">如实例系统损坏无法启动</div>
-                                        <div class="bottom-row">可进入临时救援系统进行修复或数据拷贝</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip21}}</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip22}}</div>
                                     </div>
                                 </div>
                             </el-col>
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" @click="showReinstall">
-                                        重装系统
+                                        {{lang.common_cloud_btn15}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">快速更换实例为其他操作系统</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip23}}</div>
                                     </div>
                                 </div>
                             </el-col>
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" @click="showUpgrade">
-                                        升降级
+                                        {{lang.common_cloud_btn16}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">升降级配置</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip24}}</div>
                                     </div>
                                 </div>
                             </el-col>
@@ -324,53 +324,53 @@
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" style="background: #eee;cursor: not-allowed;color: #999;">
-                                        设置启动项
+                                        {{lang.common_cloud_btn17}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">可设置您的实例从ISO或本地硬盘中启动</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip25}}</div>
                                     </div>
                                 </div>
                             </el-col>
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" style="background: #eee;cursor: not-allowed;color: #999;">
-                                        挂载ISO
+                                        {{lang.common_cloud_btn18}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">挂载ISO文件，用于安装系统或者提供Virto驱动</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip26}}</div>
                                     </div>
                                 </div>
                             </el-col>
                             <el-col :span="8">
                                 <div class="manage-item">
                                     <div class="item-top-btn" style="background: #eee;cursor: not-allowed;color: #999;">
-                                        删除实例
+                                        {{lang.common_cloud_btn19}}
                                     </div>
                                     <div class="item-bottom">
-                                        <div class="bottom-row">不再使用该实例，彻底销毁并删除所有数据该操作不可逆</div>
+                                        <div class="bottom-row">{{lang.common_cloud_tip27}}</div>
                                     </div>
                                 </div>
                             </el-col>
                         </el-row>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="磁盘" name="3">
+                <el-tab-pane :label="lang.common_cloud_tab3" name="3">
                     <div class="disk-top-operation">
-                        <el-button v-if="diskList.length != 0" type="primary" class="btn1" @click="showExpansion">扩容</el-button>
-                        <el-button type="primary" class="btn2">指南</el-button>
+                        <el-button v-if="diskList.length != 0" type="primary" class="btn1" @click="showExpansion">{{lang.common_cloud_btn20}}</el-button>
+                        <el-button type="primary" class="btn2">{{lang.common_cloud_btn21}}</el-button>
                     </div>
                     <div class="no-disk" v-if="diskList.length == 0">
-                        <span class="text">没有磁盘</span>
-                        <span class="text2">您尚未订购任何数据盘</span>
+                        <span class="text">{{lang.common_cloud_text18}}</span>
+                        <span class="text2">{{lang.common_cloud_text19}}</span>
                     </div>
                     <div class="yes-disk" v-else>
                         <div class="main-table">
                             <el-table v-loading="diskLoading" :data="diskList" style="width: 100%">
-                                <el-table-column prop="name" label="磁盘名称" min-width="400" align="left">
+                                <el-table-column prop="name" :label="lang.common_cloud_label18" min-width="400" align="left">
                                 </el-table-column>
-                                <el-table-column prop="create_time" width="600" label="创建时间" align="left">
+                                <el-table-column prop="create_time" width="600" :label="lang.common_cloud_label19" align="left">
                                 </el-table-column>
-                                <el-table-column prop="size" label="容量" width="200" align="left" :show-overflow-tooltip="true">
+                                <el-table-column prop="size" :label="lang.common_cloud_label20" width="200" align="left" :show-overflow-tooltip="true">
                                     <template slot-scope="scope">
                                         <span>{{scope.row.size + 'G'}}</span>
                                     </template>
@@ -378,43 +378,43 @@
                             </el-table>
                         </div>
                     </div>
-                    <span v-show="(configData.buy_data_disk==1) && (diskList.length < configData.disk_max_num)" class="buy-btn" @click="showDg">订购磁盘</span>
+                    <span v-show="(configData.buy_data_disk==1) && (diskList.length < configData.disk_max_num)" class="buy-btn" @click="showDg">{{lang.common_cloud_btn22}}</span>
                 </el-tab-pane>
-                <el-tab-pane label="网络" name="4">
+                <el-tab-pane :label="lang.common_cloud_tab4" name="4">
                     <div class="net">
-                        <div class="title">公网IP</div>
+                        <div class="title">{{lang.common_cloud_title3}}</div>
                         <div class="main_table">
                             <el-table v-loading="netLoading" :data="netDataList" style="width: 100%;margin-bottom: .2rem;">
-                                <el-table-column prop="ip" label="IP地址" min-width="200" align="left">
+                                <el-table-column prop="ip" :label="lang.common_cloud_label21" min-width="200" align="left">
                                 </el-table-column>
-                                <el-table-column prop="gateway" width="400" label="网关" align="left">
+                                <el-table-column prop="gateway" width="400" :label="lang.common_cloud_label22" align="left">
                                 </el-table-column>
-                                <el-table-column prop="subnet_mask" width="400" label="掩码" align="left">
+                                <el-table-column prop="subnet_mask" width="400" :label="lang.common_cloud_label23" align="left">
                                 </el-table-column>
                             </el-table>
                             <pagination :page-data="netParams" @sizechange="netSizeChange" @currentchange="netCurrentChange">
                             </pagination>
                         </div>
-                        <div class="title">网络流量</div>
+                        <div class="title">{{lang.common_cloud_title4}}</div>
                         <div class="flow-content">
                             <div class="flow-item">
-                                <div class="flow-label">当月流量:</div>
+                                <div class="flow-label">{{lang.common_cloud_label24}}:</div>
                                 <div class="flow-value">{{flowData.total}}</div>
                             </div>
                             <div class="flow-item">
-                                <div class="flow-label">剩余流量:</div>
+                                <div class="flow-label">{{lang.common_cloud_label25}}:</div>
                                 <div class="flow-value">{{flowData.leave}}</div>
                             </div>
                             <div class="flow-item">
-                                <div class="flow-label">流量归零时间:</div>
+                                <div class="flow-label">{{lang.common_cloud_label26}}:</div>
                                 <div class="flow-value">{{flowData.reset_flow_date}}</div>
                             </div>
                         </div>
 
                         <el-select class="time-select" v-model="chartSelectValue" @change="chartSelectChange">
-                            <el-option value='1' label="过去24H"></el-option>
-                            <el-option value='2' label="过去3天"></el-option>
-                            <el-option value='3' label="过去7天"></el-option>
+                            <el-option value='1' :label="lang.common_cloud_label15"></el-option>
+                            <el-option value='2' :label="lang.common_cloud_label16"></el-option>
+                            <el-option value='3' :label="lang.common_cloud_label17"></el-option>
                         </el-select>
                         <div class="echart-main">
                             <!-- 网络带宽 -->
@@ -423,31 +423,31 @@
 
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="备份与快照" name="5">
+                <el-tab-pane :label="lang.common_cloud_tab5" name="5">
                     <!-- 备份 -->
                     <!-- 启用备份 -->
                     <div class="main-content" v-if="cloudData.backup_num > 0">
                         <div class="content-top">
-                            <div class="top-title">备份</div>
-                            <div class="top-btn" @click="showCreateBs('back')">立即备份</div>
+                            <div class="top-title">{{lang.common_cloud_title5}}</div>
+                            <div class="top-btn" @click="showCreateBs('back')">{{lang.common_cloud_btn23}}</div>
                         </div>
                         <div class="main-table">
-                            <el-table v-loading="backLoading" :data="dataList1" style="width: 100%;margin-bottom: .2rem;">
-                                <el-table-column prop="name" label="备份名称" width="300" align="left">
+                            <el-table v-loading="backLoading" :data="dataList1" style="width: 100%;">
+                                <el-table-column prop="name" :label="lang.common_cloud_label27" width="300" align="left">
                                 </el-table-column>
-                                <el-table-column prop="create_time" width="300" label="生成时间" align="left">
+                                <el-table-column prop="create_time" width="300" :label="lang.common_cloud_label28" align="left">
                                     <template slot-scope="scope">
                                         {{scope.row.create_time | formateTime}}
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="notes" label="备注" min-width="400" align="left" :show-overflow-tooltip="true">
+                                <el-table-column prop="notes" :label="lang.common_cloud_label29" min-width="400" align="left" :show-overflow-tooltip="true">
                                 </el-table-column>
-                                <el-table-column prop="type" label="操作" width="150" align="left">
+                                <el-table-column prop="type" :label="lang.common_cloud_label30" width="150" align="left">
                                     <template slot-scope="scope">
                                         <el-popover placement="top-start" trigger="hover">
                                             <div class="operation">
-                                                <div class="operation-item" @click="showhyBs('back',scope.row)">还原</div>
-                                                <div class="operation-item" @click="showDelBs('back',scope.row)">删除</div>
+                                                <div class="operation-item" @click="showhyBs('back',scope.row)">{{lang.common_cloud_btn24}}</div>
+                                                <div class="operation-item" @click="showDelBs('back',scope.row)">{{lang.common_cloud_btn25}}</div>
                                             </div>
                                             <span class="more-operation" slot="reference">
                                                 <div class="dot"></div>
@@ -462,35 +462,35 @@
                     </div>
                     <!-- 没有启用备份 -->
                     <div class="no-bs no-back" v-else>
-                        <span class="no-bs-title">备份</span>
+                        <span class="no-bs-title">{{lang.common_cloud_title5}}</span>
                         <div class="no-bs-content">
-                            <span class="text">未开启备份功能</span>
-                            <div class="btn" v-if="configData.backup_enable == 1" @click="openBs('back')">立刻开启</div>
+                            <span class="text">{{lang.common_cloud_text20}}</span>
+                            <div class="btn" v-if="configData.backup_enable == 1" @click="openBs('back')">{{lang.common_cloud_btn26}}</div>
                         </div>
                     </div>
                     <!-- 快照 -->
                     <div class="main-content" v-if="cloudData.snap_num > 0">
                         <div class="content-top">
-                            <div class="top-title">快照</div>
-                            <div class="top-btn" @click="showCreateBs('snap')">生成快照</div>
+                            <div class="top-title">{{lang.common_cloud_title6}}</div>
+                            <div class="top-btn" @click="showCreateBs('snap')">{{lang.common_cloud_btn27}}</div>
                         </div>
                         <div class="main-table">
                             <el-table v-loading="snapLoading" :data="dataList2" style="width: 100%;margin-bottom: .2rem;">
-                                <el-table-column prop="name" label="快照名称" width="300" align="left">
+                                <el-table-column prop="name" :label="lang.common_cloud_label31" width="300" align="left">
                                 </el-table-column>
-                                <el-table-column prop="create_time" width="300" label="生成时间" align="left">
+                                <el-table-column prop="create_time" width="300" :label="lang.common_cloud_label28" align="left">
                                     <template slot-scope="scope">
                                         {{scope.row.create_time | formateTime}}
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="notes" label="备注" min-width="400" align="left" :show-overflow-tooltip="true">
+                                <el-table-column prop="notes" :label="lang.common_cloud_label29" min-width="400" align="left" :show-overflow-tooltip="true">
                                 </el-table-column>
-                                <el-table-column prop="type" label="操作" width="150" align="left">
+                                <el-table-column prop="type" :label="lang.common_cloud_label30" width="150" align="left">
                                     <template slot-scope="scope">
                                         <el-popover placement="top-start" trigger="hover">
                                             <div class="operation">
-                                                <div class="operation-item" @click="showhyBs('snap',scope.row)">还原</div>
-                                                <div class="operation-item" @click="showDelBs('snap',scope.row)">删除</div>
+                                                <div class="operation-item" @click="showhyBs('snap',scope.row)">{{lang.common_cloud_btn24}}</div>
+                                                <div class="operation-item" @click="showDelBs('snap',scope.row)">{{lang.common_cloud_btn25}}</div>
                                             </div>
                                             <span class="more-operation" slot="reference">
                                                 <div class="dot"></div>
@@ -504,25 +504,25 @@
                         </div>
                     </div>
                     <div class="no-bs no-snap" v-else>
-                        <span class="no-bs-title">快照</span>
+                        <span class="no-bs-title">{{lang.common_cloud_title6}}</span>
                         <div class="no-bs-content">
-                            <span class="text">未开启快照功能</span>
-                            <div class="btn" v-if="configData.snap_enable == 1" @click="openBs('snap')">立刻开启</div>
+                            <span class="text">{{lang.common_cloud_text21}}</span>
+                            <div class="btn" v-if="configData.snap_enable == 1" @click="openBs('snap')">{{lang.common_cloud_btn26}}</div>
                         </div>
                     </div>
                 </el-tab-pane>
-                <el-tab-pane label="日志" name="6">
+                <el-tab-pane :label="lang.common_cloud_tab6" name="6">
                     <div class="log">
                         <div class="main_table">
                             <el-table v-loading="logLoading" :data="logDataList" style="width: 100%;margin-bottom: .2rem;">
-                                <el-table-column prop="id" label="序号" width="400" align="left">
+                                <el-table-column prop="id" :label="lang.common_cloud_label32" width="400" align="left">
                                 </el-table-column>
-                                <el-table-column prop="create_time" width="400" label="操作时间" align="left">
+                                <el-table-column prop="create_time" width="400" :label="lang.common_cloud_label33" align="left">
                                     <template slot-scope="scope">
                                         <span>{{scope.row.create_time | formateTime}}</span>
                                     </template>
                                 </el-table-column>
-                                <el-table-column prop="description" label="操作详情" min-width="400" align="left" :show-overflow-tooltip="true">
+                                <el-table-column prop="description" :label="lang.common_cloud_label34" min-width="400" align="left" :show-overflow-tooltip="true">
                                 </el-table-column>
                             </el-table>
                             <pagination :page-data="logParams" @sizechange="logSizeChange" @currentchange="logCurrentChange">
@@ -537,15 +537,15 @@
             <div class="notes-dialog">
                 <el-dialog width="6.2rem" :visible.sync="isShowNotesDialog" :show-close=false @close="notesDgClose">
                     <div class="dialog-title">
-                        {{hostData.notes?'修改备注':'添加备注'}}
+                        {{hostData.notes?lang.common_cloud_title7:lang.common_cloud_title8}}
                     </div>
                     <div class="dialog-main">
-                        <div class="label">备注</div>
+                        <div class="label">{{lang.common_cloud_label29}}</div>
                         <el-input class="notes-input" v-model="notesValue"></el-input>
                     </div>
                     <div class="dialog-footer">
-                        <div class="btn-ok" @click="subNotes">提交</div>
-                        <div class="btn-no" @click="notesDgClose">取消</div>
+                        <div class="btn-ok" @click="subNotes">{{lang.common_cloud_btn28}}</div>
+                        <div class="btn-no" @click="notesDgClose">{{lang.common_cloud_btn29}}</div>
                     </div>
                 </el-dialog>
             </div>
@@ -554,10 +554,10 @@
             <div class="reinstall-dialog">
                 <el-dialog width="6.2rem" :visible.sync="isShowReinstallDialog" :show-close=false @close="reinstallDgClose">
                     <div class="dialog-title">
-                        重装系统
+                        {{lang.common_cloud_title9}}
                     </div>
                     <div class="dialog-main">
-                        <div class="label">操作系统</div>
+                        <div class="label">{{lang.common_cloud_label6}}</div>
                         <div class="os-content">
                             <!-- 镜像组选择框 -->
                             <el-select class="os-select os-group-select" v-model="reinstallData.osGroupId" @change="osSelectGroupChange">
@@ -574,17 +574,17 @@
                                 <el-option v-for="item in osSelectData" :key="item.id" :value="item.id" :label="item.name +'-' + commonData.currency_prefix + item.price"></el-option>
                             </el-select>
                         </div>
-                        <div class="label">密码</div>
+                        <div class="label">{{lang.common_cloud_label7}}</div>
                         <div class="pass-content">
                             <el-select class="pass-select" v-model="reinstallData.type">
-                                <el-option value="pass" label="密码"></el-option>
+                                <el-option value="pass" :label="lang.common_cloud_label7"></el-option>
 
                             </el-select>
                             <el-popover placement="top-start" width="200" trigger="hover" content="1、长度6位及以上 2、只能输入大写字母、小写字母、数字、~!@#$&* ()_ -+=| {}[];:<>?,./中的特殊符号3、不能以“/”开头4、必须包含小写字母a~z，大写字母A~Z,字母0-9">
                                 <i class="el-icon-question help-icon" slot="reference"></i>
                             </el-popover>
                             <el-input class="pass-input" v-model="reinstallData.password" placeholder="请输入内容" v-show="reinstallData.type=='pass'">
-                                <div class="pass-btn" slot="suffix" @click="autoPass">随机生成</div>
+                                <div class="pass-btn" slot="suffix" @click="autoPass">{{lang.common_cloud_btn1}}</div>
                             </el-input>
                             <div class="key-select" v-show="reinstallData.type=='key'">
                                 <el-select v-model="reinstallData.key">
@@ -592,35 +592,32 @@
                                 </el-select>
                             </div>
                         </div>
-                        <div class="label">端口</div>
+                        <div class="label">{{lang.common_cloud_label13}}</div>
                         <el-input class="pass-input" v-model="reinstallData.port" placeholder="请输入内容">
-                            <div class="pass-btn" slot="suffix" @click="autoPort">随机生成</div>
+                            <div class="pass-btn" slot="suffix" @click="autoPort">{{lang.common_cloud_btn1}}</div>
                         </el-input>
 
                         <div class="pay-img" v-show="isPayImg">
-                            当前系统为付费系统，{{commonData.currency_prefix + payMoney + '/次'}}
-
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">用户折扣金额：￥{{ payDiscount }}</div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                            {{lang.common_cloud_tip28}},{{commonData.currency_prefix + payMoney + '/次'}}
+                            <el-popover placement="top-start" width="200" trigger="hover">
+                                <div class="show-config-list">等级折扣金额：{{commonData.currency_prefix}}{{ payDiscount }}</div>
+                                <div class="show-config-list">优惠码折扣金额：{{commonData.currency_prefix}}{{ payCodePrice }}</div>
+                                <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
                             </el-popover>
-                            {/if}
-                            {/foreach}
-                            <span class="img-buy-btn" @click="payImg">立即购买</span>
+
+                            <span class="img-buy-btn" @click="payImg">{{lang.common_cloud_btn5}}</span>
                         </div>
 
                         <div class="alert">
                             <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
                             </el-alert>
 
-                            <div class="remind" v-show="!errText">请妥善保存当前密码，该密码不会二次出现</div>
+                            <div class="remind" v-show="!errText">{{lang.common_cloud_tip29}}</div>
                         </div>
                     </div>
                     <div class="dialog-footer">
-                        <div class="btn-ok" @click="doReinstall">提交</div>
-                        <div class="btn-no" @click="reinstallDgClose">取消</div>
+                        <div class="btn-ok" @click="doReinstall">{{lang.common_cloud_btn28}}</div>
+                        <div class="btn-no" @click="reinstallDgClose">{{lang.common_cloud_btn29}}</div>
                     </div>
                 </el-dialog>
             </div>
@@ -630,7 +627,7 @@
             <div class="renew-dialog">
                 <el-dialog width="6.9rem" :visible.sync="isShowRenew" :show-close=false @close="renewDgClose">
                     <div class="dialog-title">
-                        续费
+                        {{lang.common_cloud_title10}}
                     </div>
                     <div class="dialog-main">
                         <div class="renew-content">
@@ -642,25 +639,34 @@
                         </div>
                         <div class="pay-content">
                             <div class="pay-price">
-                                <div class="text">合计</div>
                                 <div class="money" v-loading="renewLoading">
-                                    {{commonData.currency_prefix + renewParams.price}}
-
-                                    {foreach $addons as $addon}
-                                    {if ($addon.name=='IdcsmartClientLevel')}
-                                    <el-popover placement="top-start" width="100" trigger="hover">
-                                        <div class="show-config-list">用户折扣金额：￥{{ renewParams.discount }}</div>
-                                        <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                                    <span class="text">{{lang.common_cloud_label11}}:</span> <span>{{commonData.currency_prefix}}{{renewParams.totalPrice | filterMoney}}</span>
+                                    <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && renewParams.isUseDiscountCode) || isShowCash">
+                                    <div class="show-config-list">
+                                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ renewParams.clDiscount | filterMoney}}</p>
+                                        <p v-if="isShowPromo && renewParams.isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ renewParams.code_discount | filterMoney }}</p>
+                                        <p v-if="isShowCash && renewParams.customfield.voucher_get_id">代金券抵扣金额：{{commonData.currency_prefix}} {{ renewParams.cash_discount | filterMoney}}</p>
+                                    </div>
+                                    <i class="el-icon-warning-outline total-icon" slot="reference"></i>
                                     </el-popover>
-                                    {/if}
-                                    {/foreach}
+                                    <p class="original-price" v-if="renewParams.totalPrice != renewParams.original_price">{{commonData.currency_prefix}} {{ renewParams.original_price | filterMoney}}</p>
+                                    <div class="code-box">
+                                        <!-- 代金券 -->
+                                        <cash-coupon ref="cashRef" v-show="isShowCash && !cashObj.code" :currency_prefix="commonData.currency_prefix" @use-cash="reUseCash" scene='renew' :product_id="[product_id]" :price="renewParams.original_price"></cash-coupon>
+                                        <!-- 优惠码 -->
+                                        <discount-code v-show="isShowPromo && !renewParams.customfield.promo_code" @get-discount="getRenewDiscount(arguments)" scene='renew' :product_id="product_id" :amount="renewParams.original_price" :billing_cycle_time="renewParams.duration"></discount-code>
+                                     </div>
+                                    <div class="code-number-text">
+                                        <div class="discount-codeNumber" v-show="renewParams.customfield.promo_code">{{ renewParams.customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode" @click="removeRenewDiscountCode()"></i></div>
+                                        <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i class="el-icon-circle-close remove-discountCode" @click="reRemoveCashCode()"></i></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="dialog-footer">
-                        <div class="btn-ok" @click="subRenew">确认续费</div>
-                        <div class="btn-no" @click="renewDgClose">取消</div>
+                        <div class="btn-ok" @click="subRenew">{{lang.common_cloud_btn30}}</div>
+                        <div class="btn-no" @click="renewDgClose">{{lang.common_cloud_btn29}}</div>
                     </div>
                 </el-dialog>
             </div>
@@ -669,47 +675,47 @@
             <div class="refund-dialog">
                 <el-dialog width="6.8rem" :visible.sync="isShowRefund" :show-close=false @close="refundDgClose">
                     <div class="dialog-title">
-                        {{refundPageData.allow_refund == 1?'退款':'停用'}}
+                        {{refundPageData.allow_refund == 1?lang.common_cloud_title11:lang.common_cloud_title12}}
                     </div>
                     <div class="dialog-main">
-                        <div class="label">产品信息</div>
+                        <div class="label">{{lang.common_cloud_label35}}</div>
                         <div class="host-content">
                             <div class="host-item">
-                                <div class="left">产品配置:</div>
+                                <div class="left">{{lang.common_cloud_label36}}:</div>
                                 <div class="right">
                                     <div class="right-row">
                                         <div class="right-row-item">{{cloudData.package.cpu}} 核CPU</div>
-                                        <div class="right-row-item">{{(cloudData.package.memory/1024).toFixed(2) + 'G 内存'}}</div>
+                                        <div class="right-row-item">{{(cloudData.package.memory/1024).toFixed(2) + 'GB 内存'}}</div>
                                         <div class="right-row-item">{{cloudData.package.system_disk_size}} GB 存储容量</div>
                                         <div class="right-row-item">{{cloudData.package.out_bw}} M 宽带</div>
                                     </div>
                                 </div>
                             </div>
                             <div class="host-item">
-                                <div class="left">订购时间:</div>
+                                <div class="left">{{lang.common_cloud_label37}}:</div>
                                 <div class="right">{{refundPageData.host.create_time | formateTime}}</div>
                             </div>
                             <div class="host-item" v-if="refundPageData.allow_refund == 1">
-                                <div class="left">订购金额:</div>
+                                <div class="left">{{lang.common_cloud_label38}}:</div>
                                 <div class="right">{{commonData.currency_prefix + refundPageData.host.first_payment_amount}}</div>
                             </div>
                         </div>
-                        <div class="label">停用原因</div>
+                        <div class="label">{{lang.common_cloud_label39}}</div>
                         <el-select v-if="refundPageData.reason_custom == 0" v-model="refundParams.suspend_reason" multiple>
                             <el-option v-for="item in refundPageData.reasons" :key="item.id" :value="item.id" :label="item.content"></el-option>
                         </el-select>
                         <el-input v-else v-model="refundParams.suspend_reason"></el-input>
-                        <div class="label">停用时间</div>
+                        <div class="label">{{lang.common_cloud_label40}}</div>
                         <el-select v-model="refundParams.type">
-                            <el-option value="Expire" label="到期"></el-option>
-                            <el-option value="Immediate" label="立即"></el-option>
+                            <el-option value="Expire" :label="lang.common_cloud_label41"></el-option>
+                            <el-option value="Immediate" :label="lang.common_cloud_label42"></el-option>
                         </el-select>
-                        <div class="label" v-if="refundPageData.allow_refund == 1">退款金额</div>
+                        <div class="label" v-if="refundPageData.allow_refund == 1">{{lang.common_cloud_label43}}}</div>
                         <div class="amount-content" v-if="refundPageData.allow_refund == 1">{{commonData.currency_prefix}}{{refundParams.type=='Immediate'?refundPageData.host.amount:'0.00'}}</div>
                     </div>
                     <div class="dialog-footer">
-                        <div class="btn-ok" @click="subRefund">{{refundPageData.allow_refund == 1?'确认退款':'确认停用'}}</div>
-                        <div class="btn-no" @click="refundDgClose">取消</div>
+                        <div class="btn-ok" @click="subRefund">{{refundPageData.allow_refund == 1? lang.common_cloud_btn31: lang.common_cloud_btn32}}</div>
+                        <div class="btn-no" @click="refundDgClose">{{lang.common_cloud_btn29}}</div>
                     </div>
                 </el-dialog>
             </div>
@@ -718,36 +724,36 @@
             <div class="repass-dialog">
                 <el-dialog width="6.8rem" :visible.sync="isShowRePass" :show-close=false @close="rePassDgClose">
                     <div class="dialog-title">
-                        重置密码
-                        <span class="second-title">如您忘记密码，可直接输入新密码进行破解</span>
+                        {{lang.common_cloud_title13}}
+                        <span class="second-title">{{lang.common_cloud_text23}}</span>
                     </div>
                     <div class="dialog-main">
                         <div class="label">
-                            密码
+                            {{lang.common_cloud_label7}}
                             <el-popover placement="top-start" width="200" trigger="hover" content="1、长度6位及以上 2、只能输入大写字母、小写字母、数字、~!@#$&* ()_ -+=| {}[];:<>?,./中的特殊符号3、不能以“/”开头4、必须包含小写字母a~z，大写字母A~Z,字母0-9">
                                 <i class="el-icon-question" slot="reference"></i>
                             </el-popover>
 
                         </div>
                         <el-input class="pass-input" v-model="rePassData.password" placeholder="请输入内容">
-                            <div class="pass-btn" slot="suffix" @click="autoPass">随机生成</div>
+                            <div class="pass-btn" slot="suffix" @click="autoPass">{{lang.common_cloud_btn1}}</div>
                         </el-input>
 
                         <div class="alert" v-show="powerStatus=='off'">
-                            <div class="title">当前操作需要实例在关机状态下进行</div>
-                            <div class="row"><span class="dot"></span> 为了避免数据丢失，实例将关机中断您的业务，请仔细确认。</div>
-                            <div class="row"><span class="dot"></span> 强制关机可能会导致数据丢失或文件系统损坏，您也可以主动关机后再进行操作
+                            <div class="title">{{lang.common_cloud_tip30}}</div>
+                            <div class="row"><span class="dot"></span> {{lang.common_cloud_tip31}}</div>
+                            <div class="row"><span class="dot"></span> {{lang.common_cloud_tip32}}
                             </div>
                         </div>
-                        <el-checkbox v-model="rePassData.checked" v-show="powerStatus=='off'">同意强制关机</el-checkbox>
+                        <el-checkbox v-model="rePassData.checked" v-show="powerStatus=='off'">{{lang.common_cloud_text24}}</el-checkbox>
                         <div class="alert-err-text">
                             <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
                             </el-alert>
                         </div>
                     </div>
                     <div class="dialog-footer">
-                        <div class="btn-ok" @click="rePassSub" v-loading="loading5">提交</div>
-                        <div class="btn-no" @click="rePassDgClose">取消</div>
+                        <div class="btn-ok" @click="rePassSub" v-loading="loading5">{{lang.common_cloud_btn28}}}</div>
+                        <div class="btn-no" @click="rePassDgClose">{{lang.common_cloud_btn29}}</div>
                     </div>
                 </el-dialog>
             </div>
@@ -844,22 +850,35 @@
                         </el-alert>
                     </div>
                     <div class="dialog-footer">
-                        <span class="money-text">
-                            切换所需费用：
-                        </span>
-                        <span class="money-num" v-loading="upgradePriceLoading">
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">用户折扣金额：￥{{ upDiscount }}</div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                            </el-popover>
-                            {/if}
-                            {/foreach}
-                            {{commonData.currency_prefix + upPrice}}
-                        </span>
-                        <div class="btn-ok" @click="upgradeSub" v-loading="loading4">提交</div>
-                        <div class="btn-no" @click="upgradeDgClose">取消</div>
+                        <div class="footer-top">
+                          <div class="money-text">切换所需费用：</div>
+                          <div class="money" v-loading="upgradePriceLoading">
+                                <span class="money-num">{{commonData.currency_prefix }} {{ upParams.totalPrice | filterMoney}}</span>
+                                <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && upParams.isUseDiscountCode) || isShowCash">
+                                    <div class="show-config-list">
+                                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ upParams.clDiscount | filterMoney }}</p>
+                                        <p v-if="isShowPromo && upParams.isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ upParams.code_discount | filterMoney}}</p>
+                                        <p v-if="isShowCash && upParams.customfield.voucher_get_id">代金券抵扣金额：{{commonData.currency_prefix}} {{ upParams.cash_discount | filterMoney}}</p>
+                                    </div>
+                                    <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                                </el-popover>
+                                <p class="original-price" v-if="upParams.totalPrice != upParams.original_price">{{commonData.currency_prefix}} {{ upParams.original_price | filterMoney}}</p>
+                                <div class="code-box">
+                                    <!-- 代金券 -->
+                                    <cash-coupon ref="cashRef" v-show="isShowCash && !cashObj.code" :currency_prefix="commonData.currency_prefix" @use-cash="upUseCash" scene='upgrade' :product_id="[product_id]" :price="upParams.original_price"></cash-coupon>
+                                      <!-- 优惠码 -->
+                                    <discount-code v-show="isShowPromo && !upParams.customfield.promo_code  " @get-discount="getUpDiscount(arguments)" scene='upgrade' :product_id="product_id" :amount="upParams.original_price" :billing_cycle_time="hostData.billing_cycle_time"></discount-code>
+                                </div>
+                               <div class="code-number-text">
+                                 <div class="discount-codeNumber" v-show="upParams.customfield.promo_code">{{ upParams.customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode" @click="removeUpDiscountCode()"></i></div>
+                                 <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i class="el-icon-circle-close remove-discountCode" @click="upRemoveCashCode()"></i></div>
+                                </div>
+                           </div>
+                        </div>
+                        <div class="footer-bottom">
+                            <div class="btn-ok" @click="upgradeSub" v-loading="loading4">提交</div>
+                            <div class="btn-no" @click="upgradeDgClose">取消</div>
+                        </div>
                     </div>
                 </el-dialog>
             </div>
@@ -898,15 +917,12 @@
                     <div class="dialog-footer">
                         <span class="text">订购所需费用:</span>
                         <span class="num" v-loading="diskPriceLoading">
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">用户折扣金额：￥{{ moreDiscountkDisPrice }}</div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                            </el-popover>
-                            {/if}
-                            {/foreach}
                             {{commonData.currency_prefix}}{{moreDiskPrice}}
+                            <el-popover placement="top-start" width="200" trigger="hover">
+                                <div class="show-config-list">等级折扣金额：{{commonData.currency_prefix}}{{ moreDiscountkDisPrice }}</div>
+                                <div class="show-config-list">优惠码折扣金额：{{commonData.currency_prefix}}{{ moreCodePrice }}</div>
+                                <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
+                            </el-popover>
                         </span>
                         <div class="btn-ok" @click="toCreateDisk">提交</div>
                         <div class="btn-no" @click="dgClose">取消</div>
@@ -935,21 +951,17 @@
                         <span class="text">扩容所需费用:</span>
                         <span class="num" v-loading="diskPriceLoading">
                             {{commonData.currency_prefix}}{{expansionDiskPrice}}
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">用户折扣金额：￥{{ expansionDiscount }}</div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                            <el-popover placement="top-start" width="200" trigger="hover">
+                                <div class="show-config-list">等级折扣金额：{{commonData.currency_prefix}}{{ expansionDiscount }}</div>
+                                <div class="show-config-list">优惠码折扣金额：{{commonData.currency_prefix}}{{ expansionCodePrice }}</div>
+                                <i class="el-icon-warning-outline total-icon" slot="reference"  v-if="isShowLevel || isShowPromo"></i>
                             </el-popover>
-                            {/if}
-                            {/foreach}
                         </span>
                         <div class="btn-ok" @click="subExpansion">提交</div>
                         <div class="btn-no" @click="krClose">取消</div>
                     </div>
                 </el-dialog>
             </div>
-
             <!-- 创建备份/快照弹窗 -->
             <div class="create-bs-dialog">
                 <el-dialog width="6.8rem" :visible.sync="isShwoCreateBs" :show-close=false @close="bsCgClose">
@@ -1030,14 +1042,12 @@
                         <span class="num">开启创建{{isBs?bsData.backNum:bsData.snapNum}}个{{isBs?'备份':'快照'}}</span>
                         <span class="price" v-loading="bsDataLoading">
                             {{commonData.currency_prefix + bsData.money}}
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
-                                <div class="show-config-list">用户折扣金额：￥{{ bsData.moneyDiscount }}</div>
-                                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                            <el-popover placement="top-start" width="200" trigger="hover">
+                                <div class="show-config-list">等级折扣金额：{{commonData.currency_prefix}}{{ bsData.moneyDiscount }}</div>
+                                <div class="show-config-list">优惠码折扣金额：{{commonData.currency_prefix}}{{ bsData.codePrice }}</div>
+                                <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
                             </el-popover>
-                            {/if}
-                            {/foreach}
+
                         </span>
                     </div>
                     <div class="dialog-footer">
@@ -1090,6 +1100,4 @@
 <script src="/plugins/server/common_cloud/template/clientarea/api/cloud.js"></script>
 <script src="/plugins/server/common_cloud/template/clientarea/utils/util.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.3.3/echarts.min.js"></script>
-<script src="/plugins/server/common_cloud/template/clientarea/components/payDialog/payDialog.js"></script>
-<script src="/plugins/server/common_cloud/template/clientarea/components/pagination/pagination.js"></script>
 <script src="/plugins/server/common_cloud/template/clientarea/js/cloudDetail.js"></script>

@@ -11,7 +11,7 @@ localStorage.setItem = function (key, newValue) {
     const template = document.getElementsByClassName('goods')[0]
     Vue.prototype.lang = window.lang
     window.addEventListener('setItemEvent', function (e) {
-      if (e.newValue.indexOf('cartNum') !== -1) {
+      if (e.newValue && e.newValue.indexOf('cartNum') !== -1) {
         vm._data.shoppingCarNum = e.newValue.split('-')[1] * 1
       }
     });
@@ -89,13 +89,7 @@ localStorage.setItem = function (key, newValue) {
 
         // 获取通用配置
         getCommonData () {
-          getCommon().then(res => {
-            if (res.data.status === 200) {
-              this.commonData = res.data.data
-              localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-              // document.title = this.commonData.website_name + '-工单系统'
-            }
-          })
+          this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
         }
       },
 

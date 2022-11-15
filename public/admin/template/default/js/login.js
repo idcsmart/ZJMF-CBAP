@@ -45,6 +45,9 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
         if (this.formData.name) {
           this.check = true
         }
+        if (!localStorage.getItem('lang')) {
+          localStorage.setItem('lang', 'zh-cn')
+        }
       },
       watch: {
         captcha_admin_login (val) {
@@ -112,6 +115,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
             const menus = await getMenus()
             localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
             this.loading = false
+            localStorage.setItem('curValue', 0)
             location.href = 'index.html'
           } catch (error) {
             (this.captcha_admin_login == 1) && this.getCaptcha()

@@ -14,7 +14,7 @@
     </div>
     <div class="template">
         <el-container>
-            <aside-menu></aside-menu>
+            <aside-menu @getruleslist="getRule"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
@@ -22,14 +22,14 @@
                     <div class="main-card">
                         <div class="main-card-title">{{lang.security_title}}</div>
                         <el-tabs v-model="activeName" @tab-click="handleClick">
-                            <el-tab-pane label="API" name="1"></el-tab-pane>
+                            <el-tab-pane label="API" name="1" v-if="isShowAPI"></el-tab-pane>
                             {foreach $addons as $addon}
                             {if ($addon.name=='IdcsmartSshKey')}
                             <el-tab-pane :label="lang.security_tab1" name="2">
                             </el-tab-pane>
                             {/if}
                             {/foreach}
-                            <el-tab-pane :label="lang.security_tab2" name="3">
+                            <el-tab-pane :label="lang.security_tab2" name="3" v-if="isShowAPILog">
                                 <div class="content-table">
                                     <div class="content_searchbar">
                                         <div>
@@ -45,7 +45,7 @@
                                         <el-table v-loading="loading" :data="dataList" style="width: 100%;margin-bottom: .2rem;">
                                             <el-table-column prop="id" label="ID" width="150" align="left">
                                             </el-table-column>
-                                            <el-table-column prop="description" label="描述" min-width="200" :show-overflow-tooltip="true" align="left">
+                                            <el-table-column prop="description" :label="lang.security_label8" min-width="200" :show-overflow-tooltip="true" align="left">
                                             </el-table-column>
                                             <el-table-column prop="create_time" :label="lang.account_label10" min-width="200" align="left">
                                                 <template slot-scope="scope">

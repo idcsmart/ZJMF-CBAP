@@ -72,10 +72,10 @@
           rules: {
             name: [
               { required: true, message: lang.input + lang.small_group_name, type: 'error' },
-              { validator: val => val.length <= 50, message: lang.verify3 + 50, type: 'warning'}
+              { validator: val => val.length <= 50, message: lang.verify3 + 50, type: 'warning' }
             ],
             description: [
-              { validator: val => val.length <= 1000, message: lang.verify3 + 1000, type: 'warning'}
+              { validator: val => val.length <= 1000, message: lang.verify3 + 1000, type: 'warning' }
             ],
             password: [{ required: true, message: lang.input + lang.password, type: 'error' }],
             repassword: [
@@ -115,6 +115,11 @@
           maxHeight: ''
         }
       },
+      // watch: {
+      //   'formData.auth'(){
+      //     console.log('all', this.$refs.tree.getItems())
+      //   }
+      // },
       mounted () {
         this.maxHeight = document.getElementById('content').clientHeight - 220
         let timer = null
@@ -128,7 +133,7 @@
             timer = null
           }, 300)
         }
-        document.title = lang.group_setting + '-' + localStorage.getItem('back_website_name')
+
       },
       methods: {
         // 切换分页
@@ -178,7 +183,14 @@
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
-              const params = { ...this.formData }
+              // 提交的时候获取半选状态的节点id
+              const pId = this.$refs.tree.getItems().filter(item => item.indeterminate).reduce((all, cur) => {
+                all.push(cur.value)
+                return all
+              }, [])
+              const params = JSON.parse(JSON.stringify(this.formData))
+              params.auth.push(...pId)
+              params.auth.sort((a, b) => a - b)
               const res = await createAdminRole(this.optType, params)
               this.$message.success(res.data.msg)
               this.getRoleList()
@@ -198,7 +210,7 @@
           this.getGroupDetail(row.id)
           this.visible = true
           this.checkAll = this.formData.auth.length === this.arr ? true : false
-          this.addTip = window.lang.update + window.lang.group
+          this.addTip = lang.update + lang.group
           this.$refs.userDialog.reset()
         },
         // 获取分组详情
@@ -206,7 +218,20 @@
           try {
             const res = await getAdminRoleDetail(id)
             const temp = res.data.data.admin_role
-            Object.assign(this.formData, temp)
+            // 处理掉半选节点的id
+            this.formData.auth = []
+            temp.auth.forEach(i => {
+              let node = this.$refs.tree.getItem(i);
+              // node.isLeaf：判断当前节点是否为子节点
+              if (node.isLeaf()) {
+                //如果是子节点，就把状态设置成选中
+                this.formData.auth.push(node.value)
+              } else {
+              }
+            })
+            this.formData.id = temp.id
+            this.formData.name = temp.name
+            this.formData.description = temp.description
           } catch (error) {
 
           }
@@ -220,14 +245,45 @@
             this.formData.auth = []
           }
         },
-        // 选中节点时
-        changeCheck () {
+        // 选中节点时，不全选的时候会丢失父节点id
+        changeCheck (_, node) {
+          // console.log('@@@', this.$refs.tree.getItems())
+
+          /* const curId = node.node.value
+          // 获取当前节点的全部父节点
+          const pId = this.$refs.tree.getParents(curId).reduce((all, cur) => {
+            all.push(cur.value)
+            return all
+          }, [])
+           // 获取当前节点的全部子节点
+          const childId = this.$refs.tree.getItems(curId).reduce((all, cur) => {
+            all.push(cur.value)
+            return all
+          }, [])
+          const temp = [].concat(pId, childId)
+          if (_.includes(curId)) {
+            this.formData.auth = Array.from(new Set(this.formData.auth.concat(temp)))
+          //  console.log(this.formData.auth)
+          } else {
+            const parArr = this.$refs.tree.getParent(curId)?.getChildren().reduce((all, cur) => {
+              all.push(cur.value)
+              return all
+            }, [])
+            // 取消的时候，当子级没有元素的时候去掉父级节点
+            if (parArr?.every(item => !this.formData.auth.includes(item))) {
+              this.formData.auth = this.formData.auth.filter(item => item !== this.$refs.tree.getParent(curId).value)
+            }
+            this.formData.auth = this.formData.auth.filter(item => !childId.includes(item))
+            // console.log(this.formData.auth)
+          }
+
+          event.stopPropagation()
           if (this.formData.auth.length === this.arr.length) {
             this.checkAll = true
           } else {
             this.checkAll = false
           }
-          this.isExpand = false
+          this.isExpand = false */
         },
         // 展开/折叠
         expandAll () {
@@ -247,6 +303,9 @@
         },
         // 删除分组
         deleteUser (row) {
+          if (row.id === 1) {
+            return
+          }
           this.delVisible = true
           this.delId = row.id
         },

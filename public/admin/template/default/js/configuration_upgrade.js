@@ -42,7 +42,7 @@
           newListParams: {
             limit: 10,
             page: 1,
-            parent_id: 3
+            parent_id: 11
           },
           isShowProgress: false,
           timer: null

@@ -143,4 +143,14 @@ class HooksController
      * @title 队列执行hook
      */
     public function task_run(){}
+
+    /**
+     * 时间 2022-10-24
+     * @title 订单取消前
+     * @url before_order_cancel
+     * @author hh
+     * @version v1
+     * @param int id - 订单ID
+     */
+    public function before_order_cancel(){}
 }

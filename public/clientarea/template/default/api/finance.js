@@ -66,8 +66,8 @@ function unAmount() {
 function creditPay(params) {
   return Axios.post(`/credit`, params);
 }
- // 删除订单
- function delete_order(id) {
+// 删除订单
+function delete_order(id) {
   return Axios.delete(`/order/${id}`);
 }
 
@@ -76,3 +76,17 @@ function creditPay(params) {
 // function onlinePay(params) {
 //   return Axios.post(`/pay`, params);
 // }
+
+// 代金券
+// 可领代金券列表
+function voucherAvailable({ params }) {
+  return Axios.get(`/voucher`, { params })
+}
+
+function voucherMine(params) {
+  return Axios.get(`/voucher/mine`, { params })
+}
+
+function voucherGet(params) {
+  return Axios.post(`/voucher/${params.id}/get`, params)
+}

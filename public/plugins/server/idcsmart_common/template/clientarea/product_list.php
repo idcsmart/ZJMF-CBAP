@@ -32,7 +32,8 @@
         <!-- <el-input suffix-icon="el-input__icon el-icon-search" @input="inputChange" v-model="params.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2"></el-input> -->
         <el-input v-model="params.keywords" style="width: 3.2rem;margin-right: .2rem;" :placeholder="lang.cloud_tip_2" clearable @clear="getList">
         </el-input>
-        <div class="search-btn" @Click="inputChange">{{lang.com_config.query}}</div>
+        <!-- <div class="search-btn" @Click="inputChange" v-loading="submitLoading">{{lang.com_config.query}}</div> -->
+        <el-button :loading="submitLoading" class="search-btn" @Click="inputChange">{{lang.com_config.query}}</el-button>
       </div>
       <div class="table">
         <!--  @row-click="(row)=>toDetail(row.id)" -->

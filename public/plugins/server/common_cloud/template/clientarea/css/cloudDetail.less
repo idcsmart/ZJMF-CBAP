@@ -569,18 +569,55 @@
   }
 
   .dialog-footer {
-    display: flex;
-    align-items: flex-end;
+    display: block;
 
     .money-text {
+      margin-top: .1rem;
+      margin-right: 0.59rem;
       color: rgba(30, 39, 54, 1);
     }
 
+    .money {
+      text-align: right;
+
+    }
+
     .money-num {
-      color: rgba(249, 150, 0, 1);
-      margin-right: .2rem;
+      font-size: .28rem;
+      font-family: Helvetica;
+      font-weight: bold;
+      color: #F0142F;
+    }
+
+    .discount-codeNumber {
+      cursor: pointer;
+    }
+
+    .total-icon {
+      font-size: 0.16rem;
+      color: #1E2736;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      font-size: 0.2rem;
+      font-weight: 500;
+      color: #999999;
+    }
+
+    .footer-top {
+      text-align: right;
+      display: flex;
+      justify-content: right;
+    }
+
+    .footer-bottom {
+      display: flex;
+      margin-top: 0.41rem;
+      justify-content: right;
     }
   }
+
 }
 
 .os-item {
@@ -935,5 +972,89 @@
       margin-bottom: .05rem;
       cursor: pointer;
     }
+  }
+}
+
+.renew-dialog {
+  .pay-content {
+    border: 1px solid #E6E7EB;
+    border-radius: 3px;
+    padding: 0.2rem 0;
+    padding-right: 0.3rem;
+
+    .pay-price {
+      display: flex;
+      flex-direction: row;
+      text-align: right;
+
+      .text {
+        margin-top: .1rem;
+        color: #1E2736;
+        margin-right: 1.43rem;
+      }
+
+      .money {
+        width: 100%;
+        font-size: .28rem;
+        font-family: Helvetica;
+        font-weight: bold;
+        color: #F0142F;
+        text-align: right;
+      }
+
+
+
+      .total-icon {
+        font-size: 0.16rem;
+        color: #1E2736;
+      }
+
+      .original-price {
+        text-decoration: line-through;
+        font-size: 0.2rem;
+        font-weight: 500;
+        color: #999999;
+      }
+
+    }
+  }
+}
+
+.code-box {
+  margin-top: 0.08rem;
+  display: flex;
+  justify-content: flex-end;
+
+  >div:nth-of-type(2) {
+    margin-left: 0.1rem;
+  }
+}
+
+.code-number-text {
+  display: flex;
+  margin-top: 0.04rem;
+  justify-content: flex-end;
+
+  .discount-codeNumber {
+    cursor: pointer;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    background: rgba(249, 149, 0, 0.2);
+    padding: 0 0.14rem;
+    color: #F99600;
+    font-weight: bold;
+    font-size: 0.14rem;
+  }
+
+  .cash-codeNumber {
+    margin-left: 0.08rem;
+    cursor: pointer;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    background: rgba(240, 20, 46, 0.12);
+    padding: 0 0.14rem;
+    color: #F0142F;
+    font-weight: bold;
+    font-size: 0.14rem;
   }
 }

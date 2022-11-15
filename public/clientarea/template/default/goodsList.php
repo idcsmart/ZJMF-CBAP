@@ -14,12 +14,12 @@
   </div>
   <div class="template">
     <el-container>
-      <aside-menu></aside-menu>
+      <aside-menu @getruleslist="getRule"></aside-menu>
       <el-container>
         <top-menu></top-menu>
         <el-main>
           <!-- 自己的东西 -->
-          <div class="main-card">
+          <div class="main-card" v-if="isShowView">
             <div class="main-title">{{lang.new_goods}}</div>
             <!-- <div class="main-content">
               <div class="select-box">
@@ -73,7 +73,8 @@
                     <div class="goods-name">{{ item.name }}</div>
                     <div v-html="item.description" class="goods-description"></div>
                     <div class="btn-box">
-                      <el-button type="primary" :key="item.id + 'aaa'" @click="goOrder(item)">{{lang.buy}}</el-button>
+                      <span class="item-price">{{commonData.currency_prefix}} {{item.price}}</span>
+                      <el-button type="primary" :key="item.id + 'aaa'"  @click="goOrder(item)">{{lang.buy}}</el-button>
                     </div>
                   </div>
                 </div>

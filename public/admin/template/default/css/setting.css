@@ -213,6 +213,9 @@
 .admin-role .auth {
   margin-left: -32px;
 }
+.admin-role .disable {
+  cursor: not-allowed;
+}
 /* notice-sms */
 .notice-email .common-header .header-left,
 .notice-email-template .common-header .header-left {
@@ -333,7 +336,7 @@
   margin-top: 30px;
 }
 .notice-send .t-popup {
-  z-index: 1;
+  z-index: 3;
 }
 .notice-send .required .t-select {
   border-color: var(--td-error-color);

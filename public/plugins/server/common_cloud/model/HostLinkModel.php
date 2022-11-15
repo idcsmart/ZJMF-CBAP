@@ -113,6 +113,18 @@ class HostLinkModel extends Model{
             }
         }
 
+        // 获取子账户可见产品
+        $res = hook('get_client_host_id', ['client_id' => get_client_id(false)]);
+        $res = array_values(array_filter($res ?? []));
+        foreach ($res as $key => $value) {
+            if(isset($value['status']) && $value['status']==200){
+                $hostId = $value['data']['host'];
+            }
+        }
+        if(isset($hostId) && !empty($hostId)){
+            $where[] = ['h.id', 'IN', $hostId];
+        }
+
         $count = $this
             ->alias('hl')
             ->join('host h', 'hl.host_id=h.id')

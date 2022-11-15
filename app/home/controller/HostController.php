@@ -43,7 +43,7 @@ class HostController extends HomeBaseController
      * @return string list[].status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除
      * @return int count - 产品总数
      */
-	public function hostList()
+	public function list()
     {
 		// 合并分页参数
         $param = array_merge($this->request->param(), ['page' => $this->request->page, 'limit' => $this->request->limit, 'sort' => $this->request->sort]);
@@ -222,6 +222,39 @@ class HostController extends HomeBaseController
         // 修改产品备注
         $result = $HostModel->updateHostNotes($param);
 
+        return json($result);
+    }
+
+    /**
+     * 时间 2022-10-26
+     * @title 获取用户所有产品
+     * @desc 获取用户所有产品
+     * @author theworld
+     * @version v1
+     * @url /console/v1/host/all
+     * @method  GET
+     * @return array list - 产品
+     * @return int list[].id - 产品ID 
+     * @return int list[].product_id - 商品ID 
+     * @return string list[].product_name - 商品名称 
+     * @return string list[].name - 标识 
+     * @return int count - 产品总数
+     */
+    public function clientHost()
+    {
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $HostModel = new HostModel();
+
+        // 获取用户产品
+        $data = $HostModel->clientHost($param);
+
+        $result = [
+            'status' => 200,
+            'msg' => lang_plugins('success_message'),
+            'data' => $data
+        ];
         return json($result);
     }
 

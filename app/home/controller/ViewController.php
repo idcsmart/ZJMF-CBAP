@@ -1,13 +1,10 @@
 <?php
 namespace app\home\controller;
 
-use think\facade\Db;
-use think\Request;
 use think\facade\View;
-use app\common\model\TaskWaitModel;
-use app\common\logic\SmsLogic;
-use app\common\logic\EmailLogic;
 use app\admin\model\PluginModel;
+use think\template\exception\TemplateNotFoundException;
+
 class ViewController extends HomeBaseController
 {
 	public function index()
@@ -21,6 +18,7 @@ class ViewController extends HomeBaseController
 		$data['themes'] = configuration('clientarea_theme');
 		$tplName = empty($param['view_html'])?'index':$param['view_html'];
 		$view_path = '../public/clientarea/template/'.$data['themes'].'/';
+
 		if(!file_exists($view_path.$tplName)){
 			$theme_config=$this->themeConfig($view_path);
 			if(!empty($theme_config['config-parent-theme'])){
@@ -34,6 +32,7 @@ class ViewController extends HomeBaseController
 		$data['addons'] = $addons['list'];
 		
 		View::config(['view_path' => $view_path]);
+
 		return View::fetch("/".$tplName,$data);
     }	
 	
@@ -47,7 +46,8 @@ class ViewController extends HomeBaseController
 	    $addon = array_column($addon,'name','id');
 		$name=parse_name($addon[$plugin_id]??'');
 		if(empty($name)){
-		    exit('not found template1');
+            throw new TemplateNotFoundException(lang('not_found'), $name);
+		    #exit('not found template1');
 		}
 		$tpl = '../public/plugins/addon/'.$name.'/template/clientarea/';
 
@@ -65,7 +65,8 @@ class ViewController extends HomeBaseController
 			$content.=$this->view('footer',$data);
 			return $content;
 		}else{
-			exit('not found template');
+            throw new TemplateNotFoundException(lang('not_found'), $tpl);
+			#exit('not found template');
 		}
 		
     }

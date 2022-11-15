@@ -26,6 +26,9 @@ class ClientCreditController extends AdminBaseController
      * @version v1
      * @url /admin/v1/client/:id/credit
      * @method  GET
+     * @param int start_time - 开始时间，时间戳(s)
+     * @param int end_time - 结束时间，时间戳(s)
+     * @param string type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund 
      * @param int id - 用户ID required
      * @param int page - 页数
      * @param int limit - 每页条数

@@ -13,7 +13,7 @@
   </div>
   <div class="template">
     <el-container>
-      <aside-menu></aside-menu>
+      <aside-menu @getruleslist="getRule"></aside-menu>
       <el-container>
         <top-menu></top-menu>
         <el-main>
@@ -63,17 +63,18 @@
                             {{item.qty}}
                           </td>
                           <td class="item-total">
-                            {foreach $addons as $addon}
-                            {if ($addon.name=='IdcsmartClientLevel')}
-                            <el-popover placement="top-start" width="100" trigger="hover">
+                              <span>{{commonData.currency_prefix}} {{(((item.price * item.qty)*1000 - item.code_discount*1000 - item.level_discount*1000) / 1000) > 0 ? (((item.price * item.qty)*1000 - item.code_discount*1000 - item.level_discount*1000) / 1000).toFixed(2) : 0.00}}</span>
+                                <el-popover placement="top-start" width="180" trigger="hover" v-if="isShowLevel || (isShowPromo && item.isUseDiscountCode)">
                                   <div class="show-config-list">
-                                      {{lang.settlement_tip7}}：{{commonData.currency_prefix}}{{ Math.round((Number(item.price) - item.unitPrice)*1000) / 1000 * item.qty }}
+                                    <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ item.level_discount | filterMoney }}</p>
+                                    <p v-if="isShowPromo && item.isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ item.code_discount | filterMoney }}</p>
                                   </div>
                                   <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                            </el-popover>
-                            {/if}
-                            {/foreach}
-                            {{commonData.currency_prefix}}{{(item.unitPrice * item.qty).toFixed(2)}}
+                                </el-popover>
+                              <p class="original-price" v-if="item.level_discount != 0 || item.code_discount != 0">{{commonData.currency_prefix}} {{(item.price * item.qty).toFixed(2)}}</p>
+                              <div v-show="item.customfield.promo_code" class="discount-codeNumber">
+                                 {{ item.customfield.promo_code }}
+                              </div>
                           </td>
                         </tr>
                       </tbody>
@@ -84,18 +85,36 @@
             </div>
           </div>
         </el-main>
-        <el-footer v-if="!isNaN(Number(totalPrice).toFixed(2))">
+        <el-footer v-if="!isNaN(Number(totalPrice).toFixed(2))" style="min-height: 1.6rem; height:auto;">
           <div class="footer-box">
             <div class="footer-left">
-              <span class="pay-text" v-if="payTypeList.length!==0">{{lang.settlement_tip1}}</span>
+              <span class="pay-text">{{lang.settlement_tip1}}</span>
               <el-radio-group v-model="payType" class="radio-box" v-if="payTypeList.length!==0">
                 <el-radio :label="item.name" v-for="item in payTypeList" :key="item.id">{{item.title}}</el-radio>
               </el-radio-group>
             </div>
             <div class="footer-right">
-                <p class="totalprice-box">{{lang.settlement_tip2}}：<span class="total-price">{{commonData.currency_prefix}}{{Number(totalPrice).toFixed(2)}}</span></p>
-                <div class="btn-box">
-                  <el-button type="primary" class="buy-btn" @click="goPay" :loading="subBtnLoading">{{lang.settlement_tip3}}</el-button>
+                <div class="totalprice-box" v-loading="totalPriceLoading">
+                  <div>
+                    {{lang.settlement_tip2}}：<span class="total-price">{{commonData.currency_prefix}}{{finallyPrice | filterMoney}}</span>
+                    <el-popover placement="top-start" width="180" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode) || isShowCash">
+                      <div class="show-config-list">
+                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ totalLevelDiscount | filterMoney }}</p>
+                        <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ totalCodelDiscount | filterMoney }}</p>
+                        <p v-if="isShowCash && cashObj.code">代金券抵扣金额：{{commonData.currency_prefix}} {{ cashPrice | filterMoney }}</p>
+                      </div>
+                      <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                    </el-popover>
+                    <div class="cash-codeNumber" v-show="cashObj.code && isShowCash">
+                      {{ cashObj.code }}<i class="el-icon-circle-close remove-discountCode" @click="reRemoveCashCode()"></i>
+                    </div>
+                  </div>
+                  <div class="cash-box">
+                    <cash-coupon ref="cashRef" v-show="!cashObj.code && isShowCash" :currency_prefix="commonData.currency_prefix" @use-cash="useCash" scene='new' :product_id="goodIdList" :price="orginPrice"></cash-coupon>
+                  </div>
+                </div>
+                <div class="btn-box" v-if="showPayBtn">
+                  <el-button type="primary"  class="buy-btn" @click="goPay" :loading="subBtnLoading">{{lang.settlement_tip3}}</el-button>
                   <div class="check-box">
                     <el-checkbox v-model="checked"></el-checkbox>
                     {{lang.settlement_tip4}}
@@ -118,5 +137,5 @@
   <script src="/{$template_catalog}/template/{$themes}/js/settlement.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/components/payDialog/payDialog.js"></script>
-
+  <script src="/{$template_catalog}/template/{$themes}/components/cashCoupon/cashCoupon.js"></script>
   {include file="footer"}

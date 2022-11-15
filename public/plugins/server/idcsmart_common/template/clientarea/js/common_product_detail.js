@@ -6,33 +6,51 @@ new Vue({
     topMenu,
     pagination,
     payDialog,
+    cashCoupon,
+    discountCode,
   },
-  created () {
+  created() {
     this.id = location.href.split('?')[1].split('=')[1]
     this.getCommonData()
     this.getDetail()
     this.getComDetail()
     // 获取退款信息
     this.getRefundInfo()
-    this.getPromo()
     this.getCountryList()
     this.getRenewStatus()
   },
-  mounted () {
-
+  mounted() {
+    this.addons_js_arr = JSON.parse(document.querySelector('#addons_js').getAttribute('addons_js')) // 插件列表
+    const arr = this.addons_js_arr.map((item) => {
+      return item.name
+    })
+    if (arr.includes('PromoCode')) {
+      // 开启了优惠码插件
+      this.isShowPromo = true
+      this.getPromo()
+    }
+    if (arr.includes('IdcsmartClientLevel')) {
+      // 开启了等级优惠
+      this.isShowLevel = true
+    }
+    if (arr.includes('IdcsmartVoucher')) {
+      // 开启了代金券
+      this.isShowCash = true
+    }
   },
-  updated () {
+  updated() {
     // // 关闭loading
     document.getElementById('mainLoading').style.display = 'none';
     document.getElementsByClassName('common_product_detail')[0].style.display = 'block'
   },
-  destroyed () {
+  destroyed() {
 
   },
-  data () {
+  data() {
     return {
       baseUrl: url,
       id: '',
+      isShowCash: false,
       product_id: '',
       renewLoading: false,
       params: {
@@ -45,6 +63,8 @@ new Vue({
         keywords: '',
       },
       commonData: {},
+      // 代金券对象
+      cashObj: {},
       payWay: {
         free: '免费',
         onetime: '一次性',
@@ -88,14 +108,23 @@ new Vue({
       renewActiveId: '0',
       // 显示续费弹窗
       isShowRenew: false,
+      customfield: {},
       // 续费页面信息
       renewPageData: [],
+      addons_js_arr: [], // 插件列表
+      isShowPromo: false, // 是否开启优惠码
+      isShowLevel: false, // 是否开启等级优惠
+      isUseDiscountCode: false, // 是否使用优惠码
       // 续费参数
       renewParams: {
         id: 0,
-        billing_cycle: '',
-        price: 0,
-        discount: 0
+        duration: '', // 周期
+        billing_cycle: '', // 周期时间
+        clDiscount: 0, // 用户等级折扣价
+        code_discount: 0, // 优惠码折扣价
+        cash_discount: 0, // 代金券折扣价格
+        original_price: 0,// 原价
+        totalPrice: 0 // 现价
       },
       /* 备注 */
       isShowNotesDialog: false,
@@ -110,16 +139,24 @@ new Vue({
     }
   },
   filters: {
-    formateTime (time) {
+    formateTime(time) {
       if (time && time !== 0) {
         return formateDate(time * 1000)
       } else {
         return "--"
       }
     },
+    filterMoney(money) {
+      if (isNaN(money)) {
+        return '0.00'
+      } else {
+        const temp = `${money}`.split('.')
+        return parseInt(temp[0]).toLocaleString() + '.' + (temp[1] || '00')
+      }
+    }
   },
   computed: {
-    filterCountry () {
+    filterCountry() {
       return (country) => {
         const name = this.countryList.filter(item => item.iso === country)
         return name[0]?.name_zh
@@ -127,12 +164,12 @@ new Vue({
     }
   },
   methods: {
-    changeAutoStatus (e) {
+    changeAutoStatus(e) {
       console.log(e)
       this.dialogVisible = true
       this.autoTitle = this.isShowPayMsg ? '请确认您将为以下实例关闭自动续费' : '请确认您将为以下实例开启自动续费'
     },
-    async changeAuto () {
+    async changeAuto() {
       try {
         const params = {
           id: this.id,
@@ -146,7 +183,7 @@ new Vue({
         this.$message.error(error.data.msg)
       }
     },
-    async getRenewStatus () {
+    async getRenewStatus() {
       try {
         const res = await renewStatus({
           id: this.id
@@ -156,7 +193,7 @@ new Vue({
 
       }
     },
-    async getPromo () {
+    async getPromo() {
       try {
         const res = await getPromoCode(this.id)
         this.promo_code = res.data.data.promo_code
@@ -165,7 +202,7 @@ new Vue({
       }
     },
     /* 备注 */
-    async getComDetail () {
+    async getComDetail() {
       try {
         const res = await getCommonDetail(this.id)
         this.hostData = res.data.data.host
@@ -175,12 +212,12 @@ new Vue({
       }
     },
     // 显示 修改备注 弹窗
-    doEditNotes () {
+    doEditNotes() {
       this.isShowNotesDialog = true
       this.notesValue = this.hostData.notes
     },
     // 修改备注提交
-    async subNotes () {
+    async subNotes() {
       const params = {
         id: this.id,
         notes: this.notesValue
@@ -194,11 +231,11 @@ new Vue({
         this.$message.error(error.data.msg)
       }
     },
-    notesDgClose () {
+    notesDgClose() {
       this.isShowNotesDialog = false
     },
     // 获取退款信息
-    async getRefundInfo () {
+    async getRefundInfo() {
       try {
         const res = await getRefundInfo(this.id)
         this.refundInfo = res.data.data.refund
@@ -207,7 +244,7 @@ new Vue({
       }
     },
     /* 停用 */
-    async stop_use () {
+    async stop_use() {
       this.refundForm.str = ''
       this.refundForm.arr = []
       this.refundForm.type = 'Expire'
@@ -225,18 +262,18 @@ new Vue({
         this.$message.error(error.data.msg)
       }
     },
-    changeReson (e) {
+    changeReson(e) {
       this.refundMoney = (e === 'Immediate') ? this.refundDialog.host.amount : '0.00'
     },
-    async submitRefund () {
+    async submitRefund() {
       try {
         if (this.refundDialog.reason_custom) { // 自定义
           if (!this.refundForm.str) {
-            return this.$message.error('请输入退款原因')
+            return this.$message.error('请输入停用原因')
           }
         } else {
           if (this.refundForm.arr.length === 0) {
-            return this.$message.error('请选择退款原因')
+            return this.$message.error('请选择停用原因')
           }
         }
         const params = {
@@ -257,7 +294,7 @@ new Vue({
     },
 
     // 取消停用
-    async cancelRefund () {
+    async cancelRefund() {
       try {
         const res = await cancelRefund({ id: this.refundInfo.id })
         this.$message.success('请求取消停用成功!')
@@ -267,14 +304,14 @@ new Vue({
       }
     },
 
-    async getCountryList () {
+    async getCountryList() {
       try {
         const res = await getCountry()
         this.countryList = res.data.data.list
       } catch (error) {
       }
     },
-    async getDetail () {
+    async getDetail() {
       try {
         const res = await getCommonListDetail(this.id)
         this.host = res.data.data.host
@@ -287,7 +324,7 @@ new Vue({
 
       }
     },
-    textRange (el) {
+    textRange(el) {
       const targetw = el.getBoundingClientRect().width
       const range = document.createRange()
       range.setStart(el, 0)
@@ -295,84 +332,133 @@ new Vue({
       const rangeWidth = range.getBoundingClientRect().width
       return rangeWidth > targetw
     },
-    checkWidth (e, index) {
+    checkWidth(e, index) {
       const bol = this.textRange(e.target)
       this.configoptions[index].show = bol
     },
-    hideTip (index) {
+    hideTip(index) {
       this.configoptions[index].show = false
     },
-    back () {
+    back() {
       window.history.back();
     },
     // 每页展示数改变
-    sizeChange (e) {
+    sizeChange(e) {
       this.params.limit = e
       this.params.page = 1
       // 获取列表
     },
     // 当前页改变
-    currentChange (e) {
+    currentChange(e) {
       this.params.page = e
 
     },
 
     // 获取通用配置
-    getCommonData () {
-      getCommon().then(res => {
-        if (res.data.status === 200) {
-          this.commonData = res.data.data
-          localStorage.setItem('common_set_before', JSON.stringify(res.data.data))
-          document.title = this.commonData.website_name + '-通用产品'
-        }
-      })
+    getCommonData() {
+      this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
+      document.title = this.commonData.website_name + '-通用产品'
     },
-
+    // 使用优惠码
+    getDiscount(data) {
+      this.customfield.promo_code = data[1]
+      this.isUseDiscountCode = true
+      this.renewParams.code_discount = Number(data[0])
+      this.renewParams.totalPrice = ((this.renewParams.original_price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.code_discount * 1000) / 1000) > 0 ? ((this.renewParams.original_price * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000).toFixed(2) : 0
+    },
     // 显示续费弹窗
-    showRenew () {
+    showRenew() {
       // 获取续费页面信息
       const params = {
         id: this.id,
       }
-      renewPage(params).then(res => {
+      this.isShowRenew = true
+      this.renewLoading = true
+      renewPage(params).then(async (res) => {
         if (res.data.status === 200) {
           this.renewPageData = res.data.data.host
           this.renewActiveId = 0
           this.renewParams.billing_cycle = this.renewPageData[0].billing_cycle
-          clientLevelAmount({ id: this.product_id, amount: this.renewPageData[0].price }).then((ress) => {
-            this.renewParams.discount = Number(ress.data.data.discount)
-            this.renewParams.price = (Number(this.renewPageData[0].price) * 1000 - Number(ress.data.data.discount) * 1000) / 1000
-            this.isShowRenew = true
-            this.renewBtnLoading = false
-          }).catch(() => {
-            this.renewParams.discount = 0
-            this.renewParams.price = Number(this.renewPageData[0].price)
-            this.isShowRenew = true
-            this.renewBtnLoading = false
-          })
-
+          this.renewParams.duration = this.renewPageData[0].duration
+          this.renewParams.original_price = this.renewPageData[0].price
+          this.renewParams.totalPrice = this.renewPageData[0].price > 0 ? Number(this.renewPageData[0].price) : 0
+          const price = this.renewPageData[0].price
+          const discountParams = { id: this.product_id, amount: price }
+          // 开启了等级折扣插件
+          if (this.isShowLevel) {
+            // 获取等级抵扣价格
+            await clientLevelAmount(discountParams).then(res2 => {
+              if (res2.data.status === 200) {
+                this.renewParams.clDiscount = Number(ress.data.data.discount) // 客户等级优惠金额
+              }
+            }).catch(error => {
+              this.renewParams.clDiscount = 0
+            })
+          }
+          // 开启了优惠码插件
+          if (this.isShowPromo && this.customfield.promo_code) {
+            // 更新优惠码
+            await applyPromoCode({ // 开启了优惠券
+              scene: 'renew',
+              product_id: this.id,
+              amount: price,
+              billing_cycle_time: this.renewParams.duration,
+              promo_code: this.customfield.promo_code,
+            }).then((resss) => {
+              this.isUseDiscountCode = true
+              this.renewParams.code_discount = Number(resss.data.data.discount)
+            }).catch((err) => {
+              this.$message.error(err.data.msg)
+              this.removeDiscountCode()
+            })
+          }
+          this.renewParams.totalPrice = ((price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.code_discount * 1000) / 1000) > 0 ? ((price * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000).toFixed(2) : 0
+          this.renewLoading = false
         }
       }).catch(err => {
+        this.renewLoading = false
         this.$message.error(err.data.msg)
       })
 
     },
+    // 续费使用代金券
+    reUseCash(val) {
+      this.cashObj = val
+      const price = val.price ? Number(val.price) : 0
+      this.renewParams.cash_discount = price
+      this.customfield.voucher_get_id = val.id
+      this.renewParams.totalPrice = ((this.renewParams.original_price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.code_discount * 1000) / 1000) > 0 ? ((this.renewParams.original_price * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000).toFixed(2) : 0
+    },
+    // 续费移除代金券
+    reRemoveCashCode() {
+      this.$refs.cashRef.closePopver()
+      this.cashObj = {}
+      this.renewParams.cash_discount = 0
+      this.customfield.voucher_get_id = ''
+      this.renewParams.totalPrice = ((this.renewParams.original_price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.code_discount * 1000) / 1000) > 0 ? ((this.renewParams.original_price * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000).toFixed(2) : 0
+    },
     // 续费弹窗关闭
-    renewDgClose () {
+    renewDgClose() {
       this.isShowRenew = false
+      this.removeDiscountCode()
+      this.reRemoveCashCode()
     },
     // 续费提交
-    subRenew () {
+    subRenew() {
       const params = {
         id: this.id,
         billing_cycle: this.renewParams.billing_cycle,
-        customfield: {
-          promo_code: []
-        }
+        customfield: this.customfield
       }
       this.loading = true
       renew(params).then(res => {
         if (res.data.status === 200) {
+          if (res.data.code == 'Paid') {
+            this.$message.success(res.data.msg)
+            this.getDetail()
+            this.loading = false
+          }
+
           this.isShowRenew = false
           this.renewOrderId = res.data.data.id
           const orderId = res.data.data.id
@@ -382,29 +468,61 @@ new Vue({
         }
       })
     },
+    removeDiscountCode() {
+      this.isUseDiscountCode = false
+      this.customfield.promo_code = ''
+      this.renewParams.code_discount = 0
+      this.renewParams.totalPrice = ((this.renewParams.original_price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000) > 0 ? ((this.renewParams.original_price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000).toFixed(2) : 0
+    },
     // 续费周期点击
-    renewItemChange (item, index) {
+    async renewItemChange(item, index) {
+      this.reRemoveCashCode()
       this.renewLoading = true
       this.renewActiveId = index
+      this.renewParams.duration = item.duration
       this.renewParams.billing_cycle = item.billing_cycle
-      clientLevelAmount({ id: this.product_id, amount: item.price }).then((res) => {
-        this.renewParams.discount = Number(res.data.data.discount)
-        this.renewParams.price = (Number(item.price) * 1000 - Number(res.data.data.discount) * 1000) / 1000
-        this.renewLoading = false
-      }).catch(() => {
-        this.renewParams.discount = 0
-        this.renewParams.price = Number(item.price)
-        this.renewLoading = false
-      })
+      const price = item.price
+      this.renewParams.original_price = item.price
+      const discountParams = { id: this.product_id, amount: price }
+      // 开启了等级折扣插件
+      if (this.isShowLevel) {
+        // 获取等级抵扣价格
+        await clientLevelAmount(discountParams).then(res2 => {
+          if (res2.data.status === 200) {
+            this.renewParams.clDiscount = Number(ress.data.data.discount) // 客户等级优惠金额
+          }
+        }).catch(error => {
+          this.renewParams.clDiscount = 0
+        })
+      }
+      // 开启了优惠码插件
+      if (this.isShowPromo && this.customfield.promo_code) {
+        // 更新优惠码
+        await applyPromoCode({ // 开启了优惠券
+          scene: 'renew',
+          product_id: this.id,
+          amount: price,
+          billing_cycle_time: this.renewParams.duration,
+          promo_code: this.customfield.promo_code,
+        }).then((resss) => {
+          this.isUseDiscountCode = true
+          this.renewParams.code_discount = Number(resss.data.data.discount)
+        }).catch((err) => {
+          this.$message.error(err.data.msg)
+          this.removeDiscountCode()
+        })
+      }
+      this.renewParams.totalPrice = ((price * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.code_discount * 1000) / 1000) > 0 ? ((price * 1000 - this.renewParams.cash_discount * 1000 - this.renewParams.clDiscount * 1000 - this.renewParams.code_discount * 1000) / 1000).toFixed(2) : 0
+      this.renewLoading = false
     },
 
     // 支付成功回调
-    paySuccess (e) {
+    paySuccess(e) {
       this.getDetail()
       console.log(e);
     },
     // 取消支付回调
-    payCancel (e) {
+    payCancel(e) {
       console.log(e);
     }
   },

@@ -279,6 +279,7 @@ class ProductController extends AdminBaseController
      * @param int id 1 商品ID required
      * @param int pre_product_id 1 移动后前一个商品ID(没有则传0) required
      * @param int product_group_id 1 移动后的商品组ID required
+     * @param int backward 1 是否向后移动:1是,0否 required
      */
     public function order()
     {

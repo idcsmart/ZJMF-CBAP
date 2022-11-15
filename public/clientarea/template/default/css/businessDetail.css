@@ -1,0 +1,58 @@
+.businessDetail-centent header {
+  display: flex;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 0.01rem solid #e6e7eb;
+  font-size: 0.28rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.25rem;
+  color: #171725;
+}
+.businessDetail-centent header img {
+  display: block;
+  width: 0.24rem;
+  height: 0.26rem;
+  margin-right: 0.24rem;
+  cursor: pointer;
+}
+.businessDetail-centent main .main-info {
+  margin-bottom: 0.4rem;
+}
+.businessDetail-centent main .main-info p {
+  font-size: 0.2rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #171725;
+  line-height: 0.25rem;
+  margin-bottom: 0.2rem;
+  margin: 0;
+}
+.businessDetail-centent main .main-info .info-box {
+  margin-top: 0.2rem;
+  background: #ffffff;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  opacity: 1;
+  border: 0.01rem solid #e6e7eb;
+  padding: 0.2rem;
+  display: flex;
+}
+.businessDetail-centent main .main-info .info-box .info-item {
+  width: 33%;
+}
+.businessDetail-centent main .main-info .info-box .info-item p {
+  font-size: 0.14rem;
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #171725;
+  line-height: 0.25rem;
+}
+.businessDetail-centent main .table-box {
+  margin-top: 0.4rem;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  opacity: 1;
+  border: 0.01rem solid #e6e7eb;
+}
+.businessDetail-centent main .table-box p {
+  font-size: 0.16rem;
+}

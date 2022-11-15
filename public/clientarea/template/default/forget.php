@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title></title>
     <!-- element 样式 -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css"> -->
+    <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/element.css">
     <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/forget.css">
     <!-- 模板样式 -->
     <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/common/common.css">
@@ -122,7 +123,8 @@
     <script src="/{$template_catalog}/template/{$themes}/components/captchaDialog/captchaDialog.js"></script>
     <!-- =======公共======= -->
     <script src="/{$template_catalog}/template/{$themes}/js/common/vue.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!-- <script src="https://unpkg.com/element-ui/lib/index.js"></script> -->
+    <script src="/{$template_catalog}/template/{$themes}/js/common/element.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/common/axios.min.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/request.js"></script>
 

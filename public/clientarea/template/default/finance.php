@@ -1,6 +1,7 @@
 {include file="header"}
 <!-- 页面独有样式 -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/finance.css">
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/voucher.css">
 </head>
 
 <body>
@@ -14,7 +15,7 @@
     </div>
     <div class="template" id="finance">
         <el-container>
-            <aside-menu></aside-menu>
+            <aside-menu @getruleslist="getRule"></aside-menu>
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
@@ -33,8 +34,12 @@
                                         {foreach $addons as $addon}
                                         {if $addon['name']=='IdcsmartWithdraw'}
                                         <div class="btn-tx" @click="showTx">{{lang.finance_btn2}}</div>
+										 <div class="tx-list" @click="goWithdrawal">
+                                            <el-badge :is-dot="isdot" class="tx-list">提现记录</el-badge>  
+                                        </div>
                                         {/if}
                                         {/foreach}
+                                       
                                     </div>
                                 </div>
                                 {foreach $addons as $addon}
@@ -50,10 +55,11 @@
 
                             </div>
                         </div>
+
                         <div class="content_box">
                             <div class="content_tab">
                                 <el-tabs v-model="activeIndex" @tab-click="handleClick">
-                                    <el-tab-pane :label="lang.finance_tab1" name="1">
+                                    <el-tab-pane :label="lang.finance_tab1" name="1" v-if="isShowOrderController">
                                         <div class="content_table">
                                             <div class="content_searchbar">
                                                 <div class="left_tips">
@@ -240,7 +246,7 @@
 
                                         </div>
                                     </el-tab-pane>
-                                    <el-tab-pane :label="lang.finance_tab2" name="2">
+                                    <el-tab-pane :label="lang.finance_tab2" name="2" v-if="isShowTransactionController">
                                         <div class="content_table">
                                             <div class="content_searchbar">
                                                 <div class="left_tips">
@@ -333,17 +339,35 @@
 
                                         </div>
                                     </el-tab-pane>
-                                    <el-tab-pane :label="lang.finance_tab3" name="3">
+                                    <el-tab-pane :label="lang.finance_tab3" name="3" v-if="isShowBalance">
                                         <div class="content_table">
                                             <div class="content_searchbar balance-searchbar">
                                                 <div class="left_tips">
 
                                                 </div>
                                                 <div class="searchbar com-search">
-                                                    <!-- <el-input suffix-icon="el-input__icon el-icon-search" @input="inputChange2" v-model="params2.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2"></el-input>
-                                                    </el-input> -->
-                                                    <el-input v-model="params3.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange3" clearable @clear="getCreditList">
-                                                        <i class="el-icon-search input-search" slot="suffix" @Click="inputChange3"></i>
+                                                    
+                                                </div>
+                                                <div class="box" style="display:flex">
+                                                <el-date-picker
+                                                        @change="inputChange3"
+                                                        v-model="date"
+                                                        type="daterange"
+                                                        range-separator="至"
+                                                        style="width:3.5rem;margin-right:0.14rem"
+                                                        start-placeholder="开始日期"
+                                                        value-format="timestamp"
+                                                        align="center"
+                                                        end-placeholder="结束日期">
+                                                        </el-date-picker>                 
+                                                    <el-select v-model="params3.type" placeholder="请选择类型" style="width:2rem" @change="inputChange3">
+                                                        <el-option :label="balanceType.Recharge.text" value="Recharge">{{balanceType.Recharge.text}}</el-option>
+                                                        <el-option :label="balanceType.Applied.text" value="Applied">{{balanceType.Applied.text}}</el-option>
+                                                        <el-option :label="balanceType.Refund.text" value="Refund">{{balanceType.Refund.text}}</el-option>
+                                                        <el-option :label="balanceType.Withdraw.text" value="Withdraw">{{balanceType.Withdraw.text}}</el-option>
+                                                    </el-select>
+                                                        <el-input v-model="params3.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2" @keyup.enter.native="inputChange3" clearable @clear="getCreditList">
+                                                            <i class="el-icon-search input-search" slot="suffix" @Click="inputChange3"></i>
                                                     </el-input>
                                                 </div>
                                             </div>
@@ -415,6 +439,125 @@
                                             </div>
 
 
+                                        </div>
+                                    </el-tab-pane>
+                                    <el-tab-pane label="我的代金券" name="4" v-if="isShowCash">
+                                        <div class="voucher">
+                                            <!-- 代金券 -->
+                                            <div class="voucher-box">
+                                                <div class="get-voucher" @click="showVoucherDialog">
+                                                    {{lang.voucher_get}}
+                                                </div>
+                                                <div class="voucher-content" v-loading="voucherLoading">
+                                                    <ul>
+                                                        <li class="item" v-for="item in voucherList" :key="item.id">
+                                                            <div class="basic">
+                                                                <div class="l-item">
+                                                                    <div class="price" :class="{used: item.status === 'used',overdue: item.status === 'expired' }">
+                                                                        <span>{{commonData.currency_prefix}}</span>
+                                                                        <span class="num">{{item.price}}</span>
+                                                                        <p class="des">{{lang.voucher_min}}：{{commonData.currency_prefix}}{{item.min_price}}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="r-item">
+                                                                    <p class="tit">{{item.code}}</p>
+                                                                    <p class="time">{{item.start_time | formateTime1}}- {{item.end_time | formateTime1}}
+                                                                    </p>
+                                                                    <div class="bot">
+                                                                        <p class="more" :class="{active: item.isShow}" @click="toggleVoucher(item)">
+                                                                            {{lang.voucher_rule}}
+                                                                            <img src="/{$template_catalog}/template/{$themes}/img/voucher/check.png" alt="">
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="bg" :class="{used: item.status === 'used', overdue: item.status === 'expired'}"></div>
+                                                            </div>
+                                                            <div class="detail" :class="{active: item.isShow}">
+                                                                <p v-if="item.product.length > 0">
+                                                                    {{lang.voucher_order_product}}：
+                                                                    <span v-for="(el,index) in item.product" :key="el.id">{{el.name}}；
+                                                                </p>
+                                                                <p v-if="item.product_need.length > 0">
+                                                                    {{lang.voucher_accout_product}}：
+                                                                    <span v-for="(el,index) in item.product_need" :key="el.id">{{el.name}}；
+                                                                </p>
+                                                                <p v-if="item.user_type === 'no_host'">
+                                                                    {{lang.voucher_no_product}}
+                                                                </p>
+                                                                <p v-if="item.user_type === 'need_active'">
+                                                                    {{lang.voucher_active}}
+                                                                </p>
+                                                                <p v-if="item.onetime">{{lang.voucher_onetime}}</p>
+                                                                <p v-if="item.upgrade_use">{{lang.voucher_upgrade}}</p>
+                                                                <p v-if="item.renew_use">{{lang.voucher_renew}}</p>
+                                                                <p v-if="!item.upgrade_use">{{lang.voucher_upgrade_no}}</p>
+                                                                <p v-if="!item.renew_use">{{lang.voucher_renew_no}}</p>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+
+                                            <!-- 领劵弹窗 -->
+                                            <el-dialog :title="lang.voucher_get" :visible.sync="dialogVisible" class="voucher-dialog">
+                                                <div class="voucher-content" v-loading="diaLoading">
+                                                    <div class="empty" v-if="voucherAvailableList.length === 0">
+                                                        <el-empty :description="lang.voucher_empty"></el-empty>
+                                                    </div>
+                                                    <ul v-else>
+                                                        <li class="item" v-for="item in voucherAvailableList" :key="item.id">
+                                                            <div class="basic">
+                                                                <div class="l-item">
+                                                                    <div class="price">
+                                                                        <span>{{commonData.currency_prefix}}</span>
+                                                                        <span class="num">{{item.price}}</span>
+                                                                        <p class="des">{{lang.voucher_min}}：{{commonData.currency_prefix}}{{item.min_price}}</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="r-item">
+                                                                    <p class="tit">{{item.code}}</p>
+                                                                    <p class="time">{{item.start_time | formateTime1}}- {{item.end_time | formateTime1}}
+                                                                    <div class="bot">
+                                                                        <p class="more" :class="{active: item.isShow}" @click="toggleVoucher(item)">
+                                                                            {{lang.voucher_rule}}
+                                                                            <img src="/{$template_catalog}/template/{$themes}/img/voucher/check.png" alt="">
+                                                                        </p>
+                                                                        <p class="receive" @click="sureGet(item)" :class="{is_get: item.is_get}">
+                                                                            {{item.is_get ?lang.voucher_has_get: lang.voucher_get_now}}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="detail" :class="{active: item.isShow}">
+                                                                <p v-if="item.product.length > 0">
+                                                                    {{lang.voucher_order_product}}：
+                                                                    <span v-for="(el,index) in item.product" :key="el.id">{{el.name}}；
+                                                                </p>
+                                                                <p v-if="item.product_need.length > 0">
+                                                                    {{lang.voucher_accout_product}}：
+                                                                    <span v-for="(el,index) in item.product_need" :key="el.id">{{el.name}}；
+                                                                </p>
+                                                                <p v-if="item.user_type === 'no_host'">
+                                                                    {{lang.voucher_no_product}}
+                                                                </p>
+                                                                <p v-if="item.user_type === 'need_active'">
+                                                                    {{lang.voucher_active}}
+                                                                </p>
+                                                                <p v-if="item.onetime">{{lang.voucher_onetime}}</p>
+                                                                <p v-if="item.upgrade_use">{{lang.voucher_upgrade}}</p>
+                                                                <p v-if="item.renew_use">{{lang.voucher_renew}}</p>
+                                                                <p v-if="!item.upgrade_use">{{lang.voucher_upgrade_no}}</p>
+                                                                <p v-if="!item.renew_use">{{lang.voucher_renew_no}}</p>
+
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </el-dialog>
+
+                                            <pagination :page-data="vParams" v-if="vParams.total" @sizechange="sizeChange" @currentchange="currentChange" class="voucher-page">
+                                            </pagination>
                                         </div>
                                     </el-tab-pane>
                                 </el-tabs>
@@ -529,21 +672,20 @@
                             <div class="dialog-form">
                                 <el-form :model="txData" label-position="top">
                                     <el-form-item :label="lang.finance_label13">
-                                        <el-select v-model="txData.method">
-                                            <el-option v-for="item in ruleData.method" :key="item" :label="item=='alipay'?'支付宝':'银行卡'" :value="item"></el-option>
-                                            <!-- <el-option label="银行卡" value="bank"></el-option> -->
+                                        <el-select v-model="txData.method_id">
+                                            <el-option v-for="item in ruleData.method" :key="item.id" :label="item.name" :value="item.id"></el-option>
                                         </el-select>
                                     </el-form-item>
-                                    <el-form-item v-if="txData.method==='alipay'" :label="lang.finance_label14">
+                                    <el-form-item :label="lang.finance_label14" v-if="!showCard">
                                         <el-input v-model="txData.account"></el-input>
                                     </el-form-item>
-                                    <el-form-item v-if="txData.method==='bank'" :label="lang.finance_label15">
+                                    <el-form-item :label="lang.finance_label15" v-if="showCard">
                                         <el-input v-model="txData.card_number"></el-input>
                                     </el-form-item>
-                                    <el-form-item v-if="txData.method==='bank'" :label="finance_label16">
+                                    <el-form-item :label="lang.finance_label16" v-if="showCard">
                                         <el-input v-model="txData.name"></el-input>
                                     </el-form-item>
-                                    <el-form-item :label="lang.finance_label16">
+                                    <el-form-item :label="lang.finance_label17">
                                         <el-input @keyup.native="txData.amount=oninput(txData.amount)" v-model="txData.amount" :placeholder="'可提现'+ commonData.currency_prefix + balance + commonData.currency_suffix">
                                             <el-button type="text" slot="suffix" @click="txData.amount=balance">{{lang.finance_btn5}}
                                             </el-button>
@@ -607,6 +749,8 @@
                     </div>
                     <pay-dialog ref="payDialog" @payok="paySuccess" @paycancel="payCancel"></pay-dialog>
                 </el-main>
+                 <!-- 提现弹窗 -->
+                 <withdraw-dialog ref="withdrawDialog" @dowithdraw="dowithdraw"></withdraw-dialog>
             </el-container>
         </el-container>
     </div>
@@ -616,5 +760,6 @@
     <script src="/{$template_catalog}/template/{$themes}/components/payDialog/payDialog.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
+    <script src="/{$template_catalog}/template/{$themes}/components/withdrawDialog/withdrawDialog.js"></script>
 
     {include file="footer"}

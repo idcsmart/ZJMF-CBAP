@@ -19,19 +19,13 @@
                 <top-menu></top-menu>
                 <el-main>
                     <!-- 自己的东西 -->
-                    <div class="main-card">
-                    <div class="main-card-title">{{lang.ticket_title}}</div>
-                        在这里写 {{commonData.currency_suffix}}
-                        <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange">
-                        </pagination>
-                    </div>
                 </el-main>
             </el-container>
         </el-container>
-    </div>  
+    </div>
     <!-- =======页面独有======= -->
-    <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/js/template.js"></script>
+    <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
     {include file="footer"}

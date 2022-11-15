@@ -29,7 +29,8 @@
                         {if ($addon.name=='IdcsmartRefund')}
                         <span class="refund">
                             <span class="refund-status" v-if="refundData && refundData.status != 'Cancelled' && refundData.status != 'Reject'">{{refundStatus[refundData.status]}}</span>
-                            <span class="refund-stop-btn" v-if="refundData && refundData.status=='Pending'" @click="quitRefund">取消停用</span>
+                            <!-- <span class="refund-stop-btn" v-if="refundData && refundData.status=='Pending'" @click="quitRefund">取消停用</span> -->
+                            <span class="refund-stop-btn" v-if="refundData && (refundData.status=='Pending' || refundData.status=='Suspend' || refundData.status=='Suspending')" @click="quitRefund">取消停用</span>
                             <span class="refund-btn" @click="showRefund" v-if="!refundData || (refundData && (refundData.status=='Reject')) || (refundData && (refundData.status=='Cancelled'))">申请停用</span>
                         </span>
                         {/if}
@@ -50,7 +51,7 @@
                                 </div>
                                 <img :src="'/plugins/server/idcsmart_dcim/template/clientarea/img/cloudDetail/'+status+'.png'" :title="statusText" v-show="(status != 'operating') && (status != 'fault')" slot="reference">
                             </el-popover>
-                            <i class="el-icon-loading" title="操作中" v-show="status == 'operating'"></i>
+                            <!-- <i class="el-icon-loading" title="操作中" v-show="status == 'operating'"></i> -->
                             <img :src="'/plugins/server/common_cloud/template/clientarea/img/cloudDetail/'+status+'.png'" :title="statusText" v-show="status == 'fault'">
                         </span>
 
@@ -501,17 +502,27 @@
                         </div>
                         <div class="pay-content">
                             <div class="pay-price">
-                                <div class="text">合计</div>
                                 <div class="money" v-loading="renewLoading">
-                                    {{commonData.currency_prefix + renewParams.price}}
-                                    {foreach $addons as $addon}
-                                    {if ($addon.name=='IdcsmartClientLevel')}
-                                    <el-popover placement="top-start" width="100" trigger="hover">
-                                        <div class="show-config-list">用户折扣金额：￥{{ renewParams.discount }}</div>
-                                        <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                                    </el-popover>
-                                    {/if}
-                                    {/foreach}
+                                    <span class="text">{{lang.common_cloud_label11}}:</span><span>{{commonData.currency_prefix}}{{renewParams.totalPrice | filterMoney}}</span>
+                                    <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode) || isShowCash">
+                                    <div class="show-config-list">
+                                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ renewParams.clDiscount | filterMoney}}</p>
+                                        <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ renewParams.code_discount | filterMoney }}</p>
+                                        <p v-if="isShowCash && customfield.voucher_get_id">代金券抵扣金额：{{commonData.currency_prefix}} {{ renewParams.cash_discount | filterMoney}}</p>
+                                    </div>
+                                    <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                                </el-popover>
+                                <p class="original-price" v-if="renewParams.totalPrice != renewParams.original_price">{{commonData.currency_prefix}} {{ renewParams.original_price | filterMoney}}</p>
+                                <div class="code-box">
+                                    <!-- 代金券 -->
+                                    <cash-coupon ref="cashRef" v-show="isShowCash && !cashObj.code" :currency_prefix="commonData.currency_prefix" @use-cash="reUseCash" scene='renew' :product_id="[product_id]" :price="renewParams.original_price"></cash-coupon>
+                                    <!-- 优惠码 -->
+                                    <discount-code v-show="isShowPromo && !customfield.promo_code" @get-discount="getDiscount(arguments)" scene='renew' :product_id="product_id" :amount="renewParams.original_price" :billing_cycle_time="renewParams.duration"></discount-code>
+                                </div>
+                                <div class="code-number-text">
+                                    <div class="discount-codeNumber" v-show="customfield.promo_code">{{ customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i></div>
+                                    <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i class="el-icon-circle-close remove-discountCode" @click="reRemoveCashCode()"></i></div>
+                                </div>
                                 </div>
                             </div>
                         </div>

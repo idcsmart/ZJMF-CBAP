@@ -20,14 +20,14 @@
             <el-switch v-model="configForm[item.id]" v-if="item.option_type ==='yes_no'" active-color="#0052D9" :active-value="calcSwitch(item,true)" :inactive-value="calcSwitch(item,false)" @change="changeConfig(false)">
             </el-switch>
             <!-- 数据输入 -->
-            <el-input-number v-model="configForm[item.id]" :min="item.subs[0].qty_min" :max="item.subs[item.subs.length-1].qty_max" v-if="item.option_type ==='quantity'" @change="changeConfig(false)">
+            <el-input-number v-model="configForm[item.id]" :min="item.qty_min" :max="item.qty_max" v-if="item.option_type ==='quantity'" @change="changeConfig(false)">
             </el-input-number>
             <!-- 数量拖动 -->
             <div class="slider" v-if="item.option_type ==='quantity_range'">
-              <span class="min">{{item.subs[0].qty_min}}</span>
-              <el-slider v-model="configForm[item.id][0]" @change="changeConfig(false)" :min="item.subs[0].qty_min" :max="item.subs[item.subs.length - 1].qty_max">
+              <span class="min">{{item.qty_min}}</span>
+              <el-slider v-model="configForm[item.id][0]" @change="changeConfig(false)" :min="item.qty_min" :max="item.qty_max">
               </el-slider>
-              <span class="max">{{item.subs[item.subs.length - 1].qty_max}}</span>
+              <span class="max">{{item.qty_max}}</span>
               <el-input v-model="configForm[item.id][0]" @input="changeNum($event,item.id)"></el-input>
             </div>
 
@@ -60,7 +60,6 @@
               </div>
             </div>
 
-
             <!-- 后缀单位 -->
             <span class="unit">{{item.unit}}</span>
           </div>
@@ -87,12 +86,12 @@
         </div>
       </div>
       <!-- 配置预览 -->
-      <div class="order-right" style="justify-content: space-between;">
+      <div class="order-right">
         <div class="right-main">
           <div class="right-title">
             {{lang.product_preview}}
           </div>
-          <div class="info" v-loading="dataLoading">
+          <div class="info">
             <p class="des">
               <span>{{basicInfo.name}}</span>
               <span v-if="base_price*1">{{commonData.currency_prefix}}{{ Number(base_price).toFixed(2) | filterMoney}}</span>
@@ -105,14 +104,14 @@
           </div>
           <div class="subtotal">
             <span class="name">{{lang.shoppingCar_goodsTotalPrice}}：</span>
-            <span v-loading="dataLoading">{{commonData.currency_prefix }}{{((totalPrice * 1).toFixed(2)) | filterMoney }}</span>
+            <span v-loading="dataLoading">{{commonData.currency_prefix }}{{((onePrice * 1).toFixed(2)) | filterMoney }}</span>
           </div>
         </div>
 
-        <div>
+        <div class="f-box" v-if="isShowBtn">
           <!-- 合计 优惠码 购买按钮 -->
           <div class="order-right-footer">
-            <div class="order-right-item">
+            <div class="order-right-item" v-if="basicInfo.allow_qty">
               <div class="row">
                 <div class="label">{{lang.shoppingCar_goodsNums}}</div>
                 <div class="value del-add">
@@ -126,17 +125,32 @@
             <div class="footer-total">
               <div class="left">{{lang.shoppingCar_tip_text3}}</div>
               <div class="right" v-loading="dataLoading">
-                {foreach $addons as $addon}
-                {if ($addon.name=='IdcsmartClientLevel')}
-                <el-popover placement="top-start" width="100" trigger="hover" popper-class="discout">
+                <span>{{commonData.currency_prefix}} {{totalPrice | filterMoney}}</span>
+                <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode)">
                   <div class="show-config-list">
-                    {{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix + discount}}
+                    <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ clDiscount | filterMoney }}</p>
+                    <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ code_discount | filterMoney }}</p>
                   </div>
                   <i class="el-icon-warning-outline total-icon" slot="reference"></i>
                 </el-popover>
-                {/if}
-                {/foreach}
-                {{commonData.currency_prefix }}{{((totalPrice * orderData.qty - discount * 1 ).toFixed(2)) | filterMoney }}
+                <p class="original-price" v-if="original_price !=totalPrice">{{commonData.currency_prefix}} {{original_price.toFixed(2) | filterMoney}}</p>
+                <!-- 优惠码 -->
+                <div class="discount-box" v-show="isShowPromo && !customfield.promo_code ">
+                  <discount-code @get-discount="getDiscount(arguments)" scene='new' :product_id='id' :qty="orderData.qty" :amount="onePrice" :billing_cycle_time="orderData.duration">
+                    <discount-code>
+                </div>
+                <div v-show="customfield.promo_code" class="discount-codeNumber">
+                  {{ customfield.promo_code }}
+                  <i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i>
+                </div>
+
+                <!-- <el-popover placement="top-start" width="100" trigger="hover" popper-class="discout">
+                    <div class="show-config-list">
+                      {{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix + discount}}
+                    </div>
+                    <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                  </el-popover>
+                  {{commonData.currency_prefix }}{{((totalPrice * orderData.qty - discount * 1 ).toFixed(2)) | filterMoney }} -->
               </div>
             </div>
             <!-- <div class="footer-code">

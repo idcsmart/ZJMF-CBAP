@@ -12,8 +12,8 @@ class TransactionController extends HomeBaseController
 {
     /**
      * 时间 2022-05-19
-     * @title 消费记录
-     * @desc 消费记录
+     * @title 交易记录
+     * @desc 交易记录
      * @author theworld
      * @version v1
      * @url /console/v1/transaction
@@ -38,7 +38,7 @@ class TransactionController extends HomeBaseController
      * @return array list[].descriptions - 描述
      * @return int count - 交易流水总数
      */
-	public function transactionList()
+	public function list()
     {
 		// 合并分页参数
         $param = array_merge($this->request->param(), ['page' => $this->request->page, 'limit' => $this->request->limit, 'sort' => $this->request->sort]);
