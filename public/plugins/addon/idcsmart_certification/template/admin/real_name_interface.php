@@ -42,7 +42,7 @@
       </template>
       <template #certification_type="{row}">
         <span v-for="(item,index) in row.certification_type">{{item}}</span>
-        <span v-if="row.certification_type.length > 1 && index !== row.certification_type.length -1 ">/</span>
+        <span v-if="row.certification_type.length > 1 && index !== row.certification_type.length -1 "></span>
       </template>
       <template #op="{row}">
         <t-tooltip :content="lang.apply_interface" :show-arrow="false" theme="light">
