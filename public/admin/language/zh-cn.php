@@ -885,4 +885,6 @@ return [
     'certification_img_two' => '请上传身份证号反面照',
     'certification_img_three' => '请上传营业执照',
     'certification_info_post_again' => '请重新提交实名资料',
+    'personal' => '个人',
+    'company' => '公司',
 ];

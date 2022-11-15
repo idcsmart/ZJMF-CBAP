@@ -126,13 +126,13 @@ class PluginModel extends Model
 			}elseif ($module=='certification'){
                 $methods = get_class_methods($class)?:[];
                 $type = [];
-                if (in_array('personal',$methods)){
-                    $type[] = 'personal';
+                if (in_array('IdcsmartaliPerson',$methods)){
+                    $type[] = lang('personal');
                 }
-                if (in_array('company',$methods)){
-                    $type[] = 'company';
+                if (in_array('IdcsmartaliCompany',$methods)){
+                    $type[] = lang('company');
                 }
-                $vv['certification_type'] = $type;
+                $vv['certification_type'] = !empty($type)?implode('/',$type):'';
             }
 			
             unset($vv['module']);
