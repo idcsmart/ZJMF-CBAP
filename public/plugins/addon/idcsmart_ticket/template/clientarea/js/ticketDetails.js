@@ -205,7 +205,7 @@
                         // 清空上传框
                         let uploadFiles = this.$refs['fileupload'].uploadFiles
                         let length = uploadFiles.length
-                        uploadFiles.splice(length-1, length)
+                        uploadFiles.splice(length - 1, length)
                     } else {
                         this.replyData.attachment.push(response.data.save_name)
                     }
@@ -244,11 +244,18 @@
                 },
                 // 附件下载
                 downloadfile(url) {
-                    const downloadElement = document.createElement("a");
-                    downloadElement.href = url;
-                    downloadElement.download = url.split("^")[1]; // 下载后文件名
-                    document.body.appendChild(downloadElement);
-                    downloadElement.click(); // 点击下载
+                    const name = url
+                    const type = name.substring(name.lastIndexOf(".") + 1)
+                    if (['png', 'jpg', 'jepg', 'bmp', 'webp'].includes(type)) {
+                        this.preImg = url
+                        this.viewer.show()
+                    } else {
+                        const downloadElement = document.createElement("a");
+                        downloadElement.href = url;
+                        downloadElement.download = url.split("^")[1]; // 下载后文件名
+                        document.body.appendChild(downloadElement);
+                        downloadElement.click(); // 点击下载
+                    }
                 },
                 showClose() {
                     this.visible = true

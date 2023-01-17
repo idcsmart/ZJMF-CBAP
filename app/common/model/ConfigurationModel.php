@@ -31,6 +31,8 @@ class ConfigurationModel extends Model
             'login_phone_verify',
             'register_email',
             'register_phone',
+            'home_login_check_ip',
+            'admin_login_check_ip',
         ],
         'security'=>[
             'captcha_client_register',
@@ -69,6 +71,9 @@ class ConfigurationModel extends Model
             'cron_aff_swhitch',
             'cron_order_overdue_swhitch',
             'cron_order_overdue_day',
+            'cron_task_shell',
+            'cron_task_status',
+            'cron_day_start_time'
         ],
         'send'=>[
             'send_sms',
@@ -102,6 +107,49 @@ class ConfigurationModel extends Model
     {
         return $this->field('setting,value')->select()->toArray();
     }
+
+    /**
+     * 时间 2022-5-10
+     * @title 保存配置项数据
+     * @desc 保存配置项数据
+     * @author xiong
+     * @version v1
+     * @return string setting - 配置项名称
+     * @return string value - 配置项值
+     */
+    public function saveConfiguration($param)
+    {
+        $setting = $param['setting'] ?? '';
+        $value = $param['value'] ?? '';
+        if(!empty($setting)){
+            $configuration = $this->index();
+            $this->startTrans();
+            try {
+                if(!in_array($setting, array_column($configuration, 'setting'))){
+                    $this->create([
+                        'setting' => $setting,
+                        'value' => $value,
+                        'description' => $setting,
+                        'create_time' => time()
+                    ]);
+                }else{
+                    $this->update([
+                        'value' => $value,
+                        'update_time' => time()
+                    ], ['setting' => $setting]);
+                }
+                $this->commit();
+            } catch (\Exception $e) {
+                // 回滚事务
+                $this->rollback();
+                return ['status' => 400, 'msg' => lang('fail_message')];
+            }
+        }else{
+            return ['status' => 400, 'msg' => lang('param_error')];
+        }
+        
+    }
+
     /**
      * 时间 2022-5-10
      * @title 获取系统设置
@@ -124,7 +172,10 @@ class ConfigurationModel extends Model
             if(in_array($v['setting'], $this->config['system'])){
                 if($v['setting'] == 'lang_home_open' || $v['setting'] == 'maintenance_mode'){
                     $data[$v['setting']] = (int)$v['value'];
-                }else{
+                }elseif ($v['setting']=='system_logo'){
+                    $data[$v['setting']] = config('idcsmart.system_logo_url') . $v['value'];
+                }
+                else{
                     $data[$v['setting']] = (string)$v['value'];
                 }
             }
@@ -160,6 +211,7 @@ class ConfigurationModel extends Model
         }
         $param['lang_home_open'] = intval($param['lang_home_open']);
         $param['maintenance_mode'] = intval($param['maintenance_mode']);
+        $param['system_logo'] = explode('/',$param['system_logo'])[count(explode('/',$param['system_logo']))-1];
         # 日志
         $description = [];
         $systemList = $this->systemList();
@@ -211,6 +263,8 @@ class ConfigurationModel extends Model
      * @return  int register_email - 邮箱注册开关:1开启0关闭
      * @return  int register_phone - 手机号注册开关:1开启0关闭
      * @return  int login_phone_verify - 手机号登录短信验证开关:1开启0关闭
+     * @return  int home_login_check_ip - 前台登录检查IP:1开启0关闭
+     * @return  int admin_login_check_ip - 后台登录检查IP:1开启0关闭
      */
     public function loginList()
     {
@@ -232,6 +286,8 @@ class ConfigurationModel extends Model
      * @param  int param.register_email - 邮箱注册开关:1开启0关闭
      * @param  int param.register_phone - 手机号注册开关:1开启0关闭
      * @param  int param.login_phone_verify - 手机号登录短信验证开关:1开启0关闭
+     * @param  int home_login_check_ip - 前台登录检查IP:1开启0关闭
+     * @param  int admin_login_check_ip - 后台登录检查IP:1开启0关闭
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -246,8 +302,8 @@ class ConfigurationModel extends Model
         $desc = array_diff_assoc($param,$loginList);
         foreach($desc as $k=>$v){
             $lang = '"'.lang("configuration_log_{$k}").'"';
-            $lang_old = lang("configuration_log_register_{$loginList[$k]}");
-            $lang_new = lang("configuration_log_register_{$v}");
+            $lang_old = lang("configuration_log_{$k}_{$loginList[$k]}");
+            $lang_new = lang("configuration_log_{$k}_{$v}");
             $description[] = lang('admin_old_to_new',['{field}'=>$lang, '{old}'=>'"'.$lang_old.'"', '{new}'=>'"'.$lang_new.'"']);
         }
         $description = implode(',', $description);
@@ -483,6 +539,8 @@ class ConfigurationModel extends Model
      * @return int cron_aff_swhitch - 推介月报开关 1开启，0关闭
      * @return int cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
      * @return int cron_order_overdue_day - 订单未付款X天后通知 required
+     * @return int cron_task_shell - 任务队列命令 required
+     * @return int cron_task_status - 任务队列最新状态 required
      */
     public function cronList()
     {
@@ -500,6 +558,16 @@ class ConfigurationModel extends Model
             $data['cron_status'] = 'success';
         }
         $data['cron_shell'] = 'php '. root_path() .'cron/cron.php';
+
+        // 任务队列命令及状态
+        $TaskModel = new TaskModel();
+        $task = $TaskModel->order('id','desc')->find();
+        if (!empty($task) && $task['status']=='Finish'){
+            $data['cron_task_status'] = 'success';
+        }else{
+            $data['cron_task_status'] = 'error';
+        }
+        $data['cron_task_shell'] = 'php '. root_path() .'cron/task.php';
 
         return $data;
     }
@@ -529,6 +597,7 @@ class ConfigurationModel extends Model
      * @return int param.cron_aff_swhitch - 推介月报开关 1开启，0关闭 required
      * @return int param.cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
      * @return int param.cron_order_overdue_day - 订单未付款X天后通知 required
+     * @return int param.cron_day_start_time - 定时任务开始时间 required
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -544,9 +613,10 @@ class ConfigurationModel extends Model
             'cron_overdue_third_day',
             'cron_ticket_close_day',
             'cron_order_overdue_day',
+            'cron_day_start_time',
         ];
         foreach($day as $v){
-            if(empty($param[$v])){
+            if(!isset($param[$v]) || empty($param[$v])){
                 $param[$v]=0;
             }
         }
@@ -731,7 +801,7 @@ class ConfigurationModel extends Model
      */
     public function themeUpdate($param)
     {
-        $adminThemeList = get_files(IDCSMART_ROOT . 'public/admin/template');
+        $adminThemeList = get_files(IDCSMART_ROOT . 'public/'.DIR_ADMIN.'/template');
         $clientareaThemeList = get_files(IDCSMART_ROOT . 'public/clientarea/template');
 
         if(!in_array($param['admin_theme'], $adminThemeList)){

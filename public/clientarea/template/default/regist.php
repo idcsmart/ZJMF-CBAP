@@ -98,15 +98,19 @@
                                     </el-checkbox>
                                     {{lang.tip3}}<a @click="toRead">{{lang.login_list}}</a> -->
                                     <el-checkbox v-model="checked">
-                                    {{lang.tip3}}<a @click="toService">{{lang.read_service}}</a>{{lang.read_and}}<a @click="toPrivacy">{{lang.read_privacy}}</a>
+                                    {{lang.tip3}}<a @click="goHelpUrl('2')">{{lang.read_service}}</a>{{lang.read_and}}<a @click="goHelpUrl('1')">{{lang.read_privacy}}</a>
                                     </el-checkbox>
                                 </div>
+                                {foreach $addons as $addon}
+                                {if ($addon.name=='IdcsmartSale')}
                                 <div class="form-item read-item">
                                     <el-checkbox v-model="checked1">{{lang.tip4}}</el-checkbox>
                                  </div>
                                 <div class="read-item" v-if="checked1">
-                                 <el-input :placeholder="lang.tip5" v-model="costomfield.sale_number"></el-input>
+                                 <el-input :placeholder="lang.tip5" v-model="customfield.sale_number"></el-input>
                                 </div>
+                                {/if}
+                                {/foreach}
                                 <div class="read-item" v-if="errorText.length !== 0">
                                     <el-alert :title="errorText" type="error" show-icon :closable="false">
                                     </el-alert>
@@ -119,7 +123,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 

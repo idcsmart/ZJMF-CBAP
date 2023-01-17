@@ -6,41 +6,41 @@
         Vue.prototype.moment = window.moment
         new Vue({
             data() {
+
                 return {
                     maxHeight: 0,
                     activeId: 1,
+                    // activeId: 3,
                     btnLoading: false,
                     menu: [
                         {
                             id: 1,
-                            icon: `/img/iu/iu-welcome.png`,
+                            icon: `/img/iu/iu-welcome.svg`,
                             text: "欢迎"
                         },
                         {
                             id: 2,
-                            icon: `/img/iu/iu-common.png`,
+                            icon: `/img/iu/iu-common.svg`,
                             text: "环境检查"
                         },
                         {
                             id: 3,
-                            icon: `/img/iu/iu-db.png`,
+                            icon: `/img/iu/iu-db.svg`,
                             text: "配置数据库"
                         }, {
                             id: 4,
-                            icon: `/img/iu/iu-config.png`,
+                            icon: `/img/iu/iu-config.svg`,
                             text: "配置信息"
                         }, {
                             id: 5,
-                            icon: `/img/iu/iu-finish.png`,
+                            icon: `/img/iu/iu-finish.svg`,
                             text: "安装完成"
                         }
                     ],
                     baseData: {
-                        "envs": [],
-                        "modules": [
-
-                        ],
-                        "error": 0
+                        envs: [],
+                        modules: [],
+                        error: 0
                     },
                     columns: [
                         {
@@ -69,7 +69,11 @@
                         },
                     ],
                     dbData: {
-                        hostname:'127.0.0.1'
+                        hostname: '127.0.0.1',
+                        dbname: '',
+                        username: "",
+                        password: "",
+                        hostport: "3306"
                     },
                     dbRules: {
                         hostname: [
@@ -89,10 +93,10 @@
                         ],
                     },
                     configData: {
-                        sitename: "",
+                        sitename: "智简魔方V10业务管理系统",
                         username: "",
                         password: "",
-                        email: ""
+                        email: "admin@domain.com"
                     },
                     configRules: {
                         sitename: [
@@ -125,7 +129,9 @@
                         admin_url: "",
                         admin_name: "",
                         admin_pass: ""
-                    }
+                    },
+                    reCheckLoading: false,
+                    dbLoading: false,
                 }
             },
             computed: {
@@ -134,18 +140,34 @@
             mounted() {
 
             },
+            watch: {
+                activeId(newValue, oldValue) {
+                    if (newValue != 0) {
+                        sessionStorage.setItem('installActiveId', newValue)
+                    } else {
+                        sessionStorage.setItem('installActiveId', 1)
+                    }
+                }
+            },
             created() {
+                this.autoPass()
+                this.autoName()
 
+                this.activeId = sessionStorage.getItem('installActiveId') ? sessionStorage.getItem('installActiveId') : 1
+                this.activeIdInit()
             },
             methods: {
                 // 欢迎页 立即开始
-                bengin() {
+                begin() {
                     // 检测环境
                     this.doStep1()
                 },
                 // 环境检查
                 doStep1() {
+                    this.reCheckLoading = true
+
                     step_1().then(res => {
+                        this.reCheckLoading = false
                         if (res.data.status === 200) {
                             this.activeId = 2
                             if (res.data.data) {
@@ -155,25 +177,48 @@
                                 })
                             }
                         }
+                        installAxios.get(`	/console/v1/country`).then(res => {
+
+                        }).catch(error => {
+                            if (error.response.status == 404) {
+                                this.baseData.modules.push(
+                                    {
+                                        status: 0,
+                                        current: "未开启",
+                                        name: "伪静态",
+                                        suggest: "开启",
+                                        worst: "开启"
+                                    }
+                                )
+                            }
+                        })
+
                     }).catch((error) => {
+                        this.reCheckLoading = false
                         this.activeId = 0
                         this.$message.error(error.data.msg)
+                        installAxios.get(`/console/v1/country`).then(res => {
+
+                        }).catch(error => {
+                            console.log("error", error);
+                        })
                     })
                 },
                 // 数据库检查提交
                 dbSubmit({ validateResult, firstError }) {
                     if (validateResult === true) {
+                        this.dbLoading = true
                         const params = { ...this.dbData }
                         step_2(params).then(res => {
-                            console.log("res",res);
+                            this.dbLoading = false
                             if (res.data.status === 200) {
                                 this.activeId = 4
                             }
-                            if(!res.data){
+                            if (!res.data) {
                                 this.$message.error("数据库连接失败！")
                             }
-
                         }).catch(error => {
+                            this.dbLoading = false
                             this.$message.error(error.data.msg)
                         })
                     } else {
@@ -181,7 +226,7 @@
                     }
                 },
                 toLearn() {
-                    location.href = 'https://www.baidu.com/'
+                    window.open('https://www.idcsmart.com/wiki_list/915.html', '_blank');
                 },
                 // 配置信息 提交
                 configSubmit({ validateResult, firstError }) {
@@ -300,12 +345,50 @@
                     //创建26个字母数组
                     var arr = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
                     var idvalue = '';
-
                     for (var i = 0; i < n; i++) {
                         idvalue += arr[Math.floor(Math.random() * 26)];
                     }
                     return idvalue;
-                }
+                },
+                activeIdInit() {
+                    switch (Number(this.activeId)) {
+                        case 1:
+                            break;
+                        case 2:
+                            this.begin()
+                            break;
+                        case 3:
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                // 复制
+                copyText(text) {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        // navigator clipboard 向剪贴板写文本
+                        this.$message.success("复制成功");
+                        return navigator.clipboard.writeText(text);
+                    } else {
+                        // 创建text area
+                        const textArea = document.createElement("textarea");
+                        textArea.value = text;
+                        // 使text area不在viewport，同时设置不可见
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        this.$message.success("复制成功");
+                        return new Promise((res, rej) => {
+                            // 执行复制命令并移除文本框
+                            document.execCommand("copy") ? res() : rej();
+                            textArea.remove();
+                        });
+                    }
+                },
             },
         }).$mount(template)
         typeof old_onload == 'function' && old_onload()

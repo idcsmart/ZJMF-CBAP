@@ -34,6 +34,10 @@ class CartValidate extends Validate
         'cal' => ['data_center_id','package_id','image_id','duration','password'],
     ];
 
+    public function sceneCalPrice(){
+        return $this->only(['data_center_id','package_id','duration']);
+    }
+
     // 验证密码
     public function checkPassword($value){
         if(is_null($value)){

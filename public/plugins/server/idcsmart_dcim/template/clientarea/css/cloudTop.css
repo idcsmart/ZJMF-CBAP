@@ -590,7 +590,7 @@
 }
 .template .main-card .card-top .renew-dialog .dialog-main .renew-content .renew-item {
   width: 1.6rem;
-  min-height: 0.62rem;
+  min-height: 0.83rem;
   border: 1px solid #E6E7EB;
   border-radius: 3px;
   display: flex;
@@ -623,6 +623,11 @@
   bottom: 0;
   z-index: 3;
   color: #FFF;
+}
+.template .main-card .card-top .renew-dialog .dialog-main .renew-content .renew-item .item-origin-price {
+  text-decoration: line-through;
+  font-size: 0.15rem;
+  color: #8692B0;
 }
 .template .main-card .card-top .renew-dialog .dialog-main .renew-content .renew-active {
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);

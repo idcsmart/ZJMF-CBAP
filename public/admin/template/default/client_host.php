@@ -51,8 +51,13 @@
       <template #product_name="{row}">
         <a :href="`host_detail.html?client_id=${row.client_id}&id=${row.id}`" class="aHover">{{row.product_name}}</a>
       </template>
-      <template #amount="{row}">
-        {{currency_prefix}}&nbsp;{{row.first_payment_amount}}<span v-if="row.billing_cycle">/</span>{{row.billing_cycle}}
+      <template #renew_amount="{row}">
+        <template v-if="row.billing_cycle">
+          {{currency_prefix}}&nbsp;{{row.renew_amount}}<span>/</span>{{row.billing_cycle}}
+        </template>
+        <template v-else>
+          {{currency_prefix}}&nbsp;{{row.first_payment_amount}}/{{lang.onetime}}
+        </template>
       </template>
       <template #status="{row}">
         <t-tag theme="default" variant="light" v-if="row.status==='Cancelled'" class="canceled">{{lang.canceled}}</t-tag>

@@ -50,3 +50,8 @@ function getMenus() {
 function editPass(params) {
   return Axios.put(`admin/password/update`, params)
 }
+
+// 生成token
+function setToken(){
+  return Axios.post(`/app_market/set_token`)
+}

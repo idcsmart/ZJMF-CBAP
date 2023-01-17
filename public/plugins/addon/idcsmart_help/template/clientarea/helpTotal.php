@@ -73,7 +73,7 @@
                                             </div>
 
                                             <!-- 主体内容 -->
-                                            <div class="right-content" v-html="detailData.content">
+                                            <div class="right-content" v-html="calStr(detailData.content)">
                                             </div>
                                             <!-- 附件 -->
                                             <div class="right-attachment">
@@ -97,7 +97,6 @@
                                                     <span>{{lang.source_text5}}{{detailData.next.title}}</span>
                                                     <i class="el-icon-arrow-right"></i>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" theme-color="default" theme-mode>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title></title>
+  <!-- element-css -->
+  <link rel="stylesheet" href="./css/common/element.css">
+  <!-- 公共样式 -->
+  <link rel="stylesheet" href="./css/common/common.css">
+  <!-- 页面独有样式 -->
+  <link rel="stylesheet" href="./css/business_detail.css">
+</head>
+
+<body>
+  <div id="mainLoading">
+    <div class="ddr ddr1"></div>
+    <div class="ddr ddr2"></div>
+    <div class="ddr ddr3"></div>
+    <div class="ddr ddr4"></div>
+    <div class="ddr ddr5"></div>
+  </div>
+  <div id="content" v-cloak>
+    <el-container style="flex-direction: column;">
+      <top-menu></top-menu>
+      <el-container>
+        <aside-menu></aside-menu>
+        <el-main>
+          <!-- 自己的 -->
+          <div class="main-box">
+            <div class="main-top">
+              <div class="banner-box" v-if="developerData.shop_header_type === 1">
+                <img :src="developerData.banner" @click="go(developerData.banner_url)" alt="">
+              </div>
+              <div class="main-app mar-0" v-else>
+                <div class="app-type">
+                  <div class="type-name" @click="typeChange(item,index)" v-for="(item,index) in app_type_list" :key="index">
+                    <span :class="select_index === index ? 'active-blue' :''">{{item.type_text}}</span><span class="app-num">({{(item.num)}})</span>
+                  </div>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in app_list" :key="item.id" @click="itemClick(item.id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{developerData.name}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="info-box">
+                <div class="info-top">
+                  <div class="info-logo">
+                    <img :src="developerData.logo" alt="">
+                  </div>
+                  <div class="info-text">
+                    <div class="info-name">{{developerData.name}}</div>
+                    <div class="info-count">
+                      <span><span class="count-title">商品数量：</span>{{developerData.app_count}}</span>
+                      <span><span class="count-title">购买量：</span>{{developerData.sell_count}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="info-desc" v-html="developerData.desc"></div>
+                <div class="contact-info">
+                  <div class="contact-item">
+                    <div class="contact-icon"><img src="./img/home/net.png" alt=""></div>
+                    <div class="contact-text">作者网站</div>
+                    <div class="contact-url">{{developerData.web}}</div>
+                  </div>
+                  <div class="contact-item">
+                    <div class="contact-icon"><img src="./img/home/emile.png" alt=""></div>
+                    <div class="contact-text">电子邮箱</div>
+                    <div class="contact-url">{{developerData.email}}</div>
+                  </div>
+                  <div class="contact-item">
+                    <div class="contact-icon"><img src="./img/home/qq.png" alt=""></div>
+                    <div class="contact-text">咨询QQ</div>
+                    <div class="contact-url">{{developerData.qq}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="main-app" v-if="developerData.shop_header_type === 1">
+              <div class="app-type">
+                <div class="type-name" @click="typeChange(item,index)" v-for="(item,index) in app_type_list" :key="index">
+                  <span :class="select_index === index ? 'active-blue' :''">{{item.type_text}}</span><span class="app-num">({{(item.num)}})</span>
+                </div>
+              </div>
+              <div class="row-bottom">
+                <div class="bottom-item" v-for="item in app_list" :key="item.id" @click="itemClick(item.id)">
+                  <img class="item-img" :src="item.icon" alt="">
+                  <p class="name">{{item.name}}</p>
+                  <div class="good">
+                    <div class="star">
+                      <!-- 亮 -->
+                      <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                        <i class="el-icon-star-on" v-for="start in 5"></i>
+                      </div>
+                      <!-- 暗 -->
+                      <div class="star-off">
+                        <i class="el-icon-star-off" v-for="start in 5"></i>
+                      </div>
+                    </div>
+                    <div class="user">{{item.sell_count}}+用户</div>
+                  </div>
+                  <div class="money">
+                    {{commontData.currency_prefix}}{{item.product_price}}起
+                  </div>
+                  <div class="author">
+                    <div class="left">
+                      <img class="author-img" src="./img/home/author.png" alt="">
+                      <span>{{developerData.name}}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+  <!-- =======页面独有======= -->
+  <script src="./api/shop.js"></script>
+  <script src="./js/business_detail.js"></script>
+  <!-- =======公共======= -->
+  <script src="https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+  <script src="./components/captchaDialog/captchaDialog.js"></script>
+  <script src="./components/countDownButton/countDownButton.js"></script>
+  <script src="./components/loginDialog/loginDialog.js"></script>
+  <script src="./components/topMenu/topMenu.js"></script>
+  <script src="./components/asideMenu/asideMenu.js"></script>
+  <script src="./utils/util.js"></script>
+  <script src="./js/common/common.js"></script>
+  <script src="./js/common/vue.js"></script>
+  <script src="./js/common/element.js"></script>
+  <script src="./js/common/axios.min.js"></script>
+  <script src="./utils/request.js"></script>
+</body>
+
+</html>

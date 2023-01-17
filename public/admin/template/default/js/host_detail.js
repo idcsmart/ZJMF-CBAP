@@ -4,7 +4,7 @@
     const template = document.getElementsByClassName('host-detail')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
-    const host = location.host
+    const host = location.origin
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
@@ -126,7 +126,37 @@
             },
           ],
           recordLoading: false,
-          hasPlugin: false
+          hasPlugin: false,
+          tempCycle: '',
+          /* 1-7 */
+          moduleVisible: false,
+          suspendVisible: false,
+          optTilte: '',
+          optType: '', // create unsuspend delete
+          suspendType: [
+            {
+              value: 'overdue',
+              label: lang.overdue
+            },
+            {
+              value: 'overtraffic',
+              label: lang.overtraffic
+            },
+            {
+              value: 'certification_not_complete',
+              label: lang.certification_not_complete
+            },
+            {
+              value: 'other',
+              label: lang.other
+            }
+          ],
+          suspendForm: {
+            suspend_type: 'overdue',
+            suspend_reason: ''
+          },
+          moduleLoading: false,
+          isShowModule: false
         }
       },
       watch: {
@@ -150,12 +180,10 @@
         this.client_id = this.getQuery(query[0])
         this.formData.id = this.id = this.getQuery(query[1])
         this.langList = JSON.parse(localStorage.getItem('common_set')).lang_home
-        this.getProductDetail()
-        this.getProList()
+        this.getProDetail()
         this.getproModule()
         this.getPlugin()
-        this.getPromoList()
-        this.getPlugin()
+
         const navList = JSON.parse(localStorage.getItem('backMenus'))
         let tempArr = navList.reduce((all, cur) => {
           cur.child && all.push(...cur.child)
@@ -170,6 +198,108 @@
         }
       },
       methods: {
+        /* 1-7 start */
+        handlerMoudle (type) {
+          this.optType = type
+          switch (type) {
+            case 'create':
+              this.optTilte = lang.module_tip1;
+              break;
+            case 'unsuspend':
+              this.optTilte = lang.module_tip2;
+              break;
+            case 'delete':
+              this.optTilte = lang.module_tip3;
+              break;
+          }
+          this.moduleVisible = true
+        },
+        confirmModule () {
+          switch (this.optType) {
+            case 'create':
+              return this.createHandler();
+            case 'unsuspend':
+              return this.unsuspendHandler();
+            case 'delete':
+              return this.deleteHandler()
+          }
+        },
+        // 开通
+        async createHandler () {
+          try {
+            this.moduleLoading = true
+            const res = await createModule({
+              id: this.id
+            })
+            this.$message.success(res.data.msg)
+            this.getProDetail()
+            this.moduleLoading = false
+            this.moduleVisible = false
+          } catch (error) {
+            this.moduleLoading = false
+            this.moduleVisible = false
+            this.$message.error(error.data.msg)
+          }
+        },
+        // 取消停用
+        async unsuspendHandler () {
+          try {
+            this.moduleLoading = true
+            const res = await unsuspendModule({
+              id: this.id
+            })
+            this.$message.success(res.data.msg)
+            this.getProDetail()
+            this.moduleLoading = false
+            this.moduleVisible = false
+          } catch (error) {
+            this.moduleLoading = false
+            this.moduleVisible = false
+            this.$message.error(error.data.msg)
+          }
+        },
+        // 删除
+        async deleteHandler () {
+          try {
+            this.moduleLoading = true
+            const res = await delModule({
+              id: this.id
+            })
+            this.$message.success(res.data.msg)
+            this.getProDetail()
+            this.moduleLoading = false
+            this.moduleVisible = false
+          } catch (error) {
+            this.moduleLoading = false
+            this.moduleVisible = false
+            this.$message.error(error.data.msg)
+          }
+        },
+        // 暂停
+        handlerSuspend () {
+          this.suspendForm.suspend_type = 'overdue'
+          this.suspendForm.suspend_reason = ''
+          this.suspendVisible = true
+        },
+        // 提交停用
+        async onSubmit () {
+          try {
+            this.moduleLoading = true
+            const res = await suspendModule({
+              id: this.id,
+              suspend_type: this.suspendForm.suspend_type,
+              suspend_reason: this.suspendForm.suspend_reason
+            })
+            this.$message.success(res.data.msg)
+            this.getProDetail()
+            this.moduleLoading = false
+            this.suspendVisible = false
+          } catch (error) {
+            this.moduleLoading = false
+            this.$message.error(error.data.msg)
+          }
+        },
+        /* 1-7 end */
         async getPlugin () {
           try {
             const res = await getAddon();
@@ -179,6 +309,7 @@
                 return all;
               }, [])
               .includes("PromoCode");
+            this.hasPlugin && this.getPromoList()
           } catch (error) { }
         },
         // 获取优惠码使用记录
@@ -191,7 +322,7 @@
           }
         },
         jumpOrder (row) {
-          location.href = 'http://' + str + `order.html?order_id=${row.order_id}`
+          location.href = str + `order.html?order_id=${row.order_id}`
         },
         /* 续费 */
         renewDialog () {
@@ -258,7 +389,7 @@
             this.$message.success(res.data.msg)
             this.submitLoading = false
             this.renewVisible = false
-            this.getProductDetail()
+            this.getProDetail()
           } catch (error) {
             this.submitLoading = false
             this.$message.error(error.data.msg)
@@ -307,14 +438,26 @@
         async getproModule () {
           try {
             const res = await getproModule(this.id)
-            this.config = res.data.data.content
+            this.isShowModule = res.data.data.content ? true : false
+            this.$nextTick(() => {
+              $('.config-box .content').html(res.data.data.content)
+            })
           } catch (error) {
           }
         },
         async getProList () {
           try {
             const res = await getProList()
-            this.proList = res.data.data.list
+            const temp = res.data.data.list
+            // 产品id不在产品列表中
+            let hasPro = temp.every(item => this.formData.product_id === item.id)
+            if (!hasPro) {
+              temp.unshift({
+                id: this.formData.product_id,
+                name: this.formData.product_name
+              })
+            }
+            this.proList = temp
           } catch (error) {
           }
         },
@@ -342,7 +485,7 @@
               }
               const res = await updateProduct(this.id, params)
               this.$message.success(res.data.msg)
-              this.getProductDetail()
+              this.getProDetail()
             } catch (error) {
               this.$message.error(error.data.msg)
             }
@@ -351,7 +494,7 @@
           })
         },
         // 获取用户详情
-        async getProductDetail () {
+        async getProDetail () {
           try {
             let inter = await getInterface(this.serverParams)
             this.serverList = inter.data.data.list
@@ -361,18 +504,21 @@
               inter = await getInterface(this.serverParams)
               this.serverList = inter.data.data.list
             }
+            
             const res = await getProductDetail(this.id)
             const temp = res.data.data.host
             Object.assign(this.formData, temp)
             this.formData.active_time = temp.active_time ? moment(temp.active_time * 1000).format('YYYY-MM-DD HH:mm:ss') : ''
             this.formData.due_time = temp.due_time ? moment(temp.due_time * 1000).format('YYYY-MM-DD HH:mm:ss') : ''
             this.formData.server_id = temp.server_id === 0 ? '' : temp.server_id
+            this.tempCycle = temp.billing_cycle
             this.$forceUpdate()
             this.status = res.data.data.status.map((item, index) => {
               return { value: item, label: lang[item] }
             })
             this.curStatus = this.formData.status
             document.title = lang.user_list + '-' + temp.product_name + '-' + localStorage.getItem('back_website_name')
+            this.getProList()
           } catch (error) {
           }
         },

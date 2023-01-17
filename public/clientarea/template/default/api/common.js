@@ -169,3 +169,13 @@ function accountPermissions(id) {
 function queryCustomerServiceCode(id) {
   return Axios.get(`/online_service`);
 }
+
+// 获取实名认证信息
+function certificationInfo() {
+  return Axios.get(`/certification/info`)
+}
+
+// 帮助文档详情
+function helpDetails(params) {
+  return Axios.get(`/help/${params.id}`, { params })
+}

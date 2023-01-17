@@ -56,6 +56,31 @@ class IdcsmartCommonProductConfigoptionController extends BaseController
     }
 
     /**
+     * 时间 2022-12-12
+     * @title 数量配置项列表(新增接口)
+     * @desc 数量配置项列表
+     * @url /admin/v1/idcsmart_common/product/:product_id/configoption/quantity
+     * @method  GET
+     * @author wyh
+     * @version v1
+     * @param   int product_id - 商品ID require
+     * @param   int configoption_id - 编辑时,传当前配置项ID
+     * @return  array configoption - 列表数据
+     * @return  int configoption.id -
+     * @return  string configoption.option_name - 配置项名称
+     */
+    public function quantityConfigoption()
+    {
+        $param = $this->request->param();
+
+        $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
+
+        $result = $IdcsmartCommonProductConfigoptionModel->quantityConfigoption($param);
+
+        return json($result);
+    }
+
+    /**
      * 时间 2022-09-26
      * @title 配置项详情
      * @desc 配置项详情
@@ -75,6 +100,7 @@ class IdcsmartCommonProductConfigoptionController extends BaseController
      * @return  int configoption.max_repeat - 最大允许重复数量
      * @return  string configoption.fee_type - 数量的类型的计费方式：stage阶梯计费，qty数量计费(当前区间价格*数量)
      * @return  string configoption.description - 说明
+     * @return  int configoption.configoption_id - 当前商品其他类型为数量拖动/数量输入的配置项ID
      * @return array configoption_sub - 子项信息
      * @return int configoption_sub.id -
      * @return  float configoption_sub.onetime - 一次性,价格
@@ -114,6 +140,10 @@ class IdcsmartCommonProductConfigoptionController extends BaseController
      * @param   int max_repeat - 最大允许重复数量
      * @param   int fee_type - 数量的类型的计费方式：stage阶梯计费，qty数量计费(当前区间价格*数量)
      * @param   int hidden - 是否隐藏:1是，0否
+     * @param   int configoption_id - 当前商品其他类型为数量拖动/数量输入的配置项ID
+     * @param   int set_son_product - 是否设为子商品:1是,0否(选择是时,才传下面pay_type,free两个字段)
+     * @param   string pay_type - 付款类型(免费free，一次onetime，周期先付recurring_prepayment,周期后付recurring_postpaid
+     * @param   int free - 关联商品首周期是否免费:1是,0否
      */
     public function create()
     {

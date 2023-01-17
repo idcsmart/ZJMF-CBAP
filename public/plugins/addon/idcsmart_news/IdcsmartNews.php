@@ -32,7 +32,7 @@ class IdcsmartNews extends Plugin
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '新闻ID',
   `addon_idcsmart_news_type_id` int(11) NOT NULL DEFAULT '0' COMMENT '新闻分类ID',
   `title` varchar(200) NOT NULL DEFAULT '' COMMENT '标题',
-  `content` text NOT NULL COMMENT '内容',
+  `content` longtext NOT NULL COMMENT '内容',
   `keywords` varchar(200) NOT NULL DEFAULT '' COMMENT '关键字',
   `img` text NOT NULL COMMENT '新闻缩略图',
   `attachment` text NOT NULL COMMENT '附件',

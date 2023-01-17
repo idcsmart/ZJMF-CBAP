@@ -50,7 +50,7 @@
                           <tr v-if="item.info">
                             <td>
                               <div class="info-box">
-                                <div class="goods-info" v-if="item.info.base_price != '0'">
+                                <div class="goods-info" v-if="item.info.base_price*1 > 0">
                                   <span class="goodsInfo-type">
                                     <span class="goodsInfo-name">{{item.name}}</span>
                                     <span class="goodsInfo-val"></span>

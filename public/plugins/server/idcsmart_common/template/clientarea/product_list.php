@@ -1,4 +1,5 @@
 <!-- 页面独有样式 -->
+<!-- 通用产品 -->
 <link rel="stylesheet" href="/plugins/server/idcsmart_common/template/clientarea/css/common_product_list.css">
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <!-- mounted之前显示 -->
@@ -24,8 +25,7 @@
       <!-- 筛选 -->
       <div class="main-card-search">
         <!-- 产品状态 -->
-        <el-select v-model="params.status" style="width:3.2rem;margin-right: .2rem;" clearable @change="getList"
-        :placeholder="lang.com_config.select_pro_status">
+        <el-select v-model="params.status" style="width:3.2rem;margin-right: .2rem;" clearable @change="getList" :placeholder="lang.com_config.select_pro_status">
           <el-option v-for="item in statusSelect" :key="item.id" :value="item.status" :label="item.label">
           </el-option>
         </el-select>
@@ -37,8 +37,7 @@
       </div>
       <div class="table">
         <!--  @row-click="(row)=>toDetail(row.id)" -->
-        <el-table v-loading="loading" :data="commonList" style="width: 100%;margin-bottom: .2rem;" 
-        @row-click="(row)=>toDetail(row)">
+        <el-table v-loading="loading" :data="commonList" style="width: 100%;margin-bottom: .2rem;" @row-click="(row)=>toDetail(row)">
           <el-table-column prop="id" label="ID" width="100" align="left">
             <template slot-scope="scope">
               <span class="column-id">{{scope.row.id}}</span>
@@ -52,9 +51,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="ip" :label="lang.com_config.money_cycle" :show-overflow-tooltip="true">
+          <el-table-column prop="ip" :label="`${lang.cloud_re_btn}${lang.com_config.money_cycle}`" :show-overflow-tooltip="true">
             <template slot-scope="{row}">
-              {{commonData.currency_prefix}}{{row.first_payment_amount}} <span v-if="row.first_payment_amount * 1 !== 0">/{{row.billing_cycle}}</span>
+              <template v-if="row.billing_cycle">
+                {{commonData.currency_prefix}}{{row.renew_amount}}<span>/</span>{{row.billing_cycle}}
+              </template>
+              <template v-else>
+                {{commonData.currency_prefix}}{{row.first_payment_amount}}/{{lang.common_cloud_text6}}
+              </template>
             </template>
           </el-table-column>
           <!-- <el-table-column prop="due_time" :label="lang.com_config.active_time" width="180">

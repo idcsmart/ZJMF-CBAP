@@ -1,5 +1,5 @@
 .top-back {
-  width: calc(100% - 160px);
+  width: calc(100% - 190px);
   background: #F6FAFF;
   height: calc(40px + 2.56rem);
   position: absolute;
@@ -96,6 +96,10 @@
   margin-left: 0.4rem;
   overflow-x: auto;
 }
+.main-card .main-card-content .content-right img {
+  max-width: 100%;
+  height: auto;
+}
 .main-card .main-card-content .content-right .right-title {
   font-size: 0.28rem;
   font-weight: bold;
@@ -132,6 +136,9 @@
 }
 .main-card .main-card-content .contnet-right-out {
   height: 100%;
+}
+.main-card .main-card-content .contnet-right-out a:target {
+  padding-top: 0.7rem !important;
 }
 .main-card .main-card-content .contnet-right-out .page {
   display: flex;

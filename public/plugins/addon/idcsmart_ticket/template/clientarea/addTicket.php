@@ -27,9 +27,9 @@
                         <div class="main-form">
                             <el-form ref="form" :model="ticketData" label-width="80px" :rules="rules">
                                 <el-form-item :label="lang.ticket_label2" prop="ticket_type_id">
-                                    <el-select class="select-type" v-model="ticketData.admin_role_id" :placeholder="lang.ticket_tips8" @change="departmentChange">
+                                    <!-- <el-select class="select-type" v-model="ticketData.admin_role_id" :placeholder="lang.ticket_tips8" @change="departmentChange">
                                         <el-option v-for="item in departmentList" :key="item.admin_role_id" :value="item.admin_role_id" :label="item.name"></el-option>
-                                    </el-select>
+                                    </el-select> -->
                                     <el-select class="select-type" v-model="ticketData.ticket_type_id" :placeholder="lang.ticket_tips2">
                                         <el-option v-for="item in ticketType" :key="item.id" :value="item.id" :label="item.name"></el-option>
                                     </el-select>

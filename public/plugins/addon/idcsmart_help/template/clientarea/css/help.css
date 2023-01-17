@@ -1,5 +1,5 @@
 .top-back {
-  width: calc(100% - 160px);
+  width: calc(100% - 190px);
   background: #F6FAFF;
   height: calc(40px + 2.56rem);
   position: absolute;
@@ -66,6 +66,11 @@
   flex-flow: wrap;
   justify-content: space-between;
   flex-direction: row;
+}
+.main-card .main-card-content::after {
+  content: '';
+  position: relative;
+  width: 4.47rem;
 }
 .main-card .main-card-content .content-item {
   position: relative;

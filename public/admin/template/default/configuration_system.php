@@ -82,7 +82,7 @@
               </div>
             </t-form-item>
           </t-col>
-          <t-col :xs="12" :xl="3" :md="6" style="margin-top: -30px;">
+          <t-col :xs="12" :xl="3" :md="6" class="special">
             <t-form-item name="lang_admin" :label="lang.isAllowChooseLan">
               <t-radio-group name="creating_notice_sms" v-model="formData.lang_home_open">
                 <t-radio value="1">{{lang.allow}}</t-radio>
@@ -90,7 +90,7 @@
               </t-radio-group>
             </t-form-item>
           </t-col>
-          <t-col :xs="12" :xl="3" :md="6" class="service" style="margin-top: -30px;">
+          <t-col :xs="12" :xl="3" :md="6" class="service special">
             <t-form-item name="lang_admin" :label="lang.maintenance_mode">
               <t-radio-group name="maintenance_mode" v-model="formData.maintenance_mode">
                 <t-radio value="1">{{lang.open}}</t-radio>
@@ -98,7 +98,7 @@
               </t-radio-group>
             </t-form-item>
           </t-col>
-          <t-col :xs="12" :xl="3" :md="6" style="margin-top: -30px;">
+          <t-col :xs="12" :xl="3" :md="6">
             <t-form-item v-if="formData.maintenance_mode == '1'" :label="lang.maintenance_mode_info" name="maintenance_mode_message">
               <t-textarea :placeholder="lang.input+lang.maintenance_mode_info" v-model="formData.maintenance_mode_message" />
             </t-form-item>

@@ -135,8 +135,8 @@ class IdcsmartCommonProductController extends BaseController
      * @version v1
      * @param   int product_id - 商品ID require
      * @param   string name - 名称 require
-     * @param   int cycle_time - 周期时长 require
-     * @param   string cycle_unit - 周期单位:hour小时,day天,month月 require
+     * @param   int cycle_time - 周期时长(infinite时,传0) require
+     * @param   string cycle_unit - 周期单位:hour小时,day天,month月,infinite无限 require
      * @param   float amout - 金额 require
      */
     public function createCustomCycle()
@@ -168,7 +168,7 @@ class IdcsmartCommonProductController extends BaseController
      * @param   int product_id - 商品ID require
      * @param   string name - 名称 require
      * @param   int cycle_time - 周期时长 require
-     * @param   string cycle_unit - 周期单位:hour小时,day天,month月 require
+     * @param   string cycle_unit - 周期单位:hour小时,day天,month月,infinite无限 require
      * @param   float amout - 金额 require
      */
 	public function updateCustomCycle()

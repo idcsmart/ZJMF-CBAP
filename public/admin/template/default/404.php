@@ -3,14 +3,14 @@
 <div id="content" class="template" v-cloak>
   <div class="no-auth">
     <img :src="`${urlPath}/img/no-auth.png`" alt="">
-    <p class="tit">{{lang.tip17}}</p>
-    <p class="path">
+    <p class="tit">{{msg}}</p>
+    <!-- <p class="path">
       <span>{{lang.user_manage}}</span>
       <span>&gt;</span>
       <span>{{lang.user_list}}</span>
       <span>&gt;</span>
       <span>{{lang.user_detail}}</span>
-    </p>
+    </p> -->
     <p>{{lang.tip18}}</p>
   </div>
 </div>

@@ -47,6 +47,23 @@
           </t-form-item>
         </t-col>
       </t-row>
+      <p class="com-tit"><span>{{ lang.ip_check }}</span></p>
+      <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+        <t-col :xs="12" :xl="3" :md="6">
+          <t-form-item name="lang_admin" :label="lang.ip_check_home">
+            <t-radio-group name="register_phone" v-model="formData.home_login_check_ip">
+              <t-radio value="1">{{lang.yes}}</t-radio>
+              <t-radio value="0">{{lang.login_no}}</t-radio>
+            </t-radio-group>
+          </t-form-item>
+          <t-form-item name="lang_admin" :label="lang.ip_check_admin">
+            <t-radio-group name="login_phone_verify" v-model="formData.admin_login_check_ip">
+              <t-radio value="1">{{lang.yes}}</t-radio>
+              <t-radio value="0">{{lang.login_no}}</t-radio>
+            </t-radio-group>
+          </t-form-item>
+        </t-col>
+      </t-row>
       <t-form-item class="btn">
         <t-button theme="primary" type="submit">{{lang.hold}}</t-button>
         <!-- <t-button theme="default" variant="base">{{lang.close}}</t-button> -->

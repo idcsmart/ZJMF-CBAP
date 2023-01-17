@@ -27,7 +27,7 @@
     flex-direction: column;
     background: #FFFFFF;
     width: 1195px;
-    height: 729px;
+    min-height: 729px;
     border-radius: 3px;
     padding: 30px;
 }
@@ -61,7 +61,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    background: rgba(0, 82, 217, 0.08);
+    /* background: rgba(0, 82, 217, 0.08); */
     margin-bottom: 4px;
 }
 
@@ -224,6 +224,11 @@
     flex-direction: row;
     margin-top: 40px;
 }
+.tip-text{
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.4);
+    margin-left: 10px;
+}
 
 .auto-pass-btn {
     color: #0052D9 !important;
@@ -250,7 +255,6 @@
 
 .over-msg {
     width: 719px;
-    height: 190px;
     border: 1px solid #DDDDDD;
     opacity: 1;
     border-radius: 3px;
@@ -263,6 +267,7 @@
     margin-top: 34px;
     display: flex;
     flex-direction: row;
+    align-items: center;
     font-size: 15px;
 }
 
@@ -274,6 +279,11 @@
 
 .item-r {
     color: rgba(0, 0, 0, 0.9);
+}
+
+.icon-copy {
+    margin-left: 10px;
+    cursor: pointer;
 }
 
 .toBack-btn {
@@ -300,7 +310,8 @@
     margin-left: 10px;
     cursor: pointer;
 }
-.error-teach{
+
+.error-teach {
     display: flex;
     flex-direction: row;
     align-items: center;

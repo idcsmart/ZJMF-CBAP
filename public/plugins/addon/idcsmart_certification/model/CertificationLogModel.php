@@ -61,6 +61,7 @@ class CertificationLogModel extends Model
      * @return int list[].type - 认证类型1个人，2企业，3个人转企业
      * @return int list[].status - 1已认证，2未通过，3待审核，4已提交资料
      * @return int list[].create_time - 提交时间
+     * @return int list[].company_organ_code - 营业执照号
      * @return int count - 实名认证总数
      */
     public function certificationList($param)
@@ -100,7 +101,7 @@ class CertificationLogModel extends Model
         };
 
         $logs = $this->alias('cl')
-            ->field('cl.id,cl.card_name,cl.company,cl.type,cl.status,cl.create_time,c.username,cl.client_id')
+            ->field('cl.id,cl.card_name,cl.company,cl.type,cl.status,cl.create_time,c.username,cl.client_id,cl.auth_fail,cl.company_organ_code')
             ->leftJoin('client c','c.id=cl.client_id')
             ->where($where)
             ->limit($param['limit'])
@@ -133,13 +134,14 @@ class CertificationLogModel extends Model
      * @return string log.card_type - 卡类型:id_card身份证,hk_macao_residence_permits港澳居住证,hk_macao_ entry_permit港澳通行证,taiwan_residence_permits台湾居住证,taiwan_entry_permit台湾通行证
      * @return string log.card_number - 证件号
      * @return array log.img - 图片地址,依次为:正,反,营业执照
+     * @return array log.company_organ_code - 营业执照号
      */
     public function certificationIndex($param)
     {
         $id = intval($param['id']);
 
         $log = $this->alias('cl')
-            ->field('cl.id,c.username,c.company,cl.create_time,p.title,cl.card_name,cl.card_type,cl.card_number,cl.img')
+            ->field('cl.id,c.username,cl.company,cl.create_time,p.title,cl.card_name,cl.card_type,cl.card_number,cl.img,cl.company_organ_code,cl.type,cl.plugin_name,cl.custom_fields_json')
             ->leftJoin('plugin p','p.name=cl.plugin_name')
             ->leftJoin('client c','c.id=cl.client_id')
             ->where('cl.id',$id)
@@ -149,10 +151,18 @@ class CertificationLogModel extends Model
             return ['status'=>400,'msg'=>lang_plugins('id_error')];
         }
 
+        // 做特殊处理
+        if (in_array($log['type'],[2,3])){
+            $customFields = json_decode($log['custom_fields_json'],true);
+            $log['card_name'] = $customFields['custom_fields1']??$log['card_name'];
+            $log['card_number'] = $customFields['custom_fields2']??$log['card_number'];
+        }
+        unset($log['plugin_name'],$log['custom_fields_json'],$log['type']);
+
         if (!empty($log['img'])){
             $imgs = explode(',',$log['img']);
 
-            $certificationUrl = IdcsmartCertificationLogic::getDefaultConfig('certification_upload');
+            $certificationUrl = IdcsmartCertificationLogic::getDefaultConfig('get_certification_upload_url');
 
             $tmp  = [];
             foreach ($imgs as $img){
@@ -224,7 +234,7 @@ class CertificationLogModel extends Model
             }
 
             # 自动更新姓名
-            if (IdcsmartCertificationLogic::getDefaultConfig('certification_update_client_name')){
+            if (IdcsmartCertificationLogic::getDefaultConfig('certification_update_client_name') && $log['type'] == 1){
                 $ClientModel = new ClientModel();
                 $ClientModel->where('id',$log['client_id'])->update([
                     'username' => $log['card_name'],
@@ -357,6 +367,15 @@ class CertificationLogModel extends Model
             })
             ->find();
 
+        $CertificationLogModel = new CertificationLogModel();
+        $lastPersonLog = $CertificationLogModel->where('client_id',$clientId)
+            ->where('type',1)
+            ->order('id','desc')
+            ->find();
+        if (!empty($person)){
+            $person->create_time = $lastPersonLog['create_time']??$person->create_time;
+        }
+
         $CertificationCompanyModel = new CertificationCompanyModel();
         $company = $CertificationCompanyModel->alias('cc')
             ->field('c.username,c.company,cc.card_name,cc.card_number,cc.company as certification_company,cc.company_organ_code,cc.status,cc.create_time')
@@ -375,6 +394,13 @@ class CertificationLogModel extends Model
                 return $value;
             })
             ->find();
+        $lastCompanyLog = $CertificationLogModel->where('client_id',$clientId)
+            ->whereIn('type',[2,3])
+            ->order('id','desc')
+            ->find();
+        if (!empty($company)){
+            $company->create_time = $lastCompanyLog['create_time']??$company->create_time;
+        }
 
         $data = [
             'is_certification' => $this->checkCertification($clientId),
@@ -829,8 +855,8 @@ class CertificationLogModel extends Model
         }
 
         if ($status==1){
-            # 自动更新姓名
-            if ($config['certification_update_client_name']){
+            # 自动更新姓名(个人认证)
+            if ($config['certification_update_client_name'] && $certificationLog['type']==1){
                 $ClientModel = new ClientModel();
                 $ClientModel->where('id',$clientId)->update([
                     'username' => $certificationLog['card_name'],

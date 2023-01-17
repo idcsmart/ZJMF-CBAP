@@ -16,7 +16,7 @@ class HostValidate extends Validate
         'first_payment_amount' 		=> 'require|float|egt:0',
         'renew_amount' 				=> 'require|float|egt:0',
         'billing_cycle' 			=> 'require|in:free,onetime,recurring_prepayment,recurring_postpaid',
-        'status' 					=> 'require|in:Unpaid,Pending,Active,Suspended,Cancelled,Deleted,Failed',
+        'status' 					=> 'require|in:Unpaid,Pending,Active,Suspended,Cancelled,Deleted,Failed,Cancelled',
         'active_time'       		=> 'date',
         'due_time'       			=> 'date',
         'suspend_type'              => 'require|in:overdue,overtraffic,certification_not_complete,other',

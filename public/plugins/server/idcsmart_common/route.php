@@ -44,6 +44,7 @@ Route::group(DIR_ADMIN . '/v1',function (){
 
     // 配置项
     Route::get('idcsmart_common/product/:product_id/configoption', "\\server\\idcsmart_common\\controller\\admin\\IdcsmartCommonProductConfigoptionController@configoptionList");
+    Route::get('idcsmart_common/product/:product_id/configoption/quantity', "\\server\\idcsmart_common\\controller\\admin\\IdcsmartCommonProductConfigoptionController@quantityConfigoption");
     Route::get('idcsmart_common/product/:product_id/configoption/:id', "\\server\\idcsmart_common\\controller\\admin\\IdcsmartCommonProductConfigoptionController@index");
     Route::post('idcsmart_common/product/:product_id/configoption', "\\server\\idcsmart_common\\controller\\admin\\IdcsmartCommonProductConfigoptionController@create");
     Route::put('idcsmart_common/product/:product_id/configoption/:id', "\\server\\idcsmart_common\\controller\\admin\\IdcsmartCommonProductConfigoptionController@update");

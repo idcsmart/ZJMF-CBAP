@@ -1,0 +1,132 @@
+.re-order {
+  display: flex;
+  flex-direction: column;
+}
+.re-order .top-card {
+  margin-bottom: 20px;
+  padding-bottom: 45px;
+  box-shadow: 0px 2px 6px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 6px;
+  background-color: #FFF;
+}
+.re-order .top-card .common-tab {
+  margin: auto;
+}
+.re-order .top-card .top-statistics {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.re-order .top-card .top-statistics .statistics-item {
+  display: flex;
+  margin-top: 40px;
+  margin-left: 30px;
+}
+.re-order .top-card .top-statistics .statistics-item:last-child {
+  margin-right: 100px;
+}
+.re-order .top-card .top-statistics .statistics-item .l {
+  display: flex;
+  flex-direction: column;
+}
+.re-order .top-card .top-statistics .statistics-item .l .num {
+  font-size: 32px;
+  line-height: 1;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.9);
+}
+.re-order .top-card .top-statistics .statistics-item .l .text {
+  font-size: 13px;
+  font-weight: 400;
+  color: #9696A3;
+  margin-top: 5px;
+}
+.re-order .top-card .top-statistics .statistics-item .r img {
+  width: 83px;
+  height: 59px;
+  margin-left: 142px;
+}
+.re-order .top-search {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+.re-order .top-search .key-input {
+  width: 240px;
+  margin-right: 8px;
+}
+.re-order .top-search .client-select {
+  margin-right: 8px;
+  width: 240px;
+}
+.re-order table tbody tr:hover {
+  cursor: pointer;
+}
+.re-order .status {
+  padding: 4px 9px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.re-order .Unpaid {
+  color: #FFF;
+  background: #FF6000;
+}
+.re-order .Ordered {
+  background: rgba(3, 177, 147, 0.2);
+  color: #03B193;
+}
+.re-order .Production {
+  color: #58A1F5;
+  background: rgba(88, 161, 245, 0.2);
+}
+.re-order .FinalUnpaid {
+  background: #58A1F5;
+  color: #FFF;
+}
+.re-order .Delivery {
+  color: #FF6000;
+  background: rgba(255, 96, 0, 0.2);
+}
+.re-order .Delivered {
+  background: #03B193;
+  color: #FFF;
+}
+.re-order .Cancelled {
+  color: #FFF;
+  background: #999999;
+}
+.re-order .operation-icon {
+  cursor: pointer;
+  margin-right: 16px;
+}
+.re-order .distribution {
+  display: flex;
+  align-items: center;
+}
+.re-order .distribution .text {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.re-order .distribution .copy-icon {
+  color: #0052D9;
+  cursor: pointer;
+  font-size: 16px;
+}
+.dialog-footer {
+  width: 100%;
+  display: flex;
+  justify-content: end;
+}
+.dialog-footer .t-button:first-child {
+  margin-right: 10px;
+}
+.cycle-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

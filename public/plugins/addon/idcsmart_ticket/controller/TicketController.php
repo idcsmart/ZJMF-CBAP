@@ -73,7 +73,7 @@ class TicketController extends PluginAdminBaseController
      * @url /admin/v1/ticket/department
      * @method  GET
      * @return array list - 工单部门列表
-     * @return int list[].admin_role_id - 工单部门ID
+     * @return int list[].id - 工单部门ID
      * @return string list[].name - 工单部门名称
      */
     public function department()
@@ -208,6 +208,8 @@ class TicketController extends PluginAdminBaseController
         $param = $this->request->param();
 
         $IdcsmartTicketModel = new IdcsmartTicketModel();
+
+        $IdcsmartTicketModel->isAdmin = true;
 
         $result = $IdcsmartTicketModel->indexTicket(intval($param['id']));
 
@@ -358,10 +360,9 @@ class TicketController extends PluginAdminBaseController
      * @version v1
      * @url /admin/v1/ticket/:id/forward
      * @method  POST
-     * @param int admin_role_id - 部门ID required
      * @param int admin_id - 管理员ID required
      * @param int notes - 备注 required
-     * @param int ticket_type_id - 类型ID required
+     * @param int ticket_type_id - 部门ID required
      */
     public function forward()
     {

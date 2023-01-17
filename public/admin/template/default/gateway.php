@@ -20,6 +20,14 @@
       <template #host_active_num="{row}">
         {{row.host_num}}({{row.host_active_num}})
       </template>
+      <template #version="{row}">
+        {{row.version}}
+        <t-tooltip :content="lang.upgrade_plugin" :show-arrow="false" theme="light" v-if="row.isUpdate">
+          <span class="upgrade" @click="updatePlugin(row)">
+            <img :src="`${urlPath}/img/upgrade.svg`" alt="">
+          </span>
+        </t-tooltip>
+      </template>
       <template #phone="{row}">
         <span v-if="row.phone">+{{row.phone_code}}&nbsp;-&nbsp;{{row.phone}}</span>
       </template>
@@ -94,6 +102,13 @@
     <template slot="footer">
       <t-button theme="primary" @click="sureChange">{{lang.sure}}</t-button>
       <t-button theme="default" @click="closeDialog">{{lang.cancel}}</t-button>
+    </template>
+  </t-dialog>
+  <!-- 升级弹窗 -->
+  <t-dialog theme="warning" :header="`${lang.sure}${lang.upgrade_plugin}？`" :visible.sync="upVisible">
+    <template slot="footer">
+      <t-button theme="primary" @click="sureUpgrade" :loading="upLoading">{{lang.sure}}</t-button>
+      <t-button theme="default" @click="upVisible=false">{{lang.cancel}}</t-button>
     </template>
   </t-dialog>
 </div>

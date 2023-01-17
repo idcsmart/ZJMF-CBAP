@@ -3,6 +3,7 @@ namespace addon\idcsmart_renew;
 
 use addon\idcsmart_renew\model\IdcsmartRenewModel;
 use app\common\lib\Plugin;
+use app\common\model\HostModel;
 use app\common\model\OrderItemModel;
 use app\common\model\OrderModel;
 use think\facade\Db;
@@ -210,4 +211,55 @@ class IdcsmartRenew extends Plugin
 
         return $IdcsmartRenewModel->beforeHostRenewalFirst($id);
     }
+
+    // 获取产品续费退款金额和总续费时长(计算升降级时续费需退款金额)
+    public function renewHostRefundAmount($param)
+    {
+        $hostId = $param['id']??0;
+
+        $HostModel = new HostModel();
+
+        $host = $HostModel->find($hostId);
+
+        $IdcsmartRenewModel = new IdcsmartRenewModel();
+        $renews = $IdcsmartRenewModel->where('host_id',$hostId)
+            ->where('status','Completed')
+            ->order('id','asc')
+            ->select()
+            ->toArray();
+        $refundTotal = 0; // 总退款金额
+        $renewCycleTotal = 0; // 总续费时间
+        foreach ($renews as $item1){
+            $renewTimeTotal = 0; // 判断续费是否已到期
+            foreach ($renews as $item2){
+                if ($item2['id']>$item1['id']){
+                    $renewTimeTotal += $item2['new_billing_cycle_time'];
+                }
+            }
+            $newDueTime = $host['due_time']-$renewTimeTotal;
+            if ($newDueTime > time()){
+                if (($newDueTime-$item1['new_billing_cycle_time']) > time()){ # 还未到当前续费周期时间段
+                    $refundTotal = bcadd($refundTotal,$item1['new_billing_cycle_amount'],2);
+                }else{
+                    $refundTotal = bcadd($refundTotal,$item1['new_billing_cycle_amount']/$item1['new_billing_cycle_time']*($newDueTime-$item1['new_billing_cycle_time']),2);
+                }
+            }
+            $renewCycleTotal += $item1['new_billing_cycle_time'];
+        }
+
+        return [$refundTotal,$renewCycleTotal];
+    }
+    
+    // 删除续费记录
+    public function deleteRenewLog($param)
+    {
+        $hostId = $param['id']??0;
+
+        $IdcsmartRenewModel = new IdcsmartRenewModel();
+
+        $IdcsmartRenewModel->where('host_id',$hostId)->where('status','Completed')->delete();
+
+        return true;
+    }
+
 }

@@ -4,3 +4,13 @@
 .addon .common-look:last-child {
   margin-right: 0;
 }
+.addon .version div {
+  display: flex;
+  align-items: center;
+}
+.addon .version .upgrade img {
+  width: 16px;
+  cursor: pointer;
+  display: block;
+  margin-left: 10px;
+}

@@ -52,7 +52,7 @@ async function changeProductConfigPrice (id, tag, config) {
           currency_code: JSON.parse(localStorage.getItem('common_set')).currency_code,
           formData: {
             client_id: '', // 用户id
-            type: 'new', // new新订单 renew 续费订单 upgrade 升降级订单 artificial 人工订单
+            type: 'artificial', // new新订单 renew 续费订单 upgrade 升降级订单 artificial 人工订单
             // 新订单
             products: [
               {
@@ -99,9 +99,9 @@ async function changeProductConfigPrice (id, tag, config) {
             lang_admin: [{ required: true }]
           },
           orderType: [
-            { type: 'new', name: lang.new },
-            // { type: 'renew', name: lang.renew },
-            { type: 'upgrade', name: lang.upgrade },
+            // { type: 'new', name: lang.new },
+            // // { type: 'renew', name: lang.renew },
+            // { type: 'upgrade', name: lang.upgrade },
             { type: 'artificial', name: lang.artificial },
           ],
           curNum: 0,
@@ -128,7 +128,7 @@ async function changeProductConfigPrice (id, tag, config) {
           renewIds: [],
           visibleTreeObj: [
             { visibleTree: false }
-          ]
+          ],
         }
       },
       mounted () {
@@ -138,11 +138,12 @@ async function changeProductConfigPrice (id, tag, config) {
           })
         }
         this.$nextTick(() => {
-          document.getElementById(`myPopup${this.curNum}`).onclick = () => {
-            event.stopPropagation()
+          if (document.getElementById(`myPopup${this.curNum}`)) {
+            document.getElementById(`myPopup${this.curNum}`).onclick = () => {
+              event.stopPropagation()
+            }
           }
         })
-
         // document.getElementById("product-tree").onclick = function () {
         //   event.stopPropagation();
         // }
@@ -565,24 +566,35 @@ async function changeProductConfigPrice (id, tag, config) {
         // 获取用户列表
         async getUserList () {
           try {
+            this.userList = []
+            this.userTotal = 0
             this.searchLoading = true
-            const { data: { data } } = await getClientList(this.userParams)
-            this.userList = data.list
-            this.userTotal = data.count
-            if (this.userTotal > 20) {
-              this.userParams.limit = this.userTotal
-              const { data: { data } } = await getClientList(this.userParams)
-              this.userList = data.list
-            }
+            const res = await getClientList(this.userParams)
+            this.userList = res.data.data.list
+            this.userTotal = res.data.data.count
+            // if (this.userTotal > 20) {
+            //   this.userParams.limit = this.userTotal
+            //   const { data: { data } } = await getClientList(this.userParams)
+            //   this.userList = data.list
+            // }
             this.searchLoading = false
+            // this.$nextTick(()=>{
+            //   this.$forceUpdate()
+            // })
           } catch (error) {
             this.searchLoading = false
           }
         },
+        filterMethod (search, option) {
+          return option
+        },
         // 远程搜素
         remoteMethod (key) {
           this.userParams.keywords = key
-          this.getUserList()
+          setTimeout(() => {
+            this.getUserList()
+          }, 300)
+
         },
         clearKey () {
           this.userParams.keywords = ''

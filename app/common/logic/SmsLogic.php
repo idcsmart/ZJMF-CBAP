@@ -253,7 +253,7 @@ class SmsLogic
             'phone_code' => $data['phone_code'],
             'phone' => $data['phone'],
             'template_code' => $index_sms_template['template_id'],
-            'content' => $send_result['data']['content'],
+            'content' => $send_result['data']['content'] ?? $data['content'],
             'status' => ($send_result['status'] == 200)?1:0,
 			'fail_reason' => ($send_result['status'] == 200)?'':$send_result['msg'],			
             'rel_id' => $client_id,
@@ -262,7 +262,7 @@ class SmsLogic
 			'port' =>  empty($param['port'])?'':$param['port'],
         ];
 		(new SmsLogModel())->createSmsLog($log);
-		unset($send_result['data']);	
+		if(isset($send_result['data']))unset($send_result['data']);	
 		return $send_result;	
     }
 	//短信接口调用

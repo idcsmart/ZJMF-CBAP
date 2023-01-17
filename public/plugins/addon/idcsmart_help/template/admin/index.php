@@ -49,7 +49,9 @@
       <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
     </template>
   </t-dialog>
-  <t-dialog :header="lang.doc_classific_manage" placement="center" :visible.sync="visible" :on-cancel="onCancel" :on-esc-keydown="onKeydownEsc" :on-close-btn-click="onClickCloseBtn" :on-close="close" width="70%" :confirm-btn='null' cancel-btn="关闭">
+  <t-dialog :header="lang.doc_classific_manage" placement="center" :visible.sync="visible" 
+  :on-cancel="onCancel" :on-esc-keydown="onKeydownEsc" :on-close-btn-click="onClickCloseBtn" 
+  :on-close="close" width="70%"  :footer="false">
     <t-table :key="key" bordered row-key="index" :data="typelist" :columns="columns2" max-height="80%">
       <template #name="slotProps">
         <t-input :placeholder="lang.input" v-model="slotProps.row.name" :disabled="!slotProps.row.isedit" style="width: 250px;" />
@@ -67,12 +69,16 @@
           <t-icon v-if="!slotProps.row.isedit" name="delete" color="#0052D9" @click="deleteClickOp(slotProps.row.id)"></t-icon>
         </div>
         <div v-else>
-          <t-icon name="save" color="#0052D9" style="margin-right: 10px;" @click="savehandleClickadd(slotProps.row.name)"></t-icon>
+          <!-- <t-icon name="save" color="#0052D9" style="margin-right: 10px;" @click="savehandleClickadd(slotProps.row.name)"></t-icon> -->
           <t-icon name="close-rectangle" color="#0052D9" @click="deleteClickadd(slotProps.row.name)"></t-icon>
         </div>
       </template>
     </t-table>
     <div class="addtype" @click="addtype">{{lang.order_new}}</div>
+    <div class="com-f-btn" style="text-align: center;">
+      <t-button theme="primary" type="submit" @click="savehandleClickadd">{{lang.batch_add}}</t-button>
+      <t-button theme="default" variant="base" @click="visible = false">{{lang.close}}</t-button>
+    </div>
   </t-dialog>
 </div>
 

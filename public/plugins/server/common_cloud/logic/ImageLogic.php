@@ -70,7 +70,6 @@ class ImageLogic{
 
 		if($res['status'] == 200){
 			// 获取当前产品已填加的镜像
-			
 			$image = ImageModel::field('id,rel_image_id')->where('product_id', $productId)->select()->toArray();
 			$image = array_column($image, 'id', 'rel_image_id');
 

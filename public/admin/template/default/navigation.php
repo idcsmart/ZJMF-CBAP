@@ -88,7 +88,7 @@
                                                     <t-icon class="close" name="close" @click="popupVisible = false" />
                                                 </div>
                                                 <div class="main-icons">
-                                                    <i @click="formData.icon = item.font_class" class="iconfont main-icons-item" v-for="item in iconsData" :key="item.icon_id" :class="item.font_class==formData.icon?'active ' + item.font_class:item.font_class"></i>
+                                                    <i @click="iconClick(item)" class="iconfont main-icons-item" v-for="item in iconsData" :key="item.icon_id" :class="item.font_class==formData.icon?'active ' + item.font_class:item.font_class"></i>
                                                 </div>
                                             </div>
                                         </template>
@@ -98,11 +98,11 @@
                                     <t-input v-model="formData.name" :maxlength="8" @blur="nameInputChange"></t-input>
                                 </t-form-item>
                                 <t-form-item name="product_id" label="关联页面" v-show="formData.type == 'module'">
-                                    <t-tree-select :min-collapsed-num="1" v-model="formData.product_id" :data="productList" :tree-props="treeProps" multiple clearable placeholder="请选择"> </t-tree-select>
+                                    <t-tree-select @change='saveSet' :min-collapsed-num="1" v-model="formData.product_id" :data="productList" :tree-props="treeProps" multiple clearable placeholder="请选择"> </t-tree-select>
                                 </t-form-item>
                                 <t-checkbox v-model="formData.isChecked" v-show="language.length>1">多语言</t-checkbox>
                                 <div v-show="formData.isChecked">
-                                    <t-form-item name="language" v-for="item in language" :key="item.display_flag" :label="item.display_name">
+                                    <t-form-item name="language" v-for="item in language" :key="item.display_lang" :label="item.display_name">
                                         <t-input v-model="formData.language[item.display_lang]"></t-input>
                                     </t-form-item>
                                 </div>
@@ -193,7 +193,7 @@
                                                     <t-icon class="close" name="close" @click="backPopupVisible = false" />
                                                 </div>
                                                 <div class="main-icons">
-                                                    <t-icon class="back-icons-item" :class="item.stem==formData.icon?'active':''" :name="item.stem" v-for="item in manifest" :key="item.stem" @click="formData.icon = item.stem"></t-icon>
+                                                    <t-icon class="back-icons-item" :class="item.stem==formData.icon?'active':''" :name="item.stem" v-for="item in manifest" :key="item.stem" @click="adminIconClick(item)"></t-icon>
                                                     <!-- <i @click="formData.icon = item.font_class" class="iconfont main-icons-item" v-for="item in iconsData" :key="item.icon_id" :class="item.font_class==formData.icon?'active ' + item.font_class:item.font_class"></i> -->
                                                 </div>
                                             </div>
@@ -205,7 +205,7 @@
                                 </t-form-item>
                                 <t-checkbox v-model="formData.isChecked" v-show="language.length>1">多语言</t-checkbox>
                                 <div v-show="formData.isChecked">
-                                    <t-form-item name="language" v-for="item in language" :key="item.display_flag" :label="item.display_name">
+                                    <t-form-item name="language" v-for="item in language" :key="item.display_lang" :label="item.display_name">
                                         <t-input v-model="formData.language[item.display_lang]"></t-input>
                                     </t-form-item>
                                 </div>
@@ -307,7 +307,7 @@
             <!-- <t-tree :data="productList" :keys="treeKey" activable hover transition /> -->
             <t-checkbox class="new_menu_checkbox" v-model="newFormData.isChecked" v-show="language.length>1">多语言</t-checkbox>
             <div v-show="newFormData.isChecked">
-                <t-form-item name="language" v-for="item in language" :key="item.display_flag" :label="item.display_name">
+                <t-form-item name="language" v-for="item in language" :key="item.display_lang" :label="item.display_name">
                     <t-input v-model="newFormData.language[item.display_lang]"></t-input>
                 </t-form-item>
             </div>
@@ -320,6 +320,7 @@
         </t-form>
     </t-dialog>
 </div>
+<script src="/{$template_catalog}/template/{$themes}/js/common/mainfest.js"></script>
 <script src="/{$template_catalog}/template/{$themes}/api/navigation.js"></script>
 <!-- vue.draggable -->
 <script src="/{$template_catalog}/template/{$themes}/js/common/Sortable.min.js"></script>

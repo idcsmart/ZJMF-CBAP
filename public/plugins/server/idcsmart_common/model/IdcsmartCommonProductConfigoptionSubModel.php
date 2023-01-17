@@ -20,6 +20,7 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
         'order'                  => 'int',
         'hidden'                 => 'int',
         'country'                => 'string',
+        'qty_change'             => 'int',
     ];
 
     /**
@@ -46,7 +47,7 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
 
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
         $configoptionSub = $IdcsmartCommonProductConfigoptionSubModel->alias('cs')
-            ->field('cs.id,cs.option_name,cs.option_param,cs.country,cs.qty_min,cs.qty_max,p.onetime')
+            ->field('cs.id,cs.option_name,cs.option_param,cs.country,cs.qty_min,cs.qty_max,p.onetime,cs.qty_change')
             ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=cs.id AND p.type=\'configoption\'')
             ->where('cs.product_configoption_id',$configoptionId)
             ->where('cs.id',$param['id'])
@@ -119,7 +120,8 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
                 'qty_max' => $param['qty_max']??0,
                 'country' => $param['country']??'',
                 'order' => $maxOrder,
-                'hidden' => $param['hidden']??0
+                'hidden' => $param['hidden']??0,
+                'qty_change' => $param['qty_change']??0,
             ]);
 
             # 插入价格
@@ -200,6 +202,7 @@ class IdcsmartCommonProductConfigoptionSubModel extends Model
                 'qty_min' => $param['qty_min']??0,
                 'qty_max' => $param['qty_max']??0,
                 'country' => $param['country']??'',
+                'qty_change' => $param['qty_change']??0,
             ]);
 
             # 插入价格

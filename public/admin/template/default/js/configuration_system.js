@@ -3,9 +3,9 @@
   window.onload = function () {
     const template = document.getElementsByClassName('configuration-system')[0]
     Vue.prototype.lang = window.lang
-    const host = location.host
+    const host = location.origin
     const fir = location.pathname.split('/')[1]
-    const str = `${host}/${fir}/`
+    const str = `${host}/${fir}`
     new Vue({
       data () {
         return {
@@ -48,7 +48,7 @@
             ],
           },
           // 图片上传相关
-          uploadUrl: 'http://' + str + 'v1/upload',
+          uploadUrl:  str + '/v1/upload',
           uploadHeaders: {
             Authorization: "Bearer" + " " + localStorage.getItem("backJwt"),
           },

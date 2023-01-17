@@ -30,6 +30,8 @@ class AdminIndexController extends PluginAdminBaseController
      * @url /admin/v1/withdraw
      * @method  GET
      * @param string keywords - 关键字:申请人
+     * @param int client_id - 用户ID
+     * @param string source - 提现来源
      * @param int status - 状态0待审核1审核通过2审核驳回3确认已汇款
      * @param int page - 页数
      * @param int limit - 每页条数
@@ -47,6 +49,7 @@ class AdminIndexController extends PluginAdminBaseController
      * @return int list[].status - 状态0待审核1审核通过2审核驳回3确认已汇款 
      * @return string list[].reason - 驳回原因 
      * @return int list[].create_time - 申请时间 
+     * @return int list[].client_id - 用户ID
      * @return string list[].username - 申请人 
      * @return string list[].company - 公司 
      * @return string list[].source - 来源

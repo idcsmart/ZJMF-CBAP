@@ -54,7 +54,7 @@
             <p class="com-tit connect"><span>{{ lang.connect }}</span></p>
             <div class="item">
               <t-form-item :label="lang.connect_goods" name="address">
-                <t-select v-model="formData.product_id" clearable>
+                <t-select v-model="formData.product_id" clearable :disabled="formData?.plugin_custom_fields?.is_link" :placeholder="lang.select+lang.connect_goods">
                   <t-option v-for="item in relationList" :key="item.id" :value="item.id" :label="item.name">
                   </t-option>
                 </t-select>

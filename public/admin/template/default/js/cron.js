@@ -9,6 +9,9 @@
           formData: {
             cron_shell: '',
             cron_status: '',
+            cron_day_start_time: 0,
+            // cron_task_shell: '',
+            // cron_task_status: '',
             // 开关配置
             cron_due_suspend_swhitch: 0,
             cron_due_suspend_day: 0,
@@ -31,6 +34,7 @@
             cron_order_overdue_swhitch: 0,
             cron_order_overdue_day: 0
           },
+          timeArr: [],
           rules: {
             cron_due_renewal_first_day: [
               {
@@ -71,6 +75,8 @@
               const params = { ...this.formData }
               delete params.cron_shell
               delete params.cron_status
+              // delete params.cron_task_shell
+              // delete params.cron_task_status
               const res = await updateTaskConfig(params)
               this.$message.success(res.data.msg)
               this.getSetting()
@@ -94,6 +100,12 @@
         }
       },
       created () {
+        for (let i = 0; i < 24; i++) {
+          this.timeArr.push({
+            value: i,
+            label: `${i}:00`
+          })
+        }
         this.getSetting()
       },
     }).$mount(template)

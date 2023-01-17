@@ -1,0 +1,167 @@
+#shop_theme {
+  padding-left: 0.7rem;
+  padding-right: 1.2rem;
+}
+#shop_theme .top-screen {
+  padding-bottom: 0.12rem;
+  border-bottom: 1px solid #E3E8EE;
+  margin-top: 0.3rem;
+}
+#shop_theme .top-screen .row {
+  display: flex;
+  margin-bottom: 0.14rem;
+}
+#shop_theme .top-screen .row .label {
+  color: #B8B9BC;
+  min-width: 0.6rem;
+  margin-right: 0.4rem;
+}
+#shop_theme .top-screen .row .value {
+  display: flex;
+}
+#shop_theme .top-screen .row .value .value-item {
+  color: #4B4B6B;
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+#shop_theme .top-screen .row .value .value-item.active {
+  color: #161EDE;
+}
+#shop_theme .top-screen-desc {
+  display: flex;
+  align-items: center;
+  margin-top: 0.4rem;
+}
+#shop_theme .top-screen-desc .desc-item {
+  display: flex;
+  margin-right: 0.4rem;
+  cursor: pointer;
+}
+#shop_theme .top-screen-desc .desc-item .caret-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-left: 8px;
+}
+#shop_theme .top-screen-desc .desc-item .caret-wrapper .top {
+  width: 0px;
+  height: 0px;
+  border-bottom: 3px solid #656A88;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  margin-bottom: 3px;
+}
+#shop_theme .top-screen-desc .desc-item .caret-wrapper .top.active {
+  border-bottom: 3px solid #161EDE;
+}
+#shop_theme .top-screen-desc .desc-item .caret-wrapper .bottom {
+  width: 0px;
+  height: 0px;
+  border-top: 3px solid #656A88;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+}
+#shop_theme .top-screen-desc .desc-item .caret-wrapper .bottom.active {
+  border-top: 3px solid #161EDE;
+}
+#shop_theme .shop-content {
+  min-height: 100px;
+}
+#shop_theme .shop-content .row {
+  margin-top: 0.4rem;
+  padding-bottom: 0.5rem;
+}
+#shop_theme .shop-content .row .row-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+}
+#shop_theme .shop-content .row .row-top .title {
+  font-size: 24px;
+  color: #090A3A;
+}
+#shop_theme .shop-content .row .row-top .all-btn {
+  padding: 0.06rem 0.12rem;
+  border: 1px solid #DADCE0;
+  color: #161EDE;
+  cursor: pointer;
+}
+#shop_theme .shop-content .row .row-bottom {
+  display: flex;
+  flex-wrap: wrap;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item {
+  margin-right: 0.3rem;
+  margin-bottom: 0.2rem;
+  cursor: pointer;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .item-img {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .name {
+  color: #090A3A;
+  margin-bottom: 0.05rem;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good .star {
+  width: 65px;
+  position: relative;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good .star .star-on {
+  white-space: nowrap;
+  overflow: hidden;
+  position: absolute;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good .star .star-on i {
+  width: 13px;
+  color: #FEBF13;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good .star .star-off {
+  white-space: nowrap;
+  overflow: hidden;
+  position: absolute;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good .star .star-off i {
+  color: #FEBF13;
+  width: 13px;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .good .user {
+  font-size: 12px;
+  color: #656A88;
+  font-weight: 500;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .money {
+  font-size: 12px;
+  color: #E50012;
+  font-weight: 500;
+  padding-bottom: 0.1rem;
+  border-bottom: 1px dashed #E3E8EE;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .author {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.09rem;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .author .left {
+  display: flex;
+  align-items: center;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .author .left span {
+  margin-left: 0.07rem;
+  color: #4B4B6B;
+  font-size: 12px;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .author .right {
+  display: flex;
+  align-items: center;
+}
+#shop_theme .shop-content .row .row-bottom .bottom-item .author .right .safe-img {
+  margin-right: 0.07rem;
+}

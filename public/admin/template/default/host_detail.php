@@ -1,5 +1,6 @@
 {include file="header"}
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <!-- =======内容区域======= -->
 <div id="content" class="host-detail table hasCrumb" v-cloak>
   <!-- crumb -->
@@ -58,11 +59,27 @@
             <t-form-item :label="lang.admin_notes" name="notes">
               <t-textarea v-model="formData.notes" :placeholder="lang.input+lang.admin_notes"></t-textarea>
             </t-form-item>
+            <!-- 1-7 -->
+            <div class="module-opt">
+              <t-button @click="handlerMoudle('create')" v-if="curStatus === 'Failed'">{{lang.module_create}}</t-button>
+              <t-button @click="handlerSuspend" v-if="curStatus === 'Active'">{{lang.deactivate}}</t-button>
+              <t-button @click="handlerMoudle('unsuspend')" v-if="curStatus === 'Suspended'">{{lang.cancel}}{{lang.deactivate}}</t-button>
+              <t-tooltip placement="top-right" :content="lang.module_tip" :show-arrow="false" theme="light" v-if="curStatus !== 'Deleted'">
+                <t-button @click="handlerMoudle('delete')">
+                  {{lang.delete}}
+                  <t-icon name="help-circle" size="18px" />
+                </t-button>
+              </t-tooltip>
+            </div>
+            <!-- 内页模块 -->
+            <div class="config-box" v-if="isShowModule">
+              <div class="content"></div>
+            </div>
           </t-col>
           <t-col :xs="12" :xl="6">
             <p class="com-tit"><span>{{lang.financial_info}}</span></p>
             <!-- 续费 -->
-            <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="(curStatus === 'Active' || curStatus === 'Suspended') && hasPlugin">{{lang.renew}}</t-button>
+            <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="(curStatus === 'Active' || curStatus === 'Suspended') && hasPlugin && tempCycle !== 'free'  && tempCycle !== 'onetime'">{{lang.renew}}</t-button>
             <div class="item">
               <t-form-item :label="lang.buy_amount" name="first_payment_amount">
                 <t-input v-model="formData.first_payment_amount" :placeholder="lang.input+lang.buy_amount">
@@ -165,6 +182,37 @@
       <t-button theme="primary" @click="submitRenew" :loading="submitLoading">{{lang.sure_renew}}</t-button>
     </div>
   </t-dialog>
+
+  <!-- 1-7 新增 -->
+  <!-- 开通，取消暂停，删除 -->
+  <t-dialog theme="warning" :header="optTilte" :close-btn="false" :visible.sync="moduleVisible" :close-on-overlay-click="false">
+    <template slot="footer">
+      <div class="common-dialog">
+        <t-button @click="confirmModule" :loading="moduleLoading">{{lang.sure}}</t-button>
+        <t-button theme="default" @click="moduleVisible=false">{{lang.cancel}}</t-button>
+      </div>
+    </template>
+  </t-dialog>
+  <!-- 停用 -->
+  <t-dialog :header="lang.deactivate" :close-btn="false" :close-on-overlay-click="false" :visible.sync="suspendVisible" width="600" :footer="false">
+    <t-form :data="suspendForm" ref="userInfo" @submit="onSubmit">
+      <t-form-item :label="lang.suspend_type">
+        <t-select v-model="suspendForm.suspend_type">
+          <t-option :value="item.value" :label="item.label" v-for="item in suspendType" :key="item.value">
+          </t-option>
+        </t-select>
+      </t-form-item>
+      <t-form-item :label="lang.suspend_reason">
+        <t-textarea v-model="suspendForm.suspend_reason"></t-textarea>
+      </t-form-item>
+      <div class="com-f-btn">
+        <t-button theme="primary" type="submit" :loading="moduleLoading">{{lang.hold}}</t-button>
+        <t-button theme="default" variant="base" @click="suspendVisible = false">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 1-7 新增 end -->
+
 </div>
 <!-- =======页面独有======= -->
 <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>

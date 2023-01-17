@@ -3,6 +3,9 @@
     window.onload = function () {
         const template = document.getElementsByClassName('template')[0]
         Vue.prototype.lang = window.lang
+        const host = location.host
+        const fir = location.pathname.split('/')[1]
+        const str = `${host}/${fir}/`
         new Vue({
             components: {
                 asideMenu,
@@ -10,7 +13,7 @@
                 payDialog,
                 cashCoupon,
             },
-            created () {
+            created() {
                 localStorage.frontMenusActiveId = "";
                 const temp = this.getQuery(location.search)
                 if (temp.cart) { // 购物车过来
@@ -32,22 +35,22 @@
                 }
                 this.getCommonData()
                 this.getPayLisy()
+
             },
-            mounted () {
+            mounted() {
                 this.addons_js_arr = JSON.parse(document.querySelector('#addons_js').getAttribute('addons_js')) // 插件列表
                 this.getCartList()
                 // 关闭loading
                 // document.getElementById('mainLoading').style.display = 'none';
                 // document.getElementsByClassName('template')[0].style.display = 'block'
+
             },
-            updated () {
+            updated() {
                 // 关闭loading
                 document.getElementById('mainLoading').style.display = 'none';
                 document.getElementsByClassName('template')[0].style.display = 'block'
             },
-            destroyed () {
-            },
-            data () {
+            data() {
                 return {
                     commonData: {}, // 公告接口数据
                     addons_js_arr: [],
@@ -75,14 +78,14 @@
             },
 
             filters: {
-                formateTime (time) {
+                formateTime(time) {
                     if (time && time !== 0) {
                         return formateDate(time * 1000)
                     } else {
                         return "--"
                     }
                 },
-                filterMoney (money) {
+                filterMoney(money) {
                     if (isNaN(money)) {
                         return '0.00'
                     } else {
@@ -92,38 +95,38 @@
                 }
             },
             computed: {
-                totalPrice () {
+                totalPrice() {
                     return this.showGoodsList.reduce((pre, cur) => {
                         return pre + (((cur.price * cur.qty) * 1000 - cur.level_discount * 1000 - cur.code_discount * 1000) / 1000)
                     }, 0)
                 },
-                finallyPrice () {
+                finallyPrice() {
                     return (this.totalPrice - this.cashPrice) > 0 ? (this.totalPrice - this.cashPrice) : 0
                 },
-                orginPrice () {
+                orginPrice() {
                     return this.showGoodsList.reduce((pre, cur) => {
                         return pre + (cur.price * cur.qty)
                     }, 0)
                 },
-                totalLevelDiscount () {
+                totalLevelDiscount() {
                     return this.showGoodsList.reduce((pre, cur) => {
                         return (pre * 1000 + cur.level_discount * 1000) / 1000
                     }, 0)
                 },
-                totalCodelDiscount () {
+                totalCodelDiscount() {
                     return this.showGoodsList.reduce((pre, cur) => {
                         return (pre * 1000 + cur.code_discount * 1000) / 1000
                     }, 0)
                 },
             },
             methods: {
-                getRule (arr) {
+                getRule(arr) {
                     let isHave = this.showFun(arr, 'PayController::pay')
                     if (isHave) {
                         this.showPayBtn = true
                     }
                 },
-                showFun (arr, str) {
+                showFun(arr, str) {
                     if (typeof arr == "string") {
                         return true;
                     } else {
@@ -138,7 +141,7 @@
                     }
                 },
                 // 获取购物车列表
-                getCartList () {
+                getCartList() {
                     const arr = this.addons_js_arr.map((item) => {
                         return item.name
                     })
@@ -179,7 +182,15 @@
                             item.level_discount = 0 // 商品等级优惠折扣金额
                             configOption(item.product_id, item.config_options).then((res) => {
                                 item.info = res.data.data
-                                item.preview = res.data.data.preview
+                                const son_previews = []
+                                if (res.data.data.other && res.data.data.other.son_previews) {
+                                    res.data.data.other.son_previews.forEach((item) => {
+                                        item.forEach((items) => {
+                                            son_previews.push(items)
+                                        })
+                                    })
+                                }
+                                item.preview = res.data.data.preview.concat(son_previews)
                                 item.price = Number(res.data.data.price)
                                 if (this.isShowLevel) { // 开启了等级优惠
                                     clientLevelAmount({ id: item.product_id, amount: item.price * item.qty }).then(ress => {
@@ -222,7 +233,7 @@
 
                     })
                 },
-                goPay () {
+                goPay() {
                     if (!this.checked) {
                         this.$message.warning("请先勾选协议后再提交订单")
                         return
@@ -249,34 +260,34 @@
                     }
 
                 },
-                useCash (val) {
+                useCash(val) {
                     this.cashObj = val
                     this.cashPrice = Number(val.price)
                     this.productObj.customfield.voucher_get_id = val.id
                 },
                 // 支付成功回调
-                paySuccess (e) {
+                paySuccess(e) {
                     location.href = './finance.html'
                 },
                 // 取消支付回调
-                payCancel (e) {
+                payCancel(e) {
                     location.href = './finance.html'
                 },
                 // 续费移除代金券
-                reRemoveCashCode () {
+                reRemoveCashCode() {
                     this.$refs.cashRef.closePopver()
                     this.cashObj = {}
                     this.cashPrice = 0
                     this.productObj.customfield.voucher_get_id = ''
                 },
-                getPayLisy () {
+                getPayLisy() {
                     payLisy().then((res) => {
                         this.payTypeList = res.data.data.list
                         this.payType = res.data.data.list[0].name
                     })
                 },
                 // 解析url
-                getQuery (url) {
+                getQuery(url) {
                     const str = url.substr(url.indexOf('?') + 1)
                     const arr = str.split('&')
                     const res = {}
@@ -286,14 +297,17 @@
                     }
                     return res
                 },
-                goTermsServiceUrl () {
+                goTermsServiceUrl() {
                     window.open(this.commonData.terms_service_url)
                 },
-                goTermsPrivacUrl () {
+                goTermsPrivacUrl() {
                     window.open(this.commonData.terms_privacy_url)
                 },
+                goHelpUrl(id) {
+                    window.open(`${location.protocol}//${host}/agreement.html?id=${id}`)
+                },
                 // 获取通用配置
-                getCommonData () {
+                getCommonData() {
                     this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
                     document.title = this.commonData.website_name + '-商品结算'
                 },

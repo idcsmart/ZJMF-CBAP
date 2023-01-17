@@ -164,7 +164,7 @@ class OrderModel extends Model
             // 获取产品计费周期
             $billingCycles[$orderItem['order_id']][] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : '';
             // 获取商品名称
-            if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code'])){
+            if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code', 'addon_idcsmart_client_level'])){
                 $productNames[$orderItem['order_id']][] = $orderItem['description'];
             }else if(!empty($orderItem['product_name'])){
                 $productNames[$orderItem['order_id']][] = $orderItem['product_name'];
@@ -192,6 +192,12 @@ class OrderModel extends Model
             }else{
                 $orders[$key]['host_name'] = '';
             } 
+            $orders[$key]['description'] = $descriptions[$order['id']] ?? [];
+            if(!empty($orders[$key]['description']) && count($orders[$key]['description'])==1){
+                $orders[$key]['description'] = $orders[$key]['description'][0] ?? '';
+            }else{
+                $orders[$key]['description'] = '';
+            }
         	
 
             // 获取计费周期,计费周期不一致是返回空字符串
@@ -285,7 +291,7 @@ class OrderModel extends Model
             $orderItems[$key]['billing_cycle'] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : ''; // 处理空数据
             $orderItems[$key]['host_status'] = $orderItem['host_status'] ?? ''; // 处理空数据
 
-            if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code'])){
+            if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code', 'addon_idcsmart_client_level'])){
                 $orderItems[$key]['product_name'] = $orderItem['description'];
                 $orderItems[$key]['host_name'] = '';
             }
@@ -760,7 +766,6 @@ class OrderModel extends Model
             $amount = $this->where('id',$order->id)->value('amount');
             
             if($amount<=0){
-                $this->processPaidOrder($order->id);
                 // 获取接口
                 /*if($product['type']=='server_group'){
                     $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
@@ -807,7 +812,13 @@ class OrderModel extends Model
                         'amount' => -$amount,
                         'create_time' => $time
                     ]);
+                    $this->update([
+                        'amount' => 0,
+                    ], ['id' => $order->id]);
+
                 }
+
+                $this->processPaidOrder($order->id);
             }
 
             $client = ClientModel::find($host['client_id']);
@@ -938,6 +949,9 @@ class OrderModel extends Model
                         'amount' => -$amount,
                         'create_time' => $time
                     ]);
+                    $this->update([
+                        'amount' => 0,
+                    ], ['id' => $order->id]);
                 }
             }
 
@@ -1119,6 +1133,9 @@ class OrderModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => lang('update_fail')];
         }
+
+        hook('after_update_order_amount',['id'=>$param['id'],'amount'=>$param['amount'],'description'=>$param['description']]);
+
         return ['status' => 200, 'msg' => lang('update_success')];
     }
 
@@ -1220,19 +1237,19 @@ class OrderModel extends Model
      */
     public function orderPaid($param)
     {
-        // 验证订单ID
-        $order = $this->find($param['id']);
-        if (empty($order)){
-            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
-        }
-
-        // 已付款的订单不能标记支付
-        if($order['status']=='Paid'){
-            return ['status'=>400, 'msg'=>lang('order_already_paid')];
-        }
-
         $this->startTrans();
         try {
+            // 验证订单ID
+            $order = $this->lock(true)->find($param['id']);
+            if (empty($order)){
+                throw new \Exception(lang('order_is_not_exist'));
+            }
+
+            // 已付款的订单不能标记支付
+            if($order['status']=='Paid'){
+                throw new \Exception(lang('order_already_paid'));
+            }
+
             if(isset($param['use_credit']) && $param['use_credit']==1){
                 $client = ClientModel::find($order['client_id']);
 
@@ -1437,6 +1454,7 @@ class OrderModel extends Model
     public function processPaidOrder($id)
     {
         $order = $this->find($id);
+
         if ($order->status != 'Paid'){
             return false;
         }
@@ -1508,10 +1526,6 @@ class OrderModel extends Model
                 case 'upgrade':
                     $this->upgradeOrderHandle($orderItem->rel_id);
                     break;
-                # 续费处理逻辑放在续费插件钩子order_paid里,放在这里不伦不类
-                /*case 'renew':
-                    $this->renewOrderHandle($orderItem->rel_id);
-                    break;*/
                 default:
                     break;
             }
@@ -1523,7 +1537,7 @@ class OrderModel extends Model
     }
 
     # 产品订单处理
-    private function hostOrderHandle($id)
+    public function hostOrderHandle($id)
     {
         $HostModel = new HostModel();
         $host = $HostModel->alias('h')
@@ -1534,10 +1548,17 @@ class OrderModel extends Model
         if (empty($host)){
             return false;
         }
+        if(in_array($host->billing_cycle,['onetime'])){
+            $dueTime = 0;
+        }else if(in_array($host->billing_cycle,['free']) && $host->billing_cycle_time==0){
+            $dueTime = 0;
+        }else{
+            $dueTime = time() + intval($host->billing_cycle_time);
+        }
         # 修改产品
         $HostModel->update([
             'status' => 'Pending',
-            'due_time' => !in_array($host->billing_cycle,['onetime']) ? (time() + intval($host->billing_cycle_time)) : 0,
+            'due_time' => $dueTime,
         ],['id'=>$id]);
 
         # 暂停时,付款后解除
@@ -1605,7 +1626,7 @@ class OrderModel extends Model
     }
 
     # 升降级订单处理
-    private function upgradeOrderHandle($id)
+    public function upgradeOrderHandle($id)
     {
 		
         $upgrade = UpgradeModel::find($id);

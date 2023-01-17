@@ -5,7 +5,7 @@
   window.onload = function () {
     const documents = document.getElementsByClassName("newscreat")[0];
     Vue.prototype.lang = window.lang;
-    const host = location.host
+    const host = location.origin
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
@@ -25,7 +25,12 @@
           id: "",
           total: 100,
           pageSizeOptions: [20, 50, 100],
-          detialform: {},
+          detialform: {
+            title: '',
+            addon_idcsmart_news_type_id: '',
+            keywords: '',
+            content: ''
+          },
           attachment: [],
           files: [],
           uploadTip: "",
@@ -36,11 +41,17 @@
               { required: true, message: "文档类型必填" },
             ],
           },
-          uploadUrl: 'http://' + str + 'v1/upload'
+          uploadUrl:  str + 'v1/upload'
         };
       },
 
       methods: {
+        transformHtml (str) {
+          const temp = str && str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').
+            replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
+            .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
+          return temp
+        },
         initTemplate () {
           tinymce.init({
             selector: '#tiny',
@@ -51,7 +62,7 @@
             plugins: 'link lists image code table colorpicker textcolor wordcount contextmenu fullpage',
             toolbar:
               'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image fullpage code | removeformat',
-            images_upload_url: 'http://' + str + 'v1/upload',
+            images_upload_url: str + 'v1/upload',
             convert_urls: false,
             // images_upload_url: 'http://' + str + 'v1/upload',
             // images_upload_handler: function (blobInfo, success, failure) {
@@ -87,7 +98,7 @@
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
-            axios.post('http://' + str + 'v1/upload', formData, {
+            axios.post(str + 'v1/upload', formData, {
               headers: {
                 Authorization: 'Bearer' + ' ' + localStorage.getItem('backJwt')
               }
@@ -168,11 +179,6 @@
           }
         },
         submit (hidden) {
-          console.log(
-            this.detialform,
-            tinyMCE.activeEditor.getContent(),
-            "detialform"
-          );
           this.detialform.content = tinyMCE.activeEditor.getContent();
 
           let arr = [];
@@ -192,7 +198,7 @@
                 return;
               }
               const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
-              const arr = this.detialform.content.match(srcReg);  
+              const arr = this.detialform.content.match(srcReg);
               if (arr !== null && arr.length > 0) {
                 this.detialform.img = arr[1]
               }
@@ -228,7 +234,7 @@
                   .then((res) => {
                     if (res.data.status === 200) {
                       console.log(res, "res");
-                      this.$message.success(lang.publish+lang.success);
+                      this.$message.success(lang.publish + lang.success);
                       setTimeout(() => {
                         location.href = "index.html";
                       }, 500);
@@ -244,8 +250,11 @@
         getdetialcon () {
           helpdetial({ id: this.id }).then((res) => {
             if (res.data.status === 200) {
-              this.detialform = res.data.data.news;
-              tinyMCE.activeEditor.setContent(this.detialform.content);
+              let obj = res.data.data.news;
+              obj.content = this.transformHtml(obj.content)
+              Object.assign(this.detialform, obj)
+              tinymce.editors['tiny'].setContent(this.detialform.content)
+              //  tinyMCE.activeEditor.setContent(this.detialform.content);
               // this.attachment = res.data.data.news.attachment;
               this.files = res.data.data.news.attachment;
               let arr = [];
@@ -277,7 +286,7 @@
         this.gettype();
       },
       mounted () {
-       this.initTemplate()
+        this.initTemplate()
       },
     }).$mount(documents);
     typeof old_onload == "function" && old_onload();

@@ -1,12 +1,12 @@
 // css 样式依赖common.css
 const asideMenu = {
-  template: ` <el-aside width="160px">
+  template: ` <el-aside width="190px">
     <img class="ali-logo" :src="logo" @click="goHome"></img>
 
     <el-menu class="menu-top" :default-active="menuActiveId" @select="handleSelect" background-color="#1E41C9" text-color="rgba(255, 255, 255, .6)" active-text-color="#FFF">
         <template v-for="item in menu1">
             <!-- 只有一级菜单 -->
-            <el-menu-item v-if="!item.child" :key="item.id" :index="item.url" :id="item.url">
+            <el-menu-item v-if="!item.child || item.child?.length === 0" :key="item.id" :index="item.url" :id="item.url">
 
                     <i class="iconfont" :class="item.icon"></i>
                     <span class="aside-menu-text" slot="title">{{item.name}}</span>
@@ -24,12 +24,12 @@ const asideMenu = {
         </template>
     </el-menu>
 
-    <div class="line"></div>
+    <div class="line" v-if="hasSeparate"></div>
 
     <el-menu class="menu-top" :default-active="menuActiveId" @select="handleSelect" background-color="#1E41C9" text-color="rgba(255, 255, 255, .6)" active-text-color="#FFF">
         <template v-for="item in menu2">
             <!-- 只有一级菜单 -->
-            <el-menu-item v-if="!item.child" :key="item.id" :index="item.url" :id="item.url">
+            <el-menu-item v-if="!item.child || item.child?.length === 0" :key="item.id" :index="item.url" :id="item.url">
                 <i class="iconfont" :class="item.icon"></i>
                 <span class="aside-menu-text" slot="title">{{item.name}}</span>
             </el-menu-item>
@@ -62,6 +62,7 @@ const asideMenu = {
       iconsData: [],
       commonData: {},
       noRepeat: [],
+      hasSeparate:false
     };
   },
   mounted() { },
@@ -79,6 +80,7 @@ const asideMenu = {
       document.getElementsByClassName("template")[0].style.display = "block";
     }
   },
+  mixins: [mixin],
   updated() {
     // // 关闭loading
 
@@ -128,62 +130,39 @@ const asideMenu = {
 
           let index = menu.findIndex((item) => item.name == "分隔符");
           if (index != -1) {
+            this.hasSeparate = true
             this.menu1 = menu.slice(0, index);
             this.menu2 = menu.slice(index + 1);
           } else {
+            this.hasSeparate = false
             this.menu1 = menu;
           }
 
           this.setActiveMenu();
         }
       });
-      queryCustomerServiceCode().then((res) => {
-        console.log("----------", res.data.data.content);
-        const str = res.data.data.content;
-        let reg1 = /<span[^>]*>/gi;
-        newStr = str.replace(reg1, "<script>");
-        // 创建 script 元素对象
-        let script = document.createElement("script");
-        // 设置 src 属性
-        script.src = "https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js";
-        // 将 script 元素对象赋值给 body 元素的子元素
-
-        this.$nextTick(() => {
-          document.querySelector("body").appendChild(script);
-        });
-      });
       // 获取详情
-      accountDetail()
-        .then((res) => {
-          if (res.data.status == 200) {
-            let obj = res.data.data.account;
-            let id = res.data.data.account.id;
-            console.log(
-              obj.customfiled,
-              obj.customfiled.is_sub_account,
-              "-------->"
-            );
-            localStorage.setItem(
-              "is_sub_account",
-              obj.customfiled.is_sub_account
-            );
-            if (obj.customfiled.is_sub_account == 1) {
-              // 子账户
-              console.log("子账户");
-              accountPermissions(id).then((relust) => {
-                let rule = relust.data.data.rule;
-                this.$emit("getruleslist", rule);
-              });
-            } else {
-              console.log("主账户");
-              // 主账户
-              this.$emit("getruleslist", "all");
-            }
+      accountDetail().then((res) => {
+        if (res.data.status == 200) {
+          let obj = res.data.data.account;
+          let id = res.data.data.account.id;
+          localStorage.setItem("is_sub_account", obj.customfiled.is_sub_account);
+          if (obj.customfiled.is_sub_account == 1) {
+            // 子账户
+            console.log("子账户");
+            accountPermissions(id).then((relust) => {
+              let rule = relust.data.data.rule;
+              this.$emit("getruleslist", rule);
+            });
+          } else {
+            console.log("主账户");
+            // 主账户
+            this.$emit("getruleslist", "all");
           }
-        })
-        .catch((err) => {
-          console.log(err, "err----->");
-        });
+        }
+      }).catch((err) => {
+        console.log(err, "err----->");
+      });
     },
     arrFun(n) {
       for (var i = 0; i < n.length; i++) {

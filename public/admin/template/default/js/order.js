@@ -6,7 +6,7 @@
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
     new Vue({
-      data () {
+      data() {
         return {
           id: '',
           rootRul: url,
@@ -41,8 +41,6 @@
             {
               colKey: 'product_names',
               title: lang.product_name,
-              ellipsis: true,
-              width: 250
             },
             // {
             //   colKey: 'host_name',
@@ -88,6 +86,7 @@
             sort: 'desc'
           },
           total: 0,
+          father_client_id: '',
           pageSizeOptions: [20, 50, 100],
           loading: false,
           delId: '',
@@ -106,7 +105,7 @@
                 pattern: /^-?\d+(\.\d{0,2})?$/, message: lang.verify10, type: 'warning'
               },
               {
-                validator: val => val*1 !== 0, message: lang.verify10, type: 'warning'
+                validator: val => val * 1 !== 0, message: lang.verify10, type: 'warning'
               }
             ],
             description: [
@@ -128,11 +127,11 @@
           optType: '' // order,sub
         }
       },
-      created () {
+      created() {
         this.params.keywords = location.href.split('?')[1]?.split('=')[1]
         this.getClientList()
       },
-      mounted () {
+      mounted() {
         this.maxHeight = document.getElementById('content').clientHeight - 170
         let timer = null
         window.onresize = () => {
@@ -147,14 +146,14 @@
         }
       },
       methods: {
-        jumpPorduct (client_id, id) {
+        jumpPorduct(client_id, id) {
           location.href = `host_detail.html?client_id=${client_id}&id=${id}`
         },
-        addOrder () {
+        addOrder() {
           location.href = 'create_order.html'
         },
         // 排序
-        sortChange (val) {
+        sortChange(val) {
           if (!val) {
             this.params.orderby = 'id'
             this.params.sort = 'desc'
@@ -164,19 +163,19 @@
           }
           this.getClientList()
         },
-        clearKey () {
+        clearKey() {
           this.params.keywords = ''
           this.seacrh()
         },
-        seacrh () {
+        seacrh() {
           this.params.page = 1
           this.getClientList()
         },
         // 自定义图标
-        treeExpandAndFoldIconRender (h, { type }) {
+        treeExpandAndFoldIconRender(h, { type }) {
         },
         // 调整价格
-        updatePrice (row, type) {
+        updatePrice(row, type) {
           this.optType = type
           this.formData.id = row.id
           this.formData.amount = ''
@@ -185,10 +184,10 @@
           this.priceModel = true
           this.curInfo = row
           if (type === 'sub') {
-            this.formData = {...row}
+            this.formData = { ...row }
           }
         },
-        async onSubmit ({ validateResult, firstError }) {
+        async onSubmit({ validateResult, firstError }) {
           if (validateResult === true) {
             if (this.optType === 'order') {
               this.changeOrderPrice()
@@ -201,7 +200,7 @@
           }
         },
         // 修改订单价格
-        async changeOrderPrice () {
+        async changeOrderPrice() {
           try {
             await updateOrder(this.formData)
             this.$message.success(lang.modify_success)
@@ -212,28 +211,29 @@
           }
         },
         // 修改子项人工价格
-        async changeSubPrice () {
+        async changeSubPrice() {
           try {
             await updateArtificialOrder(this.formData)
             this.$message.success(lang.modify_success)
             this.priceModel = false
             this.getClientList()
+            this.optType = ''
           } catch (error) {
             this.$message.error(error.data.msg);
           }
         },
 
-        closePrice () {
+        closePrice() {
           this.priceModel = false
           this.$refs.priceForm.reset()
         },
         // 删除订单
-        delteOrder (row) {
+        delteOrder(row) {
           this.delId = row.id
           this.delVisible = true
           this.delete_host = false
         },
-        async onConfirm () {
+        async onConfirm() {
           try {
             const params = {
               id: this.delId,
@@ -249,7 +249,7 @@
           }
         },
         // 标记支付
-        signPay (row) {
+        signPay(row) {
           if (row.status === 'Paid') {
             return
           }
@@ -258,7 +258,7 @@
           this.signForm.amount = row.amount
           this.signForm.credit = row.client_credit
         },
-        async sureSign () {
+        async sureSign() {
           try {
             const params = {
               id: this.delId,
@@ -273,13 +273,13 @@
           }
         },
         // 展开行
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current
           this.params.limit = e.pageSize
           this.getClientList()
         },
         // 获取订单列表
-        async getClientList () {
+        async getClientList() {
           try {
             this.loading = true
             this.fullLoading = true
@@ -291,7 +291,7 @@
               item.isExpand = false
             })
             this.loading = false
-            if (this.curInfo) { //修改子项打开对应的订单下拉
+            if (JSON.stringify(this.curInfo) !== '{}') { //修改子项打开对应的订单下拉
               this.itemClick(this.curInfo)
             } else {
             }
@@ -300,8 +300,9 @@
           }
         },
         // id点击获取订单详情
-        itemClick (row) {
+        itemClick(row) {
           if (row.order_item_count < 2) {
+            this.jumpPorduct(row.client_id, row.host_id)
             return
           }
           row.isExpand = row.isExpand ? false : true
@@ -310,11 +311,15 @@
           if (row.list?.length > 0) {
             return
           }
+          this.father_client_id = row.client_id
           this.getOrderDetail(this.optType === 'sub' ? row.pId : row.id)
 
         },
+        childItemClick(row) {
+          this.jumpPorduct(this.father_client_id, row.host_id)
+        },
         // 订单详情
-        async getOrderDetail (id) {
+        async getOrderDetail(id) {
           try {
             const res = await getOrderDetail(id)
             res.data.data.order.items.forEach(item => {

@@ -560,16 +560,18 @@ class PackageModel extends Model{
         }
         $PackageModel = PackageModel::where('product_id', $param['product_id'])->where('id', $param['package_id'])->find();
         if(empty($PackageModel)){
-            return ['status'=>400, 'msg'=>lang_plugins('package_not_found')];
+            if($params['scene'] != 'cal_price'){
+                return ['status'=>400, 'msg'=>lang_plugins('package_not_found')];
+            }
+        }else{
+            $preview[] = [
+                'name'=>lang_plugins('package'),
+                'value'=>$PackageModel['name'],
+                'price'=>$PackageModel[ $param['duration'] ] ?? 0,
+            ];
         }
 
-        $preview[] = [
-            'name'=>lang_plugins('package'),
-            'value'=>$PackageModel['name'],
-            'price'=>$PackageModel[ $param['duration'] ] ?? 0,
-        ];
-
-        if(!empty($PackageModel['data_center_id']) && !empty($dataCenter) && $dataCenter['id'] != $PackageModel['data_center_id']){
+        if(!empty($PackageModel) && !empty($PackageModel['data_center_id']) && !empty($dataCenter) && $dataCenter['id'] != $PackageModel['data_center_id']){
             return ['status'=>400, 'msg'=>lang_plugins('package_not_found')];
         }
 
@@ -597,20 +599,22 @@ class PackageModel extends Model{
         $image = ImageModel::where('id', $param['image_id'])->where('enable', 1)->find();
         // 验证镜像
         if(empty($image)){
-            return ['status'=>400, 'msg'=>lang_plugins('image_not_found')];
+            if($params['scene'] != 'cal_price'){
+                return ['status'=>400, 'msg'=>lang_plugins('image_not_found')];
+            }
+        }else{
+            $preview[] = [
+                'name'=>lang_plugins('system'),
+                'value'=>$image['name'],
+                'price'=>$image['charge'] == 1 && !empty($image['price']) ? $image['price'] : 0,
+            ];
         }
-
-        $preview[] = [
-            'name'=>lang_plugins('system'),
-            'value'=>$image['name'],
-            'price'=>$image['charge'] == 1 && !empty($image['price']) ? $image['price'] : 0,
-        ];
 
         // 套餐的价格+镜像
         $price = $PackageModel[ $param['duration'] ];
         $renew_price = $price;
         // 镜像
-        if($image['charge'] == 1 && !empty($image['price'])){
+        if(!empty($image) && $image['charge'] == 1 && !empty($image['price'])){
             $price = bcadd($price, $image['price']);
         }
         $price = amount_format($price);

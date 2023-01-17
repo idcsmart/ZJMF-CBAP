@@ -4,11 +4,14 @@
     const template = document.getElementsByClassName('withdrawal')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}/`
     new Vue({
       data () {
         return {
           data: [],
-          tableLayout: false,
+          tableLayout: true,
           bordered: true,
           visible: false,
           delVisible: false,
@@ -26,7 +29,7 @@
             {
               colKey: 'source',
               title: lang.withdrawal_source,
-              width: 500,
+              width: 400,
               ellipsis: true
             },
             {
@@ -149,6 +152,9 @@
         this.getList()
       },
       methods: {
+        jumpUser (row) {
+          location.href =  str + `client_detail.html?client_id=${row.client_id}`
+        },
         async getResons () {
           try {
             const res = await getRejectReason()

@@ -1,0 +1,447 @@
+.client {
+    padding-left: .7rem;
+    padding-right: 1.2rem;
+    padding-top: .4rem;
+
+    .red {
+        color: #E50012;
+    }
+
+    .el-tabs__item.is-active {
+        color: #161EDE;
+    }
+
+    .el-tabs__active-bar {
+        background-color: #161EDE;
+    }
+
+    .el-tabs__nav-wrap::after {
+        height: 1px;
+    }
+
+    .top-search {
+        display: flex;
+        align-content: center;
+        margin-top: .25rem;
+        margin-bottom: .2rem;
+
+        .el-select,
+        .el-input {
+            width: 2rem;
+            height: 44px;
+            margin-right: .1rem;
+
+            .el-input__inner {
+                height: 100%;
+            }
+        }
+
+        .search-btn {
+            background: #161EDE;
+            color: #FFF;
+            height: 44px;
+        }
+
+        .complaints-btn {
+            background: #161EDE;
+            color: #FFF;
+            height: 44px;
+        }
+    }
+
+    .el-table {
+        thead {
+            margin-bottom: .1rem;
+            padding-bottom: .1rem;
+
+            tr {
+                th {
+                    background: #656A88;
+                    border: 1px solid #FFF;
+                    color: #FFF;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                &:nth-child(2n) {
+                    td {
+                        border: 1px solid #FFF;
+                    }
+                }
+
+                &:nth-child(2n+1) {
+                    td {
+                        background: #EFF9FC;
+                        border: 1px solid #FFF;
+                    }
+                }
+
+            }
+        }
+
+        .el-table__body-wrapper {
+            margin-top: .1rem;
+        }
+    }
+
+    .order-status {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .operation-4 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .see-btn {
+            cursor: pointer;
+            color: rgba(28, 37, 255, 0.8);
+        }
+
+        .blue-btn {
+            cursor: pointer;
+            color: rgba(28, 37, 255, 0.8);
+        }
+
+        .column-line {
+            width: 2px;
+            height: 12px;
+            opacity: 1;
+            background-color: #E3E8EE;
+            margin-left: .1rem;
+            margin-right: .1rem;
+        }
+
+        .red-btn {
+            cursor: pointer;
+            color: #E50012;
+        }
+
+        .back-btn {
+            cursor: pointer;
+            color: #E50012;
+        }
+    }
+
+
+    // 投诉弹窗
+    .complaints-dialog {
+        .el-dialog__header {
+            padding-top: 10px;
+            background: #EFF9FC;
+
+            .el-dialog__headerbtn {
+                top: 10px;
+            }
+
+            .dialog-title {
+                display: flex;
+                align-items: center;
+
+                p {
+                    margin-left: 8px;
+                }
+            }
+
+        }
+
+        .dialog-main {
+            .el-select {
+                height: 44px;
+                width: 100%;
+
+                .el-input {
+                    height: 100%;
+
+                    .el-input__inner {
+                        height: 100%;
+                    }
+                }
+            }
+
+            .content {
+                .content-item {
+                    // height: 87px;
+                    background: #F5F5F5;
+                    border-radius: 0px 0px 0px 0px;
+                    opacity: 1;
+                    border: 1px solid #E3E8EE;
+                    margin-bottom: .1rem;
+                    padding: .1rem;
+                    display: flex;
+                    flex-direction: column;
+
+                    .name {}
+
+                    .text {}
+
+                    .images {
+                        display: flex;
+                        flex-wrap: wrap;
+
+
+                        img {
+                            width: 1.2rem;
+                            height: .8rem;
+                            margin-right: .08rem;
+                            margin-bottom: .1rem;
+                            cursor: pointer;
+                        }
+                    }
+
+                    .time {}
+                }
+            }
+        }
+
+        .dialog-footer {
+            .sub-btn {
+                color: #FFF;
+                background: #161EDE;
+            }
+
+            .close-btn {
+                color: #4B4B6B;
+            }
+        }
+    }
+
+    .appraise-dialog {
+        .el-dialog__body {
+            padding-bottom: 0;
+        }
+
+        .dialog-footer {
+            .sub-btn {
+                color: #FFF;
+                background: #161EDE;
+            }
+
+            .close-btn {
+                color: #4B4B6B;
+            }
+        }
+    }
+
+    // 撤回投诉确认弹窗
+    .comon-dialog {
+        .el-dialog__header {
+            padding-top: 10px;
+            background: #EFF9FC;
+
+            .el-dialog__headerbtn {
+                top: 10px;
+            }
+
+            .dialog-title {
+                display: flex;
+                align-items: center;
+
+                p {
+                    margin-left: 8px;
+                }
+            }
+
+        }
+
+        .dialog-main {
+            .number-input {
+                width: 100%;
+                height: 44px;
+
+                .el-input {
+                    height: 100%;
+
+                    .el-input__inner {
+                        height: 100%;
+                        text-align: left;
+                    }
+                }
+            }
+
+            .content {
+                .content-item {
+                    // height: 87px;
+                    background: #F5F5F5;
+                    border-radius: 0px 0px 0px 0px;
+                    opacity: 1;
+                    border: 1px solid #E3E8EE;
+                    margin-bottom: .1rem;
+                    padding: .1rem;
+                    display: flex;
+                    flex-direction: column;
+
+                    .name {}
+
+                    .text {}
+
+                    .images {
+                        display: flex;
+                        flex-wrap: wrap;
+
+
+                        img {
+                            width: 1.2rem;
+                            height: .8rem;
+                            margin-right: .08rem;
+                            margin-bottom: .1rem;
+                            cursor: pointer;
+                        }
+                    }
+
+                    .time {}
+                }
+            }
+        }
+
+        .dialog-footer {
+            .sub-btn {
+                color: #FFF;
+                background: #161EDE;
+            }
+
+            .close-btn {
+                color: #4B4B6B;
+            }
+        }
+    }
+
+
+    .renew-dialog {
+        .el-dialog__header {
+            padding-left: .8rem;
+            padding-top: .5rem;
+
+            .dialog-title {
+                p {
+                    font-size: .24rem;
+                    color: #171725;
+                }
+            }
+        }
+
+        .el-dialog__body {
+            padding-left: .8rem;
+            padding-right: .8rem;
+
+            .dialog-main {
+                .renew-content {
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+
+                    .renew-item {
+                        width: 1.6rem;
+                        min-height: .62rem;
+                        border: 1px solid #E6E7EB;
+                        border-radius: 3px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        margin-right: .2rem;
+                        margin-bottom: .2rem;
+                        cursor: pointer;
+                        position: relative;
+
+                        &:nth-child(3) {
+                            margin-right: 0;
+                        }
+
+                        &:nth-child(6) {
+                            margin-right: 0;
+                        }
+
+                        .item-top {
+                            font-size: .15rem;
+                            color: #1E2736;
+                            margin-top: .08rem;
+                        }
+
+                        .item-bottom {
+                            font-size: .15rem;
+                            color: #0058FF;
+                            margin-top: .04rem;
+                        }
+
+                        .check {
+                            position: absolute;
+                            right: 0;
+                            bottom: 0;
+                            z-index: 3;
+                            color: #FFF;
+                        }
+                    }
+
+                    .renew-active {
+                        box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            bottom: 0;
+                            right: 0;
+                            z-index: 2;
+                            width: 0;
+                            height: 0;
+                            border-bottom: 0.24rem solid #0058FF;
+                            border-left: 0.24rem solid transparent;
+
+                        }
+                    }
+                }
+
+                .pay-content {
+                    border: 1px solid #E6E7EB;
+                    border-radius: 3px;
+                    padding: 0.2rem 0;
+                    padding-right: 0.3rem;
+
+                    .pay-price {
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: end;
+
+
+                        .money {
+                            display: flex;
+                            align-items: center;
+
+                            .text {
+                                font-size: 0.14rem;
+                                color: #1E2736;
+                                margin-right: 0.08rem;
+                            }
+
+                            .num {
+                                
+                                font-size: .28rem;
+                                font-family: Helvetica;
+                                font-weight: bold;
+                                color: #F0142F;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .dialog-footer {
+            padding-right: .6rem;
+
+            .sub-btn {
+                color: #FFF;
+                background: #161EDE;
+            }
+
+            .close-btn {
+                color: #4B4B6B;
+            }
+        }
+
+    }
+}

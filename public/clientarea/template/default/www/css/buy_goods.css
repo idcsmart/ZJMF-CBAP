@@ -1,0 +1,77 @@
+.top-back {
+  display: flex;
+  align-items: center;
+  margin-left: 0.4rem;
+  margin-top: 0.16rem;
+  cursor: pointer;
+}
+.top-back .back-img {
+  width: 14px;
+  height: 14px;
+}
+.top-back .back-text {
+  color: #090A3A;
+  margin-left: 0.03rem;
+}
+.buy-box {
+  margin-top: 0.32rem;
+  margin-left: 1.18rem;
+}
+.buy-box .goods-title {
+  margin-bottom: 0.4rem;
+}
+.buy-box .goods-title .goods-name {
+  font-size: 0.24rem;
+  font-weight: bold;
+  color: #090A3A;
+}
+.buy-box .goods-title .goods-tip {
+  margin-left: 0.2rem;
+  font-weight: 400;
+  font-size: 0.14rem;
+  color: #B8B9BC;
+}
+.buy-box .info-item {
+  box-sizing: border-box;
+  width: 12rem;
+  border: 0.01rem solid #E3E8EE;
+  margin-bottom: 0.1rem;
+}
+.buy-box .info-item .info-title {
+  height: 0.4rem;
+  line-height: 0.4rem;
+  padding-left: 0.3rem;
+  font-size: 0.14rem;
+  color: #656A88;
+  background: #F7FAFC;
+}
+.buy-box .info-item .info-content {
+  padding-left: 0.3rem;
+  padding-top: 0.2rem;
+}
+.buy-box .info-item .info-content .info-div {
+  margin-bottom: 0.2rem;
+}
+.buy-box .info-item .info-content .info-div .info-left {
+  color: #656A88;
+  font-size: 0.14rem;
+}
+.buy-box .info-item .info-content .info-div .info-right {
+  margin-left: 0.5rem;
+  font-size: 0.14rem;
+  color: #090A3A;
+}
+.buy-box .pay-btn {
+  box-sizing: border-box;
+  width: 12rem;
+  text-align: right;
+  margin-top: 0.3rem;
+}
+.buy-box .pay-btn .el-button {
+  border-radius: 0;
+  width: 1.28rem;
+  height: 0.44rem;
+  background: #161EDE;
+  font-size: 0.16rem;
+  color: #FFFFFF;
+}

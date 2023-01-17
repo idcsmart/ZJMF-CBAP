@@ -24,7 +24,7 @@
           <t-input v-model="formData.subject" :placeholder="lang.input+lang.title"></t-input>
         </t-form-item>
         <t-form-item :label="lang.content" name="message" class="emailTemp">
-          <textarea id="emailTemp" :value="formData.message" :placeholder="lang.input+lang.content"></textarea>
+          <textarea id="emailTemp" v-html="calStr(formData.message)" :placeholder="lang.input+lang.content"></textarea>
         </t-form-item>
         <div class="com-f-btn">
           <t-button theme="primary" @click="submit">{{lang.hold}}</t-button>

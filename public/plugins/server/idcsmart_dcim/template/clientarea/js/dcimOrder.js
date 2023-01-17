@@ -19,7 +19,7 @@ new Vue({
         // 获取镜像数据
         this.getImage()
         // 获取sshkey数据
-        this.getSshKey()
+       // this.getSshKey()
         if (this.backConfig.password) {
             this.orderData.password = this.backConfig.password
         } else {
@@ -39,6 +39,8 @@ new Vue({
             // 开启了等级优惠
             this.isShowLevel = true
         }
+          // 获取sshkey数据
+          arr.includes('IdcsmartSshKey') && this.getSshKey()
     },
     data() {
         return {
@@ -1087,7 +1089,7 @@ new Vue({
                 id: this.id,
                 amount: this.totalPrice
             }
-            clientLevelAmount(params).then(res => {
+            this.isShowLevel && clientLevelAmount(params).then(res => {
                 if (res.data.status === 200) {
                     this.clDiscount = res.data.data.discount
                 }

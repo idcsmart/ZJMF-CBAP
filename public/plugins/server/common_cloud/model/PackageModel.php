@@ -600,7 +600,7 @@ class PackageModel extends Model{
             'price'=>$PackageModel[ $param['duration'] ] ?? 0,
         ];
 
-        if(!empty($PackageModel['data_center_id']) && !empty($dataCenter) && $dataCenter['id'] != $PackageModel['data_center_id']){
+        if(!empty($PackageModel) && !empty($PackageModel['data_center_id']) && !empty($dataCenter) && $dataCenter['id'] != $PackageModel['data_center_id']){
             return ['status'=>400, 'msg'=>lang_plugins('package_not_found')];
         }
 
@@ -628,14 +628,16 @@ class PackageModel extends Model{
         $image = ImageModel::where('id', $param['image_id'])->where('enable', 1)->find();
         // 验证镜像
         if(empty($image)){
-            return ['status'=>400, 'msg'=>lang_plugins('image_not_found')];
+            if($params['scene'] != 'cal_price'){
+                return ['status'=>400, 'msg'=>lang_plugins('image_not_found')];
+            }
+        }else{
+            $preview[] = [
+                'name'=>lang_plugins('system'),
+                'value'=>$image['name'],
+                'price'=>$image['charge'] == 1 && !empty($image['price']) ? $image['price'] : 0,
+            ];
         }
-
-        $preview[] = [
-            'name'=>lang_plugins('system'),
-            'value'=>$image['name'],
-            'price'=>$image['charge'] == 1 && !empty($image['price']) ? $image['price'] : 0,
-        ];
 
         // 有密钥密钥优先
         if(isset($param['ssh_key_id']) && !empty($param['ssh_key_id'])){
@@ -652,7 +654,7 @@ class PackageModel extends Model{
         $price = $PackageModel[ $param['duration'] ];
         $renew_price = $price;
         // 镜像
-        if($image['charge'] == 1 && !empty($image['price'])){
+        if(!empty($image) && $image['charge'] == 1 && !empty($image['price'])){
             $price = bcadd($price, $image['price']);
         }
         // 数据盘+备份快照

@@ -9,25 +9,25 @@
         topMenu,
         pagination,
       },
-      created () {
+      created() {
         this.getCommonData()
         this.getFileFolder()
         for (let i = 0; i < 4; i++) {
-          this.defaultImg.push(`/plugins/addon/idcsmart_news/template/clientarea/img/news_0${i+1}.png`)
+          this.defaultImg.push(`/plugins/addon/idcsmart_news/template/clientarea/img/news_0${i + 1}.png`)
         }
       },
-      mounted () {
+      mounted() {
         this.getUrlId()
       },
-      updated () {
+      updated() {
         // // 关闭loading
         document.getElementById('mainLoading').style.display = 'none';
         document.getElementsByClassName('news')[0].style.display = 'block'
       },
-      destroyed () {
+      destroyed() {
 
       },
-      data () {
+      data() {
         return {
           params: {
             page: 1,
@@ -54,14 +54,14 @@
         }
       },
       filters: {
-        formateTime (time) {
+        formateTime(time) {
           if (time && time !== 0) {
             return formateDate(time * 1000)
           } else {
             return "--"
           }
         },
-        formateByte (size) {
+        formateByte(size) {
           if (size < 1024 * 1024) {
             return (size / 1024).toFixed(2) + 'KB'
           } else {
@@ -70,24 +70,25 @@
         }
       },
       methods: {
-        getUrlId () {
-          this.newsUrl = `plugin/${this.$refs.news.$attrs.id}/source.html`
-          this.helpUrl = `plugin/${this.$refs.help.$attrs.id}/source.html`
-          this.downloadUrl = `plugin/${this.$refs.download.$attrs.id}/source.html`
+        getUrlId() {
+          this.newsUrl = `plugin/${this.$refs.news?.$attrs.id}/source.html`
+          this.helpUrl = `plugin/${this.$refs.help?.$attrs.id}/source.html`
+          this.downloadUrl = `plugin/${this.$refs.download?.$attrs.id}/source.html`
         },
-        handleClick () {
+        handleClick() {
           if (this.activeIndex == '1') {
             location.href = `/${this.helpUrl}`
           }
           if (this.activeIndex == '3') {
             location.href = `/${this.downloadUrl}`
+
           }
         },
-        goDetail (id) {
+        goDetail(id) {
           location.href = `news_detail.html?id=${id}`
         },
         // 获取文件夹
-        async getFileFolder () {
+        async getFileFolder() {
           try {
             const res = await getNews()
             if (res.data.status === 200) {
@@ -104,20 +105,20 @@
             console.log(error)
           }
         },
-        getAllnews () {
+        getAllnews() {
           this.params.page = 1
           this.curId = ''
           this.curTit = '全部'
           this.getData()
         },
         // 选择文件夹
-        changeFolder (item) {
+        changeFolder(item) {
           this.curId = item.id
           this.curTit = item.name
           this.params.page = 1
           this.getData()
         },
-        async getData () {
+        async getData() {
           this.tableLoading = true
           try {
             const params = {
@@ -147,7 +148,7 @@
           }
         },
         // 下载文件
-        async downFile (row) {
+        async downFile(row) {
           try {
             const res = await downloadFile({ id: row.id })
             // const fileName = row.name + "." + row.filetype;
@@ -167,25 +168,25 @@
           }
         },
         // 搜索
-        inputChange () {
+        inputChange() {
           this.params.page = 1
           this.getData()
         },
         // 每页展示数改变
-        sizeChange (e) {
+        sizeChange(e) {
           this.params.limit = e
           this.params.page = 1
           // 获取列表
           this.getData()
         },
         // 当前页改变
-        currentChange (e) {
+        currentChange(e) {
           this.params.page = e
           this.getData()
         },
 
         // 获取通用配置
-        getCommonData () {
+        getCommonData() {
           this.commonData = JSON.parse(localStorage.getItem('common_set_before'))
           document.title = this.commonData.website_name + `-${lang.news}`
 

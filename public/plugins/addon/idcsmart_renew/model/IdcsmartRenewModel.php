@@ -34,7 +34,7 @@ class IdcsmartRenewModel extends Model
     public $isAdmin = false;
 
     # 处理可续费周期(过滤规则)
-    private function cyclesFilter(HostModel $host,$cycles)
+    private function cyclesFilter(HostModel $host,$cycles,$promoCode='')
     {
         foreach ($cycles as $k1=>$item1){
             # 未设置参数,清除此周期
@@ -44,6 +44,7 @@ class IdcsmartRenewModel extends Model
         }
 
         foreach ($cycles as $k2=>$item2){
+            $cycles[$k2]['base_price'] = $item2['price'];
             # 产品对应周期(只能用时间比较)
             if ($host->billing_cycle_time == $item2['duration'] || $host->billing_cycle_name==$item2['billing_cycle']){ # 自然月导致前一个判断可能不生效,后一个判断在周期名称相同下也不生效
                 # 产品续费金额大于模块金额(过滤掉小于此续费周期的 周期)
@@ -51,12 +52,17 @@ class IdcsmartRenewModel extends Model
                     $max = $item2['duration'];
                 }
                 # 产品当前周期的价格以 表里数据为准
-                $cycles[$k2]['price'] = bcsub((float)$host->renew_amount,0,2);
+                if (empty($promoCode)){ // 无优惠码
+                    $cycles[$k2]['price'] = bcsub((float)$host->renew_amount,0,2);
+                }
+
             }else{ # 其他,也减除优惠码价格
-                $hookResults = hook('apply_promo_code',['host_id'=>$host->id,'price'=>$item2['price'],'scene'=>'renew','duration'=>$item2['duration']]);
-                foreach ($hookResults as $hookResult){
-                    if ($hookResult['status']==200){
-                        $cycles[$k2]['price'] = bcsub($cycles[$k2]['price'],$hookResult['data']['discount']??0,2);
+                if(empty($promoCode)){ // 无优惠码
+                    $hookResults = hook('apply_promo_code',['host_id'=>$host->id,'price'=>$item2['price'],'scene'=>'renew','duration'=>$item2['duration']]);
+                    foreach ($hookResults as $hookResult){
+                        if ($hookResult['status']==200){
+                            $cycles[$k2]['price'] = bcsub($cycles[$k2]['price'],$hookResult['data']['discount']??0,2);
+                        }
                     }
                 }
             }
@@ -108,7 +114,7 @@ class IdcsmartRenewModel extends Model
 
         # 处理可续费周期
         $cycles = $result['data']?:[];
-        $cycles = $this->cyclesFilter($host,$cycles);
+        $cycles = $this->cyclesFilter($host,$cycles,$param['customfield']['promo_code']??'');
 
         return ['status'=>200,'msg'=>lang_plugins('success_message'),'data'=>['host'=>$cycles]];
     }
@@ -148,7 +154,7 @@ class IdcsmartRenewModel extends Model
         $result = $ModuleLogic->durationPrice($host);
         $cycles = $result['status'] == 200 ? $result['data'] :[];
         # 可续费周期
-        $cycles = $this->cyclesFilter($host,$cycles);
+        $cycles = $this->cyclesFilter($host,$cycles,$param['customfield']['promo_code']??'');
 
         $billingCycleAllow = array_column($cycles,'billing_cycle');
 
@@ -308,7 +314,7 @@ class IdcsmartRenewModel extends Model
             $cycles = isset($result['status']) && $result['status'] == 200 ? $result['data'] :[];
 
             # 可续费周期
-            $cycles = $this->cyclesFilter($host,$cycles);
+            $cycles = $this->cyclesFilter($host,$cycles,$param['customfield']['promo_code']??'');
 
             $host['billing_cycles'] = $cycles;
 
@@ -390,7 +396,7 @@ class IdcsmartRenewModel extends Model
             $cycles = $result['status'] == 200 ? $result['data'] :[];
 
             # 可续费周期
-            $cycles = $this->cyclesFilter($host,$cycles);
+            $cycles = $this->cyclesFilter($host,$cycles,$param['customfield']['promo_code']??'');
 
             $billingCycleAllow = array_column($cycles,'billing_cycle');
 
@@ -520,6 +526,10 @@ class IdcsmartRenewModel extends Model
     public function renewHandle($id)
     {
         $renew = $this->find($id);
+
+        if (empty($renew)){
+            return false;
+        }
 
         if ($renew->status == 'Completed'){
             return false;

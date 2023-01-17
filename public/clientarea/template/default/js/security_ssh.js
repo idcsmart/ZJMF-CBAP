@@ -251,6 +251,9 @@
         cjClose() {
           this.isShowCj = false;
         },
+        toLearn(){
+          window.open('https://www.idcsmart.com/wiki_list/917.html', '_blank')
+        }
       },
     }).$mount(template);
     typeof old_onload == "function" && old_onload();

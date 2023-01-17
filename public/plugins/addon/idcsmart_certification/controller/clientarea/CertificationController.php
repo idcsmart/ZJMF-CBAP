@@ -41,6 +41,7 @@ class CertificationController extends PluginBaseController
      * @return string person.company - 公司
      * @return string person.card_name - 姓名
      * @return string person.card_number - 证件号
+     * @return int person.create_time - 认证时间
      * @return string person.status - 状态:1已认证，2未通过，3待审核，4已提交资料
      * @return object company - 企业认证信息
      * @return string company.username - 申请人
@@ -49,6 +50,7 @@ class CertificationController extends PluginBaseController
      * @return string company.card_number - 证件号
      * @return string company.certification_company - 实名认证企业
      * @return string company.company_organ_code - 企业代码
+     * @return int company.create_time - 认证时间
      * @return string company.status - 状态:1已认证，2未通过，3待审核，4已提交资料
      */
     public function certificationInfo()

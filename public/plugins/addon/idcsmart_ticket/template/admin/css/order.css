@@ -341,6 +341,7 @@
   display: inline-block;
 }
 .reply-item .reply-main .reply-middle {
+  position: relative;
   display: inline-block;
   margin-top: 11px;
   border-radius: 3px;
@@ -349,6 +350,7 @@
 }
 .reply-item .reply-main .reply-middle .replu-conten {
   display: inline-block;
+  word-break: break-word;
 }
 .reply-item .reply-main .reply-middle .replu-conten img {
   width: 140px;
@@ -360,8 +362,8 @@
 }
 .reply-item .reply-main .reply-middle .text-btn {
   position: absolute;
-  bottom: 10px;
-  right: 12px;
+  bottom: 0px;
+  right: 0px;
   font-size: 18px;
 }
 .reply-item .reply-main .reply-bottom {
@@ -485,5 +487,8 @@
   height: 0;
 }
 .row-class {
+  cursor: pointer;
+}
+.user-name {
   cursor: pointer;
 }

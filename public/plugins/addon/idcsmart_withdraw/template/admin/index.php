@@ -51,6 +51,9 @@
       <template #amount="{row}">
         {{currency_prefix}}{{row.amount}}
       </template>
+      <template #username="{row}">
+        <a class="jump" @click="jumpUser(row)" style="cursor: pointer;">{{row.username}}</a>
+      </template>
       <template #create_time="{row}">
         {{row.create_time ? moment(row.create_time * 1000).format('YYYY-MM-DD HH:mm') : ''}}
       </template>
@@ -130,9 +133,9 @@
       <t-form-item :label="lang.money">
         <p class="disabled">{{currency_prefix}}{{payForm.withdraw_amount}}</p>
       </t-form-item>
-      <t-form-item :label="lang.pay_way">
+      <!-- <t-form-item :label="lang.pay_way">
         <p class="disabled">{{lang.offline_payment}}</p>
-      </t-form-item>
+      </t-form-item> -->
       <t-form-item :label="lang.withdraw + lang.user">
         <p class="disabled">{{payForm.username}} <span v-if="payForm.company">({{payForm.company}})</span></p>
       </t-form-item>

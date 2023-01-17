@@ -4,7 +4,7 @@
     const template = document.getElementsByClassName("client")[0];
     Vue.prototype.lang = window.lang;
     new Vue({
-      data() {
+      data () {
         let checkPwd2 = (val) => {
           if (val !== this.formData.password) {
             return {
@@ -122,10 +122,11 @@
           /* 用户等级 */
           levelList: [],
           hasPlugin: false,
+          addonArr: []
         };
       },
       computed: {
-        filterColor() {
+        filterColor () {
           return (level) => {
             if (level) {
               return this.levelList.filter(
@@ -134,7 +135,7 @@
             }
           };
         },
-        filterName() {
+        filterName () {
           return (level) => {
             if (level) {
               return (
@@ -146,7 +147,7 @@
           };
         },
       },
-      mounted() {
+      mounted () {
         this.maxHeight = document.getElementById("content").clientHeight - 170;
         let timer = null;
         window.onresize = () => {
@@ -161,65 +162,70 @@
           }, 300);
         };
       },
-      created() {
-        // 权限相关
-        if (!this.authList.includes("ClientController::clientList")) {
-          return this.$message.error(lang.tip17 + "," + lang.tip18);
-        }
+      created () {
         const href = location.href.split("?")[1];
         if (href) {
           this.curLevelId = location.href.split("?")[1]?.split("=")[1] * 1;
         }
+        // 权限相关
+        if (!this.authList.includes("ClientController::clientList")) {
+          return this.$message.error(lang.tip17 + "," + lang.tip18);
+        }
         this.getClientList();
         this.getCountry();
-        this.getLevel();
-        this.getPlugin();
       },
       methods: {
-        async getPlugin() {
+        async getPlugin () {
           try {
             const res = await getAddon();
-            this.hasPlugin = res.data.data.list
-              .reduce((all, cur) => {
-                all.push(cur.name);
-                return all;
-              }, [])
-              .includes("IdcsmartClientLevel");
+            this.addonArr = res.data.data.list.map(item => item.name)
+            this.hasPlugin = this.addonArr.includes("IdcsmartClientLevel");
+            this.hasPlugin && this.getLevel();
+            this.addonArr.includes('IdcsmartSubAccount') && this.getSubUser()
           } catch (error) { }
         },
-        rowClick(e) {
+        rowClick (e) {
           location.href = `client_detail.html?client_id=${e.row.id}`;
         },
         /* 用户等级 */
-        async getLevel() {
+        async getLevel () {
           try {
             const res = await getAllLevel();
             this.levelList = res.data.data.list;
           } catch (error) { }
         },
         // 输入邮箱的时候取消手机号验证
-        cancelPhone(val) {
+        cancelPhone (val) {
           if (val) {
             this.$refs.userDialog.clearValidate(["phone"]);
           }
         },
-        cancelEmail(val) {
+        cancelEmail (val) {
           if (val) {
             this.$refs.userDialog.clearValidate(["email"]);
           }
         },
         // 获取列表
-        async getClientList() {
+        async getClientList () {
           try {
             this.loading = true;
             const res = await getClientList(this.params, this.curLevelId);
             this.loading = false;
             this.data = res.data.data.list;
+            this.total = res.data.data.count;
+            this.addonArr.length === 0 && this.getPlugin()
+          } catch (error) {
+            this.loading = false;
+            console.log(error.data && error.data.msg);
+          }
+        },
+        // 子账户
+        async getSubUser () {
+          try {
             idList = this.data.map((item) => item.id);
             str = idList.join(",");
             const result = await getAdminAccountApi({ id: str });
             let arr = result.data.data.list;
-            console.log(arr);
             this.data = this.data.map((item) => {
               let isHave = arr.find((opt) => opt.id === item.id);
               if (isHave) {
@@ -232,22 +238,19 @@
                 return item;
               }
             });
-
-            this.total = res.data.data.count;
           } catch (error) {
-            this.loading = false;
-            console.log(error.data && error.data.msg);
+
           }
         },
         // 切换分页
-        changePage(e) {
+        changePage (e) {
           this.params.page = e.current;
           this.params.limit = e.pageSize;
           this.params.keywords = "";
           this.getClientList();
         },
         // 排序
-        sortChange(val) {
+        sortChange (val) {
           if (!val) {
             this.params.orderby = "id";
             this.params.sort = "desc";
@@ -257,16 +260,16 @@
           }
           this.getClientList();
         },
-        clearKey() {
+        clearKey () {
           this.params.keywords = "";
           this.seacrh();
         },
-        seacrh() {
+        seacrh () {
           this.params.page = 1;
           this.getClientList();
         },
         // 获取国家列表
-        async getCountry() {
+        async getCountry () {
           try {
             const res = await getCountry();
             this.country = res.data.data.list;
@@ -274,15 +277,15 @@
             this.$message.error(error.data.msg);
           }
         },
-        close() {
+        close () {
           this.visible = false;
           this.$refs.userDialog.reset();
         },
         // 添加用户
-        addUser() {
+        addUser () {
           this.visible = true;
         },
-        async onSubmit({ validateResult, firstError }) {
+        async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const res = await addClient(this.formData);
@@ -299,18 +302,18 @@
           }
         },
         // 查看用户详情
-        handleClickDetail(row) {
+        handleClickDetail (row) {
           location.href = `client_detail.html?id=${row.id}`;
         },
         // 停用/启用
-        changeStatus(row) {
+        changeStatus (row) {
           event.stopPropagation();
           this.delId = row.id;
           this.curStatus = row.status;
           this.statusTip = this.curStatus ? lang.sure_Close : lang.sure_Open;
           this.statusVisble = true;
         },
-        async sureChange() {
+        async sureChange () {
           try {
             let tempStatus = this.curStatus === 1 ? 0 : 1;
             const res = await changeOpen(this.delId, { status: tempStatus });
@@ -321,17 +324,17 @@
             console.log(error);
           }
         },
-        closeDialog() {
+        closeDialog () {
           this.statusVisble = false;
         },
 
         // 删除用户
-        deleteUser(row) {
+        deleteUser (row) {
           event.stopPropagation();
           this.delVisible = true;
           this.delId = row.id;
         },
-        async sureDel() {
+        async sureDel () {
           try {
             await deleteClient(this.delId);
             this.$message.success(window.lang.del_success);
@@ -344,11 +347,11 @@
             this.$message.error(error.data.msg);
           }
         },
-        cancelDel() {
+        cancelDel () {
           this.delVisible = false;
         },
         // 子账户
-        goDetail(id) {
+        goDetail (id) {
           console.log(111);
           location.href = `client_detail.html?client_id=${id}`;
         },

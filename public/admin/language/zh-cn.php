@@ -33,7 +33,7 @@ return [
     'move_fail' => '移动失败',
     'file_name_error' => '文件名不允许包含!@^&"\'/\\',
     'file_mime_error' => '文件mime类型错误',
-    'file_less_than_64M' => '文件大小不超过64M',
+    'file_less_than_150M' => '文件大小不超过150M',
     'upload_success' => '上传成功',
     'upload_fail' => '上传失败',
     'file_is_not_exist' => '文件不存在',
@@ -251,6 +251,8 @@ return [
 
 
     # 日志
+    'admin_enable_user' => '{admin}启用用户{client}',
+    'admin_disable_user' => '{admin}禁用用户{client}',
     'admin_delete_user' => '{admin}删除用户{client}',
     'admin_modify_user_profile' => '{admin}将{client}的{description}',
     'admin_delete_user_host' => '{admin}将{client}的{host}删除',
@@ -291,11 +293,38 @@ return [
     'client_language' => '语言',
     'client_notes' => '备注',
 
+    'host_product' => '商品',
+    'host_server' => '接口',
+    'host_name' => '标识',
+    'host_notes' => '备注',
+    'host_first_payment_amount' => '订购金额',
+    'host_renew_amount' => '续费金额',
+    'host_billing_cycle' => '计费方式',
+    'host_billing_cycle_free' => '免费',
+    'host_billing_cycle_onetime' => '一次性',
+    'host_billing_cycle_recurring_prepayment' => '周期先付',
+    'host_billing_cycle_recurring_postpaid' => '周期后付',
+    'host_active_time' => '开通时间',
+    'host_due_time' => '到期时间',
+    'host_status' => '状态',
+    'host_status_Unpaid' => '未付款',
+    'host_status_Pending' => '开通中',
+    'host_status_Active' => '使用中',
+    'host_status_Suspended' => '已暂停',
+    'host_status_Deleted' => '已删除',
+    'host_status_Failed' => '开通失败',
+    'host_status_Cancelled' => '已取消',
+
+    'admin_modify_host' => '{admin}将{host}的{description}',
+
 
     # 通用描述
     'log_admin_update_description' => '{field}{old}为{new}',
 
     'log_admin_login' => '{admin}登录系统',
+    'log_admin_login_not_exist' => '{admin}登录系统失败,管理员不存在',
+    'log_admin_login_disabled' => '{admin}登录系统失败,已被禁用',
+    'log_admin_login_password_error' => '{admin}登录系统失败,密码不正确',
     'log_admin_logout' => '{admin}注销登录',
     'log_login_by_client' => '{admin}用{client}登录前台系统',
     'log_create_admin' => '{admin}添加管理员{name}',
@@ -356,6 +385,7 @@ return [
     'log_admin_enable_plugin' => '{admin}启用{module}接口:{name}',
     'log_admin_disable_plugin' => '{admin}禁用{module}接口:{name}',
     'log_admin_config_plugin' => '{admin}配置{module}接口:{name}',
+    'log_admin_upgrade_plugin' => '{admin}升级{module}接口:{name}',
 
     # 用户管理
     'client_is_not_exist' => '用户不存在',
@@ -483,9 +513,15 @@ return [
 	# 登录设置
     'configuration_log_register_phone' =>'手机是否支持注册',
     'configuration_log_register_email' =>'邮箱是否支持注册',
+    'configuration_log_home_login_check_ip' =>'前台登录检查IP',
+    'configuration_log_admin_login_check_ip' =>'后台登录检查IP',
     'configuration_log_login_phone_verify' =>'手机是否支持免密码登录',
-    'configuration_log_register_1' =>'是',
-    'configuration_log_register_0' =>'否',
+    'configuration_log_register_phone_1' =>'是',
+    'configuration_log_register_email_0' =>'否',
+    'configuration_log_home_login_check_ip_1' =>'是',
+    'configuration_log_home_login_check_ip_0' =>'否',
+    'configuration_log_admin_login_check_ip_1' =>'是',
+    'configuration_log_admin_login_check_ip_0' =>'否',
     'configuration_register_email_cannot_empty' => '邮箱注册开关不能为空',
     'configuration_register_email' => '邮箱注册开关值只能是1或0',
     'configuration_register_phone_cannot_empty' => '手机号注册开关不能为空',
@@ -624,6 +660,12 @@ return [
     'plugin_uninstall_pre_fail' => '插件预卸载失败',
     'plugin_uninstall_cannot' => '默认插件不能卸载',
     'plugin_disabled_cannot' => '默认插件不能禁用',
+    'plugin_upgrade_pre_fail' => '插件预升级失败',
+    'plugin_upgrade_success' => '插件升级成功',
+    'plugin_upgrade_fail' => '插件升级失败',
+    'plugin_version_information_is_missing' => '插件版本信息缺失',
+    'plugin_can_not_upgrade' => '插件不可升级',
+    'plugin_new_version_get_fail' => '插件最新版本获取失败',
 
     # 商品与商品分组
     'product_group_is_not_exist' => '商品分组不存在',
@@ -843,6 +885,8 @@ return [
     'download_sucesss' => '已成功下载',
     'download_failed' => '下载压缩包失败',
     'upgrade_download_not_exist' => '当前不存在升级下载任务',
+    'not_login_market_no_license' => '未登陆应用商店，无识别码',
+    'not_order_service' => '未订购服务',
 
     # 导航管理
     'nav_is_not_exist' => '默认导航不存在',
@@ -887,4 +931,22 @@ return [
     'certification_info_post_again' => '请重新提交实名资料',
     'personal' => '个人',
     'company' => '公司',
+
+    # 应用接口
+    'not_install_ioncube' => '未安装ionCube扩展不可安装应用',
+    'request_fail_http_code' => '请求失败,HTTP状态码:{code}',
+    'app_install_success' => '应用安装成功',
+    'app_download_fail' => '应用下载失败',
+    'app_unzip_fail' => '应用文件解压失败,失败code:{code},请到网站目录下解压下载的文件{file}',
+
+    # 
+    'log_module_create_account_success' => '产品{host}模块开通成功',
+    'log_module_create_account_failed' => '产品{host}模块开通失败,原因:{reason}',
+    'log_module_suspend_account_success' => '产品{host}模块暂停成功,暂停类型:{type},暂停原因:{reason}',
+    'log_module_suspend_account_failed' => '产品{host}模块暂停失败,原因:{reason}',
+    'log_module_unsuspend_account_success' => '产品{host}模块取消暂停成功',
+    'log_module_unsuspend_account_failed' => '产品{host}模块取消暂停失败,原因:{reason}',
+    'log_module_terminate_account_success' => '产品{host}模块删除成功',
+    'log_module_terminate_account_failed' => '产品{host}模块删除失败,原因:{reason}',
+
 ];

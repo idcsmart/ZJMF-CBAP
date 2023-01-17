@@ -28,6 +28,11 @@ class AdminBaseController extends BaseController
             }
             
     	}
+
+        if(!Cache::has('get_idcsamrt_auth')){
+            Cache::set('get_idcsamrt_auth', 1, 3600*24);
+            get_idcsamrt_auth();
+        }
     	
     }
 

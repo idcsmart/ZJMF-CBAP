@@ -35,7 +35,7 @@ const withdrawDialog = {
     <div class="withdraw-rule">
         <div class="label">{{lang.withdraw_title2}}</div>
         <div class="rules">
-            <div class="rule-item" v-if="ruler.withdraw_min || ruler.withdraw_min">
+            <div class="rules-item" v-if="ruler.withdraw_min || ruler.withdraw_max">
                 {{lang.withdraw_text1}}
                 <span v-if="ruler.withdraw_min">{{lang.withdraw_text2}}{{currency_prefix}}{{ruler.withdraw_min}}</span>
                 <span v-if="ruler.withdraw_min && ruler.withdraw_max">,</span>
@@ -47,6 +47,7 @@ const withdrawDialog = {
                 <!-- 最低手续费 -->
                 <span v-if="ruler.percent_min">{{lang.withdraw_text5}}{{currency_prefix}}{{ruler.percent_min}}</span>
             </div>
+            <div v-if="!ruler.withdraw_min && !ruler.withdraw_max && !ruler.withdraw_handling_fee && !ruler.percent_min">无</div>
         </div>
     </div>
     <span slot="footer" class="dialog-footer">

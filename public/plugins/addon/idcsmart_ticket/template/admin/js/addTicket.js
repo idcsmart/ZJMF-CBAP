@@ -14,16 +14,31 @@
             host_ids: [],
             ticket_type_id: '',
           },
+          userParams: {
+            keywords: '',
+            page: 1,
+            limit: 20,
+            orderby: 'id',
+            sort: 'desc'
+          },
+          userTotal: 0,
+          searchLoading: false,
           departmentList: [],
           orderTypeOptions: [],
           // 关联客户下拉框数据
           clientOptions: [],
           // 关联产品下拉框数据
           hostOptions: [],
+          popupProps: {
+            overlayStyle: (trigger) => ({
+              width: `${trigger.offsetWidth}px`,
+              'max-height': '362px'
+            }),
+          },
           requiredRules: {
-            title: [{ required: true, message: "请输入工单标题" }],
-            ticket_type_id: [{ required: true, message: "请选择工单类型" }],
-            client_id: [{ required: true, message: "请选择关联用户" }],
+            title: [{ required: true, message: lang.order_text15 }],
+            ticket_type_id: [{ required: true, message: lang.order_text16 }],
+            client_id: [{ required: true, message: lang.order_text17 }],
           },
         }
       },
@@ -108,11 +123,20 @@
           //   images_upload_handler: this.handlerAddImg
           // });
         },
+        // 远程搜素
+        remoteMethod(key) {
+          this.userParams.keywords = key
+          this.getClientOptions()
+        },
+        clearKey() {
+          this.userParams.keywords = ''
+          this.getClientOptions()
+        },
         handlerAddImg(blobInfo, success, failure) {
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
-            axios.post('http://' + str + 'v1/upload', formData, {
+            axios.post(`${location.protocol}//${str}v1/upload`, formData, {
               headers: {
                 Authorization: 'Bearer' + ' ' + localStorage.getItem('backJwt')
               }
@@ -164,6 +188,7 @@
               this.goList()
             }).catch(result => {
               this.$message.warning({ content: result.data.msg, placement: 'top-right' });
+              this.isSubmitIng = false
             });
           })
 
@@ -177,11 +202,17 @@
             this.orderTypeOptions = result.data.data.list;
           }).catch();
         },
-        // 获取客户数据
-        getClientOptions() {
-          getClient({ page: 1, limit: 10000 }).then(result => {
-            this.clientOptions = result.data.data.list;
-          }).catch();
+        // 获取用户列表
+        async getClientOptions() {
+          try {
+            this.searchLoading = true
+            const { data: { data } } = await getClient(this.userParams)
+            this.clientOptions = data.list
+            this.userTotal = data.count
+            this.searchLoading = false
+          } catch (error) {
+            this.searchLoading = false
+          }
         },
         // 工单-转内部-关联用户变化
         clientChange(val) {

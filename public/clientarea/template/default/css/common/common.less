@@ -2,7 +2,9 @@
   margin: 0;
   padding: 0;
 }
-
+ul,li{
+  list-style: none;
+}
 /* elemenu-ui组件 部分样式统一修改 开始*/
 .el-tabs__item {
   color: #666B80;
@@ -202,6 +204,10 @@ tbody .el-table__row {
     }
   }
 
+  .hg-24 {
+    height: 24px;
+  }
+
   .header-right-item {
 
     .cloum-line {
@@ -236,15 +242,30 @@ tbody .el-table__row {
       cursor: pointer;
 
       .head-box {
-        width: .24rem;
-        height: .24rem;
-        font-size: 0.15rem;
+        width: 24px;
+        height: 24px;
+        font-size: 15px;
         color: #FFFFFF;
         background: #fff;
         border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+    }
+
+    .un-login {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.14rem;
+      color: #8692B0;
+
+      img {
+        width: 24px;
+        height: 24px;
+        margin-right: 0.06rem;
       }
     }
   }
@@ -469,6 +490,11 @@ tbody .el-table__row {
 .menu-top .el-submenu__title {
   height: 40px;
   line-height: 40px;
+  display: flex;
+
+  i {
+    color: rgba(255, 255, 255, 0.6);
+  }
 }
 
 /* .menu-top .el-submenu {
@@ -507,6 +533,19 @@ tbody .el-table__row {
   height: 100vh;
   font-size: 14px;
   z-index: 5;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, .16);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, .8);
+    border-radius: 0.5rem;
+  }
 }
 
 .menu-list-top,
@@ -578,7 +617,7 @@ tbody .el-table__row {
 }
 
 .el-menu-item i {
-  color: rgba(255, 255, 255, .6);
+  color: #8692B0;
 }
 
 .item-img {
@@ -597,11 +636,17 @@ tbody .el-table__row {
   font-size: 20px;
 }
 
+.el-date-picker .el-picker-panel__footer .el-button {
+  display: inline-flex;
+}
+
 .el-button {
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
+
 
 /* el弹窗自带底部按钮 */
 .el-message-box__btns>.el-button {

@@ -1,4 +1,4 @@
-function captchaCheckSuccsss (bol, captcha, token, login) {
+function captchaCheckSuccsss(bol, captcha, token, login) {
   vm.captchaBol = bol
   vm.formData.captcha = captcha
   vm.formData.token = token
@@ -17,7 +17,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
       return
     }
     const vm = new Vue({
-      data () {
+      data() {
         return {
           check: false,
           type: 'password',
@@ -40,7 +40,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
           direct_login: false // 是否验证通过直接登录
         }
       },
-      created () {
+      created() {
         this.getLoginInfo()
         if (this.formData.name) {
           this.check = true
@@ -50,19 +50,19 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
         }
       },
       watch: {
-        captcha_admin_login (val) {
+        captcha_admin_login(val) {
           if (val == 1) {
             this.getCaptcha()
           }
         },
-        direct_login (bol) {
+        direct_login(bol) {
           if (bol) {
             this.submitLogin()
           }
         }
       },
       methods: {
-        async getCaptcha () {
+        async getCaptcha() {
           try {
             const res = await getCaptcha()
             const temp = res.data.data.html
@@ -72,7 +72,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
           } catch (error) {
           }
         },
-        async getLoginInfo () {
+        async getLoginInfo() {
           try {
             const res = await getLoginInfo()
             this.captcha_admin_login = res.data.data.captcha_admin_login
@@ -82,7 +82,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
           }
         },
         // 发起登录
-        async submitLogin () {
+        async submitLogin() {
           try {
             this.loading = true
             this.formData.remember_password = this.check === true ? 1 : 0
@@ -113,10 +113,23 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
             this.$message.success(res.data.msg)
             // 获取导航
             const menus = await getMenus()
+            const menulist = menus.data.data.menu
             localStorage.setItem('backMenus', JSON.stringify(menus.data.data.menu))
             this.loading = false
-            localStorage.setItem('curValue', 0)
-            location.href = 'index.html'
+            let login_url = menus.data.data.url
+            let menu_id = menus.data.data.menu_id
+            sessionStorage.clear()
+            if (login_url === '') {
+              if (!menulist[0].child) {
+                login_url = menulist[0].url
+                menu_id = menulist[0].id
+              } else {
+                login_url = menulist[0].child[0].url
+                menu_id = menulist[0].child[0].id
+              }
+            }
+            localStorage.setItem('curValue', menu_id)
+            location.href = login_url
           } catch (error) {
             (this.captcha_admin_login == 1) && this.getCaptcha()
             this.$message.error(error.data.msg)
@@ -124,7 +137,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
           }
         },
         // 提交按钮
-        async onSubmit ({ validateResult, firstError }) {
+        async onSubmit({ validateResult, firstError }) {
           if (validateResult === true) {
             // 开启验证码的时候
             if (this.captcha_admin_login === '1') {
@@ -139,7 +152,7 @@ function captchaCheckSuccsss (bol, captcha, token, login) {
           }
         },
         // 获取通用配置
-        async getCommonSetting () {
+        async getCommonSetting() {
           try {
             const res = await getCommon()
             localStorage.setItem('common_set', JSON.stringify(res.data.data))

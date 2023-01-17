@@ -40,7 +40,7 @@
     <div class="add_richtext">
       <form method="post">
         <div style="margin-bottom: 10px;">{{lang.content}}</div>
-        <textarea id="tiny" name="content">{{detialform.content}}</textarea>
+        <textarea id="tiny" name="content"  v-html="detialform.content"></textarea>
       </form>
     </div>
     <div class="rich_btns">

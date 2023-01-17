@@ -8,6 +8,11 @@
 .main-card .content-table .top-text {
   margin-bottom: 0.38rem;
 }
+.main-card .content-table .top-text .top-link {
+  margin-left: 0.1rem;
+  color: #0058ff;
+  cursor: pointer;
+}
 .main-card .content-table .content_searchbar {
   display: flex;
   flex-direction: row;

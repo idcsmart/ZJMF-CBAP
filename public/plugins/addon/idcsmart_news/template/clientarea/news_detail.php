@@ -31,7 +31,7 @@
                 {{lang.updatw_time}}：{{newDetail.create_time | formateTime}} &nbsp;&nbsp;
                 {{lang.news_key}}：{{newDetail.keywords}}
               </p>
-              <div class="content" v-html="newDetail.content"></div>
+              <div class="content" v-html="calStr(newDetail.content)"></div>
               <div class="news_annex">
                 <p>{{lang.news_annex}}： </p>
                 <p v-for="(item,index) in newDetail.attachment">

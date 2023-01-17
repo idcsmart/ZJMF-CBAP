@@ -27,6 +27,8 @@ class AdminModel extends Model
         'last_action_time'=> 'int',
         'create_time'     => 'int',
         'update_time'     => 'int',
+        'phone_code'      => 'int',
+        'phone'           => 'string',
     ];
 
     /**
@@ -47,6 +49,8 @@ class AdminModel extends Model
      * @return int list[].email - 邮箱
      * @return int list[].roles - 分组名称
      * @return int list[].status - 状态;0:禁用,1:正常
+     * @return int list[].phone_code - 国际电话区号
+     * @return string list[].phone - 手机号
      * @return int count - 管理员总数
      */
     public function adminList($param)
@@ -64,7 +68,7 @@ class AdminModel extends Model
         };
 
         $admins = $this->alias('a')
-            ->field('a.id,a.nickname,a.name,a.email,a.status,group_concat(ar.name) as roles')
+            ->field('a.id,a.nickname,a.name,a.email,a.status,a.phone_code,a.phone,group_concat(ar.name) as roles')
             ->leftjoin('admin_role_link arl','a.id=arl.admin_id')
             ->leftjoin('admin_role ar','arl.admin_role_id=ar.id')
             ->where($where)
@@ -98,11 +102,13 @@ class AdminModel extends Model
      * @return string role_id - 分组ID
      * @return string roles - 所属分组,逗号分隔
      * @return string status - 状态;0:禁用;1:正常
+     * @return int phone_code - 国际电话区号
+     * @return string phone - 手机号
      */
     public function indexAdmin($id)
     {
         $admin = $this->alias('a')
-            ->field('a.id,a.nickname,a.name,a.email,a.status,ar.id as role_id,group_concat(ar.name) as roles')
+            ->field('a.id,a.nickname,a.name,a.email,a.status,a.phone_code,a.phone,ar.id as role_id,group_concat(ar.name) as roles')
             ->leftJoin('admin_role_link arl','a.id=arl.admin_id')
             ->leftJoin('admin_role ar','ar.id=arl.admin_role_id')
             ->where('a.id',$id)
@@ -123,6 +129,8 @@ class AdminModel extends Model
      * @param string param.email 123@qq.com 邮箱 required
      * @param string param.nickname 小华 名称 required
      * @param string param.role_id 1 分组ID required
+     * @param int phone_code - 国际电话区号
+     * @param string phone - 手机号
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -142,6 +150,8 @@ class AdminModel extends Model
                 'nickname' => $param['nickname']?:'',
                 'status' => isset($param['status'])?intval($param['status']):1,
                 'create_time' => time(),
+                'phone_code' => $param['phone_code'] ?? 44,
+                'phone' => $param['phone'] ?? '',
             ]);
 
             AdminRoleLinkModel::create([
@@ -188,6 +198,8 @@ class AdminModel extends Model
      * @param string param.email 123@qq.com 邮箱 required
      * @param string param.nickname 小华 名称 required
      * @param string param.role_id 1 分组ID required
+     * @param int phone_code - 国际电话区号
+     * @param string phone - 手机号
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -236,6 +248,12 @@ class AdminModel extends Model
         if ($oldRoleId != $param['role_id']){
             $description .= lang('log_update_admin_description',['{field}'=>lang('admin_role_id'),'{content}'=>$param['role_id']]);
         }
+        if(isset($param['phone_code']) && $admin['phone_code'] != $param['phone_code']){
+            $description .= lang('log_update_admin_description',['{field}'=>'国际电话区号','{content}'=>$param['phone_code']]);
+        }
+        if(isset($param['phone']) && $admin['phone'] != $param['phone']){
+            $description .= lang('log_update_admin_description',['{field}'=>'手机号','{content}'=>$param['phone']]);
+        }
 
         $this->startTrans();
         try{
@@ -248,6 +266,12 @@ class AdminModel extends Model
             ];
             if(!empty($param['password'])){
                 $update['password']=idcsmart_password($param['password']);
+            }
+            if(is_numeric($param['phone_code'])){
+                $update['phone_code'] = $param['phone_code'];
+            }
+            if(isset($param['phone'])){
+                $update['phone'] = $param['phone'];
             }
             $this->update($update,['id'=>intval($param['id'])]);
 
@@ -300,6 +324,13 @@ class AdminModel extends Model
             return ['status'=>400,'msg'=>lang('admin_is_not_exist')];
         }
 
+        $hookRes = hook('before_admin_delete',['id'=>$id]);
+        foreach($hookRes as $v){
+            if(isset($v['status']) && $v['status'] == 400){
+                return $v;
+            }
+        }
+
         $this->startTrans();
         try{
             $this->destroy($id);
@@ -314,7 +345,7 @@ class AdminModel extends Model
             return ['status'=>400,'msg'=>lang('delete_fail')];
         }
 
-        hook('before_admin_delete',['id'=>$id]);
+        hook('after_admin_delete',['id'=>$id]);
 
         return ['status'=>200,'msg'=>lang('delete_success')];
     }
@@ -420,10 +451,12 @@ class AdminModel extends Model
         $admin = $this->where($where)->find();
 
         if (empty($admin)){
+            active_log(lang('log_admin_login_not_exist',['{admin}'=>$name]),'admin',0);
             return ['status'=>400,'msg'=>lang('admin_name_or_password_error')];
         }
 
         if ($admin['status'] == 0){
+            active_log(lang('log_admin_login_disabled',['{admin}'=>'admin#'.$admin->id.'#'.$admin['name'].'#']),'admin',$admin->id);
             return ['status'=>400,'msg'=>lang('admin_is_disabled')];
         }
 
@@ -482,6 +515,7 @@ class AdminModel extends Model
 
             return ['status'=>200,'msg'=>lang('login_success'),'data'=>$data];
         }else{
+            active_log(lang('log_admin_login_password_error',['{admin}'=>'admin#'.$admin->id.'#'.$admin['name'].'#']),'admin',$admin->id);
             return ['status'=>400,'msg'=>lang('admin_name_or_password_error')];
         }
 

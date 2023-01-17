@@ -42,7 +42,9 @@ class UpgradeSystemLogic
             'version' => configuration('system_version'),
             'last_version' => $lastVersion,
             'last_version_check' => $lastVersionCheck ?? '',
-            'is_download' => $isDownload ?? 0
+            'is_download' => $isDownload ?? 0,
+            'license' => !empty(configuration('system_license')) ? configuration('system_license') : lang('not_login_market_no_license'),
+            'service_due_time' => configuration('idcsmart_service_due_time'),
         ];
         return ['status' => 200, 'data' => $data];
     }
@@ -51,7 +53,7 @@ class UpgradeSystemLogic
     {
         $version = configuration('system_version');
         $last_version = $this->getHistoryVersion();
-        $str = '';
+        $str = $warning = '';
         if (version_compare($last_version['last'],$version,'>=')){ //2.1.0 1.2.6
             $arr = $this->diffVersion($last_version['last'],$version);
             $arr = array_reverse($arr);

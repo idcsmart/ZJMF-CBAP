@@ -13,7 +13,7 @@ class Idcsmartmail extends Plugin
         'status'      => 1,
         'author'      => '智简魔方',
         'version'     => '1.0',
-        'help_url'     => 'https://market.idcsmart.com/cart?fid=4&gid=37',//申请接口地址
+        'help_url'     => 'https://my.idcsmart.com/goods.html?id=337',//申请接口地址
     );
 
     # 插件安装

@@ -25,6 +25,9 @@ return [
     'ticket_type_name_require_max' => '工单类型名称不超过150个字符',
     'ticket_type_admin_role_id_require' => '部门ID必选',
     'ticket_type_is_not_exist' => '工单类型不存在',
+    'ticket_type_already_exist' => '工单部门已存在',
+    'ticket_type_admin_require' => '请选择管理员',
+    'ticket_type_admin_not_found' => '管理员不存在',
     'ticket_is_pending_can_handling' => '工单只有待接收状态可操作',
     'ticket_handle_success' => '接收工单成功',
     'ticket_is_pending_cannot_resolved' => '待接收状态不可操作',
@@ -40,10 +43,12 @@ return [
     'ticket_current_admin_cannot_reply' => '当前管理员不可回复',
     'ticket_attachment_name_require' => '附件名必填',
     'ticket_attachment_is_not_exist' => '附件不存在',
+    'ticket_admin_is_not_exist' => '人员不存在',
+
     # 日志
     'ticket_log_client_create_ticket' => '{client}新建工单:{ticket_id}',
     'ticket_log_admin_create_ticket' => '管理员{admin}新建工单:{ticket_id}',
-    'ticket_log_client_reply_ticket' => '{client}回复工单:{ticket_id},回复内容:{content}',
+    'ticket_log_client_reply_ticket' => '{client}回复工单:{ticket_id}',
     'ticket_log_client_urge_ticket' => '{client}催单:{ticket_id}',
     'ticket_log_client_close_ticket' => '{client}关闭工单:{ticket_id}',
 
@@ -51,11 +56,14 @@ return [
     'ticket_log_admin_receive_ticket' => '{admin}接受工单:{ticket_id}',
     'ticket_log_admin_resolved_ticket' => '{admin}标记工单:{ticket_id}已解决',
     'ticket_log_create_ticket_internal' => '{admin}新增内部工单:{ticket_id}',
+    'ticket_log_admin_create_ticket_notes' => '{admin}创建工单{ticket_id}备注:{content}',
     'ticket_log_admin_update_ticket_reply' => '{admin}编辑{name}回复的消息',
     'ticket_log_admin_delete_ticket_reply' => '{admin}删除{name}回复的消息',
     'ticket_log_admin_update_ticket_status' => '{admin}变更工单状态为{status}',
+    'ticket_log_admin_update_ticket_type' => '{admin}变更工单类型为{type}',
     'ticket_log_admin_reply_ticket_admin' => '工单{ticket_id}跟进人变更为{admin}',
     'ticket_log_admin_update_ticket_content' => '修改工单{ticket_id}内容为{content}',
+    'ticket_log_admin_ticket_forwad' => '工单{ticket_id}跟进部门变更为{admin_role}',
 
     # 导航
     'nav_plugin_addon_idcsmart_ticket' => '工单',

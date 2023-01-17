@@ -4,10 +4,18 @@ const baseURL = `/${hostUrl}/v1`
 console.log(baseURL);
 const Axios = axios.create({
   baseURL,
-  timeout: 12000
+  timeout: 120000
 })
 Axios.defaults.withCredentials = true
 
+if (
+  location.href.indexOf("login.html") === -1
+) {
+  if (!localStorage.getItem('backJwt')) {
+    location.href = 'login.html'
+    throw new Error()
+  }
+}
 
 // 请求拦截器
 Axios.interceptors.request.use(
@@ -27,7 +35,7 @@ Axios.interceptors.response.use(
     if (response.data.rule) { // 返回有rule的时候, 才执行缓存操作
       localStorage.setItem('menuList', JSON.stringify(response.data.rule)) // 权限菜单
     }
-    const host = location.host
+    const host = location.origin
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     if (code) {
@@ -44,15 +52,15 @@ Axios.interceptors.response.use(
         case 401: // 未授权:2个小时未操作自动退出登录
           if (location.href.indexOf('login.html') === -1) {
             localStorage.removeItem('backJwt')
-            location.href = 'http://' + str + 'login.html'
+            location.href =  str + 'login.html'
           }
           break
         case 403:
-          location.href = 'http://' + str + '404.html'
+          location.href =  str + '404.html'
           break
         case 404:
           if (location.href.indexOf('404.html') === -1) {
-            location.href = 'http://' + str + '404.html'
+            location.href = str + `404.html?msg=${response.data.msg}`
           }
           break
         case 405:

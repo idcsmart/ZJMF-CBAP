@@ -11,7 +11,7 @@ class IdcsmartCommonCustomCycleValidate extends Validate
 	protected $rule = [
 		'name' => 'require|max:255',
 		'cycle_time' => 'require|integer',
-        'cycle_unit' => 'require|in:hour,day,month',
+        'cycle_unit' => 'require|in:hour,day,month,infinite',
         'amount' => 'require|float|egt:0',
     ];
 

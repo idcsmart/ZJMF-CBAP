@@ -45,3 +45,7 @@ function globalSearch (keywords) {
 function getMenus () {
   return Axios.get('/menu')
 }
+// 账户详情
+function account() {
+  return Axios.get(`/account`)
+}

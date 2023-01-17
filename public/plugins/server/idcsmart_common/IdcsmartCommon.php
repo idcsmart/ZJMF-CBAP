@@ -37,7 +37,7 @@ class IdcsmartCommon
   `product_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联商品ID',
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '周期名称',
   `cycle_time` int(11) NOT NULL DEFAULT '0' COMMENT '周期时长',
-  `cycle_unit` enum('hour','day','month') NOT NULL DEFAULT 'day' COMMENT '周期单位:hour小时,day天,month月',
+  `cycle_unit` enum('hour','day','month','infinite') NOT NULL DEFAULT 'day' COMMENT '周期单位:hour小时,day天,month月,infinite无限',
   `create_time` int(11) NOT NULL DEFAULT '0',
   `update_time` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -82,6 +82,7 @@ class IdcsmartCommon
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `type` varchar(25) NOT NULL DEFAULT 'server' COMMENT '接口类型：server服务器，server_group服务器组(插件下的服务器和服务器组以及相应的模块)',
   `rel_id` int(11) NOT NULL DEFAULT '0' COMMENT '关联ID:服务器ID,服务器组ID',
+   `edition` varchar(50) NOT NULL DEFAULT '' COMMENT '版本professional专业版,free免费版',
   PRIMARY KEY (`id`),
   UNIQUE KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",
@@ -100,6 +101,9 @@ class IdcsmartCommon
   `max_repeat` int(11) NOT NULL DEFAULT '5' COMMENT '最大允许重复数量',
   `fee_type` varchar(25) NOT NULL DEFAULT 'stage' COMMENT '数量的类型的计费方式：stage阶梯计费，qty数量计费(当前区间价格*数量)',
   `description` text COMMENT '说明',
+  `configoption_id` int(11) NOT NULL DEFAULT '0' COMMENT '当前商品其他类型为数量拖动/数量输入的配置项ID',
+  `son_product_id` int(11) NOT NULL DEFAULT '0' COMMENT '子商品ID',
+  `free` tinyint(1) NOT NULL DEFAULT '0' COMMENT '关联商品首周期是否免费:1是，0否',
   PRIMARY KEY (`id`),
   KEY `product_id` (`product_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",
@@ -113,6 +117,7 @@ class IdcsmartCommon
   `order` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   `hidden` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否隐藏:1是，0否默认',
   `country` varchar(255) NOT NULL DEFAULT '' COMMENT '国家:类型为区域时选择',
+  `qty_change` int(11) NOT NULL DEFAULT '0' COMMENT '数量变化最小值',
   PRIMARY KEY (`id`),
   KEY `product_configoption_id` (`product_configoption_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;",

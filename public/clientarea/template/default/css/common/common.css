@@ -2,15 +2,19 @@
   margin: 0;
   padding: 0;
 }
+ul,
+li {
+  list-style: none;
+}
 /* elemenu-ui组件 部分样式统一修改 开始*/
 .el-tabs__item {
-  color: #666b80;
+  color: #666B80;
 }
 .el-tabs__item.is-active {
-  color: #1e2736;
+  color: #1E2736;
 }
 .el-tabs__active-bar {
-  background: #0058ff;
+  background: #0058FF;
 }
 .el-tabs__nav-wrap::after {
   height: 1px;
@@ -18,7 +22,7 @@
 .el-slider__button {
   width: 1px;
   height: 13px;
-  border: 6px solid #0058ff;
+  border: 6px solid #0058FF;
   border-radius: 0%;
 }
 /* elemenu-ui组件 部分样式统一修改 结束*/
@@ -42,7 +46,7 @@ input::-webkit-inner-spin-button {
   height: 100%;
   width: 100%;
   z-index: 9999;
-  background: #fff;
+  background: #FFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,7 +59,7 @@ input::-webkit-inner-spin-button {
   height: 100px;
   float: left;
   margin: 2px;
-  background-color: #4890ff;
+  background-color: #4890FF;
   animation: loading 1s infinite ease-in-out;
   /*animation：动画名称 持续时间 动画速度曲线 延迟 执行多少次 是否正反方向轮流播放*/
 }
@@ -110,7 +114,7 @@ tbody .el-table__row {
   width: calc(100% - 160px);
   top: 0;
   height: 40px !important;
-  background: #ffffff;
+  background: #FFFFFF;
   box-shadow: 0px 1px 4px rgba(21, 34, 50, 0.08);
   opacity: 1;
   border-radius: 0px;
@@ -163,10 +167,13 @@ tbody .el-table__row {
 .header-right .car-item .el-badge .el-badge__content.is-fixed {
   top: 5px;
 }
+.header-right .hg-24 {
+  height: 24px;
+}
 .header-right .header-right-item .cloum-line {
   width: 0px;
   height: 13px;
-  border: 1px solid #e6e7eb;
+  border: 1px solid #E6E7EB;
   opacity: 1;
 }
 .header-right .header-right-item img {
@@ -190,15 +197,28 @@ tbody .el-table__row {
   cursor: pointer;
 }
 .header-right .header-right-item .el-dropdown-header .head-box {
-  width: 0.24rem;
-  height: 0.24rem;
-  font-size: 0.15rem;
-  color: #ffffff;
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
+  color: #FFFFFF;
   background: #fff;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.header-right .header-right-item .un-login {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.14rem;
+  color: #8692B0;
+}
+.header-right .header-right-item .un-login img {
+  width: 24px;
+  height: 24px;
+  margin-right: 0.06rem;
 }
 /* header部分结束 */
 /* 主体部分开始 */
@@ -245,9 +265,9 @@ tbody .el-table__row {
 .dialog-footer .btn-ok {
   height: 0.46rem;
   width: 1.12rem;
-  background: #0058ff;
+  background: #0058FF;
   border-radius: 3px;
-  color: #ffffff;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -255,7 +275,7 @@ tbody .el-table__row {
 .dialog-footer .btn-no {
   height: 0.46rem;
   width: 1.12rem;
-  background: #e7e7e7;
+  background: #E7E7E7;
   border-radius: 3px;
   display: flex;
   align-items: center;
@@ -292,7 +312,7 @@ tbody .el-table__row {
   display: inline-block;
   width: 32px;
   height: 32px;
-  border: 1px solid #e6e7eb;
+  border: 1px solid #E6E7EB;
   margin-right: 8px;
   border-radius: 3px;
 }
@@ -303,11 +323,11 @@ tbody .el-table__row {
       height: 32px !important;
   } */
 .el-pager .active {
-  background: #f4f7fc;
-  border: 1px solid #0058ff;
+  background: #F4F7FC;
+  border: 1px solid #0058FF;
 }
 .el-pager li.active + li {
-  border-left: 1px solid #e6e7eb;
+  border-left: 1px solid #E6E7EB;
 }
 /* 换页相关结束 */
 /* 主体部分结束 */
@@ -333,7 +353,7 @@ tbody .el-table__row {
   content: "";
   height: 12px;
   width: 3px;
-  background: #fff;
+  background: #FFF;
   position: absolute;
   left: 4px;
   top: calc(50% - 6px);
@@ -341,6 +361,10 @@ tbody .el-table__row {
 .menu-top .el-submenu__title {
   height: 40px;
   line-height: 40px;
+  display: flex;
+}
+.menu-top .el-submenu__title i {
+  color: rgba(255, 255, 255, 0.6);
 }
 /* .menu-top .el-submenu {
       margin-left: .07rem;
@@ -368,15 +392,25 @@ tbody .el-table__row {
   position: sticky;
   position: -webkit-sticky;
   top: 0;
-  background: #1e41c9;
+  background: #1E41C9;
   height: 100vh;
   font-size: 14px;
   z-index: 5;
 }
+.el-aside::-webkit-scrollbar {
+  width: 6px;
+}
+.el-aside::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+.el-aside::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 0.5rem;
+}
 .menu-list-top,
 .menu-list-bottom {
   margin-top: 86px;
-  color: #ffffff;
+  color: #FFFFFF;
 }
 .father-item {
   margin-bottom: 12px !important;
@@ -391,18 +425,18 @@ tbody .el-table__row {
   margin-left: 15px;
   opacity: 0.6;
   cursor: pointer;
-  border-left: 3px solid #1e41c9;
+  border-left: 3px solid #1E41C9;
 }
 .child-item-text:last-child {
   margin-bottom: 24px;
 }
 .child-active {
   opacity: 1 !important;
-  border-left: 3px solid #ffff !important;
+  border-left: 3px solid #FFFF !important;
 }
 .menu-list-top > .menu-active,
 .menu-list-bottom > .menu-active {
-  border-left: 3px solid #ffff;
+  border-left: 3px solid #FFFF;
   opacity: 1;
   margin-left: 4px;
 }
@@ -416,7 +450,7 @@ tbody .el-table__row {
 .line {
   width: 123px;
   height: 0px;
-  border: 1px solid #ffffff;
+  border: 1px solid #FFFFFF;
   opacity: 0.1;
   margin: 90px auto;
 }
@@ -427,11 +461,11 @@ tbody .el-table__row {
   display: flex;
   align-items: center;
   cursor: pointer;
-  color: #ffffff;
+  color: #FFFFFF;
   opacity: 0.6;
 }
 .el-menu-item i {
-  color: rgba(255, 255, 255, 0.6);
+  color: #8692B0;
 }
 .item-img {
   height: 16px;
@@ -444,6 +478,9 @@ tbody .el-table__row {
 /* message */
 .el-message {
   font-size: 20px;
+}
+.el-date-picker .el-picker-panel__footer .el-button {
+  display: inline-flex;
 }
 .el-button {
   display: flex;
@@ -491,7 +528,7 @@ th {
   justify-content: flex-end;
 }
 .zf-dialog .form-footer > .btn-ok {
-  background: #0058ff;
+  background: #0058FF;
   border-radius: 3px;
   color: rgba(255, 255, 255, 0.9);
   display: flex;
@@ -499,15 +536,15 @@ th {
   justify-content: center;
 }
 .zf-dialog .btn-no {
-  background: #e7e7e7;
+  background: #E7E7E7;
   border-radius: 3px;
-  color: #1e2736;
+  color: #1E2736;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .zf-dialog .true-money {
-  color: #ffa800;
+  color: #FFA800;
 }
 .zf-dialog .pay-html {
   display: flex;
@@ -519,10 +556,10 @@ th {
   align-items: center;
 }
 .zf-dialog .blue {
-  color: #0058ff;
+  color: #0058FF;
 }
 .zf-dialog .red {
-  color: #f0142f;
+  color: #F0142F;
 }
 .zf-dialog .pay-html > img {
   width: 2.5rem;
@@ -535,7 +572,7 @@ th {
   display: flex;
   padding: 0 0.2rem;
   height: 0.48rem;
-  border: 1px solid #e6e7eb;
+  border: 1px solid #E6E7EB;
 }
 .zf-dialog .el-dialog__title {
   font-size: 0.14rem;
@@ -545,12 +582,12 @@ th {
 .zf-dialog .tip {
   text-align: center;
   font-size: 0.13rem;
-  color: #8692b0;
+  color: #8692B0;
   line-height: 0.3rem;
 }
 .zf-dialog .money {
   font-size: 0.24rem;
-  color: #1e2736;
+  color: #1E2736;
   text-align: center;
   line-height: 1;
   display: block;
@@ -573,12 +610,12 @@ th {
   display: flex;
   justify-content: space-between;
   padding: 0.2rem;
-  border-top: 1px solid #e6e7eb;
+  border-top: 1px solid #E6E7EB;
   align-items: center;
 }
 .zf-dialog .f-btn .total {
   font-size: 0.14rem;
-  color: #1e2736;
+  color: #1E2736;
 }
 .zf-dialog .f-btn .img {
   width: 0.18rem;
@@ -586,24 +623,24 @@ th {
   margin-right: 0.1rem;
 }
 .zf-dialog .el-button {
-  background: #0058ff;
+  background: #0058FF;
   color: #fff;
 }
 .zf-dialog .el-checkbox,
 .zf-dialog .el-checkbox__input.is-checked + .el-checkbox__label {
-  color: #0058ff;
+  color: #0058FF;
 }
 .el-checkbox__input.is-checked .el-checkbox__inner {
-  background-color: #0058ff;
-  color: #0058ff;
+  background-color: #0058FF;
+  color: #0058FF;
 }
 .buy-product-btn {
   width: 0.6rem;
   height: 90%;
-  background: #0058ff;
+  background: #0058FF;
   opacity: 1;
   border-radius: 3px;
-  color: #fff;
+  color: #FFF;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -654,7 +691,7 @@ th {
   font-size: 0.16rem;
   border: none;
   color: rgba(255, 255, 255, 0.9);
-  background: #0058ff;
+  background: #0058FF;
   width: 1.12rem;
   height: 0.46rem;
   border-radius: 0.03rem;
@@ -664,19 +701,19 @@ th {
   display: inline-block;
   padding: 0 0.04rem;
   border-radius: 0.03rem;
-  border: 1px solid #f99600;
+  border: 1px solid #F99600;
   font-size: 0.12rem;
   cursor: pointer;
-  color: #f99600;
+  color: #F99600;
 }
 .cash-code {
   display: inline-block;
   padding: 0 0.04rem;
   border-radius: 0.03rem;
-  border: 1px solid #f0142f;
+  border: 1px solid #F0142F;
   cursor: pointer;
   font-size: 0.12rem;
-  color: #f0142f;
+  color: #F0142F;
 }
 /* 支付弹窗结束 */
 .withdraw-dialog .el-dialog__body {
@@ -687,7 +724,7 @@ th {
 }
 .withdraw-dialog .dialog-main .el-form-item__label {
   font-size: 0.16rem;
-  color: #1e2736;
+  color: #1E2736;
   line-height: 1.5715;
 }
 .withdraw-dialog .dialog-main .input-select {
@@ -702,19 +739,19 @@ th {
 }
 .withdraw-dialog .dialog-main .amount-input .all-btn {
   font-size: 15px;
-  color: #0058ff;
+  color: #0058FF;
   cursor: pointer;
   padding-right: 0.16rem;
 }
 .withdraw-dialog .withdraw-rule .label {
   font-size: 14px;
-  color: #1e2736;
+  color: #1E2736;
   font-weight: bold;
   margin-bottom: 0.1rem;
 }
 .withdraw-dialog .withdraw-rule .rules .rules-item {
   font-size: 14px;
-  /* color: #1E2736; */
+  color: #1E2736;
 }
 @media screen and (max-width: 750px) {
   .el-main {
@@ -747,7 +784,7 @@ th {
   }
   /* 左侧弹窗菜单 */
   .drawer-menu {
-    background: #1e41c9;
+    background: #1E41C9;
     font-size: 0.32rem;
   }
   .drawer-menu-top {
@@ -762,10 +799,10 @@ th {
   }
   .drawer-menu-list-top {
     margin-top: 0.86rem;
-    color: #ffffff;
+    color: #FFFFFF;
   }
   .drawer-menu-list-top > .drawer-menu-active {
-    border-left: 3px solid #ffff;
+    border-left: 3px solid #FFFF;
     opacity: 1;
     margin-left: 0.04rem;
   }
@@ -776,7 +813,7 @@ th {
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: #ffffff;
+    color: #FFFFFF;
     opacity: 0.6;
   }
   .drawer-item-img {
@@ -815,7 +852,7 @@ th {
     width: 0.56rem;
     height: 0.56rem;
     font-size: 0.16rem;
-    color: #ffffff;
+    color: #FFFFFF;
     background: #fff;
     border-radius: 50%;
   }

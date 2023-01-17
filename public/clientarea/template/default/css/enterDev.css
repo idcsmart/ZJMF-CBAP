@@ -6,14 +6,44 @@
   line-height: 0.25rem;
 }
 .enterDev-content .enterDev-main {
-  margin-top: 0.4rem;
+  margin: 0.4rem 0;
   display: flex;
 }
-.enterDev-content .enterDev-main .el-step__icon {
+.enterDev-content .enterDev-main .enterDev-left .el-step.is-vertical .el-step__line {
+  left: 42px;
+}
+.enterDev-content .enterDev-main .enterDev-left .el-step__icon.is-text {
   position: absolute !important;
+  border: none !important;
+  border-radius: 0% !important;
+  width: 1rem !important;
+  height: 0.8rem !important;
+}
+.enterDev-content .enterDev-main .enterDev-left .el-step__icon.is-text .box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.enterDev-content .enterDev-main .enterDev-left .el-step__icon.is-text .box img {
+  width: 0.48rem;
+  height: 0.48rem;
+  margin-bottom: 0.1rem;
+  display: block;
+}
+.enterDev-content .enterDev-main .enterDev-left .el-step__icon.is-text .box .text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.enterDev-content .enterDev-main .enterDev-left .el-step__head.is-process {
+  color: #8692b0;
+}
+.enterDev-content .enterDev-main .enterDev-left .el-step__head.is-wait {
+  color: #8692b0;
 }
 .enterDev-content .enterDev-main .enterDev-right {
-  margin-top: 1.6rem;
+  margin-top: 2.2rem;
+  margin-left: 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;

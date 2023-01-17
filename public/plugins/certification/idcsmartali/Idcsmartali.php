@@ -19,7 +19,7 @@ class Idcsmartali extends Plugin
         'status'      => 1,
         'author'      => '智简魔方',
         'version'     => '1.0',
-        'help_url'    => 'https://market.idcsmart.com/cart?fid=4&gid=35'
+        'help_url'    => 'https://my.idcsmart.com/goods.html?id=817'
     );
 
     # 插件安装

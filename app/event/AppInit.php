@@ -46,8 +46,17 @@ class  AppInit
         # 允许插件自定义路由(不管是否与系统冲突)
         $addonDir = WEB_ROOT . 'plugins/addon/';
         $addons = array_map('basename', glob($addonDir . '*', GLOB_ONLYDIR));
+
+        # 获取已安装且启用的插件路由
+        $fun = function ($value){
+            return parse_name($value,1);
+        };
+        $addons = array_map($fun,$addons);
+        $addons = Db::name('plugin')->whereIn('name',$addons)
+            ->where('status',1)
+            ->column('name');
         foreach ($addons as $addon){
-            # 说明:存在一定的安全性,判断是否安装且启用的插件,20221108改,不做判断
+            $addon = parse_name($addon);
             if (is_file($addonDir . $addon . '/route.php')){
                 include_once $addonDir . $addon . '/route.php';
             }
@@ -87,7 +96,8 @@ class  AppInit
             ->where('module','addon') # 仅插件
             ->select()->toArray();
 
-        cache('system_plugin_hooks',$systemHookPlugins);
+        // 缓存文件为root用户且权限为644,导致无法写入,注释掉
+        //cache('system_plugin_hooks',$systemHookPlugins);
 
         return $systemHookPlugins;
     }
@@ -95,6 +105,7 @@ class  AppInit
     // 获取插件钩子
     public function getCacheHook()
     {
+        return $this->cacheHook();
         if (empty(cache('system_plugin_hooks'))){
             $systemHookPlugins = $this->cacheHook();
         }else{

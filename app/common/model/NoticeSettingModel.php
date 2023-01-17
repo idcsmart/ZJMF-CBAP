@@ -368,7 +368,9 @@ class NoticeSettingModel extends Model
 	function noticeActionCreate($param)
 	{	
 		$notice_setting = $this->field('name,sms_global_name,sms_global_template,sms_name,sms_template,sms_enable,email_name,email_template,email_enable')
-		->find($param['name']);
+            ->where('name',$param['name']??'')
+            ->find();
+
 		if (!empty($notice_setting)){
             return ['status'=>400, 'msg'=>lang('添加失败，动作已经存在')];
         }else if (!empty($patam['name_lang'])){
@@ -435,7 +437,7 @@ class NoticeSettingModel extends Model
 		} catch (\Exception $e) {
             // 回滚事务
             $this->rollback();
-            return ['status' => 400, 'msg' =>lang('save_fail')];
+            return ['status' => 400, 'msg' =>lang('save_fail') .$e->getMessage()  ];
         }
         return ['status' => 200, 'msg' => lang('save_success')];
 	}

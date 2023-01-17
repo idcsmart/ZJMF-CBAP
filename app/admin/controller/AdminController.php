@@ -37,6 +37,8 @@ class AdminController extends AdminBaseController
      * @return int list[].email - 邮箱
      * @return int list[].roles - 分组名称
      * @return int list[].status - 状态;0:禁用,1:正常
+     * @return int list[].phone_code - 国际电话区号
+     * @return string list[].phone - 手机号
      * @return int count - 管理员总数
      */
     public function adminList()
@@ -69,6 +71,8 @@ class AdminController extends AdminBaseController
      * @return string admin.role_id - 分组ID
      * @return string admin.roles - 所属分组,逗号分隔
      * @return string admin.status - 状态;0:禁用;1:正常
+     * @return int phone_code - 国际电话区号
+     * @return string phone - 手机号
      */
     public function index()
     {
@@ -98,6 +102,8 @@ class AdminController extends AdminBaseController
      * @param string email 123@qq.com 邮箱 required
      * @param string nickname 小华 名称 required
      * @param string role_id 1 分组ID required
+     * @param int phone_code - 国际电话区号
+     * @param string phone - 手机号
      */
     public function create()
     {
@@ -128,6 +134,8 @@ class AdminController extends AdminBaseController
      * @param string email 123@qq.com 邮箱 required
      * @param string nickname 小华 名称 required
      * @param string role_id 1 分组ID required
+     * @param int phone_code - 国际电话区号
+     * @param string phone - 手机号
      */
     public function update()
     {

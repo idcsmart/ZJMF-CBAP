@@ -7,15 +7,15 @@
     }
     const aside = document.getElementById('aside')
     const footer = document.getElementById('footer')
-    const host = location.host
+    const host = location.origin
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     Vue.prototype.lang = window.lang
     if (!localStorage.getItem('backJwt')) {
-      const host = location.host
+      const host = location.origin
       const fir = location.pathname.split('/')[1]
       const str = `${host}/${fir}/`
-      location.href = 'http://' + str + '/login.html'
+      location.href = str + '/login.html'
     }
     const MODE_OPTIONS = [
       { type: 'light', text: window.lang.theme_light, src: `${url}/img/assets-setting-light.svg` },
@@ -25,6 +25,7 @@
     /* aside */
     aside && new Vue({
       data: {
+        baseUrl: str,
         collapsed: false,
         isSearchFocus: false,
         searchData: '',
@@ -93,7 +94,7 @@
       mounted() {
         const auth = JSON.parse(localStorage.getItem('backMenus'))
         this.navList = JSON.parse(localStorage.getItem('backMenus'))
- 
+
         this.navList.forEach(item => {
           item.child && item.child.forEach(el => {
             if (el.id === this.curValue) {
@@ -111,13 +112,14 @@
       methods: {
         setWebTitle() {
           const urlArr = location.pathname.split('/')
-          const url = urlArr.at(urlArr.length > 3 ? -2 : -1)
+          // const url = urlArr.at(urlArr.length > 3 ? -2 : -1)
+          const url = urlArr.length > 3 ? urlArr[urlArr.length - 2] : urlArr[urlArr.length - 1]
           const website_name = localStorage.getItem('back_website_name')
           const menu = JSON.parse(localStorage.getItem('backMenus'))
           menu.forEach(fir => {
             const temp = fir.child || []
             temp.forEach(sec => {
-              if (sec.url.indexOf(url) !== -1) {
+              if (sec.url.indexOf('plugin') !== -1 ? sec.url.split('/')[1] === url : sec.url === url) {
                 document.title = (url === 'index.html' ? lang.home : sec.name) + '-' + website_name
               }
             })
@@ -144,7 +146,7 @@
           setTimeout(() => {
             this.audio_tip.pause();
             this.audio_tip = null
-            location.href = 'http://' + str + e.url || (e.child && str + e.child[0].url)
+            location.href = str + e.url || (e.child && str + e.child[0].url)
           }, 5)
         },
         changeCollapsed() {
@@ -152,7 +154,7 @@
         },
         goIndex() {
           localStorage.setItem('curValue', 0)
-          location.href = 'http://' + str + 'index.html'
+          location.href = str + 'index.html'
         },
         changeSearch(e) {
           this.isSearchFocus = e
@@ -197,10 +199,10 @@
             this.$message.success(res.data.msg)
             localStorage.removeItem('backJwt')
             setTimeout(() => {
-              const host = location.host
+              const host = location.origin
               const fir = location.pathname.split('/')[1]
               const str = `${host}/${fir}/`
-              location.href = 'http://' + str + 'login.html'
+              location.href = str + 'login.html'
             }, 300)
           } catch (error) {
             this.$message.error(error.data.msg)
@@ -315,3 +317,24 @@
     typeof old_onload == 'function' && old_onload()
   };
 })(window);
+
+
+const mixin = {
+  data() {
+    return {
+      addonArr: [] // 已激活的插件
+    }
+  },
+  methods: {
+    async getAddonList() {
+      try {
+        const res = await getAddon()
+        this.addonArr = res.data.data.list.map(item => item.name)
+      } catch (error) {
+      }
+    }
+  },
+  created() {
+    this.getAddonList()
+  }
+}

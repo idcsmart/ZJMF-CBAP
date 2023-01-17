@@ -96,6 +96,9 @@
       display: inline-block;
     }
   }
+  .special{
+    margin-top: -30px;
+  }
 }
 
 /* configuration-login */
@@ -277,7 +280,9 @@
 }
 
 /* notice-sms */
+.notice-sms,
 .notice-email,
+.gateway,
 .notice-email-template {
   .common-header {
     .header-left {
@@ -286,6 +291,20 @@
 
     .change_log {
       margin-right: 20px;
+    }
+  }
+  .version{
+    div{
+      display: flex;
+      align-items: center;
+    }
+    .upgrade{
+      img{
+        width: 16px;
+        cursor: pointer;
+        display: block;
+        margin-left: 10px;
+      }
     }
   }
 }
@@ -321,7 +340,13 @@
     text-align: left;
     margin-left: 0 !important;
   }
+  #tinymce {
+    ul,li{
+      list-style: none !important;
+    }
+  }
 }
+
 
 /* cron */
 .cron {
@@ -596,5 +621,18 @@
 
   .table-row {
     padding-left: 25px !important;
+  }
+  .s-item{
+    display: flex;
+    min-width: 250px;
+  }
+}
+
+
+@media screen and (max-width: 1400px) {
+  .configuration-system{
+    .special{
+      margin-top: 0;
+    }
   }
 }

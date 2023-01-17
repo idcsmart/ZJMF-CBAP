@@ -4,85 +4,77 @@ const topMenu = {
     template:
         `
         <div>
-            <el-drawer
-            :visible.sync="isShowMenu"
-            direction="ltr"
-            :before-close="handleClose"
-            :with-header="false"
-            size="3.8rem"
-            custom-class="drawer-menu"
-            >
-                <div class="drawer-menu-top">
-                    <img class="drawer-menu-logo" :src="logo"></img>
-                </div>
-                <div class="drawer-menu-list-top">
-                    <div class="drawer-menu-item" :class="item.id == menuActiveId ? 'drawer-menu-active':''" v-for="item in menu1" :key="item.id" @click="toPage(item)">
-                        <img :src="item.icon" class="drawer-item-img">
-                        <span class="drawer-item-text">{{item.name}}</span>
-                    </div>
-                </div>
-            </el-drawer>
-
-            <el-header>
-            <div class="header-left">
-                <img src="${url}/img/common/menu.png" class="menu-img" @click="showMenu">
-                <img v-if="isShowMore" src="${url}/img/common/search.png" class="left-img">
-                <el-autocomplete
-                v-if="isShowMore"
-                    v-model="topInput"
-                    :fetch-suggestions="querySearchAsync"
-                    placeholder="请输入内容"
-                    @select="handleSelect"
-                >
-                <template slot-scope="{ item }">
-                    <div class="search-value">{{ item.value }}</div>
-                    <div class="search-name">{{ item.name }}</div>
-                </template>
-                </el-autocomplete>
+        <el-drawer :visible.sync="isShowMenu" direction="ltr" :before-close="handleClose" :with-header="false" size="3.8rem" custom-class="drawer-menu">
+          <div class="drawer-menu-top">
+            <img class="drawer-menu-logo" :src="logo"></img>
+          </div>
+          <div class="drawer-menu-list-top">
+            <div class="drawer-menu-item" :class="item.id == menuActiveId ? 'drawer-menu-active':''" v-for="item in menu1" :key="item.id" @click="toPage(item)">
+              <img :src="item.icon" class="drawer-item-img">
+              <span class="drawer-item-text">{{item.name}}</span>
             </div>
-            <div class="header-right">
-                
-                <div class="header-right-item car-item">
-                    <div v-if="isShowCart" class="right-item" @click="goShoppingCar">
-                        <el-badge :value="shoppingCarNum" class="item" :hidden="shoppingCarNum === 0 ? true : false">
-                            <img src="${url}/img/common/cart.png">
-                        </el-badge>
-                    </div>
-                </div>
-
-                <div class="header-right-item">
-                    <el-dropdown @command="changeLang" trigger="click">
-                        <div class="el-dropdown-country">
-                            <img :src="curSrc" alt="">
-                            <i class="right-icon el-icon-arrow-down el-icon--right"></i>
-                        </div>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item v-for="item in commonData.lang_list" :key="item.display_flag" :command="item.display_lang">{{item.display_name}}</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-
-                <div class="header-right-item cloum-line-item">
-                    <div class="cloum-line"></div>
-                </div>
-
-                <div class="header-right-item">
-                    <el-dropdown @command="handleCommand" trigger="click">
-                        <div class="el-dropdown-header">
-                            <div class="right-item head-box" ref="headBoxRef" v-show="firstName">{{firstName}}</div>
-                            <i class="right-icon el-icon-arrow-down el-icon--right"></i>
-                        </div>
-                        <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item command="account">账户信息</el-dropdown-item>
-                            <el-dropdown-item command="quit">退出登录</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                </div>
-
+          </div>
+        </el-drawer>
+      
+        <el-header>
+          <div class="header-left">
+            <img src="${url}/img/common/menu.png" class="menu-img" @click="showMenu">
+            <img v-if="isShowMore" src="${url}/img/common/search.png" class="left-img">
+            <el-autocomplete v-if="isShowMore" v-model="topInput" :fetch-suggestions="querySearchAsync" placeholder="请输入内容" @select="handleSelect">
+              <template slot-scope="{ item }">
+                <div class="search-value">{{ item.value }}</div>
+                <div class="search-name">{{ item.name }}</div>
+              </template>
+            </el-autocomplete>
+          </div>
+          <div class="header-right">
+      
+            <div class="header-right-item car-item">
+              <div v-if="isShowCart" class="right-item" @click="goShoppingCar">
+                <el-badge :value="shoppingCarNum" class="item" :hidden="shoppingCarNum === 0 ? true : false">
+                  <img src="${url}/img/common/cart.png">
+                </el-badge>
+              </div>
             </div>
+      
+            <div class="header-right-item hg-24">
+              <el-dropdown @command="changeLang" trigger="click">
+                <div class="el-dropdown-country">
+                  <img :src="curSrc" alt="">
+                  <i class="right-icon el-icon-arrow-down el-icon--right"></i>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-for="item in commonData.lang_list" :key="item.display_lang" :command="item.display_lang">{{item.display_name}}</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+      
+            <div class="header-right-item cloum-line-item" v-if="isGetData">
+              <div class="cloum-line"></div>
+            </div>
+
+            <div class="header-right-item" v-show="unLogin && isGetData">
+                <div class="un-login" @click="goLogin">
+                 <img src="${url}/img/common/login_icon.png">登录/注册
+                </div>
+            </div>
+      
+            <div class="header-right-item" v-show="!unLogin && isGetData">
+              <el-dropdown @command="handleCommand" trigger="click">
+                <div class="el-dropdown-header">
+                  <div class="right-item head-box" ref="headBoxRef" v-show="firstName">{{firstName}}</div>
+                  <i class="right-icon el-icon-arrow-down el-icon--right"></i>
+                </div>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="account">账户信息</el-dropdown-item>
+                  <el-dropdown-item command="quit">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+
+          </div>
         </el-header>
-        </div>
-
+      </div>
     `,
     data() {
 
@@ -105,6 +97,8 @@ const topMenu = {
             commonData: {
                 lang_list: []
             },
+            unLogin: true,
+            isGetData: false
         }
     },
     props: {
@@ -152,6 +146,9 @@ const topMenu = {
                 })
             }).catch(() => { })
         },
+        goLogin() {
+            location.href = '/login.html'
+        },
         // 获取购物车数量
         getCartList() {
             cartList().then((res) => {
@@ -159,15 +156,20 @@ const topMenu = {
             })
         },
         GetIndexData() {
-            indexData().then((res) => {
-                this.firstName = res.data.data.account.username.substring(0, 1).toUpperCase()
-                if (sessionStorage.headBgc) {
-                    this.$refs.headBoxRef.style.background = sessionStorage.headBgc
-                } else {
-                    const index = Math.round(Math.random() * this.headBgcList.length)
-                    this.$refs.headBoxRef.style.background = this.headBgcList[index]
-                    sessionStorage.headBgc = this.headBgcList[index]
+            accountDetail().then((res) => {
+                if (res.data.status == 200) {
+                    this.firstName = res.data.data.account.username.substring(0, 1).toUpperCase()
+                    this.unLogin = false
+                    if (sessionStorage.headBgc) {
+                        this.$refs.headBoxRef.style.background = sessionStorage.headBgc
+                    } else {
+                        const index = Math.round(Math.random() * (this.headBgcList.length - 1))
+                        this.$refs.headBoxRef.style.background = this.headBgcList[index]
+                        sessionStorage.headBgc = this.headBgcList[index]
+                    }
                 }
+            }).finally(() => {
+                this.isGetData = true
             })
         },
         goShoppingCar() {

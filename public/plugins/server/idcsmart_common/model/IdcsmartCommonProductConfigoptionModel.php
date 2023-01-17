@@ -2,6 +2,7 @@
 namespace server\idcsmart_common\model;
 
 use app\common\model\HostModel;
+use app\common\model\ProductModel;
 use server\idcsmart_common\logic\IdcsmartCommonLogic;
 use think\db\Query;
 use think\Model;
@@ -26,6 +27,9 @@ class IdcsmartCommonProductConfigoptionModel extends Model
         'max_repeat'             => 'int',
         'fee_type'               => 'string',
         'description'            => 'string',
+        'configoption_id'        => 'int',
+        'son_product_id'         => 'int',
+        'free'                   => 'int',
     ];
 
     /**
@@ -62,6 +66,31 @@ class IdcsmartCommonProductConfigoptionModel extends Model
         ];
     }
 
+    public function quantityConfigoption($param)
+    {
+        $where = function (Query $query) use ($param){
+            $query->where('product_id',$param['product_id'])
+                ->whereIn('option_type',['quantity','quantity_range']);
+
+            if (isset($param['configoption_id']) && $param['configoption_id']){
+                $query->where('id','<>',$param['configoption_id']);
+            }
+        };
+
+        $list = $this->field('id,option_name')
+            ->where($where)
+            ->select()
+            ->toArray();
+
+        return [
+            'status' => 200,
+            'msg' => lang_plugins('success_message'),
+            'data' => [
+                'list' => $list
+            ]
+        ];
+    }
+
     /**
      * 时间 2022-09-26
      * @title 配置项详情
@@ -80,6 +109,7 @@ class IdcsmartCommonProductConfigoptionModel extends Model
      * @return  int configoption.max_repeat - 最大允许重复数量
      * @return  string configoption.fee_type - 数量的类型的计费方式：stage阶梯计费，qty数量计费(当前区间价格*数量)
      * @return  string configoption.description - 说明
+     * @return  int configoption.configoption_id - 当前商品其他类型为数量拖动/数量输入的配置项ID
      * @return array configoption_sub - 子项信息
      * @return int configoption_sub.id -
      * @return  float configoption_sub.onetime - 一次性,价格
@@ -157,6 +187,10 @@ class IdcsmartCommonProductConfigoptionModel extends Model
      * @param   int max_repeat - 最大允许重复数量
      * @param   string fee_type - 数量的类型的计费方式：stage阶梯计费，qty数量计费(当前区间价格*数量)
      * @param   int hidden - 是否隐藏:1是，0否
+     * @param   int configoption_id - 当前商品其他类型为数量拖动/数量输入的配置项ID
+     * @param   int set_son_product - 是否设为子商品:1是,0否(选择是时,才传下面pay_type,free两个字段)
+     * @param   string pay_type - 付款类型(免费free，一次onetime，周期先付recurring_prepayment,周期后付recurring_postpaid
+     * @param   int free - 关联商品首周期是否免费:1是,0否
      */
     public function createConfigoption($param)
     {
@@ -191,6 +225,70 @@ class IdcsmartCommonProductConfigoptionModel extends Model
             # 更新商品最低价格
             $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
             $IdcsmartCommonProductModel->updateProductMinPrice($productId);
+
+            # 关联数量类型同步子项
+            if (isset($param['configoption_id']) && $param['configoption_id']){
+                $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
+                $subs = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$param['configoption_id'])
+                    ->select()
+                    ->toArray();
+                foreach ($subs as $sub){
+                    $result = $IdcsmartCommonProductConfigoptionSubModel->createConfigoptionSub([
+                        'configoption_id' => $id,
+                        'option_name' => $sub['option_name']??'',
+                        'option_param' => $sub['option_param']??'',
+                        'qty_min' => $sub['qty_min']??0,
+                        'qty_max' => $sub['qty_max']??0,
+                        'country' => $sub['country']??'',
+                        'hidden' => $sub['hidden']??0,
+                    ]);
+                    if ($result['status']!=200){
+                        throw new \Exception($result['msg']);
+                    }
+                }
+            }
+
+            # 创建子商品
+            if (isset($param['set_son_product']) && $param['set_son_product']){
+                $ProductModel = new ProductModel();
+                $product = $ProductModel->where('product_id',$productId)->find();
+                $result2 = $ProductModel->createProduct([
+                    'name' => $param['option_name']??'',
+                    'product_group_id' => $product['product_group_id']??0,
+                ]);
+                if ($result2['status']!=200){
+                    throw new \Exception($result2['msg']);
+                }
+
+                $ProductModel->update([
+                    'pay_type' => $param['pay_type'],
+                    'product_id' => $productId,
+                    'update_time' => time()
+                ],['id'=>$result2['data']['product_id']??0]);
+
+                $this->update([
+                    'son_product_id' => $result2['data']['product_id']??0,
+                    'free' => $param['free']
+                ],['id'=>$id]);
+
+                $maxOrder = $this->max('order');
+
+                $sonId = $this->insertGetId([
+                    'product_id' => $result2['data']['product_id']??0,
+                    'option_name' => $param['option_name']??'',
+                    'option_type' => $param['option_type']??'select',
+                    'option_param' => $param['option_param']??'',
+                    'description' => $param['description']??'',
+                    'unit' => $param['unit']??'',
+                    'allow_repeat' => $param['allow_repeat']??0,
+                    'max_repeat' => $param['max_repeat']??5,
+                    'fee_type' => $param['fee_type']??'',
+                    'qty_min' => $param['qty_min']??0,
+                    'qty_max' => $param['qty_max']??0,
+                    'order' => $maxOrder+1,
+                    'hidden' => $param['hidden']??0,
+                ]);
+            }
 
             $this->commit();
         }catch (\Exception $e){
@@ -498,6 +596,8 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                         ->where('hidden',0)
                         ->where('id',$configoptions[$configoptionId])
                         ->find();
+                }else{
+                    $otherSub = null;
                 }
 
                 if (!empty($otherSub)){

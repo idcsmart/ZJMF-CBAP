@@ -8,6 +8,7 @@ use app\common\model\HostModel;
 use app\common\model\ProductModel;
 use app\common\model\CountryModel;
 use app\common\model\MenuModel;
+use app\admin\model\PluginModel;
 // use server\idcsmart_cloud\logic\ToolLogic;
 use addon\idcsmart_cloud\model\IdcsmartSecurityGroupHostLinkModel;
 use server\common_cloud\logic\CloudLogic;
@@ -232,14 +233,20 @@ class HostLinkModel extends Model{
             }
             $data['password'] = aes_password_decode($hostLink['password']);
 
+            $securityGroupId = 0;
             try{
-                $IdcsmartSecurityGroupHostLinkModel = new IdcsmartSecurityGroupHostLinkModel();
-                $securityGroupId = IdcsmartSecurityGroupHostLinkModel::where('host_id', $hostId)->value('addon_idcsmart_security_group_id');
-                if(!empty($securityGroupId)){
-                    $IdcsmartSecurityGroupModel = IdcsmartSecurityGroupModel::find($securityGroupId);
+                if(class_exists('IdcsmartSecurityGroupHostLinkModel')){
+                    $addon = PluginModel::where('name', 'IdcsmartCloud')->where('module', 'addon')->where('status',1)->find();
+                    if($addon){
+                        $IdcsmartSecurityGroupHostLinkModel = new IdcsmartSecurityGroupHostLinkModel();
+                        $securityGroupId = IdcsmartSecurityGroupHostLinkModel::where('host_id', $hostId)->value('addon_idcsmart_security_group_id');
+                        if(!empty($securityGroupId)){
+                            $IdcsmartSecurityGroupModel = IdcsmartSecurityGroupModel::find($securityGroupId);
+                        }
+                    }
                 }
             }catch(\Exception $e){
-                $securityGroupId = 0;
+                //$securityGroupId = 0;
             }
 
             $dataCenter = DataCenterModel::alias('dc')

@@ -4,6 +4,7 @@ namespace addon\idcsmart_ticket\model;
 use app\admin\model\AdminRoleModel;
 use think\db\Query;
 use think\Model;
+use app\admin\model\AdminModel;
 
 /*
  * @author wyh
@@ -17,7 +18,6 @@ class IdcsmartTicketTypeModel extends Model
     protected $schema = [
         'id'                               => 'int',
         'name'                             => 'string',
-        'admin_role_id'                    => 'int',
         'create_time'                      => 'int',
         'update_time'                      => 'int',
     ];
@@ -27,10 +27,8 @@ class IdcsmartTicketTypeModel extends Model
     # 工单部门
     public function typeDepartment()
     {
-        $departments = $this->alias('tt')
-            ->field('tt.admin_role_id,ar.name')
-            ->leftJoin('admin_role ar','ar.id=tt.admin_role_id')
-            ->group('tt.admin_role_id')
+        $departments = $this
+            ->field('id,name')
             ->select()
             ->toArray();
 
@@ -44,23 +42,31 @@ class IdcsmartTicketTypeModel extends Model
     # 工单类型
     public function typeTicket($param)
     {
-        $where = function (Query $query) use($param){
-            if (isset($param['admin_role_id'])){
-                $query->where('tt.admin_role_id',$param['admin_role_id']);
-            }
-        };
         if ($this->isAdmin){
             $ticketTypes = $this->alias('tt')
-                ->field('tt.id,tt.name,ar.name as role_name,ar.description')
-                ->leftJoin('admin_role ar','tt.admin_role_id=ar.id')
-                ->where($where)
+                ->field('tt.id,tt.name')
+                // ->where($where)
                 ->select()
                 ->toArray();
+
+            $admin = IdcsmartTicketTypeAdminLinkModel::alias('al')
+                ->field('al.ticket_type_id,a.id,a.name')
+                ->join('admin a', 'al.admin_id=a.id')
+                ->select()
+                ->toArray();
+            $adminArr = [];
+            foreach($admin as $v){
+                $tid = $v['ticket_type_id'];
+                unset($v['ticket_type_id']);
+                $adminArr[$tid][] = $v;
+            }
+
+            foreach($ticketTypes as $k=>$v){
+                $ticketTypes[$k]['admin'] = $adminArr[$v['id']] ?? [];
+            }
         }else{
             $ticketTypes = $this->alias('tt')
-                ->field('tt.id,tt.name,ar.description')
-                ->leftJoin('admin_role ar','tt.admin_role_id=ar.id')
-                ->where($where)
+                ->field('tt.id,tt.name')
                 ->select()
                 ->toArray();
         }
@@ -75,15 +81,19 @@ class IdcsmartTicketTypeModel extends Model
     # 工单类型详情
     public function indexTicketType($id)
     {
-        $ticketType = $this->field('id,name,admin_role_id')->find($id);
+        $ticketType = $this->field('id,name')->find($id);
         if (empty($ticketType)){
             return ['status'=>400,'msg'=>lang_plugins('ticket_type_is_not_exist')];
         }
 
-        $AdminRoleModel = new AdminRoleModel();
-        $adminRole = $AdminRoleModel->find($ticketType->admin_role_id);
-        $ticketType->role_name = $adminRole['name'];
-        unset($ticketType['admin_role_id']);
+        $admin = IdcsmartTicketTypeAdminLinkModel::alias('al')
+                ->field('a.id,a.name')
+                ->join('admin a', 'al.admin_id=a.id')
+                ->where('al.ticket_type_id', $id)
+                ->select()
+                ->toArray();
+
+        $ticketType->admin = $admin;
 
         $data = [
             'ticket_type' => $ticketType
@@ -95,15 +105,24 @@ class IdcsmartTicketTypeModel extends Model
     # 创建工单类型
     public function createTicketType($param)
     {
+        $IdcsmartTicketTypeAdminLinkModel = new IdcsmartTicketTypeAdminLinkModel();
         $this->startTrans();
 
         try{
 
-            $this->create([
+            $ticketType = $this->create([
                 'name' => $param['name'],
-                'admin_role_id' => $param['admin_role_id'],
                 'create_time' => time()
             ]);
+
+            $link = [];
+            foreach($param['admin_id'] as $v){
+                $link[] = [
+                    'ticket_type_id' => $ticketType->id,
+                    'admin_id'  => $v
+                ];
+            }
+            $IdcsmartTicketTypeAdminLinkModel->insertAll($link);
 
             $this->commit();
         }catch (\Exception $e){
@@ -117,6 +136,7 @@ class IdcsmartTicketTypeModel extends Model
     # 编辑工单类型
     public function updateTicketType($param)
     {
+        $IdcsmartTicketTypeAdminLinkModel = new IdcsmartTicketTypeAdminLinkModel();
         $this->startTrans();
 
         try{
@@ -128,9 +148,18 @@ class IdcsmartTicketTypeModel extends Model
 
             $ticketType->save([
                 'name' => $param['name'],
-                'admin_role_id' => $param['admin_role_id'],
                 'update_time' =>time()
             ]);
+
+            $link = [];
+            foreach($param['admin_id'] as $v){
+                $link[] = [
+                    'ticket_type_id' => $ticketType->id,
+                    'admin_id'  => $v
+                ];
+            }
+            IdcsmartTicketTypeAdminLinkModel::where('ticket_type_id', $param['id'])->delete();
+            $IdcsmartTicketTypeAdminLinkModel->insertAll($link);
 
             $this->commit();
         }catch (\Exception $e){
@@ -148,14 +177,14 @@ class IdcsmartTicketTypeModel extends Model
 
         try{
 
-            $ticketType = $this->field('id,name,admin_role_id')->find($id);
+            $ticketType = $this->field('id,name')->find($id);
             if (empty($ticketType)){
                 throw new \Exception(lang_plugins('ticket_type_is_not_exist'));
             }
 
             # TODO 是否可以随意删除
-
             $ticketType->delete();
+            IdcsmartTicketTypeAdminLinkModel::where('ticket_type_id', $id)->delete();
 
             $this->commit();
         }catch (\Exception $e){

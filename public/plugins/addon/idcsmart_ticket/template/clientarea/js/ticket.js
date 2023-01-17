@@ -66,7 +66,7 @@
                     errText: '',
                     // 工单类别
                     ticketType: [],
-                    ticketStatus:[],
+                    ticketStatus: [],
                     // 关联产品列表
                     hostList: [],
                     createBtnLoading: false,
@@ -266,9 +266,9 @@
                     let length = uploadFiles.length
                     uploadFiles.splice(0, length)
                 },
-                titleClick(event){
-                    event.stopPropagation();
-                    
+                titleClick(record) {
+                    const id = record.id
+                    location.href = `ticketDetails.html?id=${id}`
                 }
 
             },

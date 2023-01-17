@@ -19,7 +19,7 @@ new Vue({
         // 获取镜像数据
         this.getImage()
         // 获取sshkey数据
-        this.getSshKey()
+        // this.getSshKey()
 
         if (this.backConfig.password) {
             this.orderData.password = this.backConfig.password
@@ -41,6 +41,9 @@ new Vue({
             // 开启了等级优惠
             this.isShowLevel = true
         }
+        // 获取sshkey数据
+        arr.includes('IdcsmartSshKey') && this.getSshKey()
+
     },
     data() {
         return {
@@ -183,6 +186,7 @@ new Vue({
             position: 0,
             isNew: true,
             isPageIdNew: true,
+            errorText: "",
         }
     },
     filters: {
@@ -380,13 +384,11 @@ new Vue({
         },
         // 获取数据中心
         getDataCenter() {
-
             const params = {
                 id: this.id
             }
             dataCenter(params).then(res => {
                 if (res.data.status === 200) {
-
                     const list = res.data.data.list ? res.data.data.list : []
                     const data = []
                     console.log("长度", list.length);
@@ -916,6 +918,7 @@ new Vue({
                     this.totalPrice = 0.00
                     this.onePrice = 0.00
                     this.priceLoading = false
+                    this.errorText = err.data.msg
                 })
             }, 500)
         },
@@ -965,10 +968,6 @@ new Vue({
         },
         // 直接购买
         buyNow() {
-            // if (!this.isRead) {
-            //     this.$message.error("请先阅读并勾选协议")
-            //     return false
-            // }
             // 获取磁盘数组
             let data_disk = []
             if (this.isMoreDisk) {
@@ -999,23 +998,7 @@ new Vue({
             }
             // 直接传配置到结算页面
             sessionStorage.setItem('product_information', JSON.stringify(params))
-            // location.href = `settlement.html?id=${params.product_id}&name=${this.basicInfo.name}&config_options=${enStr}&qty=${params.qty}`
             location.href = `settlement.html?id=${params.product_id}`
-
-
-            // settle(params).then(res => {
-            //     if (res.data.status === 200) {
-            //         const orderId = res.data.data.order_id
-            //         const amount = this.totalPrice
-            //         const codePrice = this.codePrice
-            //         this.$refs.payDialog.showPayDialog(orderId, amount - codePrice)
-            //     }
-            // }).catch(error => {
-            //     this.$message({
-            //         message: error.data.msg,
-            //         type: 'warning'
-            //     });
-            // })
         },
         // 支付成功回调
         paySuccess(e) {

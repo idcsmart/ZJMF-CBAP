@@ -21,6 +21,20 @@
             client_id: '', // 用户搜索
             admin_id: '', // 跟进人搜索
           },
+          userParams: {
+            keywords: '',
+            page: 1,
+            limit: 20,
+            orderby: 'id',
+            sort: 'desc'
+          },
+          popupProps: {
+            overlayStyle: (trigger) => ({
+              width: `${trigger.offsetWidth}px`,
+              'max-height': '362px'
+            }),
+          },
+          searchLoading: false,
           // 转发弹窗
           forwardDialogVisible: false,
           audio_tip: null,
@@ -30,6 +44,7 @@
             admin_role_id: '',
             admin_id: '',
             ticket_type_id: '',
+            notes: ''
           },
           forwardFormRules: {
             admin_role_id: [{
@@ -209,7 +224,7 @@
               }
             ],
             // priority: [{ required: true, message: lang.order_priority + lang.isRequired, type: 'error' }],
-            client_id: [{ required: true, message: '关联用户' + lang.isRequired, type: 'error' }],
+            client_id: [{ required: true, message: lang.order_text2 + lang.isRequired, type: 'error' }],
             ticket_type_id: [{ required: true, message: lang.order_name + lang.isRequired, type: 'error' }],
             // admin_role_id: [{
             //   required: true, message: lang.order_designated_department + lang.isRequired,
@@ -223,6 +238,11 @@
         };
       },
       methods: {
+        // 选择部门
+        changeType(type) {
+          this.adminsOptions = this.orderTypeOptions.filter(item => item.id === type)[0]?.admin
+          this.forwardFormData.admin_id = ''
+        },
         // 获取工单类型数据
         getOrderTypeOptions(id) {
           const params = {
@@ -243,9 +263,10 @@
           this.forwardFormData.admin_role_id = ''
           this.forwardFormData.id = row.id
           this.forwardDialogVisible = true;
+          this.forwardFormData.notes = ''
         },
         goclient_detail(row) {
-          location.href = `/admin/client_detail.html?client_id=${row.client_id}`
+          location.href = 'http://' + str + `client_detail.html?client_id=${row.client_id}`
         },
         // 工单-转发-提交
         forwardFormSubmit({ validateResult, firstError }) {
@@ -254,7 +275,7 @@
             const params = {
               id: data.id,
               notes: data.notes,
-              admin_role_id: data.admin_role_id, //指定部门
+              //  admin_role_id: data.admin_role_id, //指定部门
               ticket_type_id: data.ticket_type_id,
               admin_id: data.admin_id ? data.admin_id : null, //管理员
             };
@@ -275,15 +296,28 @@
         },
         // 获取客户数据
         getClientOptions() {
-          getClient({ page: 1, limit: 10000 }).then(result => {
+          this.searchLoading = true
+          getClient(this.userParams).then(result => {
+            this.searchLoading = false
             this.clientOptions = result.data.data.list;
-          }).catch();
+          }).catch((err) => {
+            this.searchLoading = false
+          });
         },
         // 获取部门数据
         getDepartmentOptions() {
           getAdminRole({ page: 1, limit: 10000 }).then(result => {
             this.departmentOptions = result.data.data.list;
           }).catch();
+        },
+        // 远程搜素
+        remoteMethod(key) {
+          this.userParams.keywords = key
+          this.getClientOptions()
+        },
+        clearKey() {
+          this.userParams.keywords = ''
+          this.getClientOptions()
         },
         // 获取已激活插件
         getActive_plugin() {
@@ -363,7 +397,7 @@
         // 新建工单
         goAddorder(row) {
           if (row) {
-            location.href = `ticket_add.html`
+            location.href = 'http://' + str + `/plugin/idcsmart_ticket_internal/ticket_internal_add.html?id=${row.id}&client_id=${row.client_id}&host_ids=${row.host_ids}`
           } else {
             location.href = `ticket_add.html`
           }
@@ -737,6 +771,7 @@
         this.getAdminList();
         this.getClientOptions();
         this.getActive_plugin()
+        this.getOrderTypeOptions()
         setTimeout(() => {
           this.selectTimeChange(180000)
         }, 180000)

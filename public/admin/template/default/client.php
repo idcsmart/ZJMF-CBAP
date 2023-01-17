@@ -1,7 +1,7 @@
 {include file="header"}
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
 <!-- =======内容区域======= -->
-<div id="content" class="client table" v-cloak>
+<div id="content" class="client" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
       <t-button @click="addUser" class="add" v-if="authList.includes('ClientController::create')">
@@ -20,7 +20,7 @@
       </div>
     </div>
     <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"  @row-click="rowClick"
-    :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
+    :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" >
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

@@ -46,14 +46,17 @@ class Task extends Command
 	//队列
 	public function taskWait(){
 		Db::startTrans();
-		$task_lock = Db::name('configuration')->where('setting','task')->lock(true)->value('value');
+		//$task_lock = Db::name('configuration')->where('setting','task')->lock(true)->value('value');
+		$task_lock = file_exists(__DIR__.'/task.lock') ? file_get_contents(__DIR__.'/task.lock') : 0; 
 			
-		if(empty($task_lock)){
-			Db::name('configuration')->where('setting','task')->data(['value'=>1])->update();
+		if(empty($task_lock) || time()>($task_lock+2*60)){
+			file_put_contents(__DIR__.'/task.lock', time());
+			//Db::name('configuration')->where('setting','task')->data(['value'=>1])->update();
 			$task_wait = Db::name('task_wait')->limit(10)->select()->toArray();//取10条数据				
 			if($task_wait) Db::name('task_wait')->whereIn('id',array_column($task_wait,'id'))->delete();
 			Db::commit();
-			Db::name('configuration')->where('setting','task')->data(['value'=>0])->update();
+			file_put_contents(__DIR__.'/task.lock', 0);
+			//Db::name('configuration')->where('setting','task')->data(['value'=>0])->update();
 			if($task_wait){
 				foreach($task_wait as $v){
 					$task_data = json_decode($v['task_data'],true);
@@ -75,6 +78,8 @@ class Task extends Command
 						Db::name('task')->where('id',$v['task_id'])->data($task_update)->update();
 					}
 				}
+			}else{
+				sleep(3);
 			}
 		}else{
 			Db::commit();

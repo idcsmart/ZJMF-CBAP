@@ -355,6 +355,16 @@
   margin-top: 0.08rem;
   font-size: 0.14rem;
 }
+.common-config .order-right .order-right-footer .footer-total .discount-codeNumber {
+  cursor: pointer;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: rgba(249, 149, 0, 0.2);
+  padding: 0 0.14rem;
+  color: #F99600;
+  font-weight: bold;
+  font-size: 0.14rem;
+}
 .common-config .order-right .order-right-footer .footer-code {
   display: flex;
   flex-direction: column;
@@ -508,4 +518,10 @@
 }
 .discount-pop {
   white-space: nowrap;
+}
+.original-price {
+  text-decoration: line-through;
+  font-size: 0.2rem;
+  font-weight: 500;
+  color: #999999;
 }

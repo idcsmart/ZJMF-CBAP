@@ -310,8 +310,6 @@ const payDialog = {
         use: 0
       }
 
-
-
       orderDetails(orderId).then(detailRes => {
         if (detailRes.data.status === 200) {
           // 获取订单金额 和 订单id
@@ -333,6 +331,15 @@ const payDialog = {
               // 默认拉取第一种支付方式
               this.zfData.gateway = payType ? payType : this.gatewayList[0].name
               this.zfSelectChange()
+              account().then(res => {
+                if (res.data.status === 200) {
+                  this.balance = res.data.data.account.credit
+                  if (this.balance > 0) {
+                    this.zfData.checked = true
+                    this.useBalance()
+                  }
+                }
+              })
               // 轮询支付
               this.pollingStatus(this.zfData.orderId)
 
@@ -345,7 +352,6 @@ const payDialog = {
             this.time = 300000
             // 获取余额
             this.getAccount()
-
             // 展示支付 dialog
             this.isShowZf = true
             // 默认拉取第一种支付方式
@@ -354,15 +360,8 @@ const payDialog = {
             // 轮询支付
             this.pollingStatus(this.zfData.orderId)
           }
-
-
-
         }
       })
-
-
-
-
     },
   },
 

@@ -108,7 +108,15 @@
                             this.showList = [...this.shoppingList]
                             configOption(item.product_id, item.config_options).then((ress) => {
                                 item.info = ress.data.data
-                                item.preview = ress.data.data.preview // 配置信息
+                                const son_previews = []
+                                if (ress.data.data.other && ress.data.data.other.son_previews) {
+                                    ress.data.data.other.son_previews.forEach((item) => {
+                                        item.forEach((items) => {
+                                            son_previews.push(items)
+                                        })
+                                    })
+                                }
+                                item.preview = ress.data.data.preview.concat(son_previews) // 配置信息
                                 item.price = Number(ress.data.data.price) // 商品价格
                                 item.priceLoading = false
                                 if (this.isShowLevel) {
@@ -249,7 +257,7 @@
                         }
                         sessionStorage.setItem('product_information', JSON.stringify(obj))
                     }
-                    location.href = `goods.html?id=${item.product_id}`
+                    location.href = `goods.html?id=${item.product_id}&change`
                 },
                 // 监听购物车选择数量变化
                 handleCheckedCitiesChange(value) {

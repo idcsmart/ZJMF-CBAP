@@ -23,9 +23,11 @@
     color: #171725;
     font-size: 28px;
   }
+
   .cycle {
     display: flex;
     flex-wrap: wrap;
+
     .item {
       min-width: 1.4rem;
       margin-right: .2rem;
@@ -48,10 +50,12 @@
       }
     }
   }
-.common-box{
-  display: flex;
-  justify-content: space-between;
-}
+
+  .common-box {
+    display: flex;
+    justify-content: space-between;
+  }
+
   .el-icon-check {
     display: none;
   }
@@ -215,6 +219,7 @@
         cursor: pointer;
         box-sizing: border-box;
         white-space: nowrap;
+
         img {
           width: .3rem;
           height: .2rem;
@@ -230,7 +235,8 @@
           white-space: nowrap;
           text-overflow: ellipsis;
         }
-        span{
+
+        span {
           max-width: 70%;
         }
       }
@@ -279,7 +285,8 @@
       padding: 0.3rem 0;
       border-bottom: 1px solid #E6E7EB;
     }
-    .f-box{
+
+    .f-box {
       // width: 100%;
       // overflow: hidden;
       // position: relative;
@@ -351,9 +358,10 @@
             }
           }
 
-          .el-input__inner{
+          .el-input__inner {
             padding: 0;
           }
+
           .del {
             margin-right: .04rem;
           }
@@ -389,6 +397,7 @@
         flex-direction: row;
         justify-content: space-between;
         margin-top: .2rem;
+
         .left {
           color: #1E2736;
         }
@@ -400,14 +409,27 @@
           color: #F0142F;
           text-align: right;
         }
-        .total-icon{
+
+        .total-icon {
           font-size: 20px !important;
           color: #999 !important;
           cursor: pointer;
         }
-        .discount-box{
+
+        .discount-box {
           margin-top: 0.08rem;
           font-size: .14rem;
+        }
+
+        .discount-codeNumber {
+          cursor: pointer;
+          height: 0.32rem;
+          line-height: 0.32rem;
+          background: rgba(249, 149, 0, 0.2);
+          padding: 0 0.14rem;
+          color: #F99600;
+          font-weight: bold;
+          font-size: 0.14rem;
         }
       }
 
@@ -474,9 +496,8 @@
           }
         }
       }
-      .show-config-list{
 
-      }
+      .show-config-list {}
 
       .read {
         margin-top: .1rem;
@@ -598,6 +619,14 @@
     }
   }
 }
-.discount-pop{
+
+.discount-pop {
   white-space: nowrap;
+}
+
+.original-price {
+  text-decoration: line-through;
+  font-size: 0.2rem;
+  font-weight: 500;
+  color: #999999;
 }

@@ -206,12 +206,19 @@
         },
         // 编辑管理员
         updateAdmin (row) {
-          this.optType = 'update'
-          this.getGroupDetail(row.id)
           this.visible = true
+          this.optType = 'update'
+          this.formData.id = row.id
+          this.formData.name = row.name
+          this.formData.description = row.description
           this.checkAll = this.formData.auth.length === this.arr ? true : false
           this.addTip = lang.update + lang.group
-          this.$refs.userDialog.reset()
+         // this.$refs.userDialog.reset()
+          if (row.id === 1) {
+            this.formData.auth = this.arr
+            return
+          }
+          this.getGroupDetail(row.id)
         },
         // 获取分组详情
         async getGroupDetail (id) {
@@ -343,7 +350,7 @@
         // 获取权限
         async getAuthList () {
           try {
-            const res = await getAuthRole()
+            const res = await getAllAuthRole()
             this.authArr = res.data.data.list
             // 递归获取所有权限的id
             this.getIdFun(res.data.data.list)

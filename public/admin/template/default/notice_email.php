@@ -45,6 +45,14 @@
         <span v-if="row.sms_type.indexOf(1)!==-1">{{lang.international}}</span>
         <span v-if="row.sms_type.indexOf(0)!==-1">/&nbsp;{{lang.domestic}}</span>
       </template>
+      <template #version="{row}">
+        {{row.version}}
+        <t-tooltip :content="lang.upgrade_plugin" :show-arrow="false" theme="light" v-if="row.isUpdate">
+          <span class="upgrade" @click="updatePlugin(row)">
+            <img :src="`${urlPath}/img/upgrade.svg`" alt="">
+          </span>
+        </t-tooltip>
+      </template>
       <template #status="{row}">
         <t-tag theme="success" class="com-status" v-if="row.status===1" variant="light">{{lang.enable}}</t-tag>
         <t-tag theme="warning" class="com-status" v-if="row.status===0" variant="light">{{lang.disable}}</t-tag>
@@ -119,6 +127,13 @@
     <template slot="footer">
       <t-button theme="primary" @click="sureChange">{{lang.sure}}</t-button>
       <t-button theme="default" @click="closeDialog">{{lang.cancel}}</t-button>
+    </template>
+  </t-dialog>
+  <!-- 升级弹窗 -->
+  <t-dialog theme="warning" :header="`${lang.sure}${lang.upgrade_plugin}？`" :visible.sync="upVisible">
+    <template slot="footer">
+      <t-button theme="primary" @click="sureUpgrade" :loading="upLoading">{{lang.sure}}</t-button>
+      <t-button theme="default" @click="upVisible=false">{{lang.cancel}}</t-button>
     </template>
   </t-dialog>
 </div>

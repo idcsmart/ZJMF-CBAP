@@ -40,6 +40,7 @@ class ProductGroupModel extends Model
         $where = function (Query $query){
             $query->where('hidden',0)
                 ->where('parent_id',0);
+            $query->where('name','<>','应用商店');
         };
 
         $group = $this->field('id,name')
@@ -66,18 +67,22 @@ class ProductGroupModel extends Model
      */
     public function productGroupSecondList($param)
     {
-        $where = function (Query $query) use ($param){
-            $query->where('hidden',0);
+        $app = app('http')->getName();
+
+        $where = function (Query $query) use ($param,$app){
+            $query->where('pg.hidden',0);
             if (!empty($param['id']) && intval($param['id'])>0){
-                $query->where('parent_id',intval($param['id'])); # 获取指定一级分组下的二级分组
+                $query->where('pg.parent_id',intval($param['id'])); # 获取指定一级分组下的二级分组
             }else{
-                $query->where('parent_id','>',0); # 获取所有二级分组
+                $query->where('pg.parent_id','>',0); # 获取所有二级分组
             }
+            $query->where('pgf.name','<>','应用商店');
         };
 
-        $group = $this->field('id,name,parent_id')
+        $group = $this->alias('pg')->field('pg.id,pg.name,pg.parent_id')
+            ->leftJoin('product_group pgf','pgf.id=pg.parent_id')
             ->where($where)
-            ->order('order','desc')
+            ->order('pg.order','desc')
             ->select()
             ->toArray();
 

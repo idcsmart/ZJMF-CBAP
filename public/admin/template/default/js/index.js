@@ -152,6 +152,8 @@
                 this.getVisit_client()
             },
             mounted() {
+                const website_name = localStorage.getItem('back_website_name')
+                document.title = lang.home + '-' + website_name
                 this.onLoadInit()
                 window.addEventListener("resize", () => {
                     this.myChart.resize();

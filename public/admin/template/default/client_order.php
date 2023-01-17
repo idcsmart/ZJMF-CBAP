@@ -38,7 +38,9 @@
         </t-option>
       </t-select>
     </div>
-    <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading" class="user-order" :hide-sort-tips="true" :max-height="maxHeight">
+    <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" 
+    :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading" class="user-order" :hide-sort-tips="true" 
+    :max-height="maxHeight" :key="new Date().getTime()">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -84,6 +86,8 @@
       <template #status="{row}">
         <t-tag theme="default" variant="light" v-if="(row.status || row.host_status)==='Cancelled'" class="canceled">{{lang.canceled}}
         </t-tag>
+        <t-tag theme="default" variant="light" v-if="(row.status || row.host_status)==='Refunded'" class="canceled">{{lang.refunded}}
+        </t-tag>
         <t-tag theme="warning" variant="light" v-if="(row.status || row.host_status)==='Unpaid'">{{lang.Unpaid}}
         </t-tag>
         <t-tag theme="primary" variant="light" v-if="row.status==='Paid'">{{lang.Paid}}
@@ -125,10 +129,10 @@
       <template #op="{row}">
         <div v-if="row.type">
           <t-tooltip :content="lang.update_price" :show-arrow="false" theme="light">
-            <t-icon name="money-circle" @click="updatePrice(row, 'order')" class="common-look" v-if="row.status!=='Paid' && row.status!=='Cancelled'"></t-icon>
+            <t-icon name="money-circle" @click="updatePrice(row, 'order')" class="common-look" v-if="row.status!=='Paid' && row.status!=='Cancelled' && row.status!=='Refunded'"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light">
-            <t-icon name="discount" @click="signPay(row)" class="common-look" v-if="row.status!=='Paid' && row.status!=='Cancelled'" :class="{disable:row.status==='Paid'}"></t-icon>
+            <t-icon name="discount" @click="signPay(row)" class="common-look" v-if="row.status!=='Paid' && row.status!=='Cancelled' && row.status!=='Refunded'" :class="{disable:row.status==='Paid'}"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
             <t-icon name="delete" @click="delteOrder(row)" class="common-look"></t-icon>

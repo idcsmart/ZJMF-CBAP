@@ -55,9 +55,13 @@ class MenuModel extends Model
             ->order('order','asc')
             ->select()
             ->toArray();
+
+        $where = [];
+        $where[] = ['type', '=', 'admin'];
+        $where[] = ['plugin', '<>', ''];
+
         $pluginNavs = NavModel::field('id,name,url,module,plugin')
-            ->where('type', 'admin')
-            ->where('plugin', '<>', '')
+            ->where($where)
             ->select()
             ->toArray();
         foreach ($pluginNavs as $key => $value) {
@@ -86,18 +90,6 @@ class MenuModel extends Model
             ->select()
             ->toArray();
         if(empty($menus)){
-
-            $hookRes = hook('hide_nav');
-            $hideId = [];
-            foreach($hookRes as $v){
-                if(!empty($v)){
-                    $hideId[] = $v;
-                }
-            }
-            if(!empty($hideId)){
-                $where[] = ['id', 'NOT IN', $hideId];
-            }
-
             $menus = NavModel::field('id,name,url,icon,id nav_id,parent_id,module')
                 ->where($where)
                 ->order('order','asc')
@@ -291,7 +283,10 @@ class MenuModel extends Model
                     'create_time'   => time(),
                 ]);
                 $order++;
-                foreach ($value['child'] as $k => $v) {
+                if(isset($value['child'])){
+                    $order = $this->saveChild('admin', $menu->id, $value['child'], $order);
+                }
+                /*foreach ($value['child'] as $k => $v) {
                     $list[] = [
                         'type'          => 'admin',
                         'menu_type'     => $v['type'],
@@ -306,10 +301,10 @@ class MenuModel extends Model
                         'create_time'   => time(),
                     ];
                     $order++;
-                }
+                }*/
             }
 
-            $this->insertAll($list);
+            //$this->insertAll($list);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -407,7 +402,10 @@ class MenuModel extends Model
                     'create_time'   => time(),
                 ]);
                 $order++;
-                foreach ($value['child'] as $k => $v) {
+                if(isset($value['child'])){
+                    $order = $this->saveChild('home', $menu->id, $value['child'], $order);
+                }
+                /*foreach ($value['child'] as $k => $v) {
                     $list[] = [
                         'type'          => 'home',
                         'menu_type'     => $v['type'],
@@ -423,10 +421,10 @@ class MenuModel extends Model
                         'create_time'   => time(),
                     ];
                     $order++;
-                }
+                }*/
             }
 
-            $this->insertAll($list);
+            //$this->insertAll($list);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -437,16 +435,57 @@ class MenuModel extends Model
         return ['status' => 200, 'msg' => lang('update_success')];
     }
 
+    public function saveChild($type = '', $parentId = 0, $child = [], $order = 0)
+    {
+        foreach ($child as $k => $v) {
+            $menu = $this->create([
+                'type'          => $type,
+                'menu_type'     => $v['type'],
+                'name'          => $v['name'] ?? '',
+                'language'      => isset($v['language']) ? json_encode($v['language']) : '',
+                'url'           => $v['url'] ?? '',
+                'icon'          => $v['icon'] ?? '',
+                'nav_id'        => $v['nav_id'] ?? 0,
+                'parent_id'     => $parentId,
+                'module'        => $v['module'] ?? '',
+                'product_id'    => isset($v['product_id']) ? json_encode($v['product_id']) : '',
+                'order'         => $order,
+                'create_time'   => time(),
+            ]);
+            $order++;
+            if(isset($v['child'])){
+                $order = $this->saveChild($type, $menu->id, $v['child'], $order);
+            }
+        }
+        return $order;
+    }
+
     public function adminMenu(){
-        $navs = NavModel::field('id,name,url,icon,parent_id,module')
-            ->where('type', 'admin')
+
+        $where = [];
+        $where[] = ['type', '=', 'admin'];
+
+        $hookRes = hook('hide_admin_memu_nav');
+        $hideId = [];
+        foreach($hookRes as $v){
+            if(!empty($v)){
+                $hideId = array_merge($hideId, $v);
+            }
+        }
+        if(!empty($hideId)){
+            $where[] = ['id', 'NOT IN', $hideId];
+        }
+
+        $navs = NavModel::field('id,name,url,icon,parent_id,plugin')
+            ->where($where)
             ->order('order','asc')
             ->select()
             ->toArray();
         foreach ($navs as $key => $value) {
-            $navs[$key]['name'] = !empty($value['module']) ? lang_plugins($value['name']) : lang($value['name']);
-            unset($navs[$key]['module']);
+            $navs[$key]['name'] = !empty($value['plugin']) ? lang_plugins($value['name']) : lang($value['name']);
         }
+
+
 
         $urls = AuthModel::where('url', '<>', '')
             ->column('url');
@@ -461,11 +500,17 @@ class MenuModel extends Model
             ->column('au.url');
 
         $language = get_system_lang(true);  
-    
+        
+        $where = [];
+        $where[] = ['m.type', '=', 'admin'];
+        if(!empty($hideId)){
+            $where[] = ['m.nav_id', 'NOT IN', $hideId];
+        }
+
         $menus = $this->alias('m')
-            ->field('m.id,m.name,m.language,m.url,m.icon,m.parent_id,n.url nav_url')
+            ->field('m.id,m.name,m.language,m.url,m.icon,m.parent_id,n.url nav_url,n.plugin')
             ->leftjoin('nav n', 'n.id=m.nav_id')
-            ->where('m.type', 'admin')
+            ->where($where)
             ->order('m.order','asc')
             ->select()
             ->toArray();
@@ -478,18 +523,33 @@ class MenuModel extends Model
         if(empty($menus)){
             $menus = $navs;
         }
+
+        $plugins = PluginModel::where('status', 1)->column('name');
         foreach ($menus as $key => $value) {
             if(!empty($value['url']) && !in_array($value['url'], $auths) && in_array($value['url'], $urls)){
                 unset($menus[$key]);
+                continue;
             }
+            if(!empty($value['plugin'])){
+                if(!in_array($value['plugin'], $plugins)){
+                    unset($menus[$key]);
+                    continue;
+                }
+            }
+            unset($menus[$key]['plugin']);
         }
         $menus = array_values($menus);
         
+        $url = '';
+        $menuId = 0;
         // 将数组转换成树形结构
         $tree = [];
         if (is_array($menus)) {
             $refer = [];
             foreach ($menus as $key => $data) {
+                if(!empty($url) && $data['url']==$url){
+                    $menuId = $data['id'];
+                }
                 $refer[$data['id']] = &$menus[$key];
             }
             foreach ($menus as $key => $data) {
@@ -513,68 +573,128 @@ class MenuModel extends Model
             }
         }
         $tree = array_values($tree);
-        return ['menu' => $tree];
+        return ['menu' => $tree, 'menu_id' => $menuId, 'url' => $url];
     }
 
     public function homeMenu(){
-        $navs = NavModel::field('id,name,url,icon,parent_id,module')
-            ->where('type', 'home')
-            ->order('order','asc')
-            ->select()
-            ->toArray();
-        foreach ($navs as $key => $value) {
-            $navs[$key]['name'] = !empty($value['module']) ? lang_plugins($value['name']) : lang($value['name']);
-            unset($navs[$key]['module']);
-        }
-
-        $language = get_system_lang(false); 
-
-        $this->createHomeMenu();
-
-        $menus = $this->alias('m')
-            ->field('m.id,m.name,m.language,m.url,m.icon,m.parent_id,n.url nav_url,m.menu_type')
-            ->leftjoin('nav n', 'n.id=m.nav_id')
-            ->where('m.type', 'home')
-            ->order('m.order','asc')
-            ->select()
-            ->toArray();
-        foreach ($menus as $key => $data) {
-            $data['language'] = json_decode($data['language'], true);
-            $menus[$key]['name'] = $data['language'][$language] ?? $data['name'];
-            $menus[$key]['url'] = $data['nav_url'] ?? $data['url'];
-            if($data['menu_type']=='module'){
-                $menus[$key]['url'] = 'product.html?m='.$data['id'];
+        $clientId = get_client_id();
+        if(!empty($clientId)){
+            $navs = NavModel::field('id,name,url,icon,parent_id,plugin')
+                ->where('type', 'home')
+                ->order('order','asc')
+                ->select()
+                ->toArray();
+            foreach ($navs as $key => $value) {
+                $navs[$key]['name'] = !empty($value['plugin']) ? lang_plugins($value['name']) : lang($value['name']);
             }
 
-            unset($menus[$key]['language'], $menus[$key]['nav_url'], $menus[$key]['menu_type']);
-        }
-        if(empty($menus)){
-            $menus = $navs;
-        }
+            $language = get_system_lang(false); 
 
-        // 将数组转换成树形结构
-        $tree = [];
-        if (is_array($menus)) {
-            $refer = [];
+            $this->createHomeMenu();
+
+            $menus = $this->alias('m')
+                ->field('m.id,m.name,m.language,m.url,m.icon,m.parent_id,n.url nav_url,m.menu_type,n.plugin')
+                ->leftjoin('nav n', 'n.id=m.nav_id')
+                ->where('m.type', 'home')
+                ->order('m.order','asc')
+                ->select()
+                ->toArray();
             foreach ($menus as $key => $data) {
-                $refer[$data['id']] = &$menus[$key];
+                $data['language'] = json_decode($data['language'], true);
+                $menus[$key]['name'] = $data['language'][$language] ?? $data['name'];
+                $menus[$key]['url'] = $data['nav_url'] ?? $data['url'];
+                if($data['menu_type']=='module'){
+                    $menus[$key]['url'] = 'product.html?m='.$data['id'];
+                }
+
+                unset($menus[$key]['language'], $menus[$key]['nav_url'], $menus[$key]['menu_type']);
             }
-            foreach ($menus as $key => $data) {
-                // 判断是否存在parent  获取他的父类id
-                $parentId = $data['parent_id'];
-                // 0为父类id的时候
-                if ($parentId==0) {
-                    $tree[] = &$menus[$key];
-                } else {
-                    if (isset($refer[$parentId])) {
-                        $parent = &$refer[$parentId];
-                        $parent['child'][$data['id']] = &$menus[$key];
-                        $parent['child'] = array_values($parent['child']);
+            if(empty($menus)){
+                $menus = $navs;
+            }
+            $plugins = PluginModel::where('status', 1)->column('name');
+            foreach ($menus as $key => $value) {
+                if(!empty($value['plugin'])){
+                    if(!in_array($value['plugin'], $plugins)){
+                        unset($menus[$key]);
+                        continue;
+                    }
+                }
+                unset($menus[$key]['plugin']);
+            }
+            $menus = array_values($menus);
+
+            // 将数组转换成树形结构
+            $tree = [];
+            if (is_array($menus)) {
+                $refer = [];
+                foreach ($menus as $key => $data) {
+                    $refer[$data['id']] = &$menus[$key];
+                }
+                foreach ($menus as $key => $data) {
+                    // 判断是否存在parent  获取他的父类id
+                    $parentId = $data['parent_id'];
+                    // 0为父类id的时候
+                    if ($parentId==0) {
+                        $tree[] = &$menus[$key];
+                    } else {
+                        if (isset($refer[$parentId])) {
+                            $parent = &$refer[$parentId];
+                            $parent['child'][$data['id']] = &$menus[$key];
+                            $parent['child'] = array_values($parent['child']);
+                        }
                     }
                 }
             }
+            return ['menu' => $tree];
+        }else{
+            $goods = NavModel::field('id,name,url,icon,parent_id,plugin')->where('type', 'home')->where('name','nav_goods_list')->find();
+            $source1 = NavModel::field('id,name,url,icon,parent_id,plugin')->where('type', 'home')->where('name','nav_plugin_addon_idcsmart_news_source')->find();
+            if(!empty($source1)){
+                $source = $source1;
+            }else{
+                $source2 = NavModel::field('id,name,url,icon,parent_id,plugin')->where('type', 'home')->where('name','nav_plugin_addon_idcsmart_help_source')->find();
+                if(!empty($source2)){
+                    $source = $source2;
+                }else{
+                    $source3 = NavModel::field('id,name,url,icon,parent_id,plugin')->where('type', 'home')->where('name','nav_plugin_addon_idcsmart_news_source')->find();
+                    if(!empty($source3)){
+                        $source = $source3;
+                    }else{
+                        $source = [];
+                    }
+                }
+            }
+            
+            
+            $tree = [
+                [
+                    'name' => lang($goods['name']),
+                    'url' => $goods['url'],
+                    'icon' => $goods['icon'],
+                    'parent_id' => 0,
+                    'child' => [],
+                ]
+            ];
+            if(!empty($source)){
+                /*$tree[] = [
+                    'name' => '分隔符',
+                    'url' => '',
+                    'icon' => '',
+                    'parent_id' => 0,
+                    'child' => [],
+                ];*/
+                $tree[] = [
+                    'name' => lang_plugins($source['name']),
+                    'url' => $source['url'],
+                    'icon' => 'icon-a-15',
+                    'parent_id' => 0,
+                    'child' => [],
+                ];
+            }
+            return ['menu' => $tree];
         }
-        return ['menu' => $tree];
+        
     }
 
     # 创建默认导航

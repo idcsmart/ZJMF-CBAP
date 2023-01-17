@@ -1,7 +1,9 @@
-
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/plugins/addon/idcsmart_certification/template/admin/css/real_name.css">
-<div id="content" class="real_name_approval table" v-cloak>
+<link href="//unpkg.com/viewerjs/dist/viewer.css" rel="stylesheet">
+<script src="//unpkg.com/viewerjs"></script>
+<script src="//unpkg.com/v-viewer"></script>
+<div id="content" class="real_name_approval" v-cloak>
   <t-card class="list-card-container">
     <ul class="common-tab">
       <li class="active">
@@ -24,16 +26,28 @@
         </div>
       </div>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #phone="{row}">
         <span v-if="row.phone">+{{row.phone_code}}&nbsp;-&nbsp;{{row.phone}}</span>
       </template>
+      <template #username="{row}">
+        <a class="jump" @click="jumpUser(row)" style="cursor: pointer;">{{row.username}}</a>
+      </template>
+      <template #real_name="{row}">
+        <template v-if="row.type === 1">
+          {{row.card_name}}
+        </template>
+        <template v-else>{{row.company}}</template>
+      </template>
       <template #status="{row}">
         <t-tag theme="success" class="status" v-if="row.status===1" variant="light">{{lang.certified}}</t-tag>
-        <t-tag theme="danger" class="status" v-if="row.status===2" variant="light">{{lang.fail}}</t-tag>
+        <t-tooltip :content="row.auth_fail" :show-arrow="false" theme="light">
+          <t-tag theme="danger" class="status" v-if="row.status===2" variant="light">{{lang.fail}}</t-tag>
+        </t-tooltip>
+
         <t-tag theme="warning" class="status" v-if="row.status===3" variant="light">{{lang.to_audit}}</t-tag>
         <t-tag class="status" v-if="row.status===4" variant="light">{{lang.submitted}}</t-tag>
       </template>
@@ -82,29 +96,50 @@
         <p class="disabled">{{realDetai.title}}</p>
       </t-form-item>
       <t-form-item :label="lang.auth_type">
-        <p class="disabled">{{realDetai.type === 1 ? lang.personal : realDetai.type === 2 ? lang.business : lang.personal_to_business}}</p>
+        <p class="disabled">{{realDetai.type === 1 ? lang.personal_way : realDetai.type === 2 ? lang.business_way : lang.personal_to_business}}</p>
       </t-form-item>
       <t-form-item :label="lang.name">
         <p class="disabled">{{realDetai.card_name}}</p>
       </t-form-item>
-      <t-form-item :label="lang.ID_type">
-        <p class="disabled">{{realDetai.card_type === 0 ? lang.no_mainland : lang.mainland}}</p>
+      <t-form-item :label="lang.business_way + lang.nickname" v-if="realDetai.type !== 1">
+        <p class="disabled">{{realDetai.company}}</p>
       </t-form-item>
+      <!-- <t-form-item :label="lang.ID_type">
+        <p class="disabled">{{realDetai.card_type === 0 ? lang.no_mainland : lang.mainland}}</p>
+      </t-form-item> -->
       <t-form-item :label="lang.certificate_no">
         <p class="disabled">{{realDetai.card_number}}</p>
+      </t-form-item>
+      <t-form-item :label="lang.personal_no" v-if="realDetai.type !== 1">
+        <p class="disabled">{{realDetai.company_organ_code}}</p>
       </t-form-item>
       <div class="card-img">
         <div class="item" v-if="realDetai.fontUrl">
           <p class="tit">{{lang.id_Photo_front}}</p>
-          <img :src="realDetai.fontUrl" alt="">
+          <div class="img" @click="lookImg(realDetai.fontUrl)">
+            <img :src="realDetai.fontUrl" alt="">
+            <div class="preview">
+              <t-icon name="browse"></t-icon>
+            </div>
+          </div>
         </div>
         <div class="item" v-if="realDetai.backUrl">
           <p class="tit">{{lang.id_Photo_back}}</p>
-          <img :src="realDetai.backUrl" alt="">
+          <div class="img" @click="lookImg(realDetai.backUrl)">
+            <img :src="realDetai.backUrl" alt="">
+            <div class="preview">
+              <t-icon name="browse"></t-icon>
+            </div>
+          </div>
         </div>
         <div class="item" v-if="realDetai.slicense">
           <p class="tit">{{lang.business_slicense}}</p>
-          <img :src="realDetai.slicense" alt="">
+          <div class="img" @click="lookImg(realDetai.slicense)">
+            <img :src="realDetai.slicense" alt="">
+            <div class="preview">
+              <t-icon name="browse"></t-icon>
+            </div>
+          </div>
         </div>
       </div>
       <div class="f-btn">
@@ -112,6 +147,20 @@
       </div>
     </t-form>
   </t-dialog>
+  <!-- 查看大图 -->
+  <!-- <t-dialog :visible.sync="imgVisble" class="imgDialog" width="800" :footer="false">
+    <div class="img-box">
+      <img src="https://tdesign.gtimg.com/demo/demo-image-1.png" alt="">
+    </div>
+    <div class="opt">
+      <t-popup content="预览">
+        <t-icon name="rotation" @click="rotation"></t-icon>
+      </t-popup>
+      <t-icon name="zoom-out" @click="subScla"></t-icon>
+      <span>{{prentNum * sNum}}%</span>
+      <t-icon name="zoom-in" @click="addScla"></t-icon>
+    </div>
+  </t-dialog> -->
 </div>
 <script src="/plugins/addon/idcsmart_certification/template/admin/api/real_name.js"></script>
 <script src="/plugins/addon/idcsmart_certification/template/admin/js/real_name_approval.js"></script>

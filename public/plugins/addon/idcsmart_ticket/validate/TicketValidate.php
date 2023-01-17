@@ -24,8 +24,7 @@ class TicketValidate extends Validate
         'content'                  => 'max:3000',
         'host_ids'                 => 'array|checkHostIds:thinkphp',
         'attachment'               => 'array',
-        'admin_role_id'            => 'require|integer|checkAdminRole:thinkphp',
-        'admin_id'                 => 'require|integer|checkAdmin:thinkphp',
+        'admin_id'                 => 'require|integer',
     ];
 
     protected $message = [
@@ -41,7 +40,7 @@ class TicketValidate extends Validate
         'create'               => ['title','ticket_type_id','content','host_ids','attachment'],
         'create_admin'         => ['client_id','title','ticket_type_id','content','host_ids','attachment'],
         'update_status'         => ['ticket_type_id','host_ids'],
-        'forward'         => ['admin_role_id','admin_id','ticket_type_id'],
+        'forward'         => ['admin_id','ticket_type_id'],
     ];
 
     # 工单回复验证
@@ -101,33 +100,20 @@ class TicketValidate extends Validate
         return true;
     }
 
-    protected function checkAdminRole($value)
-    {
-        $AdminRoleModel = new AdminRoleModel();
+    // protected function checkAdmin($value,$rule,$data)
+    // {
+    //     $AdminModel = new AdminModel();
 
-        $adminRole = $AdminRoleModel->find($value);
+    //     $admin = $AdminModel->alias('a')
+    //         ->leftJoin('admin_role_link arl','arl.admin_id=a.id')
+    //         ->where('a.id',$value)
+    //         ->where('arl.admin_role_id',$data['admin_role_id'])
+    //         ->find();
 
-        if (empty($adminRole)){
-            return lang_plugins('admin_role_is_not_exist');
-        }
+    //     if (empty($admin)){
+    //         return lang_plugins('admin_is_not_exist');
+    //     }
 
-        return true;
-    }
-
-    protected function checkAdmin($value,$rule,$data)
-    {
-        $AdminModel = new AdminModel();
-
-        $admin = $AdminModel->alias('a')
-            ->leftJoin('admin_role_link arl','arl.admin_id=a.id')
-            ->where('a.id',$value)
-            ->where('arl.admin_role_id',$data['admin_role_id'])
-            ->find();
-
-        if (empty($admin)){
-            return lang_plugins('admin_is_not_exist');
-        }
-
-        return true;
-    }
+    //     return true;
+    // }
 }

@@ -47,7 +47,8 @@
                     location.href = '/account.html'
                 },
                 goSelect() {
-                    location.href = 'authentication_select.html'
+                    history.back()
+
                 },
                 // 获取基础信息
                 getCertificationInfo() {

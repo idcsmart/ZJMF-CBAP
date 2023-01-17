@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" theme-color="default" theme-mode>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title></title>
+    <!-- element-css -->
+    <link rel="stylesheet" href="./css/common/element.css">
+    <!-- 公共样式 -->
+    <link rel="stylesheet" href="./css/common/common.css">
+    <!-- 页面独有样式 -->
+    <link rel="stylesheet" href="./css/shop_search.css">
+</head>
+
+<body>
+    <div id="mainLoading">
+        <div class="ddr ddr1"></div>
+        <div class="ddr ddr2"></div>
+        <div class="ddr ddr3"></div>
+        <div class="ddr ddr4"></div>
+        <div class="ddr ddr5"></div>
+    </div>
+    <div id="content" v-cloak>
+        <el-container style="flex-direction: column;">
+            <top-menu></top-menu>
+            <el-container>
+                <aside-menu></aside-menu>
+                <el-main>
+                    <!-- 自己的 -->
+                    <div id="shop_search" v-loading="loading">
+                        <div class="top-back" @click="goBack">
+                            <img class="back-img" src="./img/common/back.png" alt="">
+                            <p class="back-text">返回</p>
+                        </div>
+                        <div class="search-content">
+                            <div class="app-type">
+                                <div class="app-type-item" :class="activeType == 'addon'?'active':null"
+                                    @click="appTypeChange('addon')" v-if="dataList.addon && dataList.addon.length > 0">
+                                    <span class="text">插件</span>
+                                    <span class="num">({{dataList.addon?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'captcha'?'active':null"
+                                    @click="appTypeChange('captcha')"
+                                    v-if="dataList.captcha && dataList.captcha.length > 0">
+                                    <span class="text">插件</span>
+                                    <span class="num">({{dataList.addon?.length}})</span>
+                                    验证码接口({{dataList.captcha?.length}})
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'certification'?'active':null"
+                                    @click="appTypeChange('certification')"
+                                    v-if="dataList.certification && dataList.certification.length > 0">
+                                    <span class="text">实名接口</span>
+                                    <span class="num">({{dataList.certification?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'gateway'?'active':null"
+                                    @click="appTypeChange('gateway')"
+                                    v-if="dataList.gateway && dataList.gateway.length > 0">
+                                    <span class="text">支付接口</span>
+                                    <span class="num">({{dataList.gateway?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'mail'?'active':null"
+                                    @click="appTypeChange('mail')" v-if="dataList.mail && dataList.mail.length > 0">
+                                    <span class="text">邮件接口</span>
+                                    <span class="num">({{dataList.mail?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'sms'?'active':null"
+                                    @click="appTypeChange('sms')" v-if="dataList.sms && dataList.sms.length > 0">
+                                    <span class="text">短信接口</span>
+                                    <span class="num">({{dataList.sms?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'server'?'active':null"
+                                    @click="appTypeChange('server')"
+                                    v-if="dataList.server && dataList.server.length > 0">
+                                    <span class="text">模块</span>
+                                    <span class="num">({{dataList.server?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'template'?'active':null"
+                                    @click="appTypeChange('template')"
+                                    v-if="dataList.template && dataList.template.length > 0">
+                                    <span class="text">主题</span>
+                                    <span class="num">({{dataList.template?.length}})</span>
+                                </div>
+                                <div class="app-type-item" :class="activeType == 'service'?'active':null"
+                                    @click="appTypeChange('service')"
+                                    v-if="dataList.service && dataList.service.length > 0">
+                                    <span class="text">服务</span>
+                                    <span class="num">({{dataList.service?.length}})</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row-bottom">
+                                    <div class="bottom-item" v-show="activeType == 'addon'"
+                                        v-for="item in dataList.addon" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'captcha'"
+                                        v-for="item in dataList.captcha" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'certification'"
+                                        v-for="item in dataList.certification" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'gateway'"
+                                        v-for="item in dataList.gateway" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'mail'" v-for="item in dataList.mail"
+                                        :key="item.id" @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'sms'" v-for="item in dataList.sms"
+                                        :key="item.id" @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'server'"
+                                        v-for="item in dataList.server" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'template'"
+                                        v-for="item in dataList.template" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bottom-item" v-show="activeType == 'service'"
+                                        v-for="item in dataList.service" :key="item.id"
+                                        @click="itemClick(item.id,item.client_id)">
+                                        <img class="item-img" :src="item.icon" alt="">
+                                        <p class="name">{{item.name}}</p>
+                                        <div class="good">
+                                            <div class="star">
+                                                <!-- 亮 -->
+                                                <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                                                    <i class="el-icon-star-on" v-for="start in 5"></i>
+                                                </div>
+                                                <!-- 暗 -->
+                                                <div class="star-off">
+                                                    <i class="el-icon-star-off" v-for="start in 5"></i>
+                                                </div>
+
+                                            </div>
+                                            <div class="user">{{item.sell_count}}+用户</div>
+                                        </div>
+                                        <div class="money">
+                                            {{commontData.currency_prefix}}{{item.product_price}}起
+                                        </div>
+                                        <div class="author">
+                                            <div class="left">
+                                                <img class="author-img" src="./img/home/author.png" alt="">
+                                                <span>{{item.nickname}}</span>
+                                            </div>
+                                            <div class="right">
+                                                <img class="safe-img" src="./img/home/safe.png" alt="">
+                                                <img v-show="Number(item.deposit) > 0" class="copyright-img"
+                                                    src="./img/home/copyright.png" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
+    <!-- =======页面独有======= -->
+    <script src="./api/shop.js"></script>
+    <script src="./js/shop_search.js"></script>
+    <!-- =======公共======= -->
+    <script src="https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+    <script src="./components/captchaDialog/captchaDialog.js"></script>
+    <script src="./components/countDownButton/countDownButton.js"></script>
+    <script src="./components/loginDialog/loginDialog.js"></script>
+    <script src="./components/topMenu/topMenu.js"></script>
+    <script src="./components/asideMenu/asideMenu.js"></script>
+    <script src="./utils/util.js"></script>
+    <script src="./js/common/common.js"></script>
+    <script src="./js/common/vue.js"></script>
+    <script src="./js/common/element.js"></script>
+    <script src="./js/common/axios.min.js"></script>
+    <script src="./utils/request.js"></script>
+</body>
+
+</html>

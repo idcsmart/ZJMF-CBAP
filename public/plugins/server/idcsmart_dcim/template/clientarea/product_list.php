@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/plugins/server/idcsmart_dcim/template/clientarea/css/dcimList.css">
 
 
-<div id="cloudList" >
+<div id="cloudList">
   <!-- 自己的东西 -->
   <div class="main-card">
     <div class="main-card-title">

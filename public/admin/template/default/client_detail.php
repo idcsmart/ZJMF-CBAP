@@ -1,6 +1,11 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
+<style>
+  .t-popup {
+    white-space: pre-wrap;
+  }
+</style>
 <div id="content" class="client-detail table hasCrumb" v-cloak>
   <!-- crumb -->
   <div class="com-crumb">
@@ -131,8 +136,12 @@
               <t-input disabled v-model="data.consume" />
             </t-col>
             <t-col :xs="12" :xl="3">
-              <p>{{lang.Refund}}</p>
-              <t-input disabled v-model="refundAmount" />
+              <p>{{lang.Refund}}
+                <t-tooltip :content="refundTip" :show-arrow="false" theme="light" placement="top-right">
+                  <t-icon name="help-circle" class="pack-tip"></t-icon>
+                </t-tooltip>
+              </p>
+              <t-input disabled v-model="calcRefund" />
             </t-col>
             <t-col :xs="12" :xl="3">
               <p>{{lang.withdraw}}</p>

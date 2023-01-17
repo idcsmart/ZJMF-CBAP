@@ -3,6 +3,7 @@ namespace app\http\middleware;
 
 use app\common\model\ClientModel;
 use app\common\model\ClientLoginModel;
+use think\db\Query;
 
 /**
  * @title 前台授权检查
@@ -54,19 +55,32 @@ class CheckHome extends Check
         if ($request->client_id && $client->status != 1){
             return json(['status'=>401,'msg'=>lang('client_is_disabled')]);
         }
+
+        # 登录ip不一致 wyh 之后去掉后面的说明,目前方便测试找原因
+        $checkIp = configuration('home_login_check_ip')??0;
+        if($checkIp && get_client_ip() !== $jwtToken['ip']){
+            return json(['status' => 401,'msg' => lang('login_unauthorized') . ':' . lang('inconsistent_login_ip')]);
+        }
+
         if(isset($result['data']['api'])){
             $request->client_name = $client['username'];
         }else{
-            # 不记住密码 2个小时未操作自动退出登录(该账号某个ip登录时的操作时间进行判断)
+            # 不记住密码 2个小时未操作自动退出登录(该账号某个ip登录时的操作时间进行判断)(未开启检查ip,此功能无效)
             $ClientLoginModel = new ClientLoginModel();
+            $where = function (Query $query)use ($checkIp){
+                if ($checkIp){ # 使用CDN,不检查IP
+                    $query->where('last_login_ip',get_client_ip());
+                }
+            };
             $clientLogin = $ClientLoginModel->where('client_id',$request->client_id)
-                ->where('last_login_ip',get_client_ip())
+                ->where($where)
+                ->order('create_time','desc')
                 ->find();
             if (empty($clientLogin)){
                 return json(['status'=>401,'msg'=>lang('login_unauthorized')]);
             }
 
-            if ($request->client_remember_password == 0 && ($clientLogin->last_action_time+config('idcsmart.auto_logout'))<$time){
+            if ($checkIp && $request->client_remember_password == 0 && ($clientLogin->last_action_time+config('idcsmart.auto_logout'))<$time){
                 return json(['status'=>401,'msg'=>lang('login_unauthorized') . ':' . lang('log_out_automatically_after_2_hours_without_operation')]);
             }
             # 记录操作时间(仅记录登录后的接口操作的时间)

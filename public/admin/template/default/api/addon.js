@@ -18,3 +18,11 @@ function deleteMoudle (type, name) {
 function getMenus () {
   return Axios.get('/menu')
 }
+// 获取已购买应用最新版本
+function getActiveVersion () {
+  return Axios.get('/app_market/app/version')
+}
+// 插件升级
+function upgradePlugin (params) {
+  return Axios.post(`/plugin/${params.module}/${params.name}/upgrade`)
+}

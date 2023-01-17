@@ -15,9 +15,17 @@ class ViewController extends HomeBaseController
 		];
 
 		$data['template_catalog'] = 'clientarea';
-		$data['themes'] = configuration('clientarea_theme');
 		$tplName = empty($param['view_html'])?'index':$param['view_html'];
-		$view_path = '../public/clientarea/template/'.$data['themes'].'/';
+
+		if (isset($param['theme']) && !empty($param['theme'])){
+            cookie('clientarea_theme',$param['theme']);
+            $data['themes'] = $param['theme'];
+        } elseif (cookie('clientarea_theme')){
+            $data['themes'] = cookie('clientarea_theme');
+        } else{
+            $data['themes'] = configuration('clientarea_theme');
+        }
+        $view_path = '../public/clientarea/template/'.$data['themes'].'/';
 
 		if(!file_exists($view_path.$tplName)){
 			$theme_config=$this->themeConfig($view_path);
@@ -39,7 +47,6 @@ class ViewController extends HomeBaseController
 	public function plugin()
     {
     	$param = $this->request->param();
-		$data['themes'] = configuration('clientarea_theme');
 		$plugin_id = $param['plugin_id'];
 		$tplName = empty($param['view_html'])?'index':$param['view_html'];
 		$addon = (new PluginModel())->plugins('addon')['list'];
@@ -52,7 +59,15 @@ class ViewController extends HomeBaseController
 		$tpl = '../public/plugins/addon/'.$name.'/template/clientarea/';
 
         $data['template_catalog'] = 'clientarea';
-        $data['themes'] = configuration('clientarea_theme');
+
+        if (isset($param['theme']) && !empty($param['theme'])){
+            cookie('clientarea_theme',$param['theme']);
+            $data['themes'] = $param['theme'];
+        } elseif (cookie('clientarea_theme')){
+            $data['themes'] = cookie('clientarea_theme');
+        } else{
+            $data['themes'] = configuration('clientarea_theme');
+        }
 
         $PluginModel = new PluginModel();
         $addons = $PluginModel->plugins('addon');

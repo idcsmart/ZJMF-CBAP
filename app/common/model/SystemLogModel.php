@@ -86,6 +86,10 @@ class SystemLogModel extends Model
                     $query->where('user_type', '<>', "api");
                 }else if($param['type']=='api'){
                     $query->where('user_type', "api");
+                }else{
+                    if(!empty($param['type']) && isset($param['rel_id'])){
+                        $query->where('type', $param['type'])->where('rel_id', $param['rel_id']);
+                    }
                 }
 		    })
 		    ->count();
@@ -105,6 +109,10 @@ class SystemLogModel extends Model
                     $query->where('user_type', '<>', "api");
                 }else if($param['type']=='api'){
                     $query->where('user_type', "api");
+                }else{
+                    if(!empty($param['type']) && isset($param['rel_id'])){
+                        $query->where('type', $param['type'])->where('rel_id', $param['rel_id']);
+                    }
                 }
 		    })
             ->withAttr('description',function ($value,$data){
@@ -209,12 +217,23 @@ class SystemLogModel extends Model
         $description = $param['description'] ?? '';
         $type = $param['type'] ?? '';
         $relId = $param['rel_id'] ?? 0;
+        $param['client_id']  = $param['client_id'] ?? 0;
         $adminId = get_admin_id();
         $clientId = get_client_id();
         if(empty($adminId) && empty($clientId)){
-            $userType = 'cron';
-            $userId = 0;
-            $userName = 'cron';
+            if ($type=='admin'){
+                $userType = 'admin';
+                $userId = 0;
+                $userName = '';
+            }elseif($type=='login'){
+                $userType = 'client';
+                $userId = 0;
+                $userName = '';
+            }else{
+                $userType = 'cron';
+                $userId = 0;
+                $userName = 'cron';
+            }
         }else if(!empty($adminId) && empty($clientId)){
             $userType = 'admin';
             $userId = $adminId;
@@ -275,6 +294,8 @@ class SystemLogModel extends Model
                 $clientId = $transaction['client_id'];
             }else if($type=='client'){
                 $clientId = $relId;
+            }else if(!empty($param['client_id'])){
+                $clientId = $param['client_id'];
             }
         }
 

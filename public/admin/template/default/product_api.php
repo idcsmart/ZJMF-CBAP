@@ -32,8 +32,8 @@
               </t-form-item>
               <t-form-item :label="lang.choose_interface_type">
                 <t-select v-model="formData.type" @change="changeType">
-                  <t-option value="server" label="server" key="server"></t-option>
-                  <t-option value="server_group" label="server_group" key="server_group"></t-option>
+                  <t-option value="server" :label="lang.interface" key="server"></t-option>
+                  <t-option value="server_group" :label="`${lang.interface}${lang.group}`" key="server_group"></t-option>
                 </t-select>
               </t-form-item>
               <t-form-item :label="lang.choose_interface">

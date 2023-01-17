@@ -83,6 +83,9 @@ class IdcsmartCommonProductController extends BaseController
      * @return array configoptions.subs - 子项信息
      * @return  float configoptions.subs.id - 子项ID
      * @return  float configoptions.subs.option_name - 子项名称
+     * @return  float configoptions.subs.qty_change - 数量变化值
+     * @return  float configoptions.subs.qty_min - 子项最小值
+     * @return  float configoptions.subs.qty_max - 子项最大值
      * @return object cycles - 周期({"onetime":1.00})
      * @return object custom_cycles - 自定义周期
      * @return int custom_cycles.id - 自定义周期ID

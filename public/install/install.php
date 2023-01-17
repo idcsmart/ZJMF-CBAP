@@ -52,20 +52,20 @@ class InstallSystem
         $error = 0;
         $envs = [];
         #监测-PHP版本
-        if (!version_compare(phpversion(), '7.2.5', '>=') || !version_compare(phpversion(), '7.4.0', '<')) {
+        if (!version_compare(phpversion(), '7.2.5', '>=') || !version_compare(phpversion(), '7.5.0', '<')) {
             $error++;
             $env['status'] = 0;
         }else{
             $env['status'] = 1;
         }
         $env['name'] = 'PHP版本';
-        $env['suggest'] = '>=7.2.5, <7.4.0';
+        $env['suggest'] = '>=7.2.5, <7.5.0';
         $env['current'] = phpversion();
         $env['worst'] = '7.2.5';
         $envs[] = $env;
 
         $modules = [];
-        #监测-opcache
+        /*#监测-opcache
         if (extension_loaded('Zend OPcache')) {
             $error++;
             $module['status'] = 0;
@@ -77,7 +77,7 @@ class InstallSystem
         $module['name'] = 'opcache';
         $module['suggest'] = '未开启';
         $module['worst'] = '未开启';
-        $modules[] = $module;
+        $modules[] = $module;*/
 
         #监测-session
         if (!function_exists('session_start')) {
@@ -135,7 +135,7 @@ class InstallSystem
         $module['worst'] = '开启';
         $modules[] = $module;
 
-        #监测-伪静态
+        /*#监测-伪静态
         if (!extension_loaded('curl')) {
             $error++;
             $module['status'] = 0;
@@ -179,7 +179,7 @@ location / {
         rewrite  ^(.*)$  /index.php?s=$1  last;   break;
     }
 }';
-        $modules[] = $module;
+        $modules[] = $module;*/
 
         #监测-GD
         if (!extension_loaded('gd')) {
@@ -291,6 +291,19 @@ location / {
             $module['status'] = 1;
         }
         $module['name'] = 'bcmath';
+        $module['suggest'] = '开启';
+        $module['worst'] = '开启';
+        $modules[] = $module;
+
+        #监测-ionCube
+        if (!extension_loaded('ionCube Loader')) {
+            $module['current'] = '未开启';
+            $module['status'] = 1;
+        }else{
+            $module['current'] = '开启';
+            $module['status'] = 1;
+        }
+        $module['name'] = 'ionCube';
         $module['suggest'] = '开启';
         $module['worst'] = '开启';
         $modules[] = $module;
@@ -554,24 +567,25 @@ location / {
         $db = new PDO("mysql:host={$config['hostname']};port={$config['hostport']};dbname={$config['database']}",$config['username'],$config['password']);
         try {
             $db->beginTransaction();
-            $auth = $db->query("SELECT `id` FROM `{$config['prefix']}auth`")->fetchAll(PDO::FETCH_ASSOC);
-            $auth = array_column($auth,'id');
-            $db->exec("DELETE FROM `{$config['prefix']}admin_role` WHERE `id`=1");
+            //$auth = $db->query("SELECT `id` FROM `{$config['prefix']}auth`")->fetchAll(PDO::FETCH_ASSOC);
+            //$auth = array_column($auth,'id');
+            //$db->exec("DELETE FROM `{$config['prefix']}admin_role` WHERE `id`=1");
             $time = time();
-            $db->exec("INSERT INTO `{$config['prefix']}admin_role` (`id`,`status`,`name`,`description`,`create_time`,`update_time`) VALUES (1,1,'超级管理员','拥有网站最高管理员权限',{$time},{$time})");
-            $roleId = $db->lastInsertId();
+            /*$db->exec("INSERT INTO `{$config['prefix']}admin_role` (`id`,`status`,`name`,`description`,`create_time`,`update_time`) VALUES (1,1,'超级管理员','拥有网站最高管理员权限',{$time},{$time})");
+            $roleId = $db->lastInsertId();*/
 
-            $db->exec("DELETE FROM `{$config['prefix']}admin` WHERE `id`=1");
-            $db->exec("INSERT INTO `{$config['prefix']}admin` (`id`,`nickname`,`name`,`password`,`email`,`status`,`create_time`,`update_time`) VALUES ({$admin['id']},'{$admin['nickname']}','{$admin['name']}','{$admin['password']}','{$admin['email']}',{$admin['status']},{$time},{$time})");
-            $userId = $db->lastInsertId();
+            $db->exec("UPDATE `{$config['prefix']}admin` SET `nickname`='{$admin['nickname']}',`name`='{$admin['name']}',`password`='{$admin['password']}',`email`='{$admin['email']}',`status`={$admin['status']},`create_time`={$time},`update_time`={$time} WHERE `id`=1");
+            /*$db->exec("DELETE FROM `{$config['prefix']}admin` WHERE `id`=1");
+            $db->exec("INSERT INTO `{$config['prefix']}admin` (`id`,`nickname`,`name`,`password`,`email`,`status`,`create_time`,`update_time`) VALUES ({$admin['id']},'{$admin['nickname']}','{$admin['name']}','{$admin['password']}','{$admin['email']}',{$admin['status']},{$time},{$time})");*/
+            //$userId = $db->lastInsertId();
 
-            $db->exec("INSERT INTO `{$config['prefix']}admin` (`id`,`nickname`,`name`,`password`,`email`,`status`,`create_time`,`update_time`) VALUES ({$admin['id']},'{$admin['nickname']}','{$admin['name']}','{$admin['password']}','{$admin['email']}',{$admin['status']},{$time},{$time})");
+            //$db->exec("INSERT INTO `{$config['prefix']}admin` (`id`,`nickname`,`name`,`password`,`email`,`status`,`create_time`,`update_time`) VALUES ({$admin['id']},'{$admin['nickname']}','{$admin['name']}','{$admin['password']}','{$admin['email']}',{$admin['status']},{$time},{$time})");
 
-            $db->exec("INSERT INTO `{$config['prefix']}admin_role_link` (`admin_role_id`,`admin_id`) VALUES ({$roleId},{$userId})");
+            /*$db->exec("INSERT INTO `{$config['prefix']}admin_role_link` (`admin_role_id`,`admin_id`) VALUES ({$roleId},{$userId})");
 
             foreach ($auth as $key => $value) {
                 $db->exec("INSERT INTO `{$config['prefix']}auth_link` (`auth_id`,`admin_role_id`) VALUES ({$value},{$roleId})");
-            }
+            }*/
             
             # 旧后台应用目录,实现重复安装,多次安装
             if(file_exists(IDCSMART_ROOT.'/config.php')){
@@ -586,6 +600,10 @@ location / {
             $db->exec("INSERT INTO `{$config['prefix']}configuration` (`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('website_url','{$siteInfo['domain']}',{$time},{$time},'网站域名地址')");
             $db->exec("DELETE FROM `{$config['prefix']}configuration` WHERE `setting`='website_name'");
             $db->exec("INSERT INTO `{$config['prefix']}configuration` (`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('website_name','{$siteInfo['title']}',{$time},{$time},'网站名称')");
+            $db->exec("DELETE FROM `{$config['prefix']}configuration` WHERE `setting`='terms_service_url'");
+            $db->exec("INSERT INTO `{$config['prefix']}configuration` (`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('terms_service_url','{$siteInfo['domain']}/agreement.html?id=2',{$time},{$time},'服务条款地址')");
+            $db->exec("DELETE FROM `{$config['prefix']}configuration` WHERE `setting`='terms_privacy_url'");
+            $db->exec("INSERT INTO `{$config['prefix']}configuration` (`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('terms_privacy_url','{$siteInfo['domain']}/agreement.html?id=1',{$time},{$time},'隐私条款地址')");
 
             $db->commit();
         } catch (PDOException $e) {
@@ -702,7 +720,7 @@ location / {
                 $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
                 break;
         }
-        mt_srand((int)microtime()*1000000*getmypid());
+        //mt_srand((double)microtime()*1000000*getmypid());
         while(strlen($password)<$len){
             $tmp =substr($chars,(mt_rand()%strlen($chars)),1);
             if(($is_numer <> 1 && is_numeric($tmp) && $tmp > 0 )|| $format == 'CHAR'){
@@ -714,8 +732,9 @@ location / {
             $password.= $tmp;
         }
         if($is_numer <> 1 || $is_abc <> 1 || empty($password) ){
-            $password = $this->randStr($len,$format);
+            $password = randStr($len,$format);
         }
+
         return $password;
     }
 

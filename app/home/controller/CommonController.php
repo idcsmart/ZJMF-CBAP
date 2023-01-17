@@ -232,6 +232,7 @@ class CommonController extends HomeBaseController
 
         //$data = configuration($setting);
 		$data = array_merge($lang,configuration($setting));
+        $data['system_logo'] = config('idcsmart.system_logo_url') . $data['system_logo'];
         $account = $param['account']??'';
 
         # 登录3次失败

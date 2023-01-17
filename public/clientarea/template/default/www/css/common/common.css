@@ -1,0 +1,454 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-size: 0.14rem;
+}
+[v-cloak] {
+  display: none;
+}
+/* 加载中 开始 */
+#mainLoading {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 9999;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#mainLoading .ddr {
+  width: 8px;
+  height: 100px;
+  float: left;
+  margin: 2px;
+  background-color: #4890FF;
+  animation: loading 1s infinite ease-in-out;
+  /*animation：动画名称 持续时间 动画速度曲线 延迟 执行多少次 是否正反方向轮流播放*/
+}
+#mainLoading .ddr2 {
+  animation-delay: -0.9s;
+  /*定义开始执行的地方，负号表示直接从第900ms开始执行*/
+}
+#mainLoading .ddr3 {
+  animation-delay: -0.8s;
+}
+#mainLoading .ddr4 {
+  animation-delay: -0.7s;
+}
+#mainLoading .ddr5 {
+  animation-delay: -0.6s;
+}
+::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 4px;
+  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 4px;
+}
+::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(97, 184, 179, 0.1);
+  background: #78b4b4;
+}
+::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow: inset 0 0 5px rgba(87, 175, 187, 0.1);
+  border-radius: 10px;
+  background: #ededed;
+}
+@keyframes loading {
+  0%,
+  40%,
+  100% {
+    /*定义每帧的动作*/
+    -webkit-transform: scaleY(0.5);
+  }
+  20% {
+    -webkit-transform: scaleY(1);
+  }
+}
+/* 加载中结束 */
+#content {
+  font-size: 0.14rem;
+  font-weight: 400;
+  font-family: PingFang;
+  line-height: 1.5715;
+}
+.el-header {
+  background: #F7FAFC;
+  border-bottom: 1px solid #E3E8EE;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.el-header #logo {
+  height: 36px;
+  cursor: pointer;
+}
+.el-header .header-right {
+  display: flex;
+  align-items: center;
+}
+.el-header .header-right .regist-btn {
+  padding: 6px 12px;
+  height: 25px;
+  background: #161EDE;
+  color: #FFF;
+  cursor: pointer;
+}
+.el-header .header-right .user {
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+  color: #ffffff;
+  background: pink;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.el-header .header-right .authorizeSelect {
+  margin-left: 10px;
+}
+.el-aside {
+  background: #F7FAFC;
+  border-right: 1px solid #E3E8EE;
+}
+.el-aside .aside-top .aside-search {
+  width: 200px;
+  margin-top: 24px;
+  margin-left: 20px;
+}
+.el-aside .aside-top .aside-search .el-input__prefix {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.el-aside .aside-top .aside-search .el-input__suffix {
+  right: 10px;
+}
+.el-aside .aside-top .aside-search .el-input__suffix .aside-search-btn {
+  color: #161EDE;
+}
+.el-aside .el-menu {
+  margin-top: 12px;
+  border-right: none;
+}
+.el-aside .el-menu .el-menu-item.is-active {
+  background-color: #E9EAFF !important;
+  border-right: 1px solid #161EDE;
+}
+.el-aside .el-menu .el-menu-item img {
+  margin-left: 10px;
+  margin-right: 16px;
+}
+.el-aside .el-menu .el-menu-item span {
+  font-family: PingFang SC-Regular, PingFang SC;
+  font-size: 14px;
+}
+.el-aside .aside-row-line {
+  width: 200px;
+  height: 2px;
+  background-color: #E3E8EE;
+  margin-left: 20px;
+  margin-top: 22px;
+  margin-bottom: 40px;
+}
+.el-aside .app-type-list {
+  margin-left: 61px;
+}
+.el-aside .app-type-list .title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #090A3A;
+  margin-bottom: 20px;
+}
+.el-aside .app-type-list .app-type-ul .app-type-li {
+  list-style-type: none;
+  margin-bottom: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #090A3A;
+}
+.el-aside .app-type-list .app-type-ul .app-type-li.active {
+  color: #161EDE;
+}
+.el-aside .app-type-list .app-type-ul .app-type-li:last-child {
+  margin-bottom: 0px;
+}
+.el-aside .aside-bottom {
+  display: flex;
+  flex-direction: column;
+  padding-left: 60px;
+}
+.el-aside .aside-bottom a {
+  color: #090A3A;
+}
+.el-main {
+  height: calc(100vh - 80px);
+  padding: 0;
+}
+.myPage {
+  margin-bottom: 0.26rem;
+}
+.myPage .el-pagination {
+  display: flex;
+  justify-content: flex-end;
+}
+.myPage .el-pagination .page-total {
+  margin: 0 auto 0 0;
+  font-size: 12px !important;
+  font-family: PingFang SC;
+  font-weight: 400;
+  color: #757575;
+}
+.myPage .el-pagination .el-pager .active {
+  background: #F4F7FC;
+  border: 1px solid #0058FF;
+}
+.myPage .el-pagination .el-pager li.active + li {
+  border-left: 1px solid #E6E7EB;
+}
+.myPage .el-pagination .el-pager .number {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #E6E7EB;
+  margin-right: 8px;
+  border-radius: 3px;
+}
+.myPage .el-pagination .el-pager .number:last-child {
+  margin-right: 0;
+}
+.login-dialog {
+  border-radius: 4px;
+  margin-top: 10vh !important;
+}
+.login-dialog .el-dialog__body {
+  padding: 0 0.64rem 0.55rem;
+}
+.login-dialog .el-dialog__body .login-left {
+  position: relative;
+}
+.login-dialog .el-dialog__body .login-left .login-text .login-text-title {
+  font-size: 0.32rem;
+  color: #1E2736;
+}
+.login-dialog .el-dialog__body .login-left .login-text .login-text-regist {
+  color: #1E2736;
+}
+.login-dialog .el-dialog__body .login-left .login-text .login-text-regist a {
+  color: #0058FF;
+  cursor: pointer;
+}
+.login-dialog .el-dialog__body .login-left .login-form {
+  margin-top: 0.68rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .login-top {
+  display: flex;
+  flex-direction: row;
+}
+.login-dialog .el-dialog__body .login-left .login-form .login-top .active {
+  color: #0058FF;
+  border-bottom: 2px solid #0058FF;
+}
+.login-dialog .el-dialog__body .login-left .login-form .login-top .login-email {
+  margin-right: 0.4rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .login-top .login-email,
+.login-dialog .el-dialog__body .login-left .login-form .login-top .login-phone {
+  height: 0.34rem;
+  color: #666B80;
+  cursor: pointer;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main {
+  margin-top: 0.3rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .form-item {
+  margin-top: 0.3rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .form-item .input-with-select .el-input-group__prepend {
+  background: #FFFFFF;
+  width: 64px;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .form-item .login-btn {
+  width: 100%;
+  height: 46px;
+  background: #0058FF;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .form-item .type-btn {
+  width: 100%;
+  height: 46px;
+  font-size: 0.16rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .code-item {
+  display: flex;
+  flex-direction: row;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .code-item .code-btn {
+  margin-left: 0.1rem;
+  background: #0058FF;
+  color: #FFFFFF;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .rember-item {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .rember-item a {
+  color: #0058FF;
+  cursor: pointer;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .read-item {
+  margin-top: 0.2rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .read-item a {
+  color: #0058FF;
+  cursor: pointer;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .line-item {
+  margin-top: 0.4rem;
+}
+.login-dialog .el-dialog__body .login-left .login-form .form-main .line-item text {
+  font-size: 16px;
+  color: #1E2736;
+}
+.login-dialog .el-dialog__body .login-right .login-back-img {
+  width: 5.17rem;
+  height: 3.975rem;
+  position: absolute;
+  top: 2.29rem;
+  right: 1.36rem;
+}
+/* 支付弹窗开始 */
+.zf-dialog .el-dialog__body {
+  padding: 0 !important;
+  text-align: center;
+  font-size: 0.16rem;
+}
+.zf-dialog .dialog-form {
+  display: flex;
+  flex-direction: column;
+}
+.zf-dialog .el-row {
+  display: flex;
+  align-items: center;
+  margin-top: 0.3rem;
+}
+.zf-dialog .form-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.zf-dialog .form-footer > .btn-ok {
+  background: #0058FF;
+  border-radius: 3px;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zf-dialog .btn-no {
+  background: #E7E7E7;
+  border-radius: 3px;
+  color: #1E2736;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.zf-dialog .true-money {
+  color: #FFA800;
+}
+.zf-dialog .pay-html {
+  display: flex;
+  justify-content: center;
+}
+.zf-dialog .pay-img-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.zf-dialog .blue {
+  color: #0058FF;
+}
+.zf-dialog .red {
+  color: #F0142F;
+}
+.zf-dialog .pay-html > img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+.zf-dialog .el-select {
+  width: 100%;
+}
+.zf-dialog .el-dialog__header {
+  display: flex;
+  padding: 0 0.2rem;
+  height: 0.48rem;
+  border: 1px solid #E6E7EB;
+}
+.zf-dialog .el-dialog__title {
+  font-size: 0.14rem;
+  color: #171725;
+  line-height: 0.48rem;
+}
+.zf-dialog .tip {
+  text-align: center;
+  font-size: 0.13rem;
+  color: #8692B0;
+  line-height: 0.3rem;
+}
+.zf-dialog .money {
+  font-size: 0.24rem;
+  color: #1E2736;
+  text-align: center;
+  line-height: 1;
+  display: block;
+  margin-top: 0.2rem;
+}
+.zf-dialog .pay-way .el-select {
+  width: 2rem;
+  margin: 0.12rem auto 0.6rem;
+}
+.zf-dialog .pay-img-content img {
+  width: 2rem;
+  height: 2rem;
+}
+.zf-dialog .pay-way .pay-html > img {
+  width: 2rem;
+  height: 2rem;
+  margin: 0;
+}
+.zf-dialog .f-btn {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem;
+  border-top: 1px solid #E6E7EB;
+  align-items: center;
+}
+.zf-dialog .f-btn .total {
+  font-size: 0.14rem;
+  color: #1E2736;
+}
+.zf-dialog .f-btn .img {
+  width: 0.18rem;
+  height: 0.18rem;
+  margin-right: 0.1rem;
+}
+.zf-dialog .el-button {
+  background: #0058FF;
+  color: #fff;
+}
+.zf-dialog .el-checkbox,
+.zf-dialog .el-checkbox__input.is-checked + .el-checkbox__label {
+  color: #0058FF;
+}
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: #0058FF;
+  color: #0058FF;
+}

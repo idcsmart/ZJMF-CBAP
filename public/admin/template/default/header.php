@@ -51,7 +51,7 @@
                   <p class="tit">{{lang.user}}</p>
                   <ul>
                     <li v-for="item in global.clients" :key="item.id">
-                      <a :href="`client_detail.html?client_id=${item.id}`">
+                      <a :href="`${baseUrl}client_detail.html?client_id=${item.id}`">
                         <p class="s-tit">{{item.username}}<span class="company" v-if="item.company">{{'(' + item.company + ')'}}</span></p>
                         <p class="phone" v-if="item.phone">{{item.phone}}</p>
                       </a>
@@ -62,7 +62,7 @@
                   <p class="tit">{{lang.tailorism}}</p>
                   <ul>
                     <li v-for="item in global.hosts" :key="item.id">
-                      <a :href="`host_detail.html?client_id=${item.client_id}&id=${item.id}`">
+                      <a :href="`${baseUrl}host_detail.html?client_id=${item.client_id}&id=${item.id}`">
                         <p class="s-tit">{{item.product_name}}&nbsp;#/{{item.id}}</p>
                         <p class="host-name">{{item.product_name}}</p>
                       </a>
@@ -73,7 +73,7 @@
                   <p class="tit">{{lang.product}}</p>
                   <ul>
                     <li v-for="item in global.products" :key="item.id">
-                      <a :href="`product_detail.html?id=${item.id}`">
+                      <a :href="`${baseUrl}product_detail.html?id=${item.id}`">
                         <p class="s-tit">{{item.name}}</p>
                         <p class="host-name">{{item.product_group_name_first}}/{{item.product_group_name_second}}</p>
                       </a>
@@ -134,7 +134,7 @@
                   修改密码
                 </template>
               </t-dropdown-item>
-              <t-dropdown-item  class="operations-dropdown-container-item" @click="handleLogout">
+              <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
                 <template>
                   <t-icon name="poweroff"></t-icon>
                   退出登录
@@ -193,42 +193,24 @@
             <template #icon>
               <t-icon :name="item.icon" />
             </template>
-            <span>{{item.name}}</span>
+            <span>{{item.name}}}</span>
           </t-menu-item>
           <t-submenu :value="item.id" mode="popup" v-else>
             <template #icon>
               <t-icon :name="item.icon" />
             </template>
             <span slot="title">{{item.name}}</span>
-            <t-menu-item :value="e.id" v-for="e in item.child" :key="e.id" @click="jumpHandler(e)">
-              {{e.name}}
-            </t-menu-item>
-            <!-- <template v-if="item.id===25">
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="#">推介计划</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_ticket/ticket.html">工单</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_promo_code/promo_code.html">优惠码</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_refund/refund_product.html">退款</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="#">提现</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_help/help.html">帮助中心</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_news/news.html">新闻中心</a>
-              </li>
-              <li class="t-menu__item t-menu__item--plain t-submenu__item">
-                <a href="http://kfc.idcsmart.com/admin/plugin/idcsmart_file_download/file_download.html">文件下载</a>
-              </li>
-            </template> -->
+            <div v-for="ele in item.child" :key="ele.id">
+              <t-menu-item :value="ele.id" :key="ele.id" v-if="!ele.child" @click="jumpHandler(ele)">
+                {{ele.name}}
+              </t-menu-item>
+              <t-submenu :value="ele.id" mode="popup" v-else>
+                <span slot="title">{{ele.name}}</span>
+                <t-menu-item :value="e.id" :key="e.id" v-for="e in ele.child" @click="jumpHandler(e)">
+                  {{e.name}}
+                </t-menu-item>
+              </t-submenu>
+            </div>
           </t-submenu>
         </div>
       </t-menu>

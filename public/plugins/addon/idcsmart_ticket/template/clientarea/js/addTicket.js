@@ -12,7 +12,8 @@
                 // 获取通用信息
                 this.getCommonData()
                 this.getHostList()
-                this.getDepartment()
+                this.getTicketType()
+                // this.getDepartment()
             },
             mounted() {
                 // this.initTemplate()
@@ -141,11 +142,9 @@
                     })
                 },
                 // 获取工单类型
-                getTicketType(id) {
-                    const params = {
-                        admin_role_id: id
-                    }
-                    ticketType(params).then(res => {
+                getTicketType() {
+
+                    ticketType().then(res => {
                         if (res.data.status === 200) {
                             this.ticketType = res.data.data.list
                             // this.ticketData.ticket_type_id = this.ticketType[0]?.id
@@ -189,7 +188,7 @@
                 beforeRemove(file, fileList) {
                     // 获取到删除的 save_name
                     let save_name = file.response.data.save_name
-                    this.ticketData.attachment = this.replyData.attachment.filter(item => {
+                    this.ticketData.attachment = this.ticketData.attachment.filter(item => {
                         return item != save_name
                     })
                 },

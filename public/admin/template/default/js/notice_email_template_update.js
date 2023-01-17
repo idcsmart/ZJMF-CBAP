@@ -3,7 +3,7 @@
   window.onload = function () {
     const template = document.getElementsByClassName('notice-email-template-create')[0]
     Vue.prototype.lang = window.lang
-    const host = location.host
+    const host = location.origin
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
@@ -36,12 +36,22 @@
         this.initTemplate()
         document.title = lang.email_notice + '-' + lang.template_manage + '-' + localStorage.getItem('back_website_name')
       },
+      computed: {
+        calStr () {
+          return (str) => {
+            const temp = str && str.replace(/\\n/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').
+              replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
+              .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
+              return temp
+          }
+        }
+      },
       methods: {
         async getEmailDetail () {
           try {
             const res = await getEmailTemplateDetail(this.formData.id)
             Object.assign(this.formData, res.data.data.email_template)
-            tinymce.editors['emailTemp'].setContent(this.formData.message)
+           // tinymce.editors['emailTemp'].setContent(this.formData.message)
           } catch (error) {
             console.log(error)
           }
@@ -73,18 +83,20 @@
             language: 'zh_CN',
             min_height: 400,
             width: '100%',
-            plugins: 'link lists image code table colorpicker textcolor wordcount contextmenu fullpage',
+            plugins: 'link lists image code table colorpicker textcolor wordcount contextmenu fullpage paste',
+            paste_data_images: true,
             toolbar:
               'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image fullpage code | removeformat',
-            images_upload_url: 'http://' + str + 'v1/upload',
-            images_upload_handler: this.handlerAddImg
+            images_upload_url:  str + 'v1/upload',
+            images_upload_handler: this.handlerAddImg,
+            content_css: '../css/setting.css',
           });
         },
         handlerAddImg (blobInfo, success, failure) {
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
-            axios.post('http://' + str + 'v1/upload', formData, {
+            axios.post(str + 'v1/upload', formData, {
               headers: {
                 Authorization: 'Bearer' + ' ' + localStorage.getItem('backJwt')
               }

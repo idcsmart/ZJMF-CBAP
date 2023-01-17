@@ -27,7 +27,7 @@
               title: lang.product_name,
               ellipsis: true,
               className: 'product-name',
-              width: 500
+              width: 300
             },
             {
               colKey: 'client_id',
@@ -38,12 +38,12 @@
             {
               colKey: 'name',
               title: lang.host_name,
-              width: 200,
+              width: 280,
               ellipsis: true
             },
             {
-              colKey: 'first_payment_amount',
-              title: lang.money_cycle,
+              colKey: 'renew_amount',
+              title: `${lang.renew}${lang.money_cycle}`,
               width: 166,
               ellipsis: true
             },

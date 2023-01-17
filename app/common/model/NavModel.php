@@ -67,7 +67,7 @@ class NavModel extends Model
         $object = $this->create([
             'type' => $type,
             'name' => $nav['name']??'',
-            'url'  => (isset($nav['url']) && !empty($nav['url']) && is_string($nav['url']))?"plugin/{$url}/".$nav['url'].'.html':'',
+            'url'  => (isset($nav['url']) && !empty($nav['url']) && is_string($nav['url']))? (strpos($nav['url'], '.html') === false ? "plugin/{$url}/".$nav['url'].'.html' : "plugin/{$url}/".$nav['url']):'',
             'icon' => $nav['icon']??'',
             'parent_id' => $parentId,
             'order'  => $maxOrder+1,

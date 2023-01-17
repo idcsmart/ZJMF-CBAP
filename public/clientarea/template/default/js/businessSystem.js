@@ -11,6 +11,7 @@
       },
       created () {
         this.getCommonData()
+        this.getTableList()
       },
       mounted () {
 
@@ -36,7 +37,7 @@
           },
           commonData: {},
           loading1: false,
-          tableData: []
+          authorizeList: []
         }
       },
       filters: {
@@ -66,6 +67,18 @@
         getCommonData () {
           this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
           document.title = this.commonData.website_name + '-业务系统'
+        },
+        async getTableList () {
+          this.loading1 = true
+          const res = await queryAuthorizetApi()
+          if (res.status == 200) {
+            const { data } = res.data
+            this.authorizeList = data.list
+          }
+          this.loading1 = false
+        },
+        goDetail (obj) {
+          location.href = `businessDetail.html?id=${obj.id}`
         }
       },
 

@@ -228,3 +228,19 @@ function getAdminAccountApi(params) {
 function getchildAccountListApi(params) {
   return Axios.get(`/sub_account`, { params });
 }
+
+
+/* 1-7新增产品手动开通等 */
+// 模块开通
+function createModule (params) {
+  return Axios.post(`/host/${params.id}/module/create`)
+}
+function suspendModule (params) {
+  return Axios.post(`/host/${params.id}/module/suspend`, params)
+}
+function unsuspendModule (params) {
+  return Axios.post(`/host/${params.id}/module/unsuspend`, params)
+}
+function delModule (params) {
+  return Axios.post(`/host/${params.id}/module/terminate`, params)
+}

@@ -14,22 +14,37 @@
     <div class="order-search-wrapper internal">
       <div class="search-box-left">
         <div class="search-left-top">
-            <t-input v-model="params.keywords" :placeholder="lang.please_search_order" clearable></t-input>
-            <t-select :placeholder="lang.please_search_order_type" clearable v-model="params.ticket_type_id" :keys="{ label: 'name', value: 'id' }" :options="orderTypeOptions"></t-select>
-            <t-select :placeholder="lang.please_search_order_status" :min-collapsed-num="2" multiple clearable v-model="params.status" :keys="{ label: 'name', value: 'id'}" :options="order_status_options"></t-select>
+          <t-input v-model="params.keywords" :placeholder="lang.please_search_order" clearable></t-input>
+          <t-select :placeholder="lang.please_search_order_type" clearable v-model="params.ticket_type_id" :keys="{ label: 'name', value: 'id' }" :options="orderTypeOptions"></t-select>
+          <t-select :placeholder="lang.please_search_order_status" :min-collapsed-num="2" multiple clearable v-model="params.status" :keys="{ label: 'name', value: 'id'}" :options="order_status_options"></t-select>
         </div>
         <div class="search-left-bottom">
-            <t-select :placeholder="lang.please_search_order_user" filterable clearable v-model="params.client_id" :options="clientOptions" :keys="{ label: 'username', value: 'id'}">></t-select>
-            <t-select :placeholder="lang.please_search_order_admin" filterable clearable v-model="params.admin_id" :options="adminList" :keys="{ label: 'name', value: 'id'}"></t-select>
-            <t-button @click="doUserOrderSearch">查询</t-button>
+          <t-select class="select-496" v-model="params.client_id" filterable :placeholder="lang.please_search_order_user" clearable :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false" :scroll="{ type: 'virtual',threshold:20 }" :popup-props="popupProps">
+            <t-option v-for="item in clientOptions" :value="item.id" :label="item.username" :key="item.id" class="com-custom">
+              <div>
+                <p>{{item.username}}</p>
+                <p v-if="item.phone" class="tel">+{{item.phone_code}}-{{item.phone}}</p>
+                <p v-else class="tel">{{item.email}}</p>
+              </div>
+            </t-option>
+          </t-select>
+          <!-- <t-select :placeholder="lang.please_search_order_user" filterable clearable v-model="params.client_id" :options="clientOptions" :keys="{ label: 'username', value: 'id'}">></t-select> -->
+          <t-select :placeholder="lang.please_search_order_admin" filterable clearable v-model="params.admin_id" :options="adminList" :keys="{ label: 'name', value: 'id'}"></t-select>
+          <t-button @click="doUserOrderSearch">{{lang.order_text1}}</t-button>
         </div>
       </div>
       <div class="search-box-right">
-        <t-select :placeholder="lang.please_search_order_time" v-model="order_time"  :options="timeList" @change="selectTimeChange"></t-select>
-        <div><t-button @click="goAddorder()">{{lang.order_new_rder}}</t-button></div>
+        <t-select :placeholder="lang.please_search_order_time" v-model="order_time" :options="timeList" @change="selectTimeChange">
+          <div slot="panelTopContent" style="padding: 6px 6px 0 6px">
+            <span>请选择定时刷新时间</span>
+          </div>
+        </t-select>
+        <div>
+          <t-button @click="goAddorder()">{{lang.order_new_rder}}</t-button>
+        </div>
       </div>
     </div>
-    <t-table class="list-table" :data="userOrderData" :columns="userOrderColumns"  @row-click="rowClick" hover :loading="userOrderTableloading" row-key="id" size="small">
+    <t-table class="list-table" :data="userOrderData" :columns="userOrderColumns" @row-click="rowClick" hover :loading="userOrderTableloading" row-key="id" size="small">
       <template #title="slotProps">
         <span class="order-name" @click="userOrderReply(slotProps.row)">{{slotProps.row.newTitle}}</span>
       </template>
@@ -37,7 +52,7 @@
         <span>{{slotProps.row.name ? slotProps.row.name : '--'}}</span>
       </template>
       <template #user="slotProps">
-        <span @click.stop="goclient_detail(slotProps.row)" ><span :style="{background: slotProps.row.client_level ? slotProps.row.client_level : ''}" class="user-name">{{slotProps.row.username}}</span> {{slotProps.row.admin_name ? ' (' + slotProps.row.admin_name + ')' : "--"}}</span>
+        <span @click.stop="goclient_detail(slotProps.row)"><span :style="{background: slotProps.row.client_level ? slotProps.row.client_level : ''}" class="user-name">{{slotProps.row.username}}</span> {{slotProps.row.admin_name ? ' (' + slotProps.row.admin_name + ')' : "--"}}</span>
       </template>
       <template #last_reply_time="slotProps">
         {{ slotProps.row.last_reply_time == 0 ? '--' : formatDate(slotProps.row.last_reply_time) }}
@@ -46,14 +61,14 @@
         <t-tag :style="{background:slotProps.row.color}" variant="light">{{slotProps.row.status}}</t-tag>
       </template>
       <template #operation="slotProps">
-        <t-button :title="lang.turn_order" shape="circle" variant="text" @click.stop ="internalOrderForward(slotProps.row)">
-          <t-icon name="enter" size="small" style="color:#0052D9" /> 
+        <t-button :title="lang.turn_order" shape="circle" variant="text" @click.stop="internalOrderForward(slotProps.row)">
+          <t-icon name="enter" size="small" style="color:#0052D9" />
         </t-button>
         <t-button :title="lang.order_ow_new_rder" v-if="showIdcsmartTicketInternal" shape="circle" variant="text" @click.stop="goAddorder(slotProps.row)">
-          <t-icon name="file-add" size="small" style="color:#0052D9" /> 
+          <t-icon name="file-add" size="small" style="color:#0052D9" />
         </t-button>
         <t-button :title="lang.order_new_close" shape="circle" variant="text" @click.stop="userOrderResolved(slotProps.row)">
-          <t-icon name="close-circle" size="small" style="color:#0052D9" /> 
+          <t-icon name="close-circle" size="small" style="color:#0052D9" />
         </t-button>
       </template>
     </t-table>
@@ -273,12 +288,16 @@
   <t-dialog :header="lang.order_forward" :footer="false" :visible.sync="forwardDialogVisible" destroy-on-close>
     <t-form :data="forwardFormData" :rules="forwardFormRules" ref="forwardForm" label-align="left" :label-width="80" @submit="forwardFormSubmit">
       <!-- 指定部门 -->
-      <t-form-item :label="lang.order_designated_department" name="admin_role_id">
+      <!-- <t-form-item :label="lang.order_designated_department" name="admin_role_id">
         <t-select v-model="forwardFormData.admin_role_id" @change="departmentChange" clearable filterable style="width:100%">
           <t-option v-for="(item, index) in departmentOptions" :value="item.id" :label="item.name" :key="index">
             {{ item.name }}
           </t-option>
         </t-select>
+      </t-form-item> -->
+      <!-- 工单部门 -->
+      <t-form-item :label="lang.order_designated_department" name="ticket_type_id">
+        <t-select clearable v-model="forwardFormData.ticket_type_id" :keys="{ label: 'name', value: 'id' }" :options="orderTypeOptions" @change="changeType"></t-select>
       </t-form-item>
       <!-- 指定人员 -->
       <t-form-item :label="lang.order_designated_person" name="admin_id">
@@ -292,10 +311,7 @@
       <t-form-item :label="lang.order_designated_reson" name="notes">
         <t-textarea v-model="forwardFormData.notes"></t-textarea>
       </t-form-item>
-      <!-- 工单类型 -->
-      <t-form-item :label="lang.order_designated_type" name="ticket_type_id">
-        <t-select clearable v-model="forwardFormData.ticket_type_id" :keys="{ label: 'name', value: 'id' }" :options="orderTypeOptions"></t-select>
-      </t-form-item>
+
       <t-form-item class="turn-inside-dialog-footer">
         <t-button theme="primary" type="submit">{{lang.hold}}</t-button>
         <t-button theme="default" type="reset" @click="forwardDialogClose">{{lang.cancel}}</t-button>

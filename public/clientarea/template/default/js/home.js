@@ -8,6 +8,11 @@
                 asideMenu,
                 topMenu,
             },
+            // beforeCreate() {
+            //     if (!localStorage.getItem('jwt')) {
+            //         location.href = "login.html"
+            //     }
+            // },
             created() {
                 localStorage.frontMenusActiveId = "";
                 this.getCommonData()
@@ -120,32 +125,6 @@
                     if (arr.includes('IdcsmartTicket')) {
                         ticket_list({ page: 1, limit: 3 }).then((res) => {
                             this.ticketList = res.data.data.list
-                            this.ticketList.forEach((item) => {
-                                switch (item.status) {
-                                    case 'Pending':
-                                        item.statusText = '待接受'
-                                        break;
-                                    case 'Handling':
-                                        item.statusText = '处理中'
-                                        break;
-                                    case 'Reply':
-                                        item.statusText = '待回复'
-                                        break;
-                                    case 'Replied':
-                                        item.statusText = '已回复'
-                                        break;
-                                    case 'Resolved':
-                                        item.statusText = '已解决'
-                                        break;
-                                    case 'Closed':
-                                        item.statusText = '已关闭'
-                                        break;
-                                    default: ''
-                                        item.statusText = '--'
-                                        break;
-                                }
-                            })
-
                         })
                     }
                     if (arr.includes('IdcsmartNews')) {
@@ -160,16 +139,26 @@
                     this.nameLoading = true
                     indexData().then((res) => {
                         this.account = res.data.data.account
-                        this.account.firstName = res.data.data.account.username.substring(0, 1)
+                        const reg = /^[a-zA-Z]+$/
+                        if (reg.test(res.data.data.account.username.substring(0, 1))) {
+                            this.account.firstName = res.data.data.account.username.substring(0, 1).toUpperCase()
+                        } else {
+                            this.account.firstName = res.data.data.account.username.substring(0, 1)
+                        }
                         this.percentage = Number(this.account.this_month_consume) / Number(this.account.consume) * 100
                         if (sessionStorage.headBgc) {
                             this.$refs.headBoxRef.style.background = sessionStorage.headBgc
                         } else {
-                            const index = Math.round(Math.random() * this.headBgcList.length)
+                            const index = Math.round(Math.random() * (this.headBgcList.length - 1))
                             this.$refs.headBoxRef.style.background = this.headBgcList[index]
                             sessionStorage.headBgc = this.headBgcList[index]
                         }
                         this.nameLoading = false
+                    }).catch(error => {
+                        // jwt过期跳转订购产品页面
+                        // if (error.data.status == 401) {
+                        //     location.href = "login.html"
+                        // }
                     })
 
                     indexHost({ page: 1 }).then((res) => {

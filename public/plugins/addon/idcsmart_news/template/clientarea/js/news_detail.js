@@ -64,6 +64,16 @@
           }
         }
       },
+      computed: {
+        calStr () {
+          return (str) => {
+            const temp = str && str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').
+            replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
+            .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
+            return temp
+          }
+        }
+      },
       methods: {
         back () {
           location.href = 'source.html'

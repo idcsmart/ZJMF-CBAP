@@ -7,7 +7,7 @@
       data () {
         return {
           data: [],
-          tableLayout: false,
+          tableLayout: true,
           bordered: true,
           visible: false,
           delVisible: false,
@@ -25,25 +25,31 @@
             {
               colKey: 'name',
               title: lang.username,
-              width: 300,
+              width: 200,
+              ellipsis: true
+            },
+            {
+              colKey: 'phone',
+              title: lang.phone,
+              width: 200,
               ellipsis: true
             },
             {
               colKey: 'email',
               title: lang.email,
-              width: 300,
+              width: 200,
               ellipsis: true
             },
             {
               colKey: 'nickname',
               title: lang.name,
-              width: 300,
+              width: 200,
               ellipsis: true
             },
             {
               colKey: 'roles',
               title: lang.belong_group,
-              width: 300,
+              width: 200,
               ellipsis: true
             },
             {
@@ -75,12 +81,18 @@
             repassword: '',
             email: '',
             nickname: '',
-            role_id: ''
+            role_id: '',
+            phone_code: 86,
+            phone: ''
           },
           rules: {
             name: [
               { required: true, message: lang.input + lang.username, type: 'error' },
-              { validator: val => val.length <= 50, message: lang.verify3 + 50, type: 'warning'}
+              { validator: val => val.length <= 50, message: lang.verify3 + 50, type: 'warning' }
+            ],
+            phone: [
+              { required: true, message: lang.input + lang.phone, type: 'error' },
+              { pattern: /^\d{0,11}$/, message: lang.verify11 }
             ],
             email: [
               { required: true, message: lang.input + lang.email, trigger: 'blur', type: 'error' },
@@ -88,7 +100,7 @@
             ],
             nickname: [
               { required: true, message: lang.input + lang.nickname, trigger: 'blur' },
-              { validator: val => val.length <= 20, message: lang.verify3 + 20, type: 'warning'}
+              { validator: val => val.length <= 20, message: lang.verify3 + 20, type: 'warning' }
             ],
             role_id: [
               { required: true, message: lang.input + lang.group, trigger: 'blur' }
@@ -130,6 +142,15 @@
         }
       },
       methods: {
+        // 获取国家列表
+        async getCountry () {
+          try {
+            const res = await getCountry()
+            this.country = res.data.data.list
+          } catch (error) {
+            this.$message.error(error.data.msg)
+          }
+        },
         checkPwd (val) {
           if (val !== this.formData.password) {
             return { result: false, message: window.lang.password_tip, type: 'error' };
@@ -292,6 +313,7 @@
         }
       },
       created () {
+        this.getCountry()
         this.getAdminList()
         // 循环加载分组
         this.getRoleList()

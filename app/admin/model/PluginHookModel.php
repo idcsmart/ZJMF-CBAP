@@ -30,7 +30,7 @@ class PluginHookModel extends Model
             ->where('module','addon') # 仅插件
             ->select()->toArray();
 
-        cache('system_plugin_hooks',$systemHookPlugins);
+        //cache('system_plugin_hooks',$systemHookPlugins);
 
         return $systemHookPlugins;
     }
@@ -38,6 +38,7 @@ class PluginHookModel extends Model
     // 获取插件钩子
     public function getCacheHook()
     {
+        return $this->cacheHook();
         if (empty(cache('system_plugin_hooks'))){
             $systemHookPlugins = $this->cacheHook();
         }else{

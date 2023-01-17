@@ -104,7 +104,7 @@ class IdcsmartCommonProductModel extends Model
             ->select()
             ->toArray();
         # 自定义周期为空,预设月-三年的周期
-        if (empty($customCycle)){
+        if (empty($customCycle) && !in_array($product['pay_type'],['onetime','free'])){
             $IdcsmartCommonCustomCycleModel->preSetCycle($productId);
 
             $customCycle = $IdcsmartCommonCustomCycleModel->alias('cc')
@@ -456,7 +456,7 @@ class IdcsmartCommonProductModel extends Model
         $productId = $param['product_id']??0;
 
         $commonProduct = $this->alias('cp')
-            ->field('p.name,cp.order_page_description,cp.allow_qty,p.pay_type')
+            ->field('p.name,cp.order_page_description,cp.allow_qty,p.pay_type,p.product_id')
             ->leftJoin('product p','p.id=cp.product_id')
             ->where('cp.product_id',$productId)
             ->find();
@@ -471,7 +471,7 @@ class IdcsmartCommonProductModel extends Model
 
         $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
-        $configoptions = $IdcsmartCommonProductConfigoptionModel->field('id,product_id,option_name,option_type,qty_min,qty_max,unit,allow_repeat,max_repeat,description')
+        $configoptions = $IdcsmartCommonProductConfigoptionModel->field('id,product_id,option_name,option_type,qty_min,qty_max,unit,allow_repeat,max_repeat,description,configoption_id')
             ->where('product_id',$productId)
             ->where('hidden',0)
             ->order('order','asc') # 升序
@@ -482,7 +482,7 @@ class IdcsmartCommonProductModel extends Model
         $minSubPricings = [];
         foreach ($configoptions as &$configoption){
             $subs = $IdcsmartCommonProductConfigoptionSubModel->alias('pcs')
-                ->field('pcs.id,pcs.option_name,pcs.qty_min,pcs.qty_max,pcs.country,pc.option_type,pc.fee_type,pcs.product_configoption_id')
+                ->field('pcs.id,pcs.option_name,pcs.qty_min,pcs.qty_max,pcs.country,pc.option_type,pc.fee_type,pcs.product_configoption_id,pcs.qty_change')
                 ->leftJoin('module_idcsmart_common_product_configoption pc','pc.id=pcs.product_configoption_id')
                 ->leftJoin('module_idcsmart_common_pricing p','p.rel_id=pcs.id AND p.type=\'configoption\'')
                 ->where('pcs.product_configoption_id',$configoption['id'])
@@ -647,14 +647,14 @@ class IdcsmartCommonProductModel extends Model
         $HostModel = new HostModel();
 
         $host = $HostModel->alias('h')
-            ->field('h.create_time,h.due_time,h.billing_cycle,h.billing_cycle_name,h.billing_cycle_time,h.renew_amount,h.first_payment_amount,p.name,h.status')
+            ->field('h.id,h.create_time,h.due_time,h.billing_cycle,h.billing_cycle_name,h.billing_cycle_time,h.renew_amount,h.first_payment_amount,p.name,h.status,h.name as host_name,h.product_id,h.client_notes')
             ->leftJoin('product p','p.id=h.product_id')
             ->where('h.id',$hostId)
             ->find();
         if (empty($host)){
             return ['status'=>400,'msg'=>lang_plugins('host_is_not_exist')];
         }
-
+        $host['status'] = $host['status'] != 'Failed' ? $host['status'] : 'Pending';
         $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
         $configoptions = $IdcsmartCommonProductConfigoptionModel->alias('pc')
             ->field('pc.id,pc.option_name,pc.option_type,pc.unit,hc.qty,hc.repeat')
@@ -783,6 +783,8 @@ class IdcsmartCommonProductModel extends Model
                 }
             }
             $query->where('s.module|ss.module','idcsmart_common');
+
+            $query->where('p.product_id',0);
         };
         $HostModel = new HostModel();
         $count = $HostModel->alias('h')
@@ -795,7 +797,7 @@ class IdcsmartCommonProductModel extends Model
             ->where($where)
             ->count();
         $hosts = $HostModel->alias('h')
-            ->field('h.id,h.client_id,c.username client_name,c.email,c.phone_code,c.phone,c.company,h.product_id,p.name product_name,h.name,h.create_time,h.active_time,h.due_time,h.first_payment_amount,h.billing_cycle,h.billing_cycle_name,h.status,o.pay_time')
+            ->field('h.id,h.client_id,c.username client_name,c.email,c.phone_code,c.phone,c.company,h.product_id,p.name product_name,h.name,h.create_time,h.active_time,h.due_time,h.first_payment_amount,h.renew_amount,h.billing_cycle,h.billing_cycle_name,h.status,o.pay_time')
             ->leftjoin('product p', 'p.id=h.product_id')
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id AND s.module=\'idcsmart_common\'')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')

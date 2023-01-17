@@ -6,11 +6,12 @@
     new Vue({
       data () {
         return {
-          urlPath: url
+          urlPath: url,
+          msg: ''
         }
       },
       created () {
-       
+       this.msg = decodeURI(location.href.split('?')[1]?.split('=')[1])
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

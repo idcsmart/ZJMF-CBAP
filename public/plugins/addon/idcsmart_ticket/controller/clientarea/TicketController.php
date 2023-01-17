@@ -253,7 +253,7 @@ class TicketController extends PluginBaseController
      * @url /console/v1/ticket/department
      * @method  GET
      * @return array list - 工单部门列表
-     * @return int list[].admin_role_id - 工单部门ID
+     * @return int list[].id - 工单部门ID
      * @return string list[].name - 工单部门名称
      */
     public function department()
@@ -267,17 +267,15 @@ class TicketController extends PluginBaseController
 
     /**
      * 时间 2022-06-21
-     * @title 工单类型
-     * @desc 工单类型
+     * @title 工单部门
+     * @desc 工单部门
      * @author wyh
      * @version v1
      * @url /console/v1/ticket/type
      * @method  GET
-     * @param int admin_role_id - 部门ID
      * @return array list - 工单类型列表
-     * @return int list[].id - 工单类型ID
-     * @return string list[].name - 工单类型名称
-     * @return string list[].description - 分组说明
+     * @return int list[].id - 工单部门ID
+     * @return string list[].name - 工单部门名称
      */
     public function type()
     {

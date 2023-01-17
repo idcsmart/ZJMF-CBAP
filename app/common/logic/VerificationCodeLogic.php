@@ -57,6 +57,13 @@ class VerificationCodeLogic
             }
             $phone_code = $client['phone_code'];
             $phone = $client['phone'];
+        }else if(in_array($param['action'], ['login'])){
+            $client = ClientModel::where('phone', $param['phone'])->where('phone_code', $param['phone_code'])->find();
+            if(empty($client)){
+                $param['action'] = 'register';
+            }
+            $phone_code = $param['phone_code'];
+            $phone = $param['phone'];
         }else{
             $phone_code = $param['phone_code'];
             $phone = $param['phone'];
@@ -128,6 +135,12 @@ class VerificationCodeLogic
                 return ['status'=>400, 'msg'=>lang('user_not_bind_email')];
             }
             $email = $client['email'];
+        }else if(in_array($param['action'], ['login'])){
+            $client = ClientModel::where('email', $param['email'])->find();
+            if(empty($client)){
+                $param['action'] = 'register';
+            }
+            $email = $param['email'];
         }else{
             $email = $param['email'];
         }

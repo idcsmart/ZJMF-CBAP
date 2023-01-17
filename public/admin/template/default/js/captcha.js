@@ -119,7 +119,17 @@
           }
         },
         addUser () {
-          window.open('https://market.idcsmart.com/shop')
+          // window.open('https://market.idcsmart.com/shop')
+          setToken().then(res => {
+            if (res.data.status == 200) {
+              let url = res.data.market_url
+              let getqyinfo = url.split('?')[1]
+              let getqys = new URLSearchParams('?' + getqyinfo)
+              const from = getqys.get('from')
+              const token = getqys.get('token')
+              window.open(`https://my.idcsmart.com/shop/index.html?from=${from}&token=${token}`)
+            }
+          })
         },
         // 配置
         handleConfig (row) {

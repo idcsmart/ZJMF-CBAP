@@ -133,6 +133,10 @@
   background: #FFFFFF;
 }
 
+.el-input__inner {
+  height: .46rem;
+}
+
 .el-input__suffix {
   display: flex;
   align-items: center;

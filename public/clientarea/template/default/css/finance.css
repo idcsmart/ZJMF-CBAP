@@ -191,6 +191,12 @@
   border: none;
 }
 
+.Refunded{
+  background-color: rgb(64, 158, 255, 0.12);
+  color: #409EFF;
+  border: none;
+}
+
 .gateway-pay {
   color: #5c5ee4;
   cursor: pointer;
@@ -229,6 +235,10 @@
 .Withdraw {
   background: rgba(61, 213, 152, 0.12);
   color: rgba(61, 213, 152, 1);
+}
+.Artificial{
+  background: rgba(54, 153, 255, .12);
+  color: #3699FF;
 }
 
 /* 提现弹窗 */

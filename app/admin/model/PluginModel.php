@@ -199,7 +199,7 @@ class PluginModel extends Model
             }
             $methods = array_diff($methodsFilter,$methodsFinalFilter);
             # 排除
-            $methods = array_diff($methods,['install','uninstall','construct','get_view']);
+            $methods = array_diff($methods,['install','uninstall','construct','get_view','upgrade']);
             $pluginHooks = $methods;
         }else{
             $pluginHooks = [];
@@ -469,7 +469,7 @@ class PluginModel extends Model
                 return ['status'=>400,'msg'=>lang('disable_fail') . ":" . $e->getMessage()];
             }
         }
-
+        lang_plugins('success_message', [], true);
         # 缓存插件钩子
         $PluginHookModel->cacheHook();
 
@@ -933,6 +933,99 @@ class PluginModel extends Model
             ->toArray();
 
         return ['list' => $list];
+    }
+
+    /**
+     * 时间 2022-5-16
+     * @title 插件升级
+     * @desc 插件升级:module=gateway表示支付接口列表,addon插件列表,sms短信接口列表,mail邮件接口列表
+     * @author wyh
+     * @version v1
+     * @param string param.module - 模块:gateway表示支付接口列表,addon插件列表,sms短信接口列表,mail邮件接口列表 required
+     * @param string param.name - 标识 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function upgrade($param)
+    {
+        $plugin = $this->where('name',$param['name'])->find();
+
+        if (empty($plugin)){
+            return ['status'=>400,'msg'=>lang('plugin_is_not_exist')];
+        }
+
+        $res = local_api('admin_AppMarket_getNewVersion', []);
+        if($res['status']==200){
+            foreach ($res['data']['list'] as $key => $value) {
+                if($value['uuid']==$param['name']){
+                    $result = local_api('admin_AppMarket_install', ['id' => $value['id']]);
+                    break;
+                }
+            }
+            if(isset($result)){
+                if($result['status']==400){
+                    return $result;
+                }
+            }else{
+                return ['status'=>400,'msg'=>lang('plugin_new_version_get_fail')];
+            }
+        }else{
+            return ['status'=>400,'msg'=>lang('plugin_new_version_get_fail')];
+        }
+
+        $module = $param['module'];
+        $class = get_plugin_class($plugin['name'],$module);
+        if (!class_exists($class)){
+            return ['status'=>400,'msg'=>lang('plugin_is_not_exist')];
+        }
+
+        $Plugin = new $class;
+        
+        $info = $Plugin->info;
+        if (!$info || !$Plugin->checkInfo()){
+            return ['status'=>400,'msg'=>lang('plugin_information_is_missing')];
+        }
+
+        $version = $info['version'] ?? '';
+        if(empty($version)){
+            return ['status'=>400,'msg'=>lang('plugin_version_information_is_missing')];
+        }
+
+        if(!version_compare($version, $plugin['version'], '>')){
+            return ['status'=>400,'msg'=>lang('plugin_can_not_upgrade')];
+        }
+
+        $this->startTrans();
+        try{
+            $reflect = new \ReflectionClass($class);
+            $methods = $reflect->getMethods(\ReflectionMethod::IS_PUBLIC);
+            if(in_array('upgrade', $methods)){
+                $success = $Plugin->upgrade();
+                if (!$success) {
+                    $this->rollback();
+                    throw new \Exception(lang('plugin_upgrade_pre_fail'));
+                } 
+            }
+
+            $this->update([
+                'version' => $version
+            ], ['name' => $param['name']]);
+
+            lang_plugins('success_message', [], true);
+            
+            # 记录日志
+            active_log(lang('log_admin_upgrade_plugin',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{module}'=>lang('log_admin_plugin_'.$module),'{name}'=>$param['name']]),'plugin',$plugin->id);
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+            return ['status'=>400,'msg'=>lang('plugin_upgrade_fail') . ":" . $e->getMessage()];
+        }
+        file_put_contents(WEB_ROOT."plugins/".$module.'/'.$param['name'].'_version.txt', $version);
+        lang_plugins('success_message', [], true);
+        hook('after_plugin_upgrade',['name'=>$param['name']]);
+
+        return ['status'=>200,'msg'=>lang('plugin_upgrade_success')];
     }
 
 }

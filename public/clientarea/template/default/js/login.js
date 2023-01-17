@@ -87,11 +87,13 @@ function captchaCheckCancel() {
           }
 
         },
+        goHelpUrl(id) {
+          window.open(`${location.protocol}//${host}/agreement.html?id=${id}`)
+        },
         // 登录
         doLogin() {
           let isPass = true;
           const form = { ...this.formData };
-          console.log(form);
           // 邮件登录验证
           if (this.isEmailOrPhone) {
             if (!form.email) {
@@ -134,9 +136,11 @@ function captchaCheckCancel() {
             } else {
               // 设置正则表达式的手机号码格式 规则 ^起点 $终点 1第一位数是必为1  [3-9]第二位数可取3-9的数字  \d{9} 匹配9位数字
               const reg = /^1[3-9]\d{9}$/;
-              if (!reg.test(form.phone)) {
-                isPass = false
-                this.errorText = "请输入正确的手机号"
+              if (this.formData.countryCode === 86) {
+                if (!reg.test(form.phone)) {
+                  isPass = false
+                  this.errorText = "请输入正确的手机号"
+                }
               }
             }
 
@@ -201,12 +205,9 @@ function captchaCheckCancel() {
                 // 存入 jwt
                 localStorage.setItem("jwt", res.data.data.jwt);
                 if (form.isRemember) {// 记住密码
-                  console.log(form);
                   if (this.isEmailOrPhone) {
-                    console.log("email");
                     setCookie("email", form.email, 30)
                   } else {
-                    console.log("phone");
                     setCookie("phone", form.phone, 30)
                   }
                   setCookie("password", form.password, 30)
@@ -225,10 +226,17 @@ function captchaCheckCancel() {
                   delCookie("isRemember")
                   delCookie("checked")
                 }
-                this.doGetMenu()
-                location.href = '/index.html'
+                getMenu().then(ress => {
+                  if (ress.data.status === 200) {
+                    localStorage.setItem('frontMenus', JSON.stringify(ress.data.data.menu))
+                    const goPage = sessionStorage.redirectUrl || '/index.html'
+                    sessionStorage.redirectUrl && sessionStorage.removeItem('redirectUrl')
+                    location.href = goPage
+                  }
+                })
               }
             }).catch(err => {
+              this.isCaptcha = true
               if (err.data.msg === "请输入图形验证码" || err.data.msg === "图形验证码错误") {
                 this.isShowCaptcha = true
                 this.$refs.captcha.doGetCaptcha()
@@ -243,7 +251,6 @@ function captchaCheckCancel() {
         // 获取国家列表
         getCountryList() {
           getCountry({}).then(res => {
-            console.log(res);
             if (res.data.status === 200) {
               this.countryList = res.data.data.list
             }
@@ -308,10 +315,12 @@ function captchaCheckCancel() {
             this.errorText = "请输入手机号码"
           } else {
             // 设置正则表达式的手机号码格式 规则 ^起点 $终点 1第一位数是必为1  [3-9]第二位数可取3-9的数字  \d{9} 匹配9位数字
-            const reg = /^1[3-9]\d{9}$/;
-            if (!reg.test(form.phone)) {
-              isPass = false
-              this.errorText = "请输入正确的手机号"
+            if (this.formData.countryCode === 86) {
+              const reg = /^1[3-9]\d{9}$/;
+              if (!reg.test(form.phone)) {
+                isPass = false
+                this.errorText = "请输入正确的手机号"
+              }
             }
           }
 
@@ -350,7 +359,6 @@ function captchaCheckCancel() {
         async getCommonSetting() {
           try {
             const res = await getCommon()
-            console.log(res);
             this.commonData = res.data.data
             if (this.commonData.login_phone_verify == 0) {
               this.isPassOrCode = true
@@ -367,7 +375,6 @@ function captchaCheckCancel() {
         // 获取前台导航
         doGetMenu() {
           getMenu().then(res => {
-            console.log(res);
             if (res.data.status === 200) {
               localStorage.setItem('frontMenus', JSON.stringify(res.data.data.menu))
             }

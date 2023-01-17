@@ -26,6 +26,7 @@ return [
         'key' => 'idcsmart.finance',
         'iv' => '9311019310287172'
     ],
+    'system_logo_url' => request()->domain() . '/upload/common/default/',
     // 插件模板模板定义
     'template' => [
         // 默认模板渲染规则 1 解析为小写+下划线 2 全部转换小写

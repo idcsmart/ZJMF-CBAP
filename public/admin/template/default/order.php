@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
-<div id="content" class="order table" v-cloak>
+<div id="content" class="order" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
       <t-button @click="addOrder" class="add">{{lang.create_order}}</t-button>
@@ -11,9 +11,9 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading"
-    :key="new Date().getTime()"
-     :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" @sort-change="sortChange" class="user-order" :hide-sort-tips="true" :max-height="maxHeight">
+    <t-enhanced-table ref="table" row-key="id" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ childrenKey: 'list', treeNodeColumnIndex: 0 }" :loading="loading" 
+    :key="new Date().getTime()" :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" @sort-change="sortChange" class="user-order" 
+    :hide-sort-tips="true">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -50,18 +50,23 @@
       </template>
       <template #product_names={row}>
         <template v-if="row.product_names">
-          <!-- <t-tooltip :content="lang[row.type]" theme="light" :show-arrow="false" placement="top-right">
-            <img :src="`${rootRul}/img/icon/${row.type}.png`" alt="" style="position: relative; top: 3px;">
-          </t-tooltip> -->
-          <!-- <span v-if="row.type==='artificial'">{{lang.artificial}}</span> -->
-          <span @click="itemClick(row)" class="hover">{{row.product_names[0]}}</span>
-          <span v-if="row.product_names.length>1" @click="itemClick(row)" class="hover">、{{row.product_names[1]}}</span>
-          <span v-if="row.product_names.length>2" @click="itemClick(row)" class="hover">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
+          <div v-if="row.description">
+            <t-tooltip theme="light" :show-arrow="false" placement="top-right">
+              <div slot="content" class="tool-content">{{row.description}}</div>
+              <span @click="itemClick(row)" class="hover">{{row.product_names[0]}}</span>
+              <span v-if="row.product_names.length>1" @click="itemClick(row)" class="hover">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
+            </t-tooltip>
+          </div>
+          <div v-else>
+            <span @click="itemClick(row)" class="hover">{{row.product_names[0]}}</span>
+            <span v-if="row.product_names.length>1" @click="itemClick(row)" class="hover">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
+          </div>
         </template>
-        <!-- @click="jumpPorduct(row.client_id, row.host_id)" -->
-        <span v-else class="child-name" >
-          {{row.product_name ? row.product_name : row.description}}
-          <span class="host-name" v-if="row.host_name">({{row.host_name}})</span>
+        <span v-else class="child-name">
+          <t-tooltip theme="light" :show-arrow="false" placement="top-right">
+            <div slot="content" class="tool-content">{{row.description}}</div>
+            <span @click="childItemClick(row)">{{row.product_name ? row.product_name : row.description}}<span class="host-name" v-if="row.host_name">({{row.host_name}})</span></span>
+          </t-tooltip>
         </span>
       </template>
       <template #amount="{row}">
@@ -71,6 +76,8 @@
       </template>
       <template #status="{row}">
         <t-tag theme="default" variant="light" v-if="(row.status || row.host_status)==='Cancelled'" class="canceled">{{lang.canceled}}
+        </t-tag>
+        <t-tag theme="default" variant="light" v-if="(row.status || row.host_status)==='Refunded'" class="canceled">{{lang.refunded}}
         </t-tag>
         <t-tag theme="warning" variant="light" v-if="(row.status || row.host_status)==='Unpaid'">{{lang.Unpaid}}
         </t-tag>
@@ -113,10 +120,10 @@
       <template #op="{row}">
         <template v-if="row.type">
           <t-tooltip :content="lang.update_price" :show-arrow="false" theme="light">
-            <t-icon name="money-circle" class="common-look" @click="updatePrice(row, 'order')" v-if="row.status!=='Paid' && row.status!=='Cancelled'"></t-icon>
+            <t-icon name="money-circle" class="common-look" @click="updatePrice(row, 'order')" v-if="row.status!=='Paid' && row.status!=='Cancelled' && row.status!=='Refunded'"></t-icon>
           </t-tooltip>
-          <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light" v-show="row.status!=='Paid' && row.status!=='Cancelled'">
-            <t-icon name="discount" class="common-look" :class="{disable:row.status==='Paid'}" @click="signPay(row)" ></t-icon>
+          <t-tooltip :content="lang.sign_pay" :show-arrow="false" theme="light" v-show="row.status!=='Paid' && row.status!=='Cancelled' && row.status!=='Refunded'">
+            <t-icon name="discount" class="common-look" :class="{disable:row.status==='Paid'}" @click="signPay(row)"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
             <t-icon name="delete" class="common-look" @click="delteOrder(row)"></t-icon>

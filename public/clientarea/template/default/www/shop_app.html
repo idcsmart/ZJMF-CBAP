@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" theme-color="default" theme-mode>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title></title>
+  <!-- element-css -->
+  <link rel="stylesheet" href="./css/common/element.css">
+  <!-- 公共样式 -->
+  <link rel="stylesheet" href="./css/common/common.css">
+  <!-- 页面独有样式 -->
+  <link rel="stylesheet" href="./css/shop_app.css">
+</head>
+
+<body>
+  <div id="mainLoading">
+    <div class="ddr ddr1"></div>
+    <div class="ddr ddr2"></div>
+    <div class="ddr ddr3"></div>
+    <div class="ddr ddr4"></div>
+    <div class="ddr ddr5"></div>
+  </div>
+  <div id="content" v-cloak>
+    <el-container style="flex-direction: column;">
+      <top-menu></top-menu>
+      <el-container>
+        <aside-menu></aside-menu>
+        <el-main>
+          <!-- 自己的 -->
+          <div id="shop_theme">
+            <div class="top-screen">
+              <div class="row">
+                <div class="label">价格</div>
+                <div class="value">
+                  <div class="value-item" v-for="item in payType" :key="item.id" :class="params.pay_type == item.value?'active':null" @click="payClick(item.value)">{{item.label}}</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="label">开发者</div>
+                <div class="value">
+                  <div class="value-item" v-for="item in certifyType" :key="item.id" :class="params.certify_type == item.value?'active':null" @click="certifyClick(item.value)">{{item.label}}</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="label">系统类型</div>
+                <div class="value">
+                  <div class="value-item" v-for="item in systemType" :key="item.id" :class="params.system_type == item.value?'active':null" @click="systemClick(item.value)">{{item.label}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="top-screen-desc">
+              <div class="desc-item" v-for="item in orderByType" :key="item.id" @click="orderByClick(item.value)">
+                {{item.label}}
+                <span class="caret-wrapper">
+                  <span class="top" :class="(params.orderby == item.value) && (params.sort=='asc')?'active':item.value"></span>
+                  <span class="bottom" :class="(params.orderby == item.value) && (params.sort == 'desc')?'active':params.orderby"></span>
+                  <!-- <i class="el-icon-caret-top icon icon-active"></i>
+                                    <i class="el-icon-caret-bottom icon"></i> -->
+                </span>
+              </div>
+            </div>
+            <div class="shop-content" v-loading="loading">
+              <div class="row">
+                <div class="row-top">
+                  <!-- <p class="title">热门的插件</p>
+                                    <span class="all-btn">查看全部</span> -->
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in dataList" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+  <!-- =======页面独有======= -->
+  <script src="./api/shop.js"></script>
+  <script src="./js/shop_app.js"></script>
+  <!-- =======公共======= -->
+  <script src="https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+  <script src="./components/captchaDialog/captchaDialog.js"></script>
+  <script src="./components/countDownButton/countDownButton.js"></script>
+  <script src="./components/loginDialog/loginDialog.js"></script>
+  <script src="./components/topMenu/topMenu.js"></script>
+  <script src="./components/asideMenu/asideMenu.js"></script>
+  <script src="./utils/util.js"></script>
+  <script src="./js/common/common.js"></script>
+  <script src="./js/common/vue.js"></script>
+  <script src="./js/common/element.js"></script>
+  <script src="./js/common/axios.min.js"></script>
+  <script src="./utils/request.js"></script>
+</body>
+
+</html>

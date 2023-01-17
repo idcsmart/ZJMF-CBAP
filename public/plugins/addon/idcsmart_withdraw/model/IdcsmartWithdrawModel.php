@@ -43,7 +43,8 @@ class IdcsmartWithdrawModel extends Model
     {
         $param['keywords'] = $param['keywords'] ?? '';
         $param['status'] = $param['status'] ?? '';
-        #$param['source'] = $param['source'] ?? 'credit';
+        $param['client_id'] = $param['client_id'] ?? 0;
+        $param['source'] = $app=='admin' ? ($param['source'] ?? '') : ($param['source'] ?? 'credit');
         $param['orderby'] = isset($param['orderby']) && in_array($param['orderby'], ['id']) ? 'aiw.'.$param['orderby'] : 'aiw.id';
         $param['start_time'] = $param['start_time'] ?? 0;
         $param['end_time'] = $param['end_time'] ?? 0;
@@ -60,6 +61,9 @@ class IdcsmartWithdrawModel extends Model
                     $clientId = get_client_id();
                     $query->where('aiw.client_id', $clientId);
                 }
+                if(!empty($param['client_id'])){
+                    $query->where('aiw.client_id', $param['client_id']);
+                }
                 if(in_array($param['status'], ['0','1','2','3'])){
                     $query->where('aiw.status', $param['status']);
                 }
@@ -75,7 +79,7 @@ class IdcsmartWithdrawModel extends Model
             })
             ->count();
         $list = $this->alias('aiw')
-            ->field('aiw.id,aiw.amount,aiw.fee,aiwm.name method,aiw.card_number,aiw.name,aiw.account,aiw.status,aiw.reason,aiw.create_time,c.username,c.company,aiw.source,t.transaction_number')
+            ->field('aiw.id,aiw.amount,aiw.fee,aiwm.name method,aiw.card_number,aiw.name,aiw.account,aiw.status,aiw.reason,aiw.create_time,aiw.client_id,c.username,c.company,aiw.source,t.transaction_number')
             ->leftJoin('client c', 'c.id=aiw.client_id')
             ->leftJoin('transaction t', 't.id=aiw.transaction_id')
             ->leftJoin('addon_idcsmart_withdraw_method aiwm', 'aiwm.id=aiw.addon_idcsmart_withdraw_method_id')
@@ -83,6 +87,9 @@ class IdcsmartWithdrawModel extends Model
                 if($app=='home'){
                     $clientId = get_client_id();
                     $query->where('aiw.client_id', $clientId);
+                }
+                if(!empty($param['client_id'])){
+                    $query->where('aiw.client_id', $param['client_id']);
                 }
                 if(in_array($param['status'], ['0','1','2','3'])){
                     $query->where('aiw.status', $param['status']);
@@ -113,7 +120,7 @@ class IdcsmartWithdrawModel extends Model
             $list[$key]['amount'] = amount_format($value['amount']);
             $list[$key]['fee'] = amount_format($value['fee']);
             if($app=='home'){
-                unset($list[$key]['card_number'],$list[$key]['name'],$list[$key]['account'],$list[$key]['username'],$list[$key]['company'],$list[$key]['source'],$list[$key]['transaction_number']);
+                unset($list[$key]['card_number'],$list[$key]['client_id'],$list[$key]['name'],$list[$key]['account'],$list[$key]['username'],$list[$key]['company'],$list[$key]['source'],$list[$key]['transaction_number']);
             }
         }
         return ['list' => $list, 'count' => $count];

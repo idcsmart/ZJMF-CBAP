@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" theme-color="default" theme-mode>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title></title>
+  <!-- element-css -->
+  <link rel="stylesheet" href="./css/common/element.css">
+  <!-- 公共样式 -->
+  <link rel="stylesheet" href="./css/common/common.css">
+  <!-- 页面独有样式 -->
+  <link rel="stylesheet" href="./css/shop.css">
+</head>
+
+<body>
+  <div id="mainLoading">
+    <div class="ddr ddr1"></div>
+    <div class="ddr ddr2"></div>
+    <div class="ddr ddr3"></div>
+    <div class="ddr ddr4"></div>
+    <div class="ddr ddr5"></div>
+  </div>
+  <div id="content" v-cloak>
+    <el-container style="flex-direction: column;">
+      <top-menu></top-menu>
+      <el-container>
+        <aside-menu></aside-menu>
+        <el-main>
+          <!-- 自己的 -->
+          <div id="shop" v-loading="loading">
+            <div class="top-banner">
+              <el-carousel :autoplay="false" :type="isCard?'card':''" height="240px" indicator-position="none">
+                <el-carousel-item v-for="(item,index) in banner" :key="index">
+                  <img class="banner-img" :src="item" alt="">
+                </el-carousel-item>
+              </el-carousel>
+            </div>
+            <div class="shop-content">
+              <!-- 插件 -->
+              <div class="row" v-if="appData.addon && appData.addon.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的插件</p>
+                  <span class="all-btn" @click="toSeeAll('addon')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.addon" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 热门的支付插件 -->
+              <div class="row" v-if="appData.gateway && appData.gateway.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的支付插件</p>
+                  <span class="all-btn" @click="toSeeAll('gateway')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.gateway" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 实名接口 -->
+              <div class="row" v-if="appData.certification && appData.certification.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的实名接口</p>
+                  <span class="all-btn" @click="toSeeAll('certification')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.certification" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 验证码接口 -->
+              <div class="row" v-if="appData.captcha && appData.captcha.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的验证码接口</p>
+                  <span class="all-btn" @click="toSeeAll('captcha')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.captcha" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 邮件接口 -->
+              <div class="row" v-if="appData.mail && appData.mail.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的邮件接口</p>
+                  <span class="all-btn" @click="toSeeAll('mail')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.mail" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 短信接口 -->
+              <div class="row" v-if="appData.sms && appData.sms.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的短信接口</p>
+                  <span class="all-btn" @click="toSeeAll('sms')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.sms" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 模块 -->
+              <div class="row" v-if="appData.server && appData.server.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的模块</p>
+                  <span class="all-btn" @click="toSeeAll('server')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.server" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 主题 -->
+              <div class="row" v-if="appData.template && appData.template.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的主题</p>
+                  <span class="all-btn" @click="toSeeAll('template')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.template" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- 热门的服务 -->
+              <div class="row" v-if="appData.service && appData.service.length!=0">
+                <div class="row-top">
+                  <p class="title">热门的服务</p>
+                  <span class="all-btn" @click="toSeeAll('service')">查看全部</span>
+                </div>
+                <div class="row-bottom">
+                  <div class="bottom-item" v-for="item in appData.service" :key="item.id" @click="itemClick(item.id,item.client_id)">
+                    <img class="item-img" :src="item.icon" alt="">
+                    <p class="name">{{item.name}}</p>
+                    <div class="good">
+                      <div class="star">
+                        <!-- 亮 -->
+                        <div class="star-on" :style="{'width':`${Number(item.score)/5*100}%`}">
+                          <i class="el-icon-star-on" v-for="start in 5"></i>
+                        </div>
+                        <!-- 暗 -->
+                        <div class="star-off">
+                          <i class="el-icon-star-off" v-for="start in 5"></i>
+                        </div>
+
+                      </div>
+                      <div class="user">{{item.sell_count}}+用户</div>
+                    </div>
+                    <div class="money">
+                      {{commontData.currency_prefix}}{{item.product_price}}起
+                    </div>
+                    <div class="author">
+                      <div class="left">
+                        <img class="author-img" src="./img/home/author.png" alt="">
+                        <span>{{item.nickname}}</span>
+                      </div>
+                      <div class="right">
+                        <img class="safe-img" src="./img/home/safe.png" alt="">
+                        <img v-show="Number(item.deposit) > 0" class="copyright-img" src="./img/home/copyright.png" alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+  <!-- =======页面独有======= -->
+  <script src="./api/shop.js"></script>
+  <script src="./js/shop.js"></script>
+  <!-- =======公共======= -->
+  <script src="https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js"></script>
+  <script src="./components/captchaDialog/captchaDialog.js"></script>
+  <script src="./components/countDownButton/countDownButton.js"></script>
+  <script src="./components/loginDialog/loginDialog.js"></script>
+  <script src="./components/topMenu/topMenu.js"></script>
+  <script src="./components/asideMenu/asideMenu.js"></script>
+  <script src="./utils/util.js"></script>
+  <script src="./js/common/common.js"></script>
+  <script src="./js/common/vue.js"></script>
+  <script src="./js/common/element.js"></script>
+  <script src="./js/common/axios.min.js"></script>
+  <script src="./utils/request.js"></script>
+</body>
+
+</html>

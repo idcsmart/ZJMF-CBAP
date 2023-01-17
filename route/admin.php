@@ -13,6 +13,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('login', 'admin/public/loginInfo'); # 登录信息
     Route::post('login', 'admin/public/login'); # 登录
     Route::get('captcha', 'admin/public/captcha'); # 图形验证码
+    Route::get('test', 'admin/public/test'); #测试接口
 })
     ->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,
@@ -20,8 +21,10 @@ Route::group(DIR_ADMIN.'/v1',function (){
         'Access-Control-Max-Age'             => 600,
     ]
 );
-Route::get('v1/doc', 'admin/doc/index'); #获取开发文档
-Route::post('v1/doc', 'admin/doc/create'); #生成开发文档
+
+# 应用商店
+Route::post(DIR_ADMIN.'/v1/app_market/check_token', 'admin/appMarket/checkToken'); # 校验token
+Route::post(DIR_ADMIN.'/v1/app_market/app/:id/install', 'admin/appMarket/install'); # 安装应用
 
 Route::group(DIR_ADMIN.'/v1',function (){
     Route::post('logout', 'admin/admin/logout'); #注销
@@ -143,6 +146,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::put('plugin/:module/:name/:status', 'admin/plugin/status'); # 禁用(启用)插件
     Route::get('plugin/:module/:name', 'admin/plugin/setting'); # 获取单个插件配置
     Route::put('plugin/:module/:name', 'admin/plugin/settingPost'); # 保存配置
+    Route::post('plugin/:module/:name/upgrade', 'admin/plugin/upgrade'); # 插件升级
 
     # 商品与商品分组管理
     Route::get('product', 'admin/product/productList'); # 商品列表
@@ -207,6 +211,10 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('menu/home', 'admin/menu/getHomeMenu'); # 新建接口分组
     Route::put('menu/admin', 'admin/menu/saveAdminMenu'); # 修改接口分组
     Route::put('menu/home', 'admin/menu/saveHomeMenu'); # 删除接口分组
+
+    # 应用商店
+    Route::post('app_market/set_token', 'admin/appMarket/setToken'); # 设置token
+    Route::get('app_market/app/version', 'admin/appMarket/getNewVersion'); # 安装应用
 })  
     ->allowCrossDomain([
             'Access-Control-Allow-Origin'        => $origin,

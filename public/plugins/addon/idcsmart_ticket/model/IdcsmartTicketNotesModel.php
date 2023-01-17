@@ -70,6 +70,8 @@ class IdcsmartTicketNotesModel extends Model
                 'create_time' =>time()
             ]);
 
+            active_log(lang_plugins('ticket_log_admin_create_ticket_notes', ['{admin}'=>'admin#'.get_admin_id().'#' .request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','{content}'=>$param['content']??'']), 'addon_idcsmart_ticket', $ticket->id);
+
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();

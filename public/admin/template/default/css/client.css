@@ -43,7 +43,7 @@
 }
 .client-detail .box {
   padding: 13px 38px 0 20px;
-  height: calc(100% - 140px);
+  height: calc(100% - 160px);
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
@@ -161,6 +161,9 @@
 }
 .client-order .host-name {
   color: #b1b1bc;
+}
+.client-order .tool-content {
+  white-space: pre-line;
 }
 .delDialog .t-dialog__body {
   color: #333;
@@ -421,7 +424,7 @@
   width: 45%;
 }
 .host-detail .box {
-  height: calc(100% - 140px);
+  height: calc(100% - 160px);
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
@@ -460,4 +463,20 @@
 .chlid-box .edit-text {
   color: #1482c5;
   cursor: pointer;
+}
+/* module-opt */
+.module-opt .t-icon {
+  color: #fff;
+  margin-left: 0;
+  position: relative;
+  z-index: 2;
+}
+.module-opt .t-button {
+  margin-right: 20px;
+}
+.pack-tip {
+  font-size: 16px;
+}
+.tool-content {
+  white-space: pre-line;
 }

@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/product.css">
-<div id="content" class="product table" v-cloak>
+<div id="content" class="product" v-cloak>
   <t-card class="list-card-container" :class="{stop: data.status===0}">
     <div class="common-header">
       <div class="left">
@@ -16,7 +16,10 @@
         </div>
       </div>
     </div>
-    <t-enhanced-table ref="table" row-key="key" drag-sort="row-handler" :data="data" :columns="columns" :tree="{ treeNodeColumnIndex: 1 }" :loading="loading" :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" :before-drag-sort="beforeDragSort" @abnormal-drag-sort="onAbnormalDragSort" @drag-sort="changeSort" class="product-table" :max-height="maxHeight" :row-class-name="rowName">
+    <t-enhanced-table ref="table" row-key="key" drag-sort="row-handler" :data="data" :columns="columns" :key="new Date().getTime()"
+     :tree="{ treeNodeColumnIndex: 1 }" :loading="loading" :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" 
+     :before-drag-sort="beforeDragSort" @abnormal-drag-sort="onAbnormalDragSort" @drag-sort="changeSort" class="product-table" 
+     :row-class-name="rowName">
       <template #drag="{row}">
         <t-icon name="move"></t-icon>
       </template>

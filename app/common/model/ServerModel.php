@@ -180,7 +180,7 @@ class ServerModel extends Model
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
-            return ['status'=>400, 'msg'=>lang('create_fail')];
+            return ['status'=>400, 'msg'=>$e->getMessage()];
         }
 
         hook('after_server_create',['id'=>$server->id,'customfield'=>$param['customfield']??[]]);

@@ -93,7 +93,9 @@ class CertificationController extends PluginBaseController
      * @return int list[].company - 公司
      * @return int list[].type - 认证类型1个人，2企业，3个人转企业
      * @return int list[].status - 1已认证，2未通过，3待审核，4已提交资料
+     * @return int list[].auth_fail - 失败原因
      * @return int list[].create_time - 提交时间
+     * @return int list[].company_organ_code - 营业执照号
      * @return int count - 实名认证总数
      */
     public function certificationList()
@@ -131,6 +133,7 @@ class CertificationController extends PluginBaseController
      * @return string log.card_type - 卡类型:id_card身份证,hk_macao_residence_permits港澳居住证,hk_macao_ entry_permit港澳通行证,taiwan_residence_permits台湾居住证,taiwan_entry_permit台湾通行证
      * @return string log.card_number - 证件号
      * @return array log.img - 图片地址,依次为:正,反,营业执照
+     * @return array log.company_organ_code - 营业执照号
      */
     public function index()
     {

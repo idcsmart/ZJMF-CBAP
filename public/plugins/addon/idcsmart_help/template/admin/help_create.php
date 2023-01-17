@@ -5,14 +5,21 @@
           <t-card class="add_document">
             <div class="addtitle">{{id?"编辑文档":"新增文档"}}</div>
             <div class="add_form">
-              <t-form label-Align="top" :data="detialform" class="add_tform" ref="myform" :rules="requiredRules" v-if="typelist.length > 0">
+              <t-form label-Align="top" :data="detialform" class="add_tform" ref="myform" :rules="requiredRules">
                 <t-form-item label="文档名称" name="title" class="inlineflex">
                   <t-input placeholder="请输入" v-model="detialform.title" style="width: 250px;" />
                 </t-form-item>
                 <t-form-item label="分类" name="addon_idcsmart_help_type_id" class="inlineflex">
-                  <t-select bordered style="width: 250px;" v-model="detialform.addon_idcsmart_help_type_id">
-                    <t-option v-for="(item,index) in typelist" :key="item.id" :label="item.name" :value="item.id" />
-                  </t-select>
+                  <template v-if="id">
+                      <t-select bordered style="width: 250px;" v-model="detialform.addon_idcsmart_help_type_id" v-if="detialform.addon_idcsmart_help_type_id">
+                        <t-option v-for="(item,index) in typelist" :key="item.id" :label="item.name" :value="item.id" />
+                      </t-select>
+                  </template>
+                  <template v-else>
+                       <t-select bordered style="width: 250px;" v-model="detialform.addon_idcsmart_help_type_id">
+                        <t-option v-for="(item,index) in typelist" :key="item.id" :label="item.name" :value="item.id" />
+                      </t-select>
+                  </template>
                 </t-form-item>
                 <t-form-item label="关键字" name="keywords">
                   <t-input placeholder="请输入" style="width: 250px;" v-model="detialform.keywords" />
@@ -42,7 +49,7 @@
             <div class="add_richtext">
               <form method="post">
                 <div style="margin-bottom: 10px;">内容</div>
-                <textarea id="tiny" name="content">{{detialform.content}}</textarea>
+                <textarea id="tiny" name="content" v-html="detialform.content"></textarea>
               </form>
             </div>
             <div class="rich_btns">

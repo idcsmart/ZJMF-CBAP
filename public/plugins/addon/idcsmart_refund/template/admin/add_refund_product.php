@@ -80,7 +80,7 @@
       </t-col>
     </t-row>
     <div class="add-refund-btn">
-      <t-button theme="primary" @click="addEdit">{{lang.submit}}</t-button>
+      <t-button theme="primary" @click="addEdit" style="margin-right: 20px;">{{lang.submit}}</t-button>
       <t-button theme="default" @click="goback(true)">{{lang.cancel}}</t-button>
     </div>
   </t-card>

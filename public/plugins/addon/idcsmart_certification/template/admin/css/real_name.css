@@ -13,6 +13,13 @@
   position: relative;
   top: 3px;
 }
+.viewer-container {
+  z-index: 3000 !important;
+}
+.viewer-navbar {
+  display: none !important;
+}
+/* re
 /* real_name_approval */
 .real_name_approval {
   /* detailDialog */
@@ -31,9 +38,33 @@
   margin-bottom: 15px;
   color: var(--td-text-color-primary);
 }
-.real_name_approval .detailDialog .card-img .item img {
+.real_name_approval .detailDialog .card-img .item .img {
   width: 230px;
   height: 143px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+.real_name_approval .detailDialog .card-img .item .img img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.real_name_approval .detailDialog .card-img .item .img:hover .preview {
+  opacity: 1;
+}
+.real_name_approval .detailDialog .card-img .item .preview {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  line-height: 143px;
+  text-align: center;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: all 0.3s;
 }
 .real_name_approval .detailDialog .f-btn {
   text-align: right;

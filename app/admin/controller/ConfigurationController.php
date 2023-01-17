@@ -97,6 +97,8 @@ class ConfigurationController extends AdminBaseController
      * @return  int register_email - 邮箱注册开关:1开启0关闭
      * @return  int register_phone - 手机号注册开关:1开启0关闭
      * @return  int login_phone_verify - 手机号登录短信验证开关:1开启0关闭
+     * @return  int home_login_check_ip - 前台登录检查IP:1开启0关闭
+     * @return  int admin_login_check_ip - 后台登录检查IP:1开启0关闭
      */
     public function loginList()
     {
@@ -124,6 +126,8 @@ class ConfigurationController extends AdminBaseController
      * @param  int register_email - 邮箱注册开关:1开启0关闭
      * @param  int register_phone - 手机号注册开关:1开启0关闭
      * @param  int login_phone_verify - 手机号登录短信验证开关:1开启0关闭
+     * @param  int home_login_check_ip - 前台登录检查IP:1开启0关闭
+     * @param  int admin_login_check_ip - 后台登录检查IP:1开启0关闭
      */
     public function loginUpdate()
     {
@@ -331,6 +335,9 @@ class ConfigurationController extends AdminBaseController
      * @return int cron_aff_swhitch - 推介月报开关 1开启，0关闭
      * @return int cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
      * @return int cron_order_overdue_day - 订单未付款X天后通知 required
+     * @return int cron_task_shell - 任务队列命令 required
+     * @return int cron_task_status - 任务队列最新状态:success成功，error失败 required
+     * @return int cron_day_start_time - 定时任务开始时间 required
      */
     public function cronList()
     {
@@ -375,6 +382,7 @@ class ConfigurationController extends AdminBaseController
      * @return int cron_aff_swhitch - 推介月报开关 1开启，0关闭 required
      * @return int cron_order_overdue_swhitch - 订单未付款通知开关 1开启，0关闭 required
      * @return int cron_order_overdue_day - 订单未付款X天后通知 required
+     * @return int cron_day_start_time - 定时任务开始时间 required
      */
     public function cronUpdate()
     {

@@ -892,9 +892,16 @@ class CommonCloud{
 	 */
 	public function cartCalculatePrice($params){
 		$CartValidate = new CartValidate();
-		if(!$CartValidate->scene('cal')->check($params['custom'])){
-            return ['status'=>400 , 'msg'=>lang_plugins($CartValidate->getError())];
-        }
+
+		if($params['scene'] == 'cal_price'){
+			if(!$CartValidate->scene('CalPrice')->check($params['custom'])){
+	            return ['status'=>400 , 'msg'=>lang_plugins($CartValidate->getError())];
+	        }
+		}else{
+			if(!$CartValidate->scene('cal')->check($params['custom'])){
+	            return ['status'=>400 , 'msg'=>lang_plugins($CartValidate->getError())];
+	        }
+		}
         $params['custom']['product_id'] = $params['product']['id'];
 
 		$PackageModel = new PackageModel();

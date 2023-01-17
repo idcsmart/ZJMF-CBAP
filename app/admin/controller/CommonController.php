@@ -290,6 +290,8 @@ class CommonController extends AdminBaseController
      * @return string menu[].child[].url - 网址
      * @return string menu[].child[].icon - 图标
      * @return int menu[].child[].parent_id - 父ID
+     * @return int menu_id - 选中菜单ID
+     * @return string url - 登录后跳转地址
      */
     public function adminMenu(){
         $result = [

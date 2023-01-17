@@ -7,7 +7,7 @@
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
-      data() {
+      data () {
         return {
           message: 'template...',
           // 工单类型数据
@@ -26,11 +26,11 @@
           // 完结状态下拉框
           statusOpitons: [
             {
-              statusText: '完结',
+              statusText: lang.order_text63,
               status: 1
             },
             {
-              statusText: '未完结',
+              statusText: lang.order_text64,
               status: 0
             }
           ],
@@ -53,13 +53,13 @@
           columns: [
             {
               colKey: 'name',
-              title: '工单类型',
+              title: lang.order_text65,
               cell: "name",
               width: '360'
             },
             {
-              colKey: 'role_name',
-              title: '处理部门',
+              colKey: 'admin',
+              title: lang.order_text66,
               cell: "department",
               width: '360'
 
@@ -67,7 +67,7 @@
             },
             {
               colKey: 'op',
-              title: '操作',
+              title: lang.order_text67,
               cell: "op",
               width: '360',
               width: '128'
@@ -77,34 +77,34 @@
           columns2: [
             {
               colKey: 'index',
-              title: '序号',
+              title: lang.order_text68,
               cell: "index",
               width: '193'
 
             },
             {
               colKey: 'name',
-              title: '工单状态',
+              title: lang.order_text69,
               cell: "name",
               width: '302'
             },
             {
               colKey: 'color',
-              title: '状态颜色',
+              title: lang.order_text70,
               cell: "color",
               width: '302'
 
             },
             {
               colKey: 'statusText',
-              title: '完结状态',
+              title: lang.order_text71,
               cell: "status",
               width: '302'
 
             },
             {
               colKey: 'op',
-              title: '操作',
+              title: lang.order_text67,
               cell: "op",
               width: '128'
 
@@ -112,12 +112,12 @@
           columns3: [
             {
               colKey: 'content',
-              title: '回复内容',
+              title: lang.order_text72,
               cell: "content",
             },
             {
               colKey: 'op',
-              title: '操作',
+              title: lang.order_text67,
               cell: "op",
               width: '128'
             }
@@ -127,9 +127,32 @@
       },
       computed: {
       },
+      computed: {
+        calcName () {
+          return (arr) => {
+            if (arr.length > 0) {
+              const temp = arr.reduce((all, cur) => {
+                all.push(cur.name)
+                return all
+              }, [])
+              return temp.join('，')
+            }
+            return ''
+          }
+        },
+        calcId () {
+          return (arr) => {
+            const temp = arr.reduce((all, cur) => {
+              all.push(cur.id)
+              return all
+            }, [])
+            return temp
+          }
+        }
+      },
       methods: {
         // 初始化富文本
-        initTemplate() {
+        initTemplate () {
           tinymce.init({
             selector: '#tiny',
             language_url: '/tinymce/langs/zh_CN.js',
@@ -171,11 +194,11 @@
           });
         },
         // 富文本上传图片
-        handlerAddImg(blobInfo, success, failure) {
+        handlerAddImg (blobInfo, success, failure) {
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
-            axios.post('http://' + str + 'v1/upload', formData, {
+            axios.post(`${location.protocol}//${str}v1/upload`, formData, {
               headers: {
                 Authorization: 'Bearer' + ' ' + localStorage.getItem('backJwt')
               }
@@ -196,19 +219,21 @@
           })
         },
         // 添加工单类型
-        appendToRoot() {
+        appendToRoot () {
           if (this.isUpdateType || this.isAddType) {
             return this.$message.error(lang.please_save);
           }
           this.orderTypeData.push({
             isedit: false,
             name: '',
-            isAdd: true
+            isAdd: true,
+            arr: [],
+            arr1: []
           });
           this.isAddType = true
         },
         // 获取工单类型数据
-        getOrderTypeOptions() {
+        getOrderTypeOptions () {
           getUserOrderType().then(result => {
             this.orderTypeOptions = result.data.data.list.map((item) => {
               return { name: item.name }
@@ -218,26 +243,33 @@
               item.isedit = false
               item.status = 'edit'
               item.admin_role_id = 0
+              // // 设置选中的管理员id
+              const temp = item.admin.reduce((all, cur) => {
+                all.push(cur.id)
+                return all
+              }, [])
+              item.arr = temp
+              item.arr1 = temp
               return item
             })
 
           }).catch();
         },
-        onPopupVisibleChange(val) {
+        onPopupVisibleChange (val) {
           this.popupVisible = val;
         },
-        onClear(row) {
+        onClear (row) {
           row.name = ''
         },
-        onOptionClick(item,row) {
+        onOptionClick (item, row) {
           row.name = item
           this.popupVisible = false
         },
-        onInputChange(val,row) {
+        onInputChange (val, row) {
           row.name = val
         },
         // 编辑
-        edithandleClickOp(id) {
+        edithandleClickOp (id) {
           if (this.isUpdateType) {
             return this.$message.error(lang.please_save);
           }
@@ -249,7 +281,7 @@
           }
         },
         // 工单-工单类型管理-删除
-        async orderTypeMgtDelete(row) {
+        async orderTypeMgtDelete (row) {
           const result = await orderTypeDelete(row.id);
           if (result.status === 200) {
             this.$message.success({ content: result.data.msg, placement: 'top-right' });
@@ -259,23 +291,24 @@
           }
         },
         // 取消新增类型
-        deleteClickadd() {
+        deleteClickadd () {
           this.orderTypeData.pop()
           this.isAddType = false
         },
         //取消修改
-        canceledit() {
+        canceledit (item) {
           this.isUpdateType = false
+          item.arr1 = item.arr
           this.getOrderTypeOptions();
         },
         // 工单-工单类型管理-保存
-        async orderTypeMgtSave(row) {
-          if (!row.admin_role_id || !row.name) {
+        async orderTypeMgtSave (row) {
+          if (row.arr1.length === 0 || !row.name) {
             this.$message.warning({ content: lang.order_type_verify1, placement: 'top-right' });
             return;
           }
           const params = {
-            admin_role_id: row.admin_role_id,
+            admin_id: row.arr1,
             name: row.name
           };
           if (this.isSubmit) {
@@ -304,7 +337,7 @@
 
         },
         // 删除
-        deleteClickOp(id) {
+        deleteClickOp (id) {
           deletehelptype({ id })
             .then((res) => {
               this.$message.success(res.data.msg);
@@ -315,30 +348,31 @@
             });
         },
         // 工单-转内部-选择部门变化
-        departmentChange(val) {
+        departmentChange (val, item) {
           // 获取部门id对应部门名称
-          const department = this.departmentOptions.filter(item => item.id === val)[0];
-          const name = department ? department.name : null;
-          const optionList = [];
-          // 清除已选人员数据
-          this.adminList.forEach(item => {
-            if (name && item.roles === name) {
-              optionList.push(item);
-            }
-          });
-          this.adminsOptions = optionList;
+          // const department = this.departmentOptions.filter(item => item.id === val)[0];
+          // const name = department ? department.name : null;
+          // const optionList = [];
+          // // 清除已选人员数据
+          // this.adminList.forEach(item => {
+          //   if (name && item.roles === name) {
+          //     optionList.push(item);
+          //   }
+          // });
+          // this.adminsOptions = optionList;
+          item.arr1 = val
         },
         // 获取工单状态列表
-        getTicketStatus() {
+        getTicketStatus () {
           ticketStatus().then((res) => {
             res.data.data.list.forEach((item, index) => {
               if (item['default'] === 1) {
                 item.noEdit = true
               }
               if (item['status'] === 1) {
-                item.statusText = '完结'
+                item.statusText = lang.order_text63
               } else if (item['status'] === 0) {
-                item.statusText = '未完结'
+                item.statusText = lang.order_text64
               } else {
                 item.statusText = '--'
               }
@@ -350,12 +384,12 @@
           })
         },
         // 编辑状态
-        editStatus(row) {
+        editStatus (row) {
           if (this.isUpdateStatus) {
             return this.$message.error(lang.please_save);
           }
           if (row.noEdit) {
-            return this.$message.error('默认状态不可修改!');
+            return this.$message.error(lang.order_text73);
           }
           this.isUpdateStatus = true
           for (let i = 0; i < this.orderStatusData.length; i++) {
@@ -365,10 +399,10 @@
           }
         },
         // 保存状态
-        async orderStatustSave(row) {
+        async orderStatustSave (row) {
           console.log(row);
           if (!row.name || !row.color || row.status === '') {
-            this.$message.warning({ content: '工单状态名称、工单状态颜色、完结状态是必填的！', placement: 'top-right' });
+            this.$message.warning({ content: lang.order_text74, placement: 'top-right' });
             return;
           }
           const params = {
@@ -402,7 +436,7 @@
 
         },
         // 添加工单状态
-        appendStatus() {
+        appendStatus () {
           if (this.isUpdateStatus || this.isAddStatus) {
             return this.$message.error(lang.please_save);
           }
@@ -416,9 +450,9 @@
           this.isAddStatus = true
         },
         // 工单状态删除
-        async orderStatusMgtDelete(row) {
+        async orderStatusMgtDelete (row) {
           if (row.noEdit) {
-            return this.$message.error('默认状态不可删除!');
+            return this.$message.error(lang.order_text75);
           }
           const result = await deleteTicketStatus(row.id).catch(result => {
             this.$message.warning({ content: result.data.msg, placement: 'top-right' });
@@ -431,41 +465,42 @@
           }
         },
         // 取消新增状态
-        deleteStatusadd() {
+        deleteStatusadd () {
           this.orderStatusData.pop()
           this.isAddStatus = false
         },
 
         // 取消修改状态
-        cancelStatusEdit() {
+        cancelStatusEdit () {
           this.isUpdateStatus = false
           this.getTicketStatus();
         },
         // 工单-转发-选择人员变化
-        adminChange(val) {
+        adminChange (val) {
           this.$forceUpdate();
         },
         // 获取部门数据
-        getDepartmentOptions() {
-          getAdminRole({ page: 1, limit: 10000 }).then(result => {
+        getDepartmentOptions () {
+          getAdminList({ page: 1, limit: 10000 }).then(result => {
             this.departmentOptions = result.data.data.list;
-            this.orderTypeData.forEach((item) => {
+            this.orderTypeData.forEach((item, index) => {
               this.departmentOptions.forEach((items) => {
                 if (item.role_name === items.name) {
                   item.admin_role_id = items.id
                 }
               })
+
             })
           }).catch();
         },
         // 获取人员数据
-        getAdminList() {
+        getAdminList () {
           getAdminList({ page: 1, limit: 10000 }).then(result => {
             this.adminList = result.data.data.list;
           }).catch();
         },
         // 时间格式转换
-        formatDate(dateStr) {
+        formatDate (dateStr) {
           const date = new Date(dateStr * 1000);
           const str1 = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-');
           const str2 = [this.formatDateAdd0(date.getHours()), this.formatDateAdd0(date.getMinutes()), this
@@ -473,38 +508,38 @@
           ].join(':');
           return str1 + ' ' + str2;
         },
-        formatDateAdd0(m) {
+        formatDateAdd0 (m) {
           return m < 10 ? '0' + m : m;
         },
 
         // 获取工单预设回复列表
-        getTicketPrereply() {
+        getTicketPrereply () {
           ticketPrereply().then((res) => {
             this.prereplyList = res.data.data.list
           })
         },
         // 编辑预设回复
-        editPrereply(row) {
+        editPrereply (row) {
           if (this.isEditReply) {
-            return this.$message.error('请先保存正在编辑的回复！');
+            return this.$message.error(lang.order_text76);
           }
           this.isEditReply = true
           tinyMCE.editors[0].setContent(row.content)
           this.editReplayItem = row
         },
         // 删除预设回复
-        async deletePrereply(row) {
+        async deletePrereply (row) {
           if (this.isEditReply) {
-            return this.$message.error('请先保存正在编辑的回复！');
+            return this.$message.error(lang.order_text76);
           }
           await deleteTicketPrereply(row.id)
           this.getTicketPrereply()
         },
-        handelDelete() {
+        handelDelete () {
 
         },
         // 保存预设回复
-        async savePreReplay() {
+        async savePreReplay () {
           this.saveLoading = true
           const content = tinyMCE.editors[0].getContent()
           const params = {
@@ -525,12 +560,12 @@
           this.saveLoading = false
         }
       },
-      created() {
+      created () {
         this.getOrderTypeOptions();
         this.getTicketStatus()
         this.getTicketPrereply()
       },
-      mounted() {
+      mounted () {
         this.initTemplate()
       }
     }).$mount(template);

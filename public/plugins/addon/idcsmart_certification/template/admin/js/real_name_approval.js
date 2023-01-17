@@ -4,11 +4,15 @@
     const template = document.getElementsByClassName('real_name_approval')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
+    Vue.use(VueViewer.default)
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}/`
     new Vue({
       data () {
         return {
           data: [],
-          tableLayout: false,
+          tableLayout: true,
           bordered: true,
           visible: false,
           delVisible: false,
@@ -27,6 +31,13 @@
               colKey: 'username',
               title: lang.proposer,
               ellipsis: true,
+              width: 200
+            },
+            {
+              colKey: 'real_name',
+              title: lang.real_name,
+              ellipsis: true,
+              width: 200
             },
             {
               colKey: 'type',
@@ -98,7 +109,12 @@
           // 详情
           payTit: lang.detail,
           detailVisible: false,
-          realDetai: {}
+          realDetai: {},
+          imgVisble: false,
+          bigShow: [],
+          num: 0,
+          sNum: 10,
+          prentNum: 100
         }
       },
       mounted () {
@@ -116,11 +132,27 @@
         }
       },
       methods: {
+        lookImg (url) {
+          this.bigShow = []
+          this.bigShow.push(url)
+          this.$viewerApi({
+            images: this.bigShow,
+            options: {
+              initialViewIndex: 0,
+            },
+          })
+        },
+        jumpUser (row) {
+          location.href = str + `client_detail.html?client_id=${row.client_id}`
+        },
         checkPwd (val) {
           if (val !== this.formData.password) {
             return { result: false, message: window.lang.password_tip, type: 'error' };
           }
           return { result: true }
+        },
+        rotation () {
+          this.num += 1
         },
         // 获取列表
         async getList () {

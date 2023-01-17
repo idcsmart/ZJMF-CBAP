@@ -1,10 +1,11 @@
 .top-back {
-    width: calc(100% - 160px);
+    width: calc(100% - 190px);
     background: #F6FAFF;
     height: calc(40px + 2.56rem);
     position: absolute;
     z-index: -1;
 }
+
 
 .main-card {
     position: relative;
@@ -119,6 +120,11 @@
             margin-left: .4rem;
             overflow-x: auto;
 
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+
             .right-title {
                 font-size: .28rem;
                 font-weight: bold;
@@ -164,7 +170,9 @@
 
         .contnet-right-out {
             height: 100%;
-
+            a:target{
+              padding-top: .7rem !important;
+            }
             .page {
                 display: flex;
                 flex-direction: row;

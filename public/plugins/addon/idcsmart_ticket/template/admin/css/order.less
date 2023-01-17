@@ -430,6 +430,7 @@
     display: inline-block;
 
     .reply-middle {
+      position: relative;
       display: inline-block;
       margin-top: 11px;
       border-radius: 3px;
@@ -438,6 +439,7 @@
 
       .replu-conten {
         display: inline-block;
+        word-break: break-word;
 
         img {
           width: 140px;
@@ -452,8 +454,8 @@
 
       .text-btn {
         position: absolute;
-        bottom: 10px;
-        right: 12px;
+        bottom: 0px;
+        right: 0px;
         font-size: 18px;
       }
     }
@@ -614,5 +616,9 @@
 }
 
 .row-class {
+  cursor: pointer;
+}
+
+.user-name {
   cursor: pointer;
 }

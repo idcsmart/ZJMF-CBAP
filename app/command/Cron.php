@@ -22,9 +22,15 @@ class Cron extends Command
     }
 
     protected function execute(Input $input, Output $output)
-    {	
+    {
+        // 每天几点开始执行
+        if (date('G')<($config['cron_day_start_time']??1)){
+            return false;
+        }
+
 		$this->minuteCron();// 每分钟执行一次hook需要
-		$config = $this->cronConfig();	
+		$config = $this->cronConfig();
+
 		$this->configurationUpdate('cron_lock_start_time',time());
 		
 		//最后执行时间判断
@@ -50,9 +56,23 @@ class Cron extends Command
     }
 	// 每天执行一次
 	public function dayCron($config,$output){
-		if(date('Y-m-d 01:00:00',$config['cron_lock_day_last_time'])==date('Y-m-d 01:00:00')){
-			return false;
-		}
+        # 如果已经过去24小时,并且时间超过了设置时间
+        $this_time = time();
+        if( (($this_time - $config["cron_lock_day_last_time"]??0) < 60*60*24) || date('G') < ($config["cron_day_start_time"]??0)){
+            return false;
+        }
+        # 今日执行 15分钟限制
+        /*$time_day = strtotime(date('Y-m-d'))+intval($config["cron_day_start_time"]??0)*60*60;
+        if ($time_day > time() || time() > $time_day+60*15){
+            return false;
+        }*/
+        # 今天执行了 锁 ;
+        if (date('Y-m-d',$config['cron_lock_day_last_time']??0) == date('Y-m-d')){
+            return false;
+        }
+        # 执行自动任务
+        $this->configurationUpdate('cron_lock_day_last_time',time());
+
 		$this->hostDue($config);//主机续费提示
 		$this->hostOverdue($config);//主机逾期提示
 		$this->orderOverdue($config);//订单未付款

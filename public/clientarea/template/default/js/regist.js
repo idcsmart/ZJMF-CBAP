@@ -37,9 +37,9 @@ function captchaCheckCancel() {
             phoneCode: "",
             emailCode: "",
             countryCode: 86,
-            costomfield: {}
+            customfield: {}
           },
-          costomfield: {
+          customfield: {
             sale_number: ''
           },
           token: "",
@@ -50,6 +50,11 @@ function captchaCheckCancel() {
         };
       },
       created() {
+        const temp = this.getQuery(location.search)
+        if (temp.sale_number) {
+          this.checked1 = true
+          this.customfield.sale_number = temp.sale_number
+        }
         this.getCountryList();
         this.getCommonSetting();
       },
@@ -74,6 +79,9 @@ function captchaCheckCancel() {
             this.sendPhoneCode();
           }
           // this.doRegist()
+        },
+        goHelpUrl(id) {
+          window.open(`${location.protocol}//${host}/agreement.html?id=${id}`)
         },
         async getCaptcha() {
           try {
@@ -188,7 +196,7 @@ function captchaCheckCancel() {
           }
 
           if (this.checked1) {
-            if (!this.costomfield.sale_number) {
+            if (!this.customfield.sale_number) {
               isPass = false
               this.errorText = "请输入您的销售编号！"
             }
@@ -218,26 +226,35 @@ function captchaCheckCancel() {
               username: "",
               password: form.password,
               re_password: form.repassword,
-              costomfield: {}
+              customfield: {}
             };
             if (this.checked1) {
-              params.costomfield.sale_number = this.costomfield.sale_number
+              params.customfield.sale_number = this.customfield.sale_number
             }
             //调用注册接口
-            regist(params)
-              .then((res) => {
-                if (res.data.status === 200) {
-                  this.$message.success(res.data.msg);
-                  // 存入 jwt
-                  localStorage.setItem("jwt", res.data.data.jwt);
-                  location.href = "index.html";
-                }
-              })
-              .catch((err) => {
-                this.errorText = err.data.msg;
-                // this.$message.error(err.data.msg);
-              });
+            regist(params).then((res) => {
+              if (res.data.status === 200) {
+                this.$message.success(res.data.msg);
+                // 存入 jwt
+                localStorage.setItem("jwt", res.data.data.jwt);
+                location.href = "index.html";
+              }
+            }).catch((err) => {
+              this.errorText = err.data.msg;
+              // this.$message.error(err.data.msg);
+            });
           }
+        },
+        // 解析url
+        getQuery(url) {
+          const str = url.substr(url.indexOf('?') + 1)
+          const arr = str.split('&')
+          const res = {}
+          for (let i = 0; i < arr.length; i++) {
+            const item = arr[i].split('=')
+            res[item[0]] = item[1]
+          }
+          return res
         },
         // 获取国家列表
         getCountryList() {

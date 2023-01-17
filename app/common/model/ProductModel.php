@@ -96,18 +96,26 @@ class ProductModel extends Model
             if($app=='home'){
                 $query->where('p.hidden', 0);
             }
+            $query->where('p.product_id',0);
         };
 
         $products = $this->alias('p')
             ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,p.price,s.module,ss.module module1,
             pg.name as product_group_name_second,pg.id as product_group_id_second,
-            pgf.name as product_group_name_first,pgf.id as product_group_id_first')
+            pgf.name as product_group_name_first,pgf.id as product_group_id_first,pr.name as parent_name,pr.id as parent_id')
+            ->leftJoin('product pr','pr.id=p.product_id')
             ->leftjoin('product_group pg','p.product_group_id=pg.id')
             ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
             ->leftjoin('server ss','ss.server_group_id=sg.id')
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim'])
+            ->withAttr('description',function ($value){
+                if (!empty($value)){
+                    return htmlspecialchars_decode($value);
+                }
+                return $value;
+            })
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp'])
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
@@ -118,6 +126,9 @@ class ProductModel extends Model
 
         foreach ($products as $key => $value) {
             $products[$key]['price'] = amount_format($value['price']);
+            if ($value['parent_id'] && $value['parent_id']>0){
+                $products[$key]['id'] = $value['parent_id'];
+            }
             if($app=='home'){
                 unset($products[$key]['stock_control'], $products[$key]['qty'], $products[$key]['hidden'], $products[$key]['product_group_name_second'], $products[$key]['product_group_id_second'], $products[$key]['product_group_name_first'], $products[$key]['product_group_id_first']);
             }
@@ -132,7 +143,7 @@ class ProductModel extends Model
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
             ->leftjoin('server ss','ss.server_group_id=sg.id')
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim'])
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud'])
             ->where($where)
             ->count();
 
@@ -159,6 +170,8 @@ class ProductModel extends Model
             }
             if($app=='home'){
                 $query->where('p.hidden', 0);
+            }else{
+                $query->where('pgf.name','<>','应用商店');
             }
         };
 
@@ -168,6 +181,12 @@ class ProductModel extends Model
             pgf.name as product_group_name_first,pgf.id as product_group_id_first')
             ->leftjoin('product_group pg','p.product_group_id=pg.id')
             ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
+            ->withAttr('description',function ($value){
+                if (!empty($value)){
+                    return htmlspecialchars_decode($value);
+                }
+                return $value;
+            })
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
@@ -285,6 +304,7 @@ class ProductModel extends Model
      * @return int created_notice_mail_template - 已开通邮件通知模板,默认0
      * @return array upgrade - 可升降级商品ID,数组
      * @return int product_id - 父商品ID
+     * @return array plugin_custom_fields - 自定义字段{is_link:是否已有子商品,是,置灰}
      */
     public function indexProduct($id)
     {
@@ -309,6 +329,19 @@ class ProductModel extends Model
             if($app=='home'){
                 $product = ['id' => $product['id'], 'name' => $product['name']];
             }
+        }
+
+        # 自定义字段
+        $result = hook('product_detail_custom_fields',['id'=>$id]);
+        foreach ($result as $item){
+            if (is_array($item)){
+                foreach ($item as $key=>$value){
+                    $customFields[$key] = $value;
+                }
+            }
+        }
+        if (!empty($product)){
+            $product['plugin_custom_fields'] = $customFields??[];
         }
 
         return $product?:(object)[];
@@ -591,7 +624,7 @@ class ProductModel extends Model
             $this->update([
                 'name' => $param['name']??'',
                 'product_group_id' => $param['product_group_id'],
-                'description' => $param['description']??'',
+                'description' => isset($param['description'])?htmlspecialchars($param['description']):'',
                 'hidden' => $param['hidden'],
                 'stock_control' => $param['stock_control'],
                 'qty' => $param['qty'],
@@ -1232,7 +1265,7 @@ class ProductModel extends Model
         $param['config_options'] = $param['config_options'] ?? [];
         
         $ModuleLogic = new ModuleLogic();
-        return $ModuleLogic->cartCalculatePrice($ProductModel, $param['config_options']);
+        return $ModuleLogic->cartCalculatePrice($ProductModel, $param['config_options'], 1, 'cal_price');
     }
 
     /**

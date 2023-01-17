@@ -27,6 +27,7 @@ class ClientController extends AdminBaseController
      * @method  GET
      * @param object custom_field - 自定义字段,key为自定义字段名称,value为自定义字段的值
      * @param string keywords - 关键字,搜索范围:用户ID,姓名,邮箱,手机号
+     * @param int client_id - 用户ID,精确搜索
      * @param int page - 页数
      * @param int limit - 每页条数
      * @param string orderby - 排序 id

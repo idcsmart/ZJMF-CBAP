@@ -3,6 +3,7 @@
   window.onload = function () {
     const template = document.getElementsByClassName('configuration-system')[0]
     Vue.prototype.lang = window.lang
+    Vue.prototype.moment = window.moment;
     const host = location.host
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
@@ -42,11 +43,13 @@
           newListParams: {
             limit: 10,
             page: 1,
-            parent_id: 11
+            parent_id: 3
           },
           isShowProgress: false,
-          timer: null
+          timer: null,
+          hasUpdate: false,
         }
+
       },
       methods: {
 
@@ -59,10 +62,36 @@
             if (this.systemData.is_download == 1) {
               this.isDown = true
             }
+            // 判断版本是否可以更新
+            this.hasUpdate = this.checkVersion(this.systemData.version, this.systemData.last_version)
             localStorage.setItem('systemData', JSON.stringify(this.systemData))
           } catch (error) {
 
           }
+        },
+        /**
+         * 
+         * @param {string} nowStr 当前版本
+         * @param {string} lastStr 最新版本
+         */
+        checkVersion(nowStr, lastStr) {
+          const nowArr = nowStr.split('.')
+          const lastArr = lastStr.split('.')
+          let hasUpdate = false
+          const nowLength = nowArr.length
+          const lastLength = lastArr.length
+
+          const length = Math.min(nowLength, lastLength)
+          for (let i = 0; i < length; i++) {
+            if (lastArr[i] - nowArr[i] > 0) {
+              hasUpdate = true
+            }
+          }
+          if (!hasUpdate && lastLength - nowLength > 0) {
+            hasUpdate = true
+          }
+          return hasUpdate
+
         },
         // 获取更新信息
         getUpContent() {
@@ -107,7 +136,7 @@
           window.open(`https://www.idcsmart.com/news_cont2/${item.row.id}.html`)
         },
         onRowMouseover(item) {
-          
+
         },
         // 开始下载
         beginDown() {

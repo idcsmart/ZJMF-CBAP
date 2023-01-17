@@ -1,6 +1,6 @@
 // css 样式依赖common.css
 const aliAsideMenu = {
-    template: ` <el-aside width="160px">
+    template: ` <el-aside width="220px">
     <img class="ali-logo" :src="logo"></img>
     <div class="menu-list-top">
         <div class="menu-item" :class="item.id === menuActiveId ? 'menu-active':''" v-for="item in menu1" :key="item.id" @click="toPage(item)">

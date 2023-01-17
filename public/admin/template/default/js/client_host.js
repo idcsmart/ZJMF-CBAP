@@ -42,8 +42,8 @@
               ellipsis: true
             },
             {
-              colKey: 'amount',
-              title: lang.money_cycle,
+              colKey: 'renew_amount',
+              title: `${lang.renew}${lang.money_cycle}`,
               width: 200,
               ellipsis: true
             },
@@ -191,6 +191,7 @@
               return item
             })
             this.renewLoading = false
+            
           } catch (error) {
             this.renewLoading = false
           }
@@ -221,7 +222,7 @@
             this.$message.success(res.data.msg)
             this.submitLoading = false
             this.renewVisible = false
-            this.getHostList()
+            this.getClientList()
           } catch (error) {
             this.submitLoading = false
             console.log(error)

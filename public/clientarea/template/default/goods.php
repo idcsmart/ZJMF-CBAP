@@ -1,7 +1,6 @@
 {include file="header"}
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
-
 <body>
   <!-- mounted之前显示 -->
   <div id="mainLoading">

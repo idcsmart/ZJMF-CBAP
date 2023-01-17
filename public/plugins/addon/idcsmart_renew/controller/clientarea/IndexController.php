@@ -53,7 +53,7 @@ class IndexController extends PluginBaseController
      * @url /console/v1/host/:id/renew
      * @method  POST
      * @param int id - 产品ID required
-     * @param string billing_cycle - 周期 required
+     * @param string billing_cycle - 周期(通用产品是中文，云产品是英文;这里要注意，根据续费页面返回的周期来传，不停的模块可能传的不一样) required
      * @param object customfield - 自定义参数,比如优惠码参数传:{"promo_code":["pr8nRQOGbmv5"]}
      */
     public function renew()

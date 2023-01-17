@@ -159,7 +159,7 @@ class ModuleLogic
 	 * @return  int status - 状态,200=成功,400=失败
 	 * @return  string msg - 信息
 	 */
-	public function suspendAccount(HostModel $HostModel): array
+	public function suspendAccount(HostModel $HostModel, $param = []): array
 	{
 		// 模块调用
 		$module = $HostModel->getModule();
@@ -167,6 +167,9 @@ class ModuleLogic
 			if(method_exists($ImportModule, 'suspendAccount')){
 				// 获取模块通用参数
 				$params = $HostModel->getModuleParams();
+				$params['suspend_type'] = $param['suspend_type'] ?? 'overdue';
+				$params['suspend_reason'] = $param['suspend_reason'] ?? '';
+
 				$res = call_user_func([$ImportModule, 'suspendAccount'], $params);
 				return $this->formatResult($res, lang('module_suspend_success'), lang('module_suspend_fail'));
 			}else{
@@ -308,6 +311,7 @@ class ModuleLogic
 	 * @version v1
 	 * @param   ProductModel $ProductModel - 产品模型
 	 * @param   mixed  $params   []  自己定义的参数
+	 * @param   string  scene - 场景(buy=验证所有参数,cal_price=价格计算)
 	 * @return  int status - 状态(200=成功,400=失败)
 	 * @return  array data - 购物车数据
 	 * @return  float data.price - 配置项金额
@@ -319,7 +323,7 @@ class ModuleLogic
 	 * @return  string data.preview[].value - 值
 	 * @return  string data.preview[].price - 价格
 	 */
-	public function cartCalculatePrice($ProductModel, $params = [], $qty=1)
+	public function cartCalculatePrice($ProductModel, $params = [], $qty=1, $scene = 'buy')
 	{
 		$result = [];
 
@@ -328,7 +332,7 @@ class ModuleLogic
 		if($ImportModule = $this->importModule($module)){
 			if(method_exists($ImportModule, 'cartCalculatePrice')){
 				// 获取模块通用参数
-				$result = call_user_func([$ImportModule, 'cartCalculatePrice'], ['product'=>$ProductModel, 'custom'=>$params, 'qty'=>$qty]);
+				$result = call_user_func([$ImportModule, 'cartCalculatePrice'], ['product'=>$ProductModel, 'custom'=>$params, 'qty'=>$qty, 'scene'=>$scene]);
 				if(isset($result['status']) && $result['status'] == 200 && !isset($result['data']['preview'])){
 					$result['data']['preview'] = [];
 				}

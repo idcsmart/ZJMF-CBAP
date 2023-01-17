@@ -456,7 +456,7 @@ class IdcsmartCommonLogic
                 'description'=>implode("\n",$description),
                 'content'=>implode("\n",$description),
                 'preview'=>$preview,
-                'base_price' => $basePrice
+                'base_price' => $basePrice,
             ]
         ];
 
@@ -473,6 +473,13 @@ class IdcsmartCommonLogic
         $hostId = $param['host_id'];
 
         $configoptions = $param['custom']['configoption']??[];
+
+        $IdcsmartCommonHostConfigoptionModel =new IdcsmartCommonHostConfigoptionModel();
+        // 删除旧的产品关联配置数据
+        $IdcsmartCommonHostConfigoptionModel->where('host_id',$hostId)->delete();
+        // 删除旧的产品关联的子产品数据
+        /*$IdcsmartCommonSonHost = new IdcsmartCommonSonHost();
+        $IdcsmartCommonSonHost->where('host_id',$hostId)->delete();*/
 
         $IdcsmartCommonProductConfigoptionModel = new IdcsmartCommonProductConfigoptionModel();
 
@@ -522,7 +529,6 @@ class IdcsmartCommonLogic
             }
         }
 
-        $IdcsmartCommonHostConfigoptionModel =new IdcsmartCommonHostConfigoptionModel();
         $IdcsmartCommonHostConfigoptionModel->insertAll($insert);
 
         return true;
@@ -545,6 +551,7 @@ class IdcsmartCommonLogic
             ->field('pc.id,pc.option_type,hc.configoption_sub_id,hc.qty,pc.fee_type')
             ->leftJoin('module_idcsmart_common_product_configoption pc','pc.id=hc.configoption_id')
             ->where('hc.host_id',$host_id)
+            ->where('pc.hidden',0)
             ->select()
             ->toArray();
 

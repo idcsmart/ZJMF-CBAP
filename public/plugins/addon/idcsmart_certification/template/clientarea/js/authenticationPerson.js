@@ -128,9 +128,9 @@
                 },
                 // 身份证第一张上传成功回调
                 handleSuccess1(response, file, fileList) {
-                    this.sunmitBtnLoading = false
                     if (response.status === 200) {
                         this.img_one = response.data.save_name
+                        this.sunmitBtnLoading = false
                         this.uploadTipsText1 = ''
                     } else {
                         this.$message.warning(response.msg)
@@ -157,9 +157,9 @@
                 },
                 // 身份证第二张上传成功回调
                 handleSuccess2(response, file, fileList) {
-                    this.sunmitBtnLoading = false
                     if (response.status === 200) {
                         this.img_two = response.data.save_name
+                        this.sunmitBtnLoading = false
                         this.uploadTipsText2 = ''
                     } else {
                         this.$message.warning(response.msg)

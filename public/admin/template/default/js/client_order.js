@@ -278,7 +278,7 @@
               item.isExpand = false
             })
             this.loading = false
-            if (this.curInfo) { //修改子项打开对应的订单下拉
+            if (JSON.stringify(this.curInfo) !== '{}') { //修改子项打开对应的订单下拉
               this.itemClick(this.curInfo)
             } else {
             }

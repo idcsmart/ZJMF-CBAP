@@ -11,7 +11,7 @@
         payDialog,
         withdrawDialog,
       },
-      mounted () {
+      mounted() {
         window.addEventListener("scroll", this.computeScroll);
         // 关闭loading
         // document.getElementById('mainLoading').style.display = 'none';
@@ -26,15 +26,15 @@
           this.isShowCash = true;
         }
       },
-      updated () {
+      updated() {
         // 关闭loading
         // document.getElementById('mainLoading').style.display = 'none';
         // document.getElementsByClassName('template')[0].style.display = 'block'
       },
-      destroyed () {
+      destroyed() {
         window.removeEventListener("scroll", this.computeScroll);
       },
-      data () {
+      data() {
         return {
           isShowOrderController: false, // 是否展示订单记录
           isShowTransactionController: false, // 是否展示交易订单
@@ -107,6 +107,7 @@
             Applied: { text: lang.finance_text9 },
             Refund: { text: lang.finance_text10 },
             Withdraw: { text: lang.finance_text11 },
+            Artificial: { text: "人工订单" }
           },
           loading1: false,
           loading2: false,
@@ -242,19 +243,19 @@
           diaLoading: false,
         };
       },
-      created () {
+      mixins: [mixin],
+      created() {
         // 订单记录列表
         // this.getorderList();
         this.getCommon();
         this.getAccount();
         this.getGateway();
         this.getUnAmount();
-        // 获取提现规则
-        this.getWithdrawRule();
+
       },
       watch: {
         txData: {
-          handler (newV, oldV) {
+          handler(newV, oldV) {
             let obj = this.ruleData.method.find(
               (item) => item.id == newV.method_id
             );
@@ -263,20 +264,19 @@
             } else {
               this.showCard = false;
             }
-            console.log(newV);
           },
           deep: true,
         },
       },
       filters: {
-        formateTime (time) {
+        formateTime(time) {
           if (time && time !== 0) {
             return formateDate(time * 1000);
           } else {
             return "--";
           }
         },
-        formateTime1 (time) {
+        formateTime1(time) {
           if (time && time !== 0) {
             return formateDate1(time * 1000);
           } else {
@@ -285,7 +285,7 @@
         },
       },
       methods: {
-        getRule (arr) {
+        getRule(arr) {
           let isShow1 = this.showFun(arr, "OrderController::index");
           let isShow2 = this.showFun(arr, "TransactionController::list");
           let isShow3 = this.showFun(arr, "AccountController::creditList");
@@ -310,9 +310,8 @@
             this.activeIndex = "4";
           }
           this.handleClick();
-          console.log(isShow1, isShow2, isShow2, this.activeIndex);
         },
-        showFun (arr, str) {
+        showFun(arr, str) {
           if (typeof arr == "string") {
             return true;
           } else {
@@ -327,18 +326,16 @@
           }
         },
         // 去往提现列表
-        goWithdrawal () {
-          console.log(111);
+        goWithdrawal() {
           location.href = "/withdrawal.html";
         },
         //获取订单列表
-        getorderList () {
+        getorderList() {
           this.loading1 = true;
           orderList(this.params1).then((res) => {
             if (res.data.status === 200) {
               this.params1.total = res.data.data.count;
               let list = res.data.data.list;
-
               list.map((item) => {
                 let product_name = "";
                 // 商品名称 含两个以上的 只取前两个拼接然后拼接上商品名称的个数
@@ -368,13 +365,12 @@
               });
 
               this.dataList1 = list;
-              console.log(this.dataList1);
             }
             this.loading1 = false;
           });
         },
         // 获取交易记录列表
-        getTransactionList () {
+        getTransactionList() {
           this.loading2 = true;
           transactionList(this.params2).then((res) => {
             if (res.data.status === 200) {
@@ -393,7 +389,7 @@
           });
         },
         // 获取余额记录列表
-        getCreditList () {
+        getCreditList() {
           this.loading3 = true;
           if (this.date && this.date[0]) {
             this.params3.start_time = this.date[0] / 1000;
@@ -406,9 +402,9 @@
             if (res.data.status === 200) {
               let list = res.data.data.list;
               // 过滤人工订单 不显示
-              list = list.filter((item) => {
-                return item.type !== "Artificial";
-              });
+              // list = list.filter((item) => {
+              //   return item.type !== "Artificial";
+              // });
               this.dataList3 = list;
               this.params3.total = res.data.data.count;
             }
@@ -416,7 +412,7 @@
           });
         },
         // 获取订单详情
-        getOrderDetailsList (id) {
+        getOrderDetailsList(id) {
           this.loading4 = true;
           orderDetails(id).then((res) => {
             if (res.data.status === 200) {
@@ -439,17 +435,15 @@
           });
         },
         // 获取支付方式列表
-        getGateway () {
+        getGateway() {
           gatewayList().then((res) => {
             if (res.data.status === 200) {
               this.gatewayList = res.data.data.list;
-              console.log(this.gatewayList);
             }
           });
         },
         // tab点击事件
-        handleClick () {
-          console.log(this.activeIndex);
+        handleClick() {
           if (this.activeIndex == 1) {
             // 订单记录
             this.getorderList();
@@ -466,56 +460,56 @@
             this.getVoucher();
           }
         },
-        sizeChange1 (e) {
+        sizeChange1(e) {
           this.params1.limit = e;
           this.getorderList();
         },
-        sizeChange2 (e) {
+        sizeChange2(e) {
           this.params2.limit = e;
           this.getTransactionList();
         },
-        sizeChange3 (e) {
+        sizeChange3(e) {
           this.params3.limit = e;
           this.getCreditList();
         },
 
-        currentChange1 (e) {
+        currentChange1(e) {
           this.params1.page = e;
           this.getorderList();
         },
-        currentChange2 (e) {
+        currentChange2(e) {
           this.params2.page = e;
           this.getTransactionList();
         },
-        currentChange3 (e) {
+        currentChange3(e) {
           this.params3.page = e;
           this.getCreditList();
         },
         // 订单记录 搜索框事件
-        inputChange1 () {
+        inputChange1() {
           this.params1.page = 1;
           this.getorderList();
         },
         // 交易记录 搜索框事件
-        inputChange2 () {
+        inputChange2() {
           this.params2.page = 1;
           this.getTransactionList();
         },
         // 余额记录 搜索框事件
-        inputChange3 () {
+        inputChange3() {
           this.params3.page = 1;
           this.getCreditList();
         },
-        changeDate () { },
+        changeDate() { },
         // 获取通用配置
-        getCommon () {
+        getCommon() {
           this.commonData = JSON.parse(localStorage.getItem("common_set_before"))
           document.title = this.commonData.website_name + "-财务信息";
           this.currency_prefix = this.commonData.currency_prefix;
           this.currency_code = this.commonData.currency_code;
         },
         // 获取账户详情
-        getAccount () {
+        getAccount() {
           account().then((res) => {
             if (res.data.status === 200) {
               this.balance = res.data.data.account.credit;
@@ -523,15 +517,15 @@
           });
         },
         // 获取待审核金额
-        getUnAmount () {
-          unAmount().then((res) => {
+        getUnAmount() {
+          this.addons_js_arr.includes('IdcsmartRefund') && unAmount().then((res) => {
             if (res.data.status === 200) {
               this.unAmount = res.data.data.amount;
             }
           });
         },
         // 显示充值 dialog
-        showCz () {
+        showCz() {
           // 初始化弹窗数据
           this.czData = {
             amount: "",
@@ -546,11 +540,10 @@
           this.payLoading1 = false;
           this.payHtml = "";
         },
-        keepTwoDecimalFull (num) {
+        keepTwoDecimalFull(num) {
           var result = parseFloat(num);
           if (isNaN(result)) {
-            alert("传递参数错误，请检查！");
-            return false;
+            return num;
           }
           result = Math.round(num * 100) / 100;
           var s_x = result.toString(); //将数字转换为字符串
@@ -570,46 +563,10 @@
           return s_x;
         },
         // 显示提现 dialog
-        showTx () {
-          const ruler = {
-            // 提现来源
-            source: "credit",
-            // 提现方式
-            method: [],
-            // 第一个提现方式
-            method_id: "",
-            // 可提现金额
-            withdrawable_amount: this.balance,
-            // 单次提现最提金额
-            withdraw_min: "",
-            // 单次提现最高金额
-            withdraw_max: "",
-            // 提现手续费 百分比的带上“%” 固定金额 保留两位数
-            withdraw_handling_fee: "",
-            // 最低提现手续费
-            percent_min: "",
-          };
-          ruler.method = this.ruleData.method;
-          ruler.method_id = this.ruleData.method[0]
-            ? this.ruleData.method[0].id
-            : "";
-          ruler.withdraw_max = this.keepTwoDecimalFull(this.ruleData.max);
-          ruler.withdraw_min = this.keepTwoDecimalFull(this.ruleData.min);
-          // 如果是固定的费用就取 withdraw_fee
-          if (this.ruleData.withdraw_fee_type == "fixed") {
-            ruler.withdraw_handling_fee =
-              this.currency_prefix + this.ruleData.withdraw_fee;
-          } else {
-            // 如果是百分比收费就取 percent 不过加上 符号
-            ruler.withdraw_handling_fee = this.ruleData.percent + "%";
-          }
-          ruler.percent_min = this.keepTwoDecimalFull(
-            this.ruleData.percent_min
-          );
-          this.$refs.withdrawDialog.shwoWithdrawal(ruler);
+        showTx() {
+          this.getWithdrawRule()
         },
-        dowithdraw (params) {
-          console.log(params);
+        dowithdraw(params) {
           // 推介计划提现
           withdraw(params)
             .then((res) => {
@@ -628,7 +585,7 @@
             });
         },
         // 申请提现 提交
-        doCredit () {
+        doCredit() {
           let isPass = true;
           const data = this.txData;
           if (data.method === "alipay") {
@@ -686,7 +643,7 @@
           }
         },
         // 充值金额变化时触发
-        czInputChange () {
+        czInputChange() {
           let data = this.czData;
           let isPass = true;
           if (!data.gateway) {
@@ -716,7 +673,7 @@
           }
         },
         // 充值方式变化时触发
-        czSelectChange () {
+        czSelectChange() {
           let data = this.czData;
           let isPass = true;
           if (!data.gateway) {
@@ -737,13 +694,13 @@
           }
         },
         // 充值dialog 关闭
-        czClose () {
+        czClose() {
           this.isShowCz = false;
           clearInterval(this.timer);
           this.time = 300000;
         },
         // 充值
-        doRecharge (params) {
+        doRecharge(params) {
           this.payLoading1 = true;
           this.isShowimg1 = true;
           this.czDataOld = { ...this.czData };
@@ -760,7 +717,6 @@
                     this.errText = "";
                     if (res.data.status === 200) {
                       this.payHtml = res.data.data.html;
-                      console.log(this.payHtml);
                       // 轮询支付状态
                       this.pollingStatus(orderId);
                     }
@@ -782,7 +738,7 @@
             });
         },
         // 轮循支付状态
-        pollingStatus (id) {
+        pollingStatus(id) {
           if (this.timer) {
             clearInterval(this.timer);
           }
@@ -810,13 +766,12 @@
             }
           }, 2000);
         },
-        getRowKey (row) {
+        getRowKey(row) {
           return row.id + "-" + row.host_id;
         },
         // 订单记录订单详情
-        load (tree, treeNode, resolve) {
+        load(tree, treeNode, resolve) {
           // 获取订单详情
-          // console.log(tree);
           const id = tree.id;
           orderDetails(id).then((res) => {
             if (res.data.status === 200) {
@@ -827,7 +782,7 @@
           // this.getOrderDetailsList(id)
         },
         // 打开删除弹窗
-        openDeletaDialog (row, index) {
+        openDeletaDialog(row, index) {
           this.isShowDeOrder = true;
           this.deleteObj = {
             id: row.id,
@@ -835,7 +790,7 @@
           };
         },
         // 删除订单
-        handelDeleteOrder () {
+        handelDeleteOrder() {
           delete_order(this.deleteObj.id)
             .then((res) => {
               this.dataList1.splice(this.deleteObj.index, 1);
@@ -848,32 +803,30 @@
             });
         },
         // 交易记录订单详情
-        rowClick (orderId) {
+        rowClick(orderId) {
           this.isDetail = true;
           // const id = row.order_id
           this.getOrderDetailsList(orderId);
         },
         // 支付弹窗相关
         // 点击去支付
-        showPayDialog (row) {
+        showPayDialog(row) {
           const orderId = row.id;
           const amount = row.amount;
           this.$refs.payDialog.showPayDialog(orderId, amount);
         },
         // 支付成功回调
-        paySuccess (e) {
-          console.log(e);
+        paySuccess(e) {
           this.getCreditList();
           this.getorderList();
           this.getAccount();
           this.getUnAmount();
         },
         // 取消支付回调
-        payCancel (e) {
-          console.log(e);
+        payCancel(e) {
         },
         // 支付方式切换
-        zfSelectChange () {
+        zfSelectChange() {
           this.payLoading = true;
           this.isShowimg = true;
           const balance = Number(this.balance);
@@ -900,7 +853,7 @@
             });
         },
         // 使用余额
-        useBalance () {
+        useBalance() {
           this.getAccount();
           if (this.balanceTimer) {
             clearTimeout(this.balanceTimer);
@@ -946,16 +899,51 @@
           }, 500);
         },
         // 获取提现规则
-        getWithdrawRule () {
+        getWithdrawRule() {
           withdrawRule().then((res) => {
             if (res.data.status === 200) {
-              console.log(res.data.data);
               this.ruleData = res.data.data;
+              const ruler = {
+                // 提现来源
+                source: "credit",
+                // 提现方式
+                method: [],
+                // 第一个提现方式
+                method_id: "",
+                // 可提现金额
+                withdrawable_amount: this.balance,
+                // 单次提现最提金额
+                withdraw_min: "",
+                // 单次提现最高金额
+                withdraw_max: "",
+                // 提现手续费 百分比的带上“%” 固定金额 保留两位数
+                withdraw_handling_fee: "",
+                // 最低提现手续费
+                percent_min: "",
+              };
+              ruler.method = this.ruleData.method;
+              ruler.method_id = this.ruleData.method[0]
+                ? this.ruleData.method[0].id
+                : "";
+              ruler.withdraw_max = this.keepTwoDecimalFull(this.ruleData.max);
+              ruler.withdraw_min = this.keepTwoDecimalFull(this.ruleData.min);
+              // 如果是固定的费用就取 withdraw_fee
+              if (this.ruleData.withdraw_fee_type == "fixed") {
+                ruler.withdraw_handling_fee =
+                  this.currency_prefix + this.ruleData.withdraw_fee;
+              } else {
+                // 如果是百分比收费就取 percent 不过加上 符号
+                ruler.withdraw_handling_fee = this.ruleData.percent ? this.ruleData.percent + "%" : '';
+              }
+              ruler.percent_min = this.keepTwoDecimalFull(
+                this.ruleData.percent_min
+              );
+              this.$refs.withdrawDialog.shwoWithdrawal(ruler);
             }
           });
         },
         // 充值关闭
-        zfClose () {
+        zfClose() {
           this.isShowZf = false;
           this.isShowPay = true;
           clearInterval(this.timer);
@@ -974,8 +962,7 @@
           }
         },
         // 确认使用余额支付
-        handleOk () {
-          console.log("确认使用余额支付");
+        handleOk() {
           const params = {
             gateway: this.zfData.gateway,
             id: this.zfData.orderId,
@@ -985,7 +972,7 @@
             .catch((error) => { });
         },
         // 返回两位小数
-        oninput (value) {
+        oninput(value) {
           let str = value;
           let len1 = str.substr(0, 1);
           let len2 = str.substr(1, 1);
@@ -1016,7 +1003,7 @@
           return str;
         },
         // 监测滚动
-        computeScroll () {
+        computeScroll() {
           let sizeWidth = document.documentElement.clientWidth; // 初始宽宽度
           if (sizeWidth > 750) {
             return false;
@@ -1174,9 +1161,9 @@
                   if (res.data.status === 200) {
                     let list = res.data.data.list;
                     // 过滤人工订单 不显示
-                    list = list.filter((item) => {
-                      return item.type !== "Artificial";
-                    });
+                    // list = list.filter((item) => {
+                    //   return item.type !== "Artificial";
+                    // });
 
                     list.map((item) => {
                       this.dataList3.push(item);
@@ -1194,13 +1181,12 @@
           }
         },
         // 返回顶部
-        goBackTop () {
+        goBackTop() {
           document.documentElement.scrollTop = document.body.scrollTop = 0;
         },
         // 移动端item展开
-        showItem (item) {
+        showItem(item) {
           if (item.hasChildren) {
-            // console.log(item);
             const id = item.id;
             orderDetails(id).then((res) => {
               if (res.data.status === 200) {
@@ -1212,17 +1198,16 @@
                   }
                 });
               }
-              console.log(this.dataList1);
             });
           }
         },
 
         // 代金卷
-        showVoucherDialog () {
+        showVoucherDialog() {
           this.dialogVisible = true;
           this.getVoucherAvailable();
         },
-        toggleVoucher (row) {
+        toggleVoucher(row) {
           this.voucherList
             .filter((item) => item.id !== row.id)
             .map((item) => {
@@ -1238,7 +1223,7 @@
           row.isShow = !row.isShow;
         },
         // 可领代金券
-        async getVoucherAvailable () {
+        async getVoucherAvailable() {
           try {
             this.diaLoading = true;
             const res = await voucherAvailable(this.availableParams);
@@ -1256,7 +1241,7 @@
           }
         },
         // 点击领取
-        async sureGet (item) {
+        async sureGet(item) {
           try {
             if (item.is_get) {
               return;
@@ -1271,7 +1256,7 @@
           }
         },
         // 获取我的代金券
-        async getVoucher () {
+        async getVoucher() {
           try {
             this.voucherLoading = true;
             const res = await voucherMine(this.vParams);
@@ -1289,14 +1274,14 @@
           }
         },
         // 每页展示数改变
-        sizeChange (e) {
+        sizeChange(e) {
           this.vParams.limit = e;
           this.vParams.page = 1;
           // 获取列表
           this.getVoucher();
         },
         // 当前页改变
-        currentChange (e) {
+        currentChange(e) {
           this.vParams.page = e;
           this.getVoucher();
         },

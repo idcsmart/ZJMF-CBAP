@@ -1,6 +1,6 @@
 {include file="header"}
 <!-- 页面独有样式 -->
-<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/promotionDetail.css">
+<link rel="stylesheet" href="/plugins/addon/idcsmart_app_market/template/clientarea/css/promotionDetail.css">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
                     <!-- 自己的东西 -->
                     <div class="promotionDetail-contetn">
                         <header>
-                          <img src="/{$template_catalog}/template/{$themes}/img/invoice/路径 5684.png" alt="" @click="goBack">
+                          <img src="/plugins/addon/idcsmart_app_market/template/clientarea/img/invoice/路径 5684.png" alt="" @click="goBack">
                           促销详情
                         </header>
                         <main>
@@ -101,8 +101,7 @@
         </el-container>
     </div>
     <!-- =======页面独有======= -->
-    <script src="/{$template_catalog}/template/{$themes}/js/promotionDetail.js"></script>
-    <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>
-    <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
-    <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
-    {include file="footer"}
+    <script src="/plugins/addon/idcsmart_app_market/template/clientarea/js/promotionDetail.js"></script>
+    <script src="/plugins/addon/idcsmart_app_market/template/clientarea/api/common.js"></script>
+    <script src="/plugins/addon/idcsmart_app_market/template/clientarea/components/pagination/pagination.js"></script>
+    <script src="/plugins/addon/idcsmart_app_market/template/clientarea/utils/util.js"></script>

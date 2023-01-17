@@ -137,7 +137,6 @@
   flex-wrap: wrap;
   border: 1px solid #E6E7EB;
   border-left: 0;
-  border-top: 0;
 }
 .basic-info .box .item {
   width: 50%;
@@ -147,12 +146,17 @@
   font-size: 0.14rem;
   color: #1E2736;
   margin: 0;
+  border-top: 1px solid #E6E7EB;
 }
 .basic-info .box .item .r-info {
   width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.basic-info .box .item:nth-child(1),
+.basic-info .box .item:nth-child(2) {
+  border-top: 0;
 }
 .basic-info .box .name {
   width: 2.4rem;
@@ -173,7 +177,6 @@
 .basic-info .r-info {
   padding: 0 0.2rem;
   border-left: 1px solid #E6E7EB;
-  border-top: 1px solid #E6E7EB;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -186,7 +189,6 @@
 .basic-info .name {
   min-width: 0.7rem;
   border-left: 1px solid #E6E7EB;
-  border-top: 1px solid #E6E7EB;
   padding: 0 0.2rem;
 }
 .basic-info img {
@@ -253,7 +255,7 @@
 }
 .renew-dialog .dialog-main .renew-content .renew-item {
   width: 1.6rem;
-  height: 0.62rem;
+  height: 0.83rem;
   border: 1px solid #E6E7EB;
   border-radius: 3px;
   display: flex;
@@ -279,6 +281,11 @@
   font-size: 0.15rem;
   color: #0058FF;
   margin-top: 0.04rem;
+}
+.renew-dialog .dialog-main .renew-content .renew-item .item-origin-price {
+  text-decoration: line-through;
+  font-size: 0.15rem;
+  color: #8692B0;
 }
 .renew-dialog .dialog-main .renew-content .renew-item .check {
   position: absolute;

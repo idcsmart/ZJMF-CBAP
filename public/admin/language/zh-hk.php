@@ -1,9 +1,9 @@
 <?php
 
 return [
-	'display_name' => '中文繁體',//用于在语言切换下拉中显示
-	'display_flag' => 'HK',//用于显示图片，使用国家代码大写
-	'not_found' => '页面找不到了',
+    'display_name' => '中文简体',//用于在语言切换下拉中显示
+    'display_flag' => 'CN',//用于显示图片，使用国家代码大写
+    'not_found' => '页面找不到了',
 
 
     'success_message' => '请求成功',
@@ -14,7 +14,7 @@ return [
     'delete_fail' => '删除失败',
     'update_success' => '修改成功',
     'update_fail' => '修改失败',
-	'save_success' => '保存成功',
+    'save_success' => '保存成功',
     'save_fail' => '保存失败',
     'register_success' => '注册成功',
     'register_fail' => '注册失败',
@@ -33,7 +33,7 @@ return [
     'move_fail' => '移动失败',
     'file_name_error' => '文件名不允许包含!@^&"\'/\\',
     'file_mime_error' => '文件mime类型错误',
-    'file_less_than_64M' => '文件大小不超过64M',
+    'file_less_than_150M' => '文件大小不超过150M',
     'upload_success' => '上传成功',
     'upload_fail' => '上传失败',
     'file_is_not_exist' => '文件不存在',
@@ -251,6 +251,8 @@ return [
 
 
     # 日志
+    'admin_enable_user' => '{admin}启用用户{client}',
+    'admin_disable_user' => '{admin}禁用用户{client}',
     'admin_delete_user' => '{admin}删除用户{client}',
     'admin_modify_user_profile' => '{admin}将{client}的{description}',
     'admin_delete_user_host' => '{admin}将{client}的{host}删除',
@@ -291,11 +293,38 @@ return [
     'client_language' => '语言',
     'client_notes' => '备注',
 
+    'host_product' => '商品',
+    'host_server' => '接口',
+    'host_name' => '标识',
+    'host_notes' => '备注',
+    'host_first_payment_amount' => '订购金额',
+    'host_renew_amount' => '续费金额',
+    'host_billing_cycle' => '计费方式',
+    'host_billing_cycle_free' => '免费',
+    'host_billing_cycle_onetime' => '一次性',
+    'host_billing_cycle_recurring_prepayment' => '周期先付',
+    'host_billing_cycle_recurring_postpaid' => '周期后付',
+    'host_active_time' => '开通时间',
+    'host_due_time' => '到期时间',
+    'host_status' => '状态',
+    'host_status_Unpaid' => '未付款',
+    'host_status_Pending' => '开通中',
+    'host_status_Active' => '使用中',
+    'host_status_Suspended' => '已暂停',
+    'host_status_Deleted' => '已删除',
+    'host_status_Failed' => '开通失败',
+    'host_status_Cancelled' => '已取消',
+
+    'admin_modify_host' => '{admin}将{host}的{description}',
+
 
     # 通用描述
     'log_admin_update_description' => '{field}{old}为{new}',
 
     'log_admin_login' => '{admin}登录系统',
+    'log_admin_login_not_exist' => '{admin}登录系统失败,管理员不存在',
+    'log_admin_login_disabled' => '{admin}登录系统失败,已被禁用',
+    'log_admin_login_password_error' => '{admin}登录系统失败,密码不正确',
     'log_admin_logout' => '{admin}注销登录',
     'log_login_by_client' => '{admin}用{client}登录前台系统',
     'log_create_admin' => '{admin}添加管理员{name}',
@@ -356,6 +385,7 @@ return [
     'log_admin_enable_plugin' => '{admin}启用{module}接口:{name}',
     'log_admin_disable_plugin' => '{admin}禁用{module}接口:{name}',
     'log_admin_config_plugin' => '{admin}配置{module}接口:{name}',
+    'log_admin_upgrade_plugin' => '{admin}升级{module}接口:{name}',
 
     # 用户管理
     'client_is_not_exist' => '用户不存在',
@@ -448,7 +478,7 @@ return [
     'task_has_been_retried' => '任务已经发起重试，不可再次发起',
     'only_failed_task_can_retry' => '失败的任务才可以发起重试',
 
-	# 系统设置
+    # 系统设置
     'configuration_log_switch_1' =>'开启',
     'configuration_log_switch_0' =>'关闭',
     'configuration_log_lang_admin' =>'后台默认语言',
@@ -480,7 +510,7 @@ return [
     'configuration_terms_privacy_url' => '隐私条款地址不能为空',
     'configuration_terms_privacy_url_cannot_exceed_255_chars' => '隐私条款地址最多不能超过255个字符',
     'configuration_system_logo' => '请选择系统LOGO',
-	# 登录设置
+    # 登录设置
     'configuration_log_register_phone' =>'手机是否支持注册',
     'configuration_log_register_email' =>'邮箱是否支持注册',
     'configuration_log_login_phone_verify' =>'手机是否支持免密码登录',
@@ -492,7 +522,7 @@ return [
     'configuration_register_phone' => '手机号注册开关值只能是1或0',
     'configuration_login_phone_verify_cannot_empty' => '手机号登录短信验证开关不能为空',
     'configuration_login_phone_verify' => '手机号登录短信验证开关值只能是1或0',
-	# 验证码设置
+    # 验证码设置
     'configuration_log_captcha_client_register' =>'新用户注册启用图形验证码',
     'configuration_log_captcha_client_login' =>'用户登录启用图形验证码',
     'configuration_log_captcha_admin_login' =>'后台系统登录启用图形验证码',
@@ -503,34 +533,34 @@ return [
     'configuration_log_captcha_height' =>'图形验证码高度',
     'configuration_log_captcha_length' =>'图形验证码字符长度',
     'configuration_log_code_client_email_register' =>'邮箱注册数字验证码',
-	'configuration_captcha_client_register_cannot_empty' => '客户注册图形验证码开关不能为空',
-	'configuration_captcha_client_register' => '客户注册图形验证码开关值只能是1或0',
-	'configuration_captcha_client_login_cannot_empty' => '客户登录图形验证码开关不能为空',
-	'configuration_captcha_client_login' => '客户登录图形验证码开关值只能是1或0',
-	'configuration_captcha_client_login_error_cannot_empty' => '客户登录失败图形验证码开关不能为空',
-	'configuration_captcha_client_login_error' => '客户登录失败图形验证码开关值只能是1或0',
-	'configuration_captcha_admin_login_cannot_empty' => '管理员登录图形验证码开关不能为空',
-	'configuration_captcha_admin_login' => '管理员登录图形验证码开关值只能是1或0',
-	'configuration_captcha_width_cannot_empty' => '图形验证码宽度不能为空',
-	'configuration_captcha_width' => '图形验证码宽度只能在200到400之间的数字',
-	'configuration_captcha_height_cannot_empty' => '图形验证码高度不能为空',
-	'configuration_captcha_height' => '图形验证码高度只能在50到100之间的数字',
-	'configuration_captcha_length_cannot_empty' => '图形验证码字符长度不能为空',
-	'configuration_captcha_length' => '图形验证码字符长度只能是在4到6之间的整数',
-	# 货币设置
+    'configuration_captcha_client_register_cannot_empty' => '客户注册图形验证码开关不能为空',
+    'configuration_captcha_client_register' => '客户注册图形验证码开关值只能是1或0',
+    'configuration_captcha_client_login_cannot_empty' => '客户登录图形验证码开关不能为空',
+    'configuration_captcha_client_login' => '客户登录图形验证码开关值只能是1或0',
+    'configuration_captcha_client_login_error_cannot_empty' => '客户登录失败图形验证码开关不能为空',
+    'configuration_captcha_client_login_error' => '客户登录失败图形验证码开关值只能是1或0',
+    'configuration_captcha_admin_login_cannot_empty' => '管理员登录图形验证码开关不能为空',
+    'configuration_captcha_admin_login' => '管理员登录图形验证码开关值只能是1或0',
+    'configuration_captcha_width_cannot_empty' => '图形验证码宽度不能为空',
+    'configuration_captcha_width' => '图形验证码宽度只能在200到400之间的数字',
+    'configuration_captcha_height_cannot_empty' => '图形验证码高度不能为空',
+    'configuration_captcha_height' => '图形验证码高度只能在50到100之间的数字',
+    'configuration_captcha_length_cannot_empty' => '图形验证码字符长度不能为空',
+    'configuration_captcha_length' => '图形验证码字符长度只能是在4到6之间的整数',
+    # 货币设置
     'configuration_log_currency_code' =>'货币代码',
     'configuration_log_currency_prefix' =>'货币符号',
     'configuration_log_currency_suffix' =>'货币后缀',
     'configuration_log_recharge_open' =>'启用充值',
     'configuration_log_recharge_min' =>'单笔最小金额',
-	'configuration_currency_code_cannot_empty' => '货币代码不能为空',
-	'configuration_currency_prefix_cannot_empty' => '货币符号不能为空',
-	'configuration_currency_suffix_cannot_empty' => '货币后缀不能为空',
-	'configuration_recharge_open_cannot_empty' => '启用充值开关不能为空',
-	'configuration_recharge_open' => '启用充值开关值只能是1或0',
-	'configuration_recharge_min_float' => '单笔最小金额必须大于零的数字',
-	'configuration_recharge_max_egt_recharge_min' => '单笔最大金额大于等于单笔最小金额',
-	# 定时任务设置
+    'configuration_currency_code_cannot_empty' => '货币代码不能为空',
+    'configuration_currency_prefix_cannot_empty' => '货币符号不能为空',
+    'configuration_currency_suffix_cannot_empty' => '货币后缀不能为空',
+    'configuration_recharge_open_cannot_empty' => '启用充值开关不能为空',
+    'configuration_recharge_open' => '启用充值开关值只能是1或0',
+    'configuration_recharge_min_float' => '单笔最小金额必须大于零的数字',
+    'configuration_recharge_max_egt_recharge_min' => '单笔最大金额大于等于单笔最小金额',
+    # 定时任务设置
     'configuration_log_cron_due_suspend_swhitch' =>'产品暂停',
     'configuration_log_cron_due_unsuspend_swhitch' =>'产品解除暂停',
     'configuration_log_cron_due_terminate_swhitch' =>'产品删除',
@@ -552,7 +582,7 @@ return [
     'configuration_cron_overdue_second_day_cannot_empty' => '产品逾期第二次提醒天数大于或等于0的整数',
     'configuration_cron_overdue_third_day_cannot_empty' => '产品逾期第三次提醒天数大于或等于0的整数',
     'configuration_cron_ticket_close_day_cannot_empty' => '已回复状态的工单提醒小时大于或等于0的整数',  
-    'configuration_cron_order_overdue_day_cannot_empty' => '订单未付款通知天数大于或等于0的整数',	
+    'configuration_cron_order_overdue_day_cannot_empty' => '订单未付款通知天数大于或等于0的整数',    
     'configuration_cron_due_suspend_swhitch' => '产品到期暂停开关值只能是1或0',
     'configuration_cron_due_unsuspend_swhitch' => '自动解除暂停开关值只能是1或0',
     'configuration_cron_due_terminate_swhitch' => '产品到期删除开关值只能是1或0',
@@ -624,6 +654,12 @@ return [
     'plugin_uninstall_pre_fail' => '插件预卸载失败',
     'plugin_uninstall_cannot' => '默认插件不能卸载',
     'plugin_disabled_cannot' => '默认插件不能禁用',
+    'plugin_upgrade_pre_fail' => '插件预升级失败',
+    'plugin_upgrade_success' => '插件升级成功',
+    'plugin_upgrade_fail' => '插件升级失败',
+    'plugin_version_information_is_missing' => '插件版本信息缺失',
+    'plugin_can_not_upgrade' => '插件不可升级',
+    'plugin_new_version_get_fail' => '插件最新版本获取失败',
 
     # 商品与商品分组
     'product_group_is_not_exist' => '商品分组不存在',
@@ -689,8 +725,8 @@ return [
     'please_enter_email_message' => '请输入邮件内容',
     'email_cannot_be_empty' => '邮箱不能为空',
     'email_format_error' => '邮箱格式错误',
-	
-	# 短信模板
+    
+    # 短信模板
     'sms_template_log_template_id' => '短信模板ID',
     'sms_template_log_type' => '模板类型',
     'sms_template_log_type_0' => '大陆',
@@ -703,30 +739,30 @@ return [
     'sms_template_log_status_1' => '审核中',
     'sms_template_log_status_2' => '通过',
     'sms_template_log_status_3' => '未通过',
-	'sms_template_is_not_exist' => '短信模板不存在',
-	'sms_template_review_before_sending' => '短信模板审核通过才能发短信',
-	'sms_template_cannot_be_modified' => '短信模板状态审核中，不能修改',
-	'sms_please_enter_sms_type' => '请选择短信模板区域',
-	'sms_type_must' => '请选择短信模板区域只能是1或0',
+    'sms_template_is_not_exist' => '短信模板不存在',
+    'sms_template_review_before_sending' => '短信模板审核通过才能发短信',
+    'sms_template_cannot_be_modified' => '短信模板状态审核中，不能修改',
+    'sms_please_enter_sms_type' => '请选择短信模板区域',
+    'sms_type_must' => '请选择短信模板区域只能是1或0',
     'sms_title_cannot_empty' => '请输入短信标题',
     'sms_title_cannot_exceed_50_chars' => '短信标题最多不能超过50个字符',
     'sms_please_enter_content' => '请输入短信内容',
-	'sms_content_cannot_exceed_255_chars' => '短信内容最多不能超过255个字符',
-	'sms_notes_cannot_exceed_1000_chars' => '短信备注最多不能超过1000个字符',
+    'sms_content_cannot_exceed_255_chars' => '短信内容最多不能超过255个字符',
+    'sms_notes_cannot_exceed_1000_chars' => '短信备注最多不能超过1000个字符',
     'sms_please_enter_sms_status' => '请选择短信模板状态',
     'sms_status_error' => '短信模板状态错误，只能是0,2,3',
     'sms_area_code_must_be_integer' => '短信区号必须是整数',
     'sms_phone_number_cannot_be_empty' => '手机号不能为空',
     'sms_phone_number_must_be_integer' => '手机号必须是整数',
-	
-	# 短信/邮件发送
+    
+    # 短信/邮件发送
     'send_notice_log_sms_global_name' => '短信国际接口',
     'send_notice_log_sms_global_template' => '短信国际接口模板',
     'send_notice_log_sms_name' => '短信国内接口',
     'send_notice_log_sms_template' => '短信国内接口模板',
     'send_notice_log_email_name' => '邮件接口',
     'send_notice_log_email_template' => '邮件接口模板',
-	'send_wrong_action_name' => '动作名称错误',
+    'send_wrong_action_name' => '动作名称错误',
     'send_sms_success' => '短信发送成功',
     'send_sms_error' => '短信发送失败',
     'send_sms_area_code_error' => '区号错误',
@@ -747,41 +783,41 @@ return [
     'send_sms_template_is_not_exist_global' => '国际短信模板不存在',
     'send_mail_success' => '邮件发送成功',
     'send_mail_error' => '邮件发送失败',
-	'send_mail_interface_is_not_exist' => '邮件接口不存在',
+    'send_mail_interface_is_not_exist' => '邮件接口不存在',
     'send_mail_interface_not_supported' => '邮件接口不支持',
     'send_mail_interface_is_disabled' => '邮件接口已禁用',
     'send_mail_interface_not_installed_' => '邮件接口未安装',
-	'send_mail_action_not_enabled' => '邮件发送动作未开启',
+    'send_mail_action_not_enabled' => '邮件发送动作未开启',
     'send_mail_interface_not_set' => '邮件发送接口未设置',
     'send_mail_template_not_set' => '邮件发送模板未设置',
     'email_cancel_send' => '邮件取消发送',
     'sms_cancel_send' => '短信取消发送',
-	
-	
-	# 发送管理
-	'notice_action_code'=>'验证码',
-	'notice_action_client_login_success'=>'用户登录',
-	'notice_action_client_register_success'=>'用户注册',
-	'notice_action_client_change_phone'=>'用户更改手机',
-	'notice_action_client_change_email'=>'用户更改邮箱',
-	'notice_action_client_change_password'=>'用户更改密码',
-	'notice_action_order_create'=>'订单创建',
-	'notice_action_host_pending'=>'产品开通中',
-	'notice_action_host_active'=>'开通成功',
-	'notice_action_host_suspend'=>'产品暂停通知',
-	'notice_action_host_unsuspend'=>'产品解除暂停通知',
-	'notice_action_host_terminate'=>'产品删除通知',
-	'notice_action_host_upgrad'=>'产品升降级',
-	'notice_action_admin_create_account'=>'超级管理员添加后台管理员',
-	'notice_action_host_renewal_first'=>'第一次续费提醒',
-	'notice_action_host_renewal_second'=>'第二次续费提醒',
-	'notice_action_host_overdue_first'=>'逾期付款第一次提醒',
-	'notice_action_host_overdue_second'=>'逾期付款第二次提醒',
-	'notice_action_host_overdue_third'=>'逾期付款第三次提醒',
-	'notice_action_order_overdue'=>'订单未付款通知',
-	'notice_action_admin_order_amount'=>'订单金额修改',
-	'notice_action_order_pay'=>'订单支付通知',
-	'notice_action_order_recharge'=>'充值成功通知',
+    
+    
+    # 发送管理
+    'notice_action_code'=>'验证码',
+    'notice_action_client_login_success'=>'用户登录',
+    'notice_action_client_register_success'=>'用户注册',
+    'notice_action_client_change_phone'=>'用户更改手机',
+    'notice_action_client_change_email'=>'用户更改邮箱',
+    'notice_action_client_change_password'=>'用户更改密码',
+    'notice_action_order_create'=>'订单创建',
+    'notice_action_host_pending'=>'产品开通中',
+    'notice_action_host_active'=>'开通成功',
+    'notice_action_host_suspend'=>'产品暂停通知',
+    'notice_action_host_unsuspend'=>'产品解除暂停通知',
+    'notice_action_host_terminate'=>'产品删除通知',
+    'notice_action_host_upgrad'=>'产品升降级',
+    'notice_action_admin_create_account'=>'超级管理员添加后台管理员',
+    'notice_action_host_renewal_first'=>'第一次续费提醒',
+    'notice_action_host_renewal_second'=>'第二次续费提醒',
+    'notice_action_host_overdue_first'=>'逾期付款第一次提醒',
+    'notice_action_host_overdue_second'=>'逾期付款第二次提醒',
+    'notice_action_host_overdue_third'=>'逾期付款第三次提醒',
+    'notice_action_order_overdue'=>'订单未付款通知',
+    'notice_action_admin_order_amount'=>'订单金额修改',
+    'notice_action_order_pay'=>'订单支付通知',
+    'notice_action_order_recharge'=>'充值成功通知',
     'notice_setting_sms_global_template_error' => '国际短信模板ID错误',
     'notice_setting_sms_template_error' => '国内短信模板ID错误',
     'notice_setting_email_template_error' => '邮件接口模板ID错误',
@@ -843,6 +879,8 @@ return [
     'download_sucesss' => '已成功下载',
     'download_failed' => '下载压缩包失败',
     'upgrade_download_not_exist' => '当前不存在升级下载任务',
+    'not_login_market_no_license' => '未登陆应用商店，无识别码',
+    'not_order_service' => '未订购服务',
 
     # 导航管理
     'nav_is_not_exist' => '默认导航不存在',
@@ -885,4 +923,24 @@ return [
     'certification_img_two' => '请上传身份证号反面照',
     'certification_img_three' => '请上传营业执照',
     'certification_info_post_again' => '请重新提交实名资料',
+    'personal' => '个人',
+    'company' => '公司',
+
+    # 应用接口
+    'not_install_ioncube' => '未安装ionCube扩展不可安装应用',
+    'request_fail_http_code' => '请求失败,HTTP状态码:{code}',
+    'app_install_success' => '应用安装成功',
+    'app_download_fail' => '应用下载失败',
+    'app_unzip_fail' => '应用文件解压失败,失败code:{code},请到网站目录下解压下载的文件{file}',
+
+    # 
+    'log_module_create_account_success' => '产品{host}模块开通成功',
+    'log_module_create_account_failed' => '产品{host}模块开通失败,原因:{reason}',
+    'log_module_suspend_account_success' => '产品{host}模块暂停成功,暂停类型:{type},暂停原因:{reason}',
+    'log_module_suspend_account_failed' => '产品{host}模块暂停失败,原因:{reason}',
+    'log_module_unsuspend_account_success' => '产品{host}模块取消暂停成功',
+    'log_module_unsuspend_account_failed' => '产品{host}模块取消暂停失败,原因:{reason}',
+    'log_module_terminate_account_success' => '产品{host}模块删除成功',
+    'log_module_terminate_account_failed' => '产品{host}模块删除失败,原因:{reason}',
+
 ];

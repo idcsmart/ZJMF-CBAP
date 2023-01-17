@@ -40,7 +40,6 @@ class HostModel extends Model
         'termination_time'      => 'int',
         'create_time'           => 'int',
         'update_time'           => 'int',
-        'suspend_type'          => 'string',
     ];
 
     /**
@@ -135,7 +134,7 @@ class HostModel extends Model
             })
             ->count();
         $hosts = $this->alias('h')
-            ->field('h.id,h.client_id,c.username client_name,c.email,c.phone_code,c.phone,c.company,h.product_id,p.name product_name,h.name,h.create_time,h.active_time,h.due_time,h.first_payment_amount,h.billing_cycle,h.billing_cycle_name,h.status,o.pay_time')
+            ->field('h.id,h.client_id,c.username client_name,c.email,c.phone_code,c.phone,c.company,h.product_id,p.name product_name,h.name,h.create_time,h.active_time,h.due_time,h.first_payment_amount,h.billing_cycle,h.billing_cycle_name,h.status,o.pay_time,h.renew_amount')
             ->leftjoin('product p', 'p.id=h.product_id')
             ->leftjoin('client c', 'c.id=h.client_id')
             ->leftjoin('order o', 'o.id=h.order_id')
@@ -397,29 +396,83 @@ class HostModel extends Model
         if (empty($product)){
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
+        $param['server_id'] = $param['server_id'] ?? 0;
+        $param['name'] = $param['name'] ?? '';
+        $param['notes'] = $param['notes'] ?? '';
+        $param['first_payment_amount'] = $param['first_payment_amount'] ?? 0;
+        $param['renew_amount'] = $param['renew_amount'] ?? 0;
+        $param['active_time'] = isset($param['active_time']) ? strtotime($param['active_time']) : 0;
+        $param['due_time'] = isset($param['due_time']) ? strtotime($param['due_time']) : 0;
+        // 计费周期为一次性和免费的产品没有到期时间和续费金额,其他的使用传入的到期时间和续费金额
+        if($param['billing_cycle']=='onetime'){
+            $param['due_time'] = 0;
+            $param['renew_amount'] = 0;
+        }else if($param['billing_cycle']=='free'){
+            $param['renew_amount'] = 0;
+        }
+
+        # 日志详情
+        $description = [];
+        if ($host['product_id'] != $param['product_id']){
+            $oldProduct = ProductModel::find($host['product_id']);
+            $oldProduct = $oldProduct['name'] ?? '';
+            $newProduct = ProductModel::find($param['product_id']);
+            $newProduct = $newProduct['name'] ?? '';
+
+            $description[] = lang('old_to_new',['{old}'=>lang('host_product').$oldProduct, '{new}'=>$param['username']]);
+        }
+        if ($host['server_id'] != $param['server_id']){
+            $oldServer = ServerModel::find($host['server_id']);
+            $oldServer = $oldServer['name'] ?? '';
+            $newServer = ServerModel::find($param['server_id']);
+            $newServer = $newServer['name'] ?? '';
+
+            $description[] = lang('old_to_new',['{old}'=>lang('host_server').$oldServer, '{new}'=>$newServer]);
+        }
+        if ($host['name'] != $param['name']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_name').$host['name'], '{new}'=>$param['name']]);
+        }
+        if ($host['notes'] != $param['notes']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_notes').$host['notes'], '{new}'=>$param['notes']]);
+        }
+        if ($host['first_payment_amount'] != $param['first_payment_amount']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_first_payment_amount').$host['first_payment_amount'], '{new}'=>$param['first_payment_amount']]);
+        }
+        if ($host['renew_amount'] != $param['renew_amount']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_renew_amount').$host['renew_amount'], '{new}'=>$param['renew_amount']]);
+        }
+        if ($host['billing_cycle'] != $param['billing_cycle']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_billing_cycle').lang('host_billing_cycle_'.$host['billing_cycle']), '{new}'=>lang('host_billing_cycle_'.$param['billing_cycle'])]);
+        }
+        if ($host['active_time'] != $param['active_time']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_active_time').date("Y-m-d H:i:s", $host['active_time']), '{new}'=>$param['active_time']]);
+        }
+        if ($host['due_time'] != $param['due_time']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_due_time').date("Y-m-d H:i:s", $host['due_time']), '{new}'=>$param['due_time']]);
+        }
+        if ($host['status'] != $param['status']){
+            $description[] = lang('old_to_new',['{old}'=>lang('host_status').lang('host_status_'.$host['status']), '{new}'=>lang('host_status_'.$param['status'])]);
+        }
+        $description = implode(',', $description);
 
         $this->startTrans();
         try {
-            // 计费周期为一次性和免费的产品没有到期时间和续费金额,其他的使用传入的到期时间和续费金额
-            if($param['billing_cycle']=='onetime'){
-                unset($param['due_time'], $param['renew_amount']);
-            }else if($param['billing_cycle']=='free'){
-                unset($param['renew_amount']);
-            }
-
+            
             $this->update([
                 'product_id' => $param['product_id'],
-                'server_id' => $param['server_id'] ?? 0,
-                'name' => $param['name'] ?? '',
-                'notes' => $param['notes'] ?? '',
-                'first_payment_amount' => $param['first_payment_amount'] ?? 0,
-                'renew_amount' => $param['renew_amount'] ?? 0,
+                'server_id' => $param['server_id'],
+                'name' => $param['name'],
+                'notes' => $param['notes'],
+                'first_payment_amount' => $param['first_payment_amount'],
+                'renew_amount' => $param['renew_amount'],
                 'billing_cycle' => $param['billing_cycle'],
-                'active_time' => isset($param['active_time']) ? strtotime($param['active_time']) : 0,
-                'due_time' => isset($param['due_time']) ? strtotime($param['due_time']) : 0,
+                'active_time' => $param['active_time'],
+                'due_time' => $param['due_time'],
                 'status' => $param['status'],
                 'update_time' => time()
             ], ['id' => $param['id']]);
+
+            if(!empty($description)) active_log(lang('admin_modify_host', ['{admin}'=>request()->admin_name, '{host}'=>'host#'.$host->id.'#'.$param['name'].'#', '{description}'=>$description]), 'host', $host->id);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -567,6 +620,8 @@ class HostModel extends Model
 
             if($host['billing_cycle']=='onetime'){
                 $due_time = 0;
+            }else if($host['billing_cycle']=='free' && $host['billing_cycle_time']==0){
+                $due_time = 0;
             }else{
                 $due_time = time() + $host['billing_cycle_time'];
             }
@@ -598,8 +653,10 @@ class HostModel extends Model
                     ],      
                 ]); 
             }
-			
-			
+
+            $description = lang('log_module_create_account_success', [
+                '{host}'=> 'host#'.$host->id.'#'.$host['name'].'#',
+            ]);
         }else{
             hook('after_host_create_fail',['id'=>$id]);
 
@@ -607,7 +664,13 @@ class HostModel extends Model
                 'status'      => 'Failed',
                 'update_time' => time(),
             ], ['id'=>$id]);
+
+            $description = lang('log_module_create_account_failed', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+                '{reason}'=>$res['msg'] ?? '',
+            ]);
         }
+        active_log($description, 'host', $host->id);
         return $res;
     }
 
@@ -643,7 +706,7 @@ class HostModel extends Model
         hook('before_host_suspend',['id'=>$id]);
 
         $ModuleLogic = new ModuleLogic();
-        $res = $ModuleLogic->suspendAccount($host);
+        $res = $ModuleLogic->suspendAccount($host, $param);
         if($res['status'] == 200){
 
             hook('after_host_suspend_success',['id'=>$id]);
@@ -671,10 +734,29 @@ class HostModel extends Model
 					'host_id'=>$id,//主机ID
 				],		
 			]);
+
+            $suspendType = [
+                'overdue'=>'到期暂停',
+                'overtraffic'=>'超流暂停',
+                'certification_not_complete'=>'实名未完成',
+                'other'=>'其他',
+            ];
+
+            $description = lang('log_module_suspend_account_success', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+                '{type}'=>$suspendType[ $param['suspend_type'] ] ?? $suspendType['overdue'],
+                '{reason}'=>$param['suspend_reason'],
+            ]);
+
         }else{
             hook('after_host_suspend_fail',['id'=>$id,'fail_reason'=>$res['msg']??'']);
 
+            $description = lang('log_module_suspend_account_failed', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+                '{reason}'=>$res['msg'] ?? '',
+            ]);
         }
+        active_log($description, 'host', $host->id);
         return $res;
     }
 
@@ -734,10 +816,19 @@ class HostModel extends Model
 					],		
 				]);
 			}
+
+            $description = lang('log_module_unsuspend_account_success', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+            ]);
         }else{
             hook('after_host_unsuspend_fail',['id'=>$id,'fail_reason'=>$res['msg']??'']);
 
+            $description = lang('log_module_unsuspend_account_failed', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+                '{reason}'=>$res['msg'] ?? '',
+            ]);
         }
+        active_log($description, 'host', $host->id);
         return $res;
     }
 
@@ -788,9 +879,19 @@ class HostModel extends Model
 					'host_id'=>$id,//主机ID
 				],		
 			]);
+
+            $description = lang('log_module_terminate_account_success', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+            ]);
         }else{
             hook('after_host_terminate_fail',['id'=>$id,'fail_reason'=>$res['msg']??'']);
+
+            $description = lang('log_module_terminate_account_failed', [
+                '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
+                '{reason}'=>$res['msg'] ?? '',
+            ]);
         }
+        active_log($description, 'host', $host->id);
         return $res;
     }
 
@@ -1005,8 +1106,10 @@ class HostModel extends Model
      */
     public function upgradeAccount($id)
     {
-        $upgrade = UpgradeModel::find($id);
-        if (empty($upgrade)){
+        $UpgradeModel = new UpgradeModel();
+        $UpgradeModel->startTrans();
+        $upgrade = $UpgradeModel->where('id',$id)->lock(true)->find();
+        if (empty($upgrade) || $upgrade['status']=='Completed'){
             return false;
         }
 
@@ -1020,6 +1123,35 @@ class HostModel extends Model
             }else{
                 $serverId = $product['rel_id'];
             }
+
+            $host = $this->find($upgrade['host_id']);
+            // wyh 20210109 改 一次性/免费可升级后
+            if($host['billing_cycle']=='onetime'){
+                if ($product['pay_type']=='onetime'){
+                    $hostDueTime = 0;
+                }elseif ($product['pay_type']=='free' && $upgrade['billing_cycle_time']==0){
+                    $hostDueTime = 0;
+                }else{
+                    $hostDueTime = time()+$upgrade['billing_cycle_time'];
+                }
+            }else if($host['billing_cycle']=='free' && $host['billing_cycle_time']==0){
+                if ($product['pay_type']=='onetime'){
+                    $hostDueTime = 0;
+                }elseif ($product['pay_type']=='free' && $upgrade['billing_cycle_time']==0){
+                    $hostDueTime = 0;
+                }else{
+                    $hostDueTime = time()+$upgrade['billing_cycle_time'];
+                }
+            }else{
+                if ($product['pay_type']=='onetime'){
+                    $hostDueTime = 0;
+                }elseif ($product['pay_type']=='free' && $upgrade['billing_cycle_time']==0){
+                    $hostDueTime = 0;
+                }else{ # 周期到周期,不变更
+                    $hostDueTime = $host['due_time'];
+                }
+            }
+
             $this->update([
                 'product_id' => $upgrade['rel_id'],
                 'server_id' => $serverId,
@@ -1028,6 +1160,7 @@ class HostModel extends Model
                 'billing_cycle' => $product['pay_type'],
                 'billing_cycle_name' => $upgrade['billing_cycle_name'],
                 'billing_cycle_time' => $upgrade['billing_cycle_time'],
+                'due_time' => $hostDueTime,
             ],['id' => $upgrade['host_id']]);
             $ModuleLogic = new ModuleLogic();
             $host = $this->find($upgrade['host_id']);
@@ -1039,9 +1172,12 @@ class HostModel extends Model
                 'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['renew_price'] : 0,
             ],['id' => $upgrade['host_id']]);
             $ModuleLogic = new ModuleLogic();
-            //$host = $this->find($upgrade['host_id']);
+            $host = $this->find($upgrade['host_id']);
             $ModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
         }
+
+        $ProductModel = new ProductModel();
+        $product = $ProductModel->find($host['product_id']);
 
         # 发送邮件短信
 		add_task([
@@ -1050,6 +1186,9 @@ class HostModel extends Model
 			'task_data' => [
 				'name'=>'host_upgrad',//发送动作名称
 				'host_id'=>$upgrade['host_id'],//主机ID
+                'template_param'=>[
+                    'product_name' => $product['name']??''
+                ],
 			],		
 		]);
 		add_task([
@@ -1058,8 +1197,16 @@ class HostModel extends Model
 			'task_data' => [
 				'name'=>'host_upgrad',//发送动作名称
 				'host_id'=>$upgrade['host_id'],//主机ID
+                'template_param'=>[
+                    'product_name' => $product['name']??''
+                ],
 			],		
 		]);
+        $upgrade->save([
+            'status' => 'Completed',
+            'update_time' => time()
+        ]);
+        $UpgradeModel->commit();
         return ['status'=>200, 'msg'=>lang('success_message')];
     }
 

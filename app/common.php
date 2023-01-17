@@ -10,8 +10,6 @@ use app\common\model\ClientModel;
 use think\facade\Event;
 use app\common\model\TaskWaitModel;
 use app\common\model\NoticeSettingModel;
-use app\common\model\CertificationLogModel;
-
 
 function read_dir($dir = '', $files = []){
     if(!is_dir($dir)){
@@ -704,6 +702,22 @@ function configuration($setting)
 }
 
 /**
+ * @title 保存系统配置
+ * @desc 保存系统配置
+ * @author wyh
+ * @version v1
+ * @param string setting 配置项键
+ * @param string value 值
+ * @return boolean
+ */
+function updateConfiguration($setting,$value)
+{
+    $ConfigurationModel = new ConfigurationModel();
+    $ConfigurationModel->saveConfiguration(['setting' => $setting, 'value' => $value]);
+    return true;
+}
+
+/**
  * @title 检查手机格式
  * @desc 检查手机格式,中国手机不带国际电话区号,国际手机号格式为:国际电话区号-手机号
  * @author theworld
@@ -799,7 +813,7 @@ function rand_str($len=8,$format='ALL'){
             $chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             break;
     }
-    mt_srand((double)microtime()*1000000*getmypid());
+    //mt_srand((double)microtime()*1000000*getmypid());
     while(strlen($password)<$len){
         $tmp =substr($chars,(mt_rand()%strlen($chars)),1);
         if(($is_numer <> 1 && is_numeric($tmp) && $tmp > 0 )|| $format == 'CHAR'){
@@ -878,9 +892,10 @@ function idcsmart_tmp_order_id($rule=1)
  * @param string description - 描述
  * @param string type - 关联类型
  * @param int relId - 关联ID
+ * @param int relId - 关联用户ID
  * @return boolean
  */
-function active_log($description, $type = '', $relId = 0)
+function active_log($description, $type = '', $relId = 0, $clientId = 0)
 {
     // 实例化模型类
     $SystemLogModel = new SystemLogModel();
@@ -889,6 +904,7 @@ function active_log($description, $type = '', $relId = 0)
         'description' => $description,
         'type' => $type,
         'rel_id' => $relId,
+        'client_id' => $clientId,
     ];
     // 添加日志
     $result = $SystemLogModel->createSystemLog($param);
@@ -1362,4 +1378,53 @@ function export_excel(string $filename = '', array $field = [], array $data = []
 
     $objWriter->save('php://output');
     exit;
+}
+
+/**
+ * @title 获取授权信息
+ * @desc 获取授权信息
+ * @author theworld
+ * @version v1
+ */
+function get_idcsamrt_auth()
+{
+    $license = configuration('system_license');//系统授权码
+    if(empty($license)){
+        return false;
+    }
+    if(!empty($_SERVER) && isset($_SERVER['SERVER_ADDR']) && !empty($_SERVER['SERVER_ADDR']) && isset($_SERVER['HTTP_HOST']) && !empty($_SERVER['HTTP_HOST'])){
+        
+    }else{
+        return false;
+    }
+    $ip = $_SERVER['SERVER_ADDR'];//服务器地址
+    $arr = parse_url($_SERVER['HTTP_HOST']);
+    $domain = isset($arr['host'])? ($arr['host'].(isset($arr['port']) ? (':'.$arr['port']) : '')) :$arr['path'];
+    $type = 'finance';
+    
+    $version = configuration('system_version');//系统当前版本
+    $data = [
+        'ip' => $ip,
+        'domain' => $domain,
+        'type' => $type,
+        'license' => $license,
+        'install_version' => $version,
+        'request_time' => time(),
+    ];
+    
+    $url = "https://license.soft13.idcsmart.com/app/api/auth_rc";
+    $res = curl($url,$data,20,'POST');
+    if($res['http_code'] == 200){
+        $result = json_decode($res['content'], true);
+    }else{
+        return false;
+    }
+    if(isset($result['status']) && $result['status']==200){
+        $ConfigurationModel = new ConfigurationModel();
+        $ConfigurationModel->saveConfiguration(['setting' => 'idcsmartauthinfo', 'value' => $result['data']]);
+        $ConfigurationModel->saveConfiguration(['setting' => 'idcsmart_service_due_time', 'value' => $result['due_time']]);
+        return true;
+    }else{
+        return false;
+    }
 }

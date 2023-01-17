@@ -88,6 +88,9 @@
   color: rgba(0, 0, 0, 0.9);
   display: inline-block;
 }
+.configuration-system .special {
+  margin-top: -30px;
+}
 /* configuration-login */
 .configuration-login .t-col {
   display: flex;
@@ -217,13 +220,33 @@
   cursor: not-allowed;
 }
 /* notice-sms */
+.notice-sms .common-header .header-left,
 .notice-email .common-header .header-left,
+.gateway .common-header .header-left,
 .notice-email-template .common-header .header-left {
   display: flex;
 }
+.notice-sms .common-header .change_log,
 .notice-email .common-header .change_log,
+.gateway .common-header .change_log,
 .notice-email-template .common-header .change_log {
   margin-right: 20px;
+}
+.notice-sms .version div,
+.notice-email .version div,
+.gateway .version div,
+.notice-email-template .version div {
+  display: flex;
+  align-items: center;
+}
+.notice-sms .version .upgrade img,
+.notice-email .version .upgrade img,
+.gateway .version .upgrade img,
+.notice-email-template .version .upgrade img {
+  width: 16px;
+  cursor: pointer;
+  display: block;
+  margin-left: 10px;
 }
 .notice-email-template-create .com-f-btn {
   text-align: left;
@@ -250,6 +273,10 @@
   width: 100% !important;
   text-align: left;
   margin-left: 0 !important;
+}
+.notice-email-template-create #tinymce ul,
+.notice-email-template-create #tinymce li {
+  list-style: none !important;
 }
 /* cron */
 .cron .com-h-tit {
@@ -461,4 +488,13 @@
 }
 .upgrade-box .table-row {
   padding-left: 25px !important;
+}
+.upgrade-box .s-item {
+  display: flex;
+  min-width: 250px;
+}
+@media screen and (max-width: 1400px) {
+  .configuration-system .special {
+    margin-top: 0;
+  }
 }

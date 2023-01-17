@@ -29,7 +29,7 @@
                                 <div class="content-table">
                                     <div class="top-text">
                                         密钥将用于创建实例时使用，您可以使用您的私钥登陆云服务器
-                                        <span style="margin-left: 0.1rem; color: #0058ff;">查看指南</span>
+                                        <span class="top-link" @click="toLearn">查看指南</span>
                                     </div>
                                     <div class="content_searchbar">
                                         <div class="left-btn" @click="showCreateSsh">

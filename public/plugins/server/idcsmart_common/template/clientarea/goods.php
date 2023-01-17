@@ -70,11 +70,21 @@
         <!-- 周期 -->
         <div class="config-item">
           <p class="config-tit">{{lang.com_config.cycle}}</p>
-          <div class="onetime" v-if="basicInfo.pay_type === 'onetime'">
-            <p>{{lang.product_onetime_free}}：{{commonData.currency_prefix}}{{onetime}}</p>
+          <div class="onetime cycle" v-if="basicInfo.pay_type === 'onetime'">
+            <!-- <p>{{lang.product_onetime_free}}：{{commonData.currency_prefix}}{{onetime}}</p> -->
+            <div class="item com-active">
+              <p class="name">{{lang.common_cloud_text6}}</p>
+              <p class="price">{{commonData.currency_prefix}}{{onetime}}</p>
+              <i class="el-icon-check"></i>
+            </div>
           </div>
-          <div class="onetime" v-if="basicInfo.pay_type === 'free'">
-            <p>{{lang.product_free}}</p>
+          <div class="onetime cycle" v-if="basicInfo.pay_type === 'free'">
+            <!-- <p>{{lang.product_free}}</p> -->
+            <div class="item com-active">
+              <p class="name">{{lang.product_free}}</p>
+              <p class="price">{{commonData.currency_prefix}}0.00</p>
+              <i class="el-icon-check"></i>
+            </div>
           </div>
           <div class="cycle" v-if="basicInfo.pay_type === 'recurring_prepayment' || basicInfo.pay_type === 'recurring_postpaid'">
             <div class="item" v-for="(item,index) in custom_cycles" :key="item.id" @click="changeCycle(item,index)" :class="{'com-active': index === curCycle }">

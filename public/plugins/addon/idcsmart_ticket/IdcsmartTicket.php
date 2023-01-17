@@ -5,6 +5,7 @@ use addon\idcsmart_ticket\logic\IdcsmartTicketLogic;
 use app\common\lib\Plugin;
 use app\common\model\SystemLogModel;
 use think\facade\Db;
+use addon\idcsmart_ticket\model\IdcsmartTicketModel;
 
 /*
  * 智简魔方工单插件
@@ -33,7 +34,6 @@ class IdcsmartTicket extends Plugin
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ticket_num` varchar(128) NOT NULL DEFAULT '' COMMENT '工单号',
   `num` int(11) NOT NULL DEFAULT '0' COMMENT '工单号后四位数字num',
-  `admin_role_id` int(11) NOT NULL DEFAULT '0' COMMENT '部门id,这里就是管理员分组ID',
   `client_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户id',
   `title` varchar(255) NOT NULL DEFAULT '' COMMENT '标题',
   `ticket_type_id` int(11) NOT NULL DEFAULT '0' COMMENT '工单类型ID',
@@ -47,10 +47,10 @@ class IdcsmartTicket extends Plugin
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   `last_reply_admin_id` int(11) NOT NULL DEFAULT '0' COMMENT '最近一次回复的管理员ID',
+  `post_admin_id` int(11) NOT NULL DEFAULT '0' COMMENT '后台创建工单的管理员ID',
   PRIMARY KEY (`id`),
   KEY `tn` (`ticket_num`) USING BTREE,
   KEY `ci` (`client_id`) USING BTREE,
-  KEY `ari` (`admin_role_id`) USING BTREE,
   KEY `status` (`status`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT COMMENT='工单表';",
             "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_host_link`;",
@@ -97,7 +97,6 @@ class IdcsmartTicket extends Plugin
             "CREATE TABLE `idcsmart_addon_idcsmart_ticket_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '工单类型',
-  `admin_role_id` int(11) NOT NULL DEFAULT '0' COMMENT '默认接受部门ID',
   `create_time` int(11) NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` int(11) NOT NULL DEFAULT '0' COMMENT '更新时间',
   PRIMARY KEY (`id`)
@@ -111,7 +110,14 @@ class IdcsmartTicket extends Plugin
   `update_time` int(11) NOT NULL DEFAULT '0',
   `admin_id` int(11) NOT NULL DEFAULT '0' COMMENT '管理员ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
+            "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_type_admin_link`;",
+            "CREATE TABLE `idcsmart_addon_idcsmart_ticket_type_admin_link` (
+  `ticket_type_id` int(11) NOT NULL DEFAULT '0',
+  `admin_id` int(11) NOT NULL DEFAULT '0',
+  KEY `ticket_type_id` (`ticket_type_id`) USING BTREE,
+  KEY `admin_id` (`admin_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='工单类型管理员管理员关联表';",
         ];
         foreach ($sql as $v){
             Db::execute($v);
@@ -138,6 +144,7 @@ class IdcsmartTicket extends Plugin
             "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_reply`",
             "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_status`",
             "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_notes`",
+            "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_type_admin_link`",
         ];
         foreach ($sql as $v){
             Db::execute($v);
@@ -154,5 +161,11 @@ class IdcsmartTicket extends Plugin
 
         return true;
     }
+
+    public function afterAdminDelete($param){
+        $IdcsmartTicketModel = new IdcsmartTicketModel();
+        $IdcsmartTicketModel->afterAdminDelete($param);
+    }
+
 
 }

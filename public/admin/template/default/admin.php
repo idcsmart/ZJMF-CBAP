@@ -66,6 +66,13 @@
     ]">
         <t-input :placeholder="lang.input+lang.surePassword" type="password" v-model="formData.repassword" />
       </t-form-item>
+      <t-form-item :label="lang.phone" name="phone">
+        <t-select v-model="formData.phone_code" filterable style="width: 100px" :placeholder="lang.phone_code">
+          <t-option v-for="item in country" :value="item.phone_code" :label="item.name_zh + '+' + item.phone_code" :key="item.name">
+          </t-option>
+        </t-select>
+        <t-input :placeholder="lang.input+lang.phone" v-model="formData.phone" style="width: calc(100% - 100px);" />
+      </t-form-item>
       <t-form-item :label="lang.email" name="email">
         <t-input :placeholder="lang.input+lang.email" v-model="formData.email" />
       </t-form-item>

@@ -68,10 +68,6 @@ class Check
             return ['status' => 401,'msg' => lang('password_is_change_please_login_again')];
         }
 
-        # 登录ip不一致 wyh 之后去掉后面的说明,目前方便测试找原因
-        if(get_client_ip() !== $jwtToken['ip']){
-            return ['status' => 401,'msg' => lang('login_unauthorized') . ':' . lang('inconsistent_login_ip')];
-        }
         # 登录用户ID不一致
         if ($id != $jwtToken['id']){
             return ['status' => 401,'msg' => lang('login_unauthorized') . ':' . lang('login_user_ID_is_inconsistent')];

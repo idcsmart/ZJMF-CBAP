@@ -13,10 +13,12 @@
             <t-col :xs="12" :xl="6">
               <div class="item">
                 <t-form-item :label="lang.name" name="client_id">
-                  <t-select v-model="formData.client_id" filterable :placeholder="lang.example" clearable :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false" :scroll="{ type: 'virtual',threshold:20 }" :popup-props="popupProps" class="user-select" @change="chooseUser">
+                  <t-select v-model="formData.client_id" filterable :placeholder="lang.example" :loading="searchLoading"
+                  @search="remoteMethod"  @clear="clearKey" :show-arrow="false"  :filter="filterMethod"
+                  :popup-props="popupProps" class="user-select" @change="chooseUser">
                     <t-option v-for="item in userList" :value="item.id" :label="item.username" :key="item.id" class="com-custom">
                       <div>
-                        <p>{{item.username}}</p>
+                        <p>{{item.id}}-{{item.username}}</p>
                         <p v-if="item.phone" class="tel">+{{item.phone_code}}-{{item.phone}}</p>
                         <p v-else class="tel">{{item.email}}</p>
                       </div>

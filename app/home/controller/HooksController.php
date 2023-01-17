@@ -153,4 +153,14 @@ class HooksController
      * @param int id - 订单ID
      */
     public function before_order_cancel(){}
+
+    /**
+     * 时间 2023-01-04
+     * @title 获取用户详情后
+     * @url before_order_cancel
+     * @author theworld
+     * @version v1
+     * @param int id - 用户ID
+     */
+    public function after_client_index(){}
 }

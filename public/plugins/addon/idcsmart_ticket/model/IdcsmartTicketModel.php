@@ -3,6 +3,7 @@ namespace addon\idcsmart_ticket\model;
 
 use addon\idcsmart_ticket\logic\IdcsmartTicketLogic;
 use app\admin\model\AdminRoleLinkModel;
+use app\admin\model\AdminRoleModel;
 use app\admin\model\PluginModel;
 use app\common\logic\UploadLogic;
 use app\common\model\SystemLogModel;
@@ -22,7 +23,6 @@ class IdcsmartTicketModel extends Model
         'id'                               => 'int',
         'ticket_num'                       => 'string',
         'num'                              => 'int',
-        'admin_role_id'                    => 'int',
         'client_id'                        => 'int',
         'title'                            => 'string',
         'ticket_type_id'                   => 'int',
@@ -36,6 +36,7 @@ class IdcsmartTicketModel extends Model
         'create_time'                      => 'int',
         'update_time'                      => 'int',
         'last_reply_admin_id'              => 'int',
+        'post_admin_id'                    => 'int',
     ];
 
     # 是否后台
@@ -58,12 +59,10 @@ class IdcsmartTicketModel extends Model
             return false;
         }
 
-        $AdminRoleLinkModel = new AdminRoleLinkModel();
-        $allowAdmin = $AdminRoleLinkModel->where('admin_role_id',$ticket->admin_role_id)->column('admin_id');
-        if (!in_array(get_admin_id(),$allowAdmin)){
+        $allowAdmin = IdcsmartTicketTypeAdminLinkModel::where('ticket_type_id', $ticket['ticket_type_id'])->column('admin_id');
+        if(!in_array(get_admin_id(), $allowAdmin)){
             return false;
         }
-
         return true;
     }
 
@@ -76,13 +75,16 @@ class IdcsmartTicketModel extends Model
                 $query->where('t.client_id',get_client_id());
             }else{
                 if (get_admin_id() != 1){ # 超级管理员查看所有?目前
-                    $AdminRoleLinkModel = new AdminRoleLinkModel();
-                    $adminRoleIds = $AdminRoleLinkModel->where('admin_id',get_admin_id())->column('admin_role_id');
+                    $ticketTypeId = IdcsmartTicketTypeAdminLinkModel::where('admin_id', get_admin_id())->column('ticket_type_id');
+                    $ticketTypeId = array_unique($ticketTypeId);
 
-                    $query->whereIn('t.admin_role_id',$adminRoleIds);
+                    if(!empty($ticketTypeId)){
+                        $query->whereIn('t.ticket_type_id', $ticketTypeId);
+                    }else{
+                        $query->where('t.id', 0);
+                    }
                 }
             }
-
             if (isset($param['status']) && $param['status'] && is_array($param['status'])){
                 $query->whereIn('t.status',$param['status']);
             }else{
@@ -158,6 +160,7 @@ class IdcsmartTicketModel extends Model
                 ->limit($param['limit'])
                 ->page($param['page'])
                 ->order('t.last_reply_time','desc')
+                ->order('t.post_time','desc')
                 ->order('t.id','desc')
                 ->select()
                 ->toArray();
@@ -230,9 +233,16 @@ class IdcsmartTicketModel extends Model
         }
 
         $ticket = $this->alias('t')
-            ->field('t.id,t.ticket_num,t.client_id,t.title,t.content,t.ticket_type_id,ts.name as status,ts.color,t.create_time,t.attachment,t.last_reply_time,c.username')
+            ->field('t.id,t.ticket_num,t.client_id,t.title,t.content,t.ticket_type_id,ts.name as status,ts.color,t.create_time,t.attachment,t.last_reply_time,c.username,t.post_admin_id,a.name as admin_name')
             ->leftJoin('client c','c.id=t.client_id')
+            ->leftJoin('admin a','t.post_admin_id=a.id')
             ->leftJoin('addon_idcsmart_ticket_status ts','ts.id=t.status')
+            ->withAttr('content',function ($value){
+                if (!empty($value)){
+                    return htmlspecialchars_decode($value);
+                }
+                return $value;
+            })
             ->where('t.id',$id)
             ->find();
         if (empty($ticket)){
@@ -251,8 +261,15 @@ class IdcsmartTicketModel extends Model
         $ticket['host_ids'] = $IdcsmartTicketHostLinkModel->where('ticket_id',$id)->column('host_id');
 
         $IdcsmartTicketReplyModel = new IdcsmartTicketReplyModel();
+
+        if ($this->isAdmin){
+            $field = 'tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.name as admin_name';
+        }else{
+            $field = 'tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.nickname as admin_name';
+        }
+
         $ticketReplies = $IdcsmartTicketReplyModel->alias('tr')
-            ->field('tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.name as admin_name')
+            ->field($field)
             ->leftJoin('client c','c.id=tr.rel_id AND tr.type=\'Client\'')
             ->leftJoin('admin a','a.id=tr.rel_id AND tr.type=\'Admin\'')
             ->withAttr('attachment',function ($value) use ($config){
@@ -267,6 +284,12 @@ class IdcsmartTicketModel extends Model
                     }
                 }
                 return $attachments;
+            })
+            ->withAttr('content',function ($value){
+                if (!empty($value)){
+                    return htmlspecialchars_decode($value);
+                }
+                return $value;
             })
             ->withAttr('admin_name',function ($value){
                 if (is_null($value)){
@@ -286,7 +309,7 @@ class IdcsmartTicketModel extends Model
             ->order('tr.create_time','desc')
             ->select()->toArray();
 
-        array_push($ticketReplies,['id'=>0,'content'=>$ticket->content,'attachment'=>$ticket->attachment,'create_time'=>$ticket->create_time,'type'=>'Client','client_name'=>$ticket->username,'admin_name'=>'']);
+        array_push($ticketReplies,['id'=>0,'content'=>$ticket->content,'attachment'=>$ticket->attachment,'create_time'=>$ticket->create_time,'type'=>'Client','client_name'=>$ticket->post_admin_id?$ticket['admin_name']:$ticket->username,'admin_name'=>'']);
 
         $ticket['replies'] = $ticketReplies;
         $data = [
@@ -313,17 +336,17 @@ class IdcsmartTicketModel extends Model
             $ticket = $this->create([
                 'ticket_num' => $ticketNum[0],
                 'num' => $ticketNum[1],
-                'admin_role_id' => $idcsmartTicketType->admin_role_id,
                 'client_id' => $clientId,
                 'title' => $param['title'],
                 'ticket_type_id' => $param['ticket_type_id'],
-                'content' => $param['content']??'',
+                'content' => isset($param['content'])?htmlspecialchars($param['content']):'',
                 'status' => 1,
                 'attachment' => (isset($param['attachment']) && !empty($param['attachment']))?implode(',',$param['attachment']):'',
                 'last_reply_time' => 0,
                 'create_time' => time(),
                 'post_time' => time(),
                 'notes' => $param['notes']??'',
+                'post_admin_id' => get_admin_id()??0,
             ]);
 
             $IdcsmartTicketHostLinkModel = new IdcsmartTicketHostLinkModel();
@@ -375,7 +398,7 @@ class IdcsmartTicketModel extends Model
                 ]);
             }else{
                 # 管理员创建工单日志
-                active_log(lang_plugins('ticket_log_admin_create_ticket', ['{admin}'=>'client#'.get_admin_id().'#' .request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#']), 'addon_idcsmart_ticket', $ticket->id);
+                active_log(lang_plugins('ticket_log_admin_create_ticket', ['{admin}'=>'admin#'.get_admin_id().'#' .request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#']), 'addon_idcsmart_ticket', $ticket->id);
             }
 
             $this->commit();
@@ -431,7 +454,7 @@ class IdcsmartTicketModel extends Model
                 'ticket_id' => $id,
                 'type' => $this->isAdmin?'Admin':'Client',
                 'rel_id' => $this->isAdmin?get_admin_id():$clientId,
-                'content' => $param['content'],
+                'content' => htmlspecialchars($param['content']),
                 'attachment' => (isset($param['attachment']) && !empty($param['attachment']))?implode(',',$param['attachment']):'',
                 'create_time' => $time
             ]);
@@ -744,14 +767,20 @@ class IdcsmartTicketModel extends Model
             if (empty($ticket)){
                 throw new \Exception(lang_plugins('ticket_is_not_exist'));
             }
-
+            $adminId = IdcsmartTicketTypeAdminLinkModel::where('ticket_type_id', $param['ticket_type_id'])->column('admin_id');
+            if(!in_array($param['admin_id'], $adminId)){
+                throw new \Exception(lang_plugins('ticket_admin_is_not_exist'));
+            }
             $ticket->save([
-                'admin_role_id' => $param['admin_role_id'],
                 'admin_id' => $param['admin_id'],
                 'notes' => $param['notes']??'',
                 'ticket_type_id' => $param['ticket_type_id'],
                 'update_time' => time()
             ]);
+
+            $IdcsmartTicketTypeModel = IdcsmartTicketTypeModel::find($param['ticket_type_id']);
+
+            active_log(lang_plugins('ticket_log_admin_ticket_forwad', ['{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','admin_role'=>$IdcsmartTicketTypeModel['name']]), 'addon_idcsmart_ticket', $ticket->id);
 
             $this->commit();
         }catch (\Exception $e){
@@ -781,6 +810,10 @@ class IdcsmartTicketModel extends Model
                 throw new \Exception(lang_plugins('ticket_status_is_not_exist'));
             }
 
+            $oldStatus = $ticket['status'];
+
+            $oldType = $ticket['ticket_type_id'];
+
             $ticket->save([
                 'status' => $param['status'],
                 'ticket_type_id' => $param['ticket_type_id']??0,
@@ -799,7 +832,16 @@ class IdcsmartTicketModel extends Model
             }
             $IdcsmartTicketHostLinkModel->insertAll($insert);
 
-            active_log(lang_plugins('ticket_log_admin_update_ticket_status', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{status}'=>$ticketStatus['name']]), 'addon_idcsmart_ticket', $id);
+            if ($oldStatus!=$param['status']){
+                active_log(lang_plugins('ticket_log_admin_update_ticket_status', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{status}'=>$ticketStatus['name']]), 'addon_idcsmart_ticket', $id);
+            }
+
+            if ($oldType!=$param['ticket_type_id']){
+                $IdcsmartTicketTypeModel = new IdcsmartTicketTypeModel();
+                $ticketType = $IdcsmartTicketTypeModel->where('id',$param['ticket_type_id'])->find();
+                active_log(lang_plugins('ticket_log_admin_update_ticket_type', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{type}'=>$ticketType['name']]), 'addon_idcsmart_ticket', $id);
+            }
+
             $this->commit();
         }catch (\Exception $e){
             $this->rollback();
@@ -849,7 +891,7 @@ class IdcsmartTicketModel extends Model
             }
 
             $ticket->save([
-                'content' => $param['content'],
+                'content' => htmlspecialchars($param['content']),
                 'update_time' => time()
             ]);
 
@@ -863,4 +905,9 @@ class IdcsmartTicketModel extends Model
 
         return ['status'=>200,'msg'=>lang_plugins('success_message')];
     }
+
+    public function afterAdminDelete($param){
+        IdcsmartTicketTypeAdminLinkModel::where('admin_id', $param['admin_id'])->delete();
+    }
+
 }

@@ -195,7 +195,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="recommend-box" v-else>
+                <!-- <div class="recommend-box" v-else>
                   <img src="/{$template_catalog}/template/{$themes}/img/home/recommend-img.png" alt="">
                     <div v-if="showRight">
                       <h2>{{lang.index_text17}}</h2>
@@ -203,17 +203,17 @@
                       <div class="no-recommend" @click="openVisible = true">立刻开启</div>
                     </div>
                     <div v-else class="recommend-text">{{lang.index_text21}}</div>
-                </div>
+                </div> -->
                 {/if}
                 {/foreach}
                 <div class="recommend-box" v-if="!showRight || !isOpen">
                   <img src="/{$template_catalog}/template/{$themes}/img/home/recommend-img.png" alt="">
-                    <div v-if="showRight">
-                      <h2>{{lang.index_text17}}</h2>
-                      <p>{{lang.index_text18}}</p>
-                      <div class="no-recommend" @click="openVisible = true">立刻开启</div>
-                    </div>
-                    <div v-else class="recommend-text">{{lang.index_text21}}</div>
+                  <div v-if="showRight">
+                    <h2>{{lang.index_text17}}</h2>
+                    <p>{{lang.index_text18}}</p>
+                    <div class="no-recommend" @click="openVisible = true">立刻开启</div>
+                  </div>
+                  <div v-else class="recommend-text">{{lang.index_text21}}</div>
                 </div>
                 <!-- 推介计划结束 -->
                 {foreach $addons as $addon}
@@ -225,7 +225,7 @@
                   </div>
                   <div class="WorkOrder-content">
                     <div class="WorkOrder-item" v-for="item in ticketList" :key="item.id">
-                      <div class="replay-div" :class="item.status === 'Reply' ? 'replay-red' : item.status === 'Pending' ? 'replay-green' : ''">{{item.statusText}}</div>
+                      <div class="replay-div" :style="{'background':`${item.color}`}">{{item.status}}</div>
                       <div class="replay-box">
                         <div class="replay-title">{{item.title}}</div>
                         <div class="replay-name">{{item.name}}</div>

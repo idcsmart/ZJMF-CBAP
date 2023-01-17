@@ -4,7 +4,7 @@
     const template = document.getElementsByClassName('real_name_interface')[0]
     Vue.prototype.lang = window.lang
     new Vue({
-      data () {
+      data() {
         return {
           data: [],
           tableLayout: false,
@@ -27,7 +27,7 @@
               ellipsis: true,
               className: 'status-icon'
             },
-             {
+            {
               colKey: 'certification_type',
               title: lang.type,
               width: 150,
@@ -88,7 +88,7 @@
           baseUrl: url
         }
       },
-      mounted () {
+      mounted() {
         this.maxHeight = document.getElementById('content').clientHeight - 220
         let timer = null
         window.onresize = () => {
@@ -104,7 +104,7 @@
       },
       methods: {
         // 获取列表
-        async getGatewayList () {
+        async getGatewayList() {
           try {
             this.loading = true
             const params = { ...this.params }
@@ -117,16 +117,26 @@
             this.loading = false
           }
         },
-        addUser () {
-          window.open('https://market.idcsmart.com/shop')
+        addUser() {
+          // window.open('https://market.idcsmart.com/shop')
+          setToken().then(res => {
+            if (res.data.status == 200) {
+              let url = res.data.market_url
+              let getqyinfo = url.split('?')[1]
+              let getqys = new URLSearchParams('?' + getqyinfo)
+              const from = getqys.get('from')
+              const token = getqys.get('token')
+              window.open(`https://my.idcsmart.com/shop/index.html?from=${from}&token=${token}`)
+            }
+          })
         },
         // 配置
-        handleConfig (row) {
+        handleConfig(row) {
           this.configVisble = true
           this.delId = row.name
           this.getConfig(row.id)
         },
-        async getConfig (id) {
+        async getConfig(id) {
           try {
             const params = {
               module: this.moduleName,
@@ -142,7 +152,7 @@
           }
         },
         // 保存配置
-        async onSubmit () {
+        async onSubmit() {
           try {
             const params = {
               module: this.moduleName,
@@ -161,32 +171,32 @@
           }
         },
         // 切换分页
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current
           this.params.limit = e.pageSize
           this.getGatewayList()
         },
         // 排序
-        clearKey () {
+        clearKey() {
           this.params.keywords = ''
           this.seacrh()
         },
-        seacrh () {
+        seacrh() {
           this.getGatewayList()
         },
-        close () {
+        close() {
           this.visible = false
           this.$refs.userDialog.reset()
         },
 
         // 停用/启用
-        changeStatus (row) {
+        changeStatus(row) {
           this.delId = row.name
           this.curStatus = row.status
           this.statusTip = this.curStatus ? window.lang.sureDisable : window.lang.sure_Open
           this.statusVisble = true
         },
-        async sureChange () {
+        async sureChange() {
           try {
             let tempStatus = this.curStatus === 1 ? 0 : 1
             const params = {
@@ -203,17 +213,17 @@
             this.statusVisble = false
           }
         },
-        closeDialog () {
+        closeDialog() {
           this.statusVisble = false
         },
         // 删除
-        deletePay (row) {
+        deletePay(row) {
           this.delVisible = true
           this.delId = row.name
           this.type = row.status === 3 ? 'install' : 'uninstall'
           this.installTip = row.status === 3 ? window.lang.sureInstall : window.lang.sureUninstall
         },
-        async sureDel () {
+        async sureDel() {
           try {
             const params = {
               module: this.moduleName,
@@ -221,7 +231,7 @@
             }
             const res = await deleteMoudle(this.type, params)
             this.$message.success(res.data.msg)
-           // this.params.page = this.data.length > 1 ? this.params.page : this.params.page - 1
+            // this.params.page = this.data.length > 1 ? this.params.page : this.params.page - 1
             this.delVisible = false
             this.getGatewayList()
           } catch (error) {
@@ -229,17 +239,17 @@
             this.$message.error(error.data.msg)
           }
         },
-        cancelDel () {
+        cancelDel() {
           this.delVisible = false
         },
 
       },
-      created () {
+      created() {
         this.getGatewayList()
       },
       computed: {
         // 格式化配置里面的options
-        computedOptions () {
+        computedOptions() {
           return (options) => {
             const arr = []
             Object.keys(options).map(item => {

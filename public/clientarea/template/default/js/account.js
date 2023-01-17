@@ -607,7 +607,7 @@
               code: this.reEmailData.code,
               email: this.reEmailData.email,
             };
-            updateAliEmail(params)
+            updateEmail(params)
               .then((res) => {
                 if (res.data.status === 200) {
                   this.$message.success("邮箱验证成功");

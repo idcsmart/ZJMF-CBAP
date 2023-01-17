@@ -10,6 +10,27 @@
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
           <t-col :xs="12" :xl="6">
             <div class="item">
+              <p class="tit">{{lang.task_queue_commands}}</p>
+              <t-textarea v-model="formData.cron_task_shell" disabled />
+            </div>
+            <div class="item">
+              <p class="tit">{{lang.task_queue_status}}</p>
+              <t-alert v-if="formData.cron_task_status === 'success'" theme="success">
+                <template slot="message">
+                  <span>{{lang.task_queue_normal}}</span>
+                </template>
+              </t-alert>
+              <t-alert v-if="formData.cron_task_status === 'error'" theme="error">
+                <template slot="message">
+                  <span>{{lang.task_queue_abnormal}}</span>
+                </template>
+              </t-alert>
+            </div>
+          </t-col>
+        </t-row>
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+          <t-col :xs="12" :xl="6">
+            <div class="item">
               <p class="tit">{{lang.automation_scripts}}</p>
               <t-textarea v-model="formData.cron_shell" disabled />
             </div>
@@ -28,6 +49,19 @@
             </div>
           </t-col>
         </t-row>
+        <div class="item-box">
+          <p class="com-tit"><span>{{lang.time_setting}}</span></p>
+          <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+            <t-col :xs="12" :xl="6">
+              <t-form-item :label="lang.task_execution_time">
+                <t-select v-model="formData.cron_day_start_time" :placeholder="lang.select" style="width: 182px;">
+                  <t-option v-for="item in timeArr" :value="item.value" :label="item.label" :key="item.value">
+                  </t-option>
+                </t-select>
+              </t-form-item>
+            </t-col>
+          </t-row>
+        </div>
         <div class="item-box">
           <p class="com-tit"><span>{{lang.module}}</span></p>
           <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">

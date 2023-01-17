@@ -11,11 +11,13 @@ class AdminValidate extends Validate
 	protected $rule = [
 		'id' 		    => 'require|integer',
         'name' 		    => 'require|max:50|min:1|unique:admin',
-        'password' 		=> 'require|alphaNum|max:32|min:6',
+        'password' 		=> 'require|max:32|min:6|checkPassword:thinkphp',
         'repassword'	=> 'require|confirm:password',
         'email' 		=> 'require|email|unique:admin',
         'nickname' 		=> 'require|max:20|min:1',
-        'remember_password' 		=> 'in:0,1',
+        'remember_password' => 'in:0,1',
+        'phone_code'    => 'number',
+        'phone'         => 'max:11|number',
     ];
 
     protected $message  =   [
@@ -26,7 +28,7 @@ class AdminValidate extends Validate
         'name.max'     			    => 'admin_name_cannot_exceed_50_chars',
         'name.unique'     			=> 'admin_name_unique',
         'password.require'        	=> 'please_enter_password',
-        'password.alphaNum'        	=> 'password_formatted_incorrectly',
+        //'password.alphaNum'        	=> 'password_formatted_incorrectly',
         'password.max'        	    => 'password_formatted_incorrectly',
         'password.min'        	    => 'password_formatted_incorrectly',
         'repassword.require'        => 'please_enter_password_again',
@@ -38,11 +40,14 @@ class AdminValidate extends Validate
         'email.email'        		=> 'please_enter_vaild_email',
         'email.unique'        		=> 'admin_email_unique',
         'remember_password.in'      => 'remember_password_value_0_or_1',
+        'phone_code.number'         => '国际电话区号格式错误',
+        'phone.max'                 => '手机号格式错误',
+        'phone.number'              => '手机号格式错误',
     ];
 
     protected $scene = [
-        'create' => ['name', 'email', 'password', 'repassword', 'nickname'],
-        'update' => ['id', 'name', 'email', 'nickname'],
+        'create' => ['name', 'email', 'password', 'repassword', 'nickname', 'phone', 'phone_code'],
+        'update' => ['id', 'name', 'email', 'nickname', 'phone', 'phone_code'],
         'password' => ['password', 'repassword'],
     ];
 
@@ -51,6 +56,16 @@ class AdminValidate extends Validate
     {
         return $this->only(['name','password','remember_password'])
             ->remove('name', 'max|min|unique')
-            ->remove('password', 'alphaNum|max|min');
+            ->remove('password', 'checkPassword|max|min');
+    }
+
+    // 验证密码无汉字
+    protected function checkPassword($value,$rule,$data)
+    {
+        if (preg_match("/[\\x7f-\\xff]/", $value)) { //判断字符串中是否有中文
+            return 'password_formatted_incorrectly';
+        }
+
+        return true;
     }
 }

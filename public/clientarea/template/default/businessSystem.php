@@ -18,20 +18,23 @@
             <el-container>
                 <top-menu></top-menu>
                 <el-main>
-                    <div class="businessSystem-content">
+                <div class="businessSystem-content">
                         <header>业务系统 V10</header>
                         <main>
-                            <el-table v-loading="loading1" :data="tableData" style="width: 100%;margin-bottom: .2rem;">
-                                <el-table-column prop="id" label="序号" width="100" :show-overflow-tooltip="true" >
+                            <el-table v-loading="loading1" :data="authorizeList" style="width: 100%;margin-bottom: .2rem;">
+                                <el-table-column type="index" label="序号" width="100" :show-overflow-tooltip="true">
                                 </el-table-column>
-                                <el-table-column prop="id" label="授权码"  :show-overflow-tooltip="true" >
+                                <el-table-column prop="license" label="授权码"  :show-overflow-tooltip="true" >
+                                    <template slot-scope="{row}">
+                                        <span @click="goDetail(row)">{{row.license}}</span>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="id" label="关联域名"  :show-overflow-tooltip="true" >
+                                <el-table-column prop="domain" label="关联域名"  :show-overflow-tooltip="true" >
                                 </el-table-column>
-                                <el-table-column prop="id" label="插件数量" width="100" :show-overflow-tooltip="true" >
+                                <el-table-column  prop="plugin_num" label="插件数量" width="100" :show-overflow-tooltip="true" >
                                 </el-table-column>
                             </el-table>
-                            <pagination :page-data="params1" @sizechange="sizeChange1" @currentchange="currentChange1">
+                            <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange">
                             </pagination>
                         </main>
                     </div>
@@ -41,6 +44,7 @@
     </div>
     <!-- =======页面独有======= -->
     <script src="/{$template_catalog}/template/{$themes}/js/businessSystem.js"></script>
+    <script src="/{$template_catalog}/template/{$themes}/api/market.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/api/common.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
     <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>

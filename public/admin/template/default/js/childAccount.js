@@ -18,6 +18,7 @@
         return {
           message: "template...",
           id: "",
+          pId: "",
           country: [],
           formData: {
             visible_product: "host",
@@ -68,6 +69,7 @@
       async created () {
         const query = location.href.split("?")[1].split("&");
         this.id = Number(this.getQuery(query[0]));
+        this.pId = Number(this.getQuery(query[1]));
         await this.getTreeList();
         this.getDetail();
         this.getModuleList();
@@ -193,7 +195,7 @@
         },
         // 获取所有产品
         async getProductList () {
-          const res = await queryProductListAPI(this.id);
+          const res = await queryProductListAPI(this.pId);
           if (res.status === 200) {
             this.productList = res.data.data.list;
           }

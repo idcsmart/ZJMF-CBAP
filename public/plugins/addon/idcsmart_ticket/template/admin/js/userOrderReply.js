@@ -46,13 +46,13 @@
           columns: [
             {
               colKey: 'description',
-              title: '记录详情',
+              title: lang.order_text39,
               cell: "description",
               ellipsis: true
             },
             {
               colKey: 'create_time',
-              title: '记录时间',
+              title: lang.order_text40,
               cell: "create_time",
               width: '157'
             }
@@ -110,7 +110,8 @@
         },
         // 跳转用户信息页
         goUserPagr() {
-          location.href = `/admin/client_detail.html?client_id=${this.orderDetailData.client_id}`
+          const url = 'http://' + str + `client_detail.html?client_id=${this.orderDetailData.client_id}`
+          window.open(url)
         },
         // 获取工单预设回复列表
         getTicketPrereply() {
@@ -177,6 +178,7 @@
           this.replyData = item.content
           tinyMCE.editors[0].setContent(item.content)
           tinyMCE.editors[0].editorManager.get('tiny').focus();
+          this.handleScrollBottom()
         },
         // 聊天列表滚动到底部
         scrollBotton() {
@@ -184,6 +186,12 @@
           const listBoxDom = document.querySelector('.t-list__inner')
           const h = listBoxDom.scrollHeight
           listDom.scrollTop = h
+        },
+        // 滚动到底部
+        handleScrollBottom() {
+          const detailDom = document.querySelector('.area')
+          console.log(detailDom.scrollTop);
+          detailDom.scrollTop = detailDom.scrollHeight
         },
         // 确认编辑
         handelEdit() {
@@ -234,7 +242,7 @@
         // 点击删除按钮
         deleteItem(item) {
           if (this.isEditing) {
-            this.$message.error('请先保存正在编辑的内容！')
+            this.$message.error(lang.order_text41)
             return
           }
           this.editObj = item
@@ -305,7 +313,7 @@
         // 修改工单状态
         handelEditOrderStatus() {
           if (this.params.status == '') {
-            return this.$message.warning({ content: '请选择工单状态后再保存！', placement: 'top-right' });
+            return this.$message.warning({ content: lang.order_text42, placement: 'top-right' });
           }
           const str = location.search.substr(1).split('&');
           const orderId = str[0].split('=')[1];
@@ -369,11 +377,18 @@
         },
         // 附件下载
         downloadfile(url) {
-          const downloadElement = document.createElement("a");
-          downloadElement.href = url;
-          downloadElement.download = url.split("^")[1]; // 下载后文件名
-          document.body.appendChild(downloadElement);
-          downloadElement.click(); // 点击下载
+          const name = url
+          const type = name.substring(name.lastIndexOf(".") + 1)
+          if (['png', 'jpg', 'jepg', 'bmp', 'webp'].includes(type)) {
+            this.preImg = url
+            this.viewer.show()
+          } else {
+            const downloadElement = document.createElement("a");
+            downloadElement.href = url;
+            downloadElement.download = url.split("^")[1]; // 下载后文件名
+            document.body.appendChild(downloadElement);
+            downloadElement.click(); // 点击下载
+          }
         },
         timeago(time) {
           if (time == 0) {
@@ -392,7 +407,7 @@
 
           let result = "";
           if (diffValue < 0) {
-            result = "" + "未来";
+            result = "" + lang.order_text43;
           }
           const minC = diffValue / minute;  //计算时间差的分，时，天，周，月
           const hourC = diffValue / hour;
@@ -402,19 +417,19 @@
           const yearC = diffValue / year;
 
           if (yearC >= 1) {
-            result = " " + parseInt(yearC) + "年前"
+            result = " " + parseInt(yearC) + lang.order_text44
           } else if (monthC >= 1 && monthC < 12) {
-            result = " " + parseInt(monthC) + "月前"
+            result = " " + parseInt(monthC) + lang.order_text45
           } else if (weekC >= 1 && weekC < 5 && dayC > 6 && monthC < 1) {
-            result = " " + parseInt(weekC) + "周前"
+            result = " " + parseInt(weekC) + lang.order_text46
           } else if (dayC >= 1 && dayC <= 6) {
-            result = " " + parseInt(dayC) + "天前"
+            result = " " + parseInt(dayC) + lang.order_text47
           } else if (hourC >= 1 && hourC <= 23) {
-            result = " " + parseInt(hourC) + "小时前"
+            result = " " + parseInt(hourC) + lang.order_text48
           } else if (minC >= 1 && minC <= 59) {
-            result = " " + parseInt(minC) + "分钟前"
+            result = " " + parseInt(minC) + lang.order_text49
           } else if (diffValue >= 0 && diffValue <= minute) {
-            result = "刚刚"
+            result = lang.order_text50
           }
           return result
         },
@@ -540,7 +555,7 @@
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
-            axios.post('http://' + str + 'v1/upload', formData, {
+            axios.post(`${location.protocol}//${str}v1/upload`, formData, {
               headers: {
                 Authorization: 'Bearer' + ' ' + localStorage.getItem('backJwt')
               }

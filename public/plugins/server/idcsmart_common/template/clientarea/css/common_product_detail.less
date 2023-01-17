@@ -168,8 +168,6 @@
     flex-wrap: wrap;
     border: 1px solid #E6E7EB;
     border-left: 0;
-    border-top: 0;
-
     .item {
       width: 50%;
       line-height: .5rem;
@@ -178,12 +176,15 @@
       font-size: .14rem;
       color: #1E2736;
       margin: 0;
-
+      border-top: 1px solid #E6E7EB;
       .r-info {
         width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+      &:nth-child(1),&:nth-child(2){
+        border-top: 0;
       }
     }
 
@@ -213,7 +214,6 @@
   .r-info {
     padding: 0 .2rem;
     border-left: 1px solid #E6E7EB;
-    border-top: 1px solid #E6E7EB;
     overflow: hidden;
     text-overflow: ellipsis; //（文本溢出显示省略号）
     white-space: nowrap;
@@ -228,7 +228,6 @@
   .name {
     min-width: .7rem;
     border-left: 1px solid #E6E7EB;
-    border-top: 1px solid #E6E7EB;
     padding: 0 .2rem;
   }
 
@@ -313,7 +312,7 @@
 
       .renew-item {
         width: 1.6rem;
-        height: .62rem;
+        height: .83rem;
         border: 1px solid #E6E7EB;
         border-radius: 3px;
         display: flex;
@@ -342,6 +341,12 @@
           font-size: .15rem;
           color: #0058FF;
           margin-top: .04rem;
+        }
+
+        .item-origin-price {
+          text-decoration: line-through;
+          font-size: 0.15rem;
+          color: #8692B0;
         }
 
         .check {

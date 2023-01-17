@@ -19,7 +19,7 @@
         <top-menu></top-menu>
         <el-main>
           <!-- 自己的东西 -->
-          <div class="main-card" v-if="isShowView">
+          <div class="main-card">
             <div class="main-title">{{lang.new_goods}}</div>
             <!-- <div class="main-content">
               <div class="select-box">

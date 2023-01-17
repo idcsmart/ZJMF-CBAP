@@ -119,3 +119,7 @@
 .t-table th, .t-table thead td{
   color: #000000 !important;
 }
+
+#content .t-divider__inner-text{
+  padding-left: 0;
+}

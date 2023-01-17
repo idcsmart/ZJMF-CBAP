@@ -107,7 +107,7 @@ function deleteAdminRole(id) {
   return Axios.delete(`/admin/role/${id}`)
 }
 // 获取权限
-function getAuthRole() {
+function getAllAuthRole() {
   return Axios.get('/auth')
 }
 // 短信接口
@@ -211,5 +211,14 @@ function upProgress() {
 }
 // 获取公告
 function newsList(params) {
-  return Axios.get(`https://market.idcsmart.com/news/list`, { params })
+  return Axios.get(`https://my.idcsmart.com/console/v1/news?addon_idcsmart_news_type_id=11`, { params })
+}
+
+// 获取已购买应用最新版本
+function getActiveVersion () {
+  return Axios.get('/app_market/app/version')
+}
+// 插件升级
+function upgradePlugin (params) {
+  return Axios.post(`/plugin/${params.module}/${params.name}/upgrade`)
 }

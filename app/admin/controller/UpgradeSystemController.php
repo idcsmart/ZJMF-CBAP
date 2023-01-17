@@ -22,6 +22,8 @@ class UpgradeSystemController extends AdminBaseController
      * @return string last_version - 最新系统版本 
      * @return string last_version_check - 最新系统版本检测结果 
      * @return int is_download - 更新包是否下载完毕:0否1是 
+     * @return string license - 授权码
+     * @return string service_due_time - 服务到期时间
      */
     public function systemVersion()
     {

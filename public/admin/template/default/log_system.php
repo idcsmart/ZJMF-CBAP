@@ -23,7 +23,7 @@
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #description="{row}">
-        <span v-html="row.description"></span>
+        <span v-html="calStr(row.description)"></span>
       </template>
       <template #create_time="{row}">
         {{moment(row.create_time * 1000).format('YYYY-MM-DD HH:mm')}}

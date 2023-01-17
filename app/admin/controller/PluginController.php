@@ -172,5 +172,25 @@ class PluginController extends AdminBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2022-5-16
+     * @title 插件升级
+     * @desc 插件升级:module=gateway表示支付接口列表,addon插件列表,sms短信接口列表,mail邮件接口列表
+     * @url /admin/v1/plugin/:module/:name/upgrade
+     * @method  POST
+     * @author wyh
+     * @version v1
+     * @param string module - 模块:gateway表示支付接口列表,addon插件列表,sms短信接口列表,mail邮件接口列表 required
+     * @param string name - 插件标识 required
+     */
+    public function upgrade()
+    {
+        $param = $this->request->param();
+
+        $result = (new PluginModel())->upgrade($param);
+
+        return json($result);
+    }
+
 }
 

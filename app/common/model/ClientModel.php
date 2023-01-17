@@ -67,6 +67,7 @@ class ClientModel extends Model
     {
         $param['custom_field'] = $param['custom_field'] ?? [];
         $param['keywords'] = $param['keywords'] ?? '';
+        $param['client_id'] = intval($param['client_id'] ?? 0);
         $param['orderby'] = isset($param['orderby']) && in_array($param['orderby'], ['id', 'username', 'phone', 'email']) ? 'c.'.$param['orderby'] : 'c.id';
 
     	$count = $this->alias('c')
@@ -76,6 +77,9 @@ class ClientModel extends Model
     			if(!empty($param['keywords'])){
     				$query->where('c.id|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
     			}
+                if(!empty($param['client_id'])){
+                    $query->where('c.id', $param['client_id']);
+                }
 		        if(!empty($param['custom_field'])){
                     $where = [];
                     foreach ($param['custom_field'] as $key => $value) {
@@ -94,6 +98,9 @@ class ClientModel extends Model
                 if(!empty($param['keywords'])){
                     $query->where('c.id|c.username|c.email|c.phone', 'like', "%{$param['keywords']}%");
                 }
+                if(!empty($param['client_id'])){
+                    $query->where('c.id', $param['client_id']);
+                }
     			if(!empty($param['custom_field'])){
                     $where = [];
                     foreach ($param['custom_field'] as $key => $value) {
@@ -103,7 +110,6 @@ class ClientModel extends Model
                         $query->whereRaw(implode(' AND ', $where));
                     }
                 }
-		        
 		    })
     		->limit($param['limit'])
     		->page($param['page'])
@@ -163,6 +169,7 @@ class ClientModel extends Model
      * @return array login_logs - 登录记录
      * @return string login_logs[].ip - IP
      * @return int login_logs[].login_time - 登录时间
+     * @return int login_logs[].register_time - 注册时间
      */
     public function indexClient($id)
     {
@@ -189,8 +196,10 @@ class ClientModel extends Model
                 'is_sub_account' => get_client_id()!=get_client_id(false) ? 1 : 0
             ];
             // 前台接口去除字段
-            unset($client['client_notes'], $client['register_time'], $client['last_login_time'], $client['last_login_ip']);
+            unset($client['client_notes'], $client['last_login_time'], $client['last_login_ip']);
         }
+
+        hook('after_client_index', ['id' => $id]);
         
         
         return $client;
@@ -275,7 +284,7 @@ class ClientModel extends Model
 		    return ['status' => 400, 'msg' => lang('create_fail')];
 		}
 
-		hook('after_client_create',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
+		hook('after_client_register',['id'=>$client->id,'customfield'=>$param['customfield']??[]]);
 
     	return ['status' => 200, 'msg' => lang('create_success'), 'data' => ['id' => $client->id]];
     }
@@ -519,6 +528,15 @@ class ClientModel extends Model
                 'status' => $status,
                 'update_time' => time(),
             ],['id' => $param['id']]);
+
+            # 记录日志
+            if($status==1){
+                active_log(lang('admin_enable_user', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client['username'].'#']), 'client', $client->id);
+            }else{
+                active_log(lang('admin_disable_user', ['{admin}'=>request()->admin_name, '{client}'=>'client#'.$client->id.'#'.$client['username'].'#']), 'client', $client->id);
+            }
+            
+
             $this->commit();
         }catch (\Exception $e){
             // 回滚事务
@@ -1099,6 +1117,7 @@ class ClientModel extends Model
         }
         # 手机号未注册
         if (empty($client = $this->checkPhoneRegister($param['account'],$param['phone_code']))){
+            active_log(lang('log_client_login_account_not_register',['{client}'=>$param['account']]),'login',0);
             return ['status'=>400,'msg'=>lang('login_phone_is_not_register')];
         }
         # 登录限制
@@ -1112,11 +1131,13 @@ class ClientModel extends Model
             return ['status'=>400,'msg'=>lang('verification_code_error')];
         }
         if ($code != $param['code']){
+            active_log(lang('log_client_login_code_error',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
             return ['status'=>400,'msg'=>lang('verification_code_error')];
         }
         $this->clearPhoneVerificationCode($param['account'],$param['phone_code'],'login');
         # 账号被禁用
         if ($client['status'] != 1){
+            active_log(lang('log_client_login_status_disabled',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
             return ['status'=>400,'msg'=>lang('login_client_is_disabled')];
         }
 
@@ -1231,14 +1252,17 @@ class ClientModel extends Model
         # 验证账号
         $email = $param['account'];
         if (empty($client = $this->checkEmailRegister($email))){
+            active_log(lang('log_client_login_account_not_register',['{client}'=>$param['account']]),'login',0);
             return ['status'=>400,'msg'=>lang('login_email_is_not_register')];
         }
         # 验证密码是否相等
         if (!idcsmart_password_compare($param['password'],$client->password)){
+            active_log(lang('log_client_login_password_error',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
             return ['status'=>400,'msg'=>lang('login_password_error')];
         }
         # 账号被禁用
         if ($client['status'] != 1){
+            active_log(lang('log_client_login_status_disabled',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
             return ['status'=>400,'msg'=>lang('login_client_is_disabled')];
         }
 
@@ -1322,14 +1346,17 @@ class ClientModel extends Model
         }
         # 手机号未注册
         if (empty($client = $this->checkPhoneRegister($param['account'],$param['phone_code']))){
+            active_log(lang('log_client_login_account_not_register',['{client}'=>$param['account']]),'login',0);
             return ['status'=>400,'msg'=>lang('login_phone_is_not_register')];
         }
         # 验证密码是否相等
         if (!idcsmart_password_compare($param['password'],$client->password)){
+            active_log(lang('log_client_login_password_error',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
             return ['status'=>400,'msg'=>lang('login_password_error')];
         }
         # 账号被禁用
         if ($client['status'] != 1){
+            active_log(lang('log_client_login_status_disabled',['{client}'=>'client#'.$client->id.'#'.$client->username.'#']),'login',$client->id);
             return ['status'=>400,'msg'=>lang('login_client_is_disabled')];
         }
 

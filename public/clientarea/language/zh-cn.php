@@ -176,6 +176,10 @@ return [
     'change_password' => '{client}修改密码',
 
     'log_client_login' => '{client}登录系统',
+    'log_client_login_status_disabled' => '{client}登录系统失败,已被禁用',
+    'log_client_login_code_error' => '{client}登录系统失败,验证码不正确',
+    'log_client_login_account_not_register' => '{client}登录系统失败,用户不存在',
+    'log_client_login_password_error' => '{client}登录系统失败,密码不正确',
     'log_client_logout' => '{client}注销登录',
     'log_client_register' => '账号{account}注册成功',
     'log_client_pay_order_success' => '{client}支付订单:{order_id},支付金额:{amount}',

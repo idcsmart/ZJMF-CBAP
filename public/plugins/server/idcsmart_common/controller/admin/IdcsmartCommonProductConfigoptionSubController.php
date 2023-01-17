@@ -71,6 +71,7 @@ class IdcsmartCommonProductConfigoptionSubController extends BaseController
      * @param   int qty_min - 最小值：类型为数量的时候quantity,quantity_range选择
      * @param   int qty_max - 最大值：类型为数量的时候quantity,quantity_range选择
      * @param   string country - 国家:类型为区域时选择
+     * @param   int qty_change - 数量变化最小值:类型为数量的时候quantity,quantity_range选择
      * @param   float onetime - 一次性价格
      * @param   object custom_cycle - 自定义周期及价格格式：{"{自定义周期ID}":"{金额}"}
      * @param   float custom_cycle.1 - 自定义周期及价格

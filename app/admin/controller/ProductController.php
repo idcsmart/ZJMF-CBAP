@@ -115,6 +115,7 @@ class ProductController extends AdminBaseController
      * @return int product.creating_notice_mail_template - 开通中邮件通知模板,默认0
      * @return int product.created_notice_mail_template - 已开通邮件通知模板,默认0
      * @return int product_id - 父商品ID
+     * @return array plugin_custom_fields - 自定义字段{is_link:是否已有子商品,是,置灰}
      */
     public function index()
     {

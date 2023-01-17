@@ -68,7 +68,7 @@
           <template v-if="host?.status==='Active'">
             {foreach $addons as $addon}
             {if ($addon.name=='IdcsmartRenew')}
-            <span class="renew btn" @click="showRenew" v-if="!refundInfo || (refundInfo && refundInfo.status=='Cancelled') || (refundInfo && refundInfo.status=='Reject')">{{lang.cloud_re_btn}}</span>
+            <span class="renew btn" @click="showRenew" v-if="(!refundInfo || (refundInfo && refundInfo.status=='Cancelled') || (refundInfo && refundInfo.status=='Reject')) && (host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free')">{{lang.cloud_re_btn}}</span>
             <span class="disabeld btn" v-else>{{lang.cloud_re_btn}}</span>
             {/if}
             {/foreach}
@@ -94,7 +94,7 @@
         </div>
         {foreach $addons as $addon}
         {if ($addon.name=='IdcsmartRenew')}
-        <div class="item">
+        <div class="item" v-if="host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free'">
           <span>自动续费：</span>
           <el-switch :value="isShowPayMsg" active-color="#0052D9" :active-value="1" :inactive-value="0" @change="changeAutoStatus">
           </el-switch>
@@ -109,10 +109,11 @@
         {/foreach}
         <div class="item">
           <span>优惠码：</span>
-          <template v-if="promo_code.length > 0">
-            <span v-for="(item,index) in promo_code" :key="item">{{item}}</span>
-            <span v-if="index !== 0">;</span>
-          </template>
+          <span v-if="promo_code.length > 0">
+            <span v-for="(item,index) in promo_code" :key="item">{{item}}
+              <span v-if="index !== 0">;</span>
+            </span>
+          </span>
           <span v-else>--</span>
         </div>
       </div>
@@ -121,7 +122,7 @@
     <div class="basic-info">
       <p class="s-tit">基础信息</p>
       <div class="box">
-        <div class="item" v-for="(item,index) in configoptions" :key="index" :class="{last_item: configoptions % 2 !== 0 && index === configoptions.length - 2}">
+        <div class="item" v-for="(item,index) in configoptions" :key="index" :class="{last_item: configoptions.length % 2 !== 0 && index === configoptions.length - 2}">
 
           <p @mouseenter="e=>checkWidth(e,index)" @mouseout="hideTip(index)" v-if="!item.show" class="name">
             {{item.option_name}}
@@ -153,38 +154,41 @@
         <div class="dialog-title">续费</div>
         <div class="dialog-main">
           <div class="renew-content">
-            <div class="renew-item" :class="renewActiveId==index?'renew-active':''" v-for="(item,index) in renewPageData" :key="index" @click="renewItemChange(item,index)">
+            <div class="renew-item" v-for="(item,index) in renewPageData" :key="index" :class="renewActiveId == index ? 'renew-active' : ''" @click="renewItemChange(item,index)">
               <div class="item-top">{{item.billing_cycle}}</div>
-              <div class="item-bottom">{{commonData.currency_prefix + item.price}}</div>
-              <i class="el-icon-check check" v-show="renewActiveId==index"></i>
+              <div class="item-bottom" v-if="isShowPromo && isUseDiscountCode">{{commonData.currency_prefix + item.base_price}}</div>
+              <div class="item-bottom" v-else>{{commonData.currency_prefix + item.price}}</div>
+              <div class="item-origin-price" v-if="item.price != item.base_price && !isUseDiscountCode">{{commonData.currency_prefix + item.base_price}}</div>
+              <i class="el-icon-check check" v-show="renewActiveId == index"></i>
             </div>
           </div>
         </div>
         <div class="pay-content">
-            <div class="pay-price">
-                <div class="money" v-loading="renewLoading">
-                    <span class="text">{{lang.common_cloud_label11}}:</span><span>{{commonData.currency_prefix}}{{renewParams.totalPrice | filterMoney}}</span>
-                    <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode) || isShowCash">
-                      <div class="show-config-list">
-                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ renewParams.clDiscount | filterMoney}}</p>
-                        <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ renewParams.code_discount | filterMoney }}</p>
-                        <p v-if="isShowCash && customfield.voucher_get_id">代金券抵扣金额：{{commonData.currency_prefix}} {{ renewParams.cash_discount | filterMoney}}</p>
-                      </div>
-                      <i class="el-icon-warning-outline total-icon" slot="reference"></i>
-                  </el-popover>
-                  <p class="original-price" v-if="renewParams.totalPrice != renewParams.original_price">{{commonData.currency_prefix}} {{ renewParams.original_price | filterMoney}}</p>
-                  <div class="code-box">
-                    <!-- 代金券 -->
-                    <cash-coupon ref="cashRef" v-show=" isShowCash && !cashObj.code" :currency_prefix="commonData.currency_prefix" @use-cash="reUseCash" scene='renew' :product_id="[product_id]" :price="renewParams.original_price"></cash-coupon>
-                    <!-- 优惠码 -->
-                    <discount-code v-show="isShowLevel && !customfield.promo_code" @get-discount="getDiscount(arguments)" scene='renew' :product_id="product_id" :amount="renewParams.original_price" :billing_cycle_time="renewParams.duration"></discount-code>
-                  </div>
-                  <div class="code-number-text">
-                    <div class="discount-codeNumber" v-show="customfield.promo_code">{{ customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i></div>
-                    <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i class="el-icon-circle-close remove-discountCode" @click="reRemoveCashCode()"></i></div>
-                  </div>
+          <div class="pay-price">
+            <div class="money" v-loading="renewLoading">
+              <span class="text">{{lang.common_cloud_label11}}:</span><span>{{commonData.currency_prefix}}{{renewParams.totalPrice | filterMoney}}</span>
+              <el-popover placement="top-start" width="200" trigger="hover" v-if="isShowLevel || (isShowPromo && isUseDiscountCode) || isShowCash">
+                <div class="show-config-list">
+                  <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ renewParams.clDiscount | filterMoney}}</p>
+                  <p v-if="isShowPromo && isUseDiscountCode">{{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ renewParams.code_discount | filterMoney }}</p>
+                  <p v-if="isShowCash && customfield.voucher_get_id">代金券抵扣金额：{{commonData.currency_prefix}} {{ renewParams.cash_discount | filterMoney}}</p>
                 </div>
+                <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+              </el-popover>
+              <p class="original-price" v-if="customfield.promo_code && renewParams.totalPrice != renewParams.base_price">{{commonData.currency_prefix}} {{ renewParams.base_price | filterMoney}}</p>
+              <p class="original-price" v-if="!customfield.promo_code && renewParams.totalPrice != renewParams.original_price">{{commonData.currency_prefix}} {{ renewParams.original_price | filterMoney}}</p>
+              <div class="code-box">
+                <!-- 代金券 -->
+                <cash-coupon ref="cashRef" v-show=" isShowCash && !cashObj.code" :currency_prefix="commonData.currency_prefix" @use-cash="reUseCash" scene='renew' :product_id="[product_id]" :price="renewParams.original_price"></cash-coupon>
+                <!-- 优惠码 -->
+                <discount-code v-show="isShowLevel && !customfield.promo_code" @get-discount="getDiscount(arguments)" scene='renew' :product_id="product_id" :amount="renewParams.base_price" :billing_cycle_time="renewParams.duration"></discount-code>
+              </div>
+              <div class="code-number-text">
+                <div class="discount-codeNumber" v-show="customfield.promo_code">{{ customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i></div>
+                <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i class="el-icon-circle-close remove-discountCode" @click="reRemoveCashCode()"></i></div>
+              </div>
             </div>
+          </div>
         </div>
         <div class="dialog-footer">
           <el-button class="btn-ok" @click="subRenew" :loading="loading">确认续费</el-button>

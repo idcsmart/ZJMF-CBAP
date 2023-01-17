@@ -21,6 +21,7 @@ class IdcsmartCommonProductConfigoptionSubValidate extends Validate
 		'hidden' => 'in:0,1',
 		'country' => 'max:255',
 		'custom_cycle' => 'array',
+		'qty_change' => 'integer',
     ];
 
     protected $message  =   [
@@ -91,6 +92,8 @@ class IdcsmartCommonProductConfigoptionSubValidate extends Validate
         $min = $configoption['qty_min'];
 
         # 编辑子项时
+        $data['qty_min'] = $data['qty_min']??0;
+        $data['qty_max'] = $data['qty_max']??0;
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
         if (isset($data['id'])){
             $max = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$value)
@@ -98,8 +101,10 @@ class IdcsmartCommonProductConfigoptionSubValidate extends Validate
                 ->max('qty_max');
             $min = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$value)
                 ->where('id','<>',$data['id'])
-                ->max('qty_min');
-
+                ->min('qty_min');
+            if ($data['qty_min']>$min && $data['qty_max']<$max){
+                return true;
+            }
         }
 
         if ($IdcsmartCommonLogic->checkQuantity($configoption['option_type'])){

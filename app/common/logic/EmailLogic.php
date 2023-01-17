@@ -38,7 +38,7 @@ class EmailLogic
 			'email_name' => $param['email_name'],
 		];		
 		if(empty($param['email'])){
-			return ['status'=>400, 'msg'=>lang('email_cannot_be_empty')];//邮箱不能为空
+			return ['status'=>400, 'msg'=>lang('email_cannot_be_empty'),'data'=>$data];//邮箱不能为空
 		}
 		$mail_methods = $this->mailMethods('send',$data);
 		if($mail_methods['status'] == 'success'){

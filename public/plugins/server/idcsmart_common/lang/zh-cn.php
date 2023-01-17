@@ -30,6 +30,12 @@ return [
     'idcsmart_common_configoption_cannot_update'=>'存在购买产品,不可修改数据类型',
     'idcsmart_common_configoption_sub_qty_max_egt'=>'阶梯范围最大值大于等于最小值',
     'idcsmart_common_configoption_sub_qty_min_gt_value'=>'阶梯范围最小值大于{max}或最大值小于{min}',
+    'idcsmart_common_configoption_id_repeat'=>'关联其他数量选项错误',
+    'idcsmart_common_configoption_id_other'=>'关联的数量选项已关联其他选项',
+    'idcsmart_common_configoption_id_self'=>'不可关联自身',
+    'idcsmart_common_configoption_id_quantity'=>'仅可关联数量拖动或数量输入类型选项',
+    'idcsmart_common_son_product_pay_type_require'=>'请选择子商品费用类型',
+    'idcsmart_common_product_is_son'=>'当前商品为子商品,不可继续创建子商品',
 
 ];
 

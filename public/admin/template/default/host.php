@@ -1,6 +1,6 @@
 {include file="header"}
 <!-- =======内容区域======= -->
-<div id="content" class="host table" v-cloak>
+<div id="content" class="host" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
       <div></div>
@@ -10,7 +10,8 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :hide-sort-tips="true" @sort-change="sortChange" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'"
+     :hide-sort-tips="true" @sort-change="sortChange">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -24,8 +25,13 @@
           <span v-if="row.company">({{row.company}})</span>
         </a>
       </template>
-      <template #first_payment_amount="{row}">
-        {{currency_prefix}}&nbsp;{{row.first_payment_amount}}<span v-if="row.billing_cycle">/</span>{{row.billing_cycle}}
+      <template #renew_amount="{row}">
+        <template v-if="row.billing_cycle">
+          {{currency_prefix}}&nbsp;{{row.renew_amount}}<span>/</span>{{row.billing_cycle}}
+        </template>
+       <template v-else>
+          {{currency_prefix}}&nbsp;{{row.first_payment_amount}}/{{lang.onetime}}
+       </template>
       </template>
       <template #product_name="{row}">
         <a :href="`host_detail.html?client_id=${row?.client_id}&id=${row.id}`" class="aHover">{{row.product_name}}</a>
