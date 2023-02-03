@@ -38,8 +38,8 @@ class UpgradeSystem
 
     protected function verifyJwt($jwt)
     {
-        $idcsmart = include IDCSMART_ROOT."/config/idcsmart.php";
-        $key = $idcsmart['jwt_key_admin'] . AUTHCODE;
+        //$idcsmart = include IDCSMART_ROOT."/config/idcsmart.php";
+        $key = 'qp8FhjzGHRUaPsBXSdu24CmD90EJ3l' . AUTHCODE;
 
         try{
             $jwtAuth = json_decode(json_encode(\Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key($key,'HS256'))),true);
@@ -298,7 +298,7 @@ class UpgradeSystem
                     return json_encode(['status'=>400, 'msg'=>$progress_log['msg']]);
                 }
             }
-            return json_encode(['status'=>400, 'msg'=>'升级步骤错误']);
+            return json_encode(['status'=>400, 'msg'=>'升级文件错误']);
 
         }
         return json_encode(['status'=>400, 'msg'=>'升级步骤错误']);
