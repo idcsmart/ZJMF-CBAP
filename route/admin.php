@@ -69,20 +69,30 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::post('order', 'admin/order/create'); # 添加订单
     Route::put('order/:id/amount', 'admin/order/updateAmount'); # 修改订单金额
     Route::put('order/item/:id', 'admin/order/updateOrderItem'); # 编辑人工调整的订单子项
+    Route::delete('order/item/:id', 'admin/order/deleteOrderItem'); # 删除人工调整的订单子项
     Route::put('order/:id/status/paid', 'admin/order/paid'); # 标记支付
     Route::delete('order/:id', 'admin/order/delete'); # 删除订单
     Route::post('order/upgrade/amount', 'admin/order/getUpgradeAmount'); # 获取升降级订单金额
+    Route::post('order/:id/refund', 'admin/order/orderRefund'); # 订单退款
+    Route::post('order/:id/apply_credit', 'admin/order/orderApplyCredit'); # 订单退款
+    Route::post('order/:id/remove_credit', 'admin/order/orderRemoveCredit'); # 订单退款
+    Route::get('order/:id/refund_record', 'admin/order/refundRecordList'); # 订单退款记录列表
+    Route::delete('refund_record/:id', 'admin/order/deleteRefundRecord'); # 删除退款记录
+    Route::put('order/:id/gateway', 'admin/order/updateGateway'); # 修改订单支付方式
+    Route::put('order/:id/notes', 'admin/order/updateNotes'); # 修改订单备注
 
     # 产品管理
     Route::get('host', 'admin/host/hostList'); # 产品列表
     Route::get('host/:id', 'admin/host/index'); # 获取单个产品
     Route::put('host/:id', 'admin/host/update'); # 修改产品
     Route::delete('host/:id', 'admin/host/delete'); # 删除产品
+    Route::delete('host', 'admin/host/batchDelete'); # 批量删除产品
     Route::post('host/:id/module/create', 'admin/host/createAccount'); # 模块开通
     Route::post('host/:id/module/suspend', 'admin/host/suspendAccount'); # 模块暂停
     Route::post('host/:id/module/unsuspend', 'admin/host/unsuspendAccount'); # 模块解除暂停
     Route::post('host/:id/module/terminate', 'admin/host/terminateAccount'); # 模块删除
     Route::get('host/:id/module', 'admin/host/adminArea'); # 产品内页模块
+    Route::get('host/:id/module/button', 'admin/host/moduleButton'); # 模块按钮输出
     Route::get('host/:id/upgrade/config_option', 'admin/host/changeConfigOption'); # 产品升降级配置
     Route::post('host/:id/upgrade/config_option', 'admin/host/changeConfigOptionCalculatePrice'); # 产品升降级配置计算价格
     Route::get('client/:id/host/all', 'admin/host/clientHost'); # 获取用户所有产品
@@ -166,11 +176,13 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::delete('product/group/:id', 'admin/productGroup/delete'); # 删除商品分组
     Route::put('product/group/:id', 'admin/productGroup/update'); # 编辑商品分组
     Route::put('product/group/:id/product', 'admin/productGroup/moveProduct'); # 移动商品至其他商品组
+    Route::put('product/group/:id/:hidden', 'admin/productGroup/hidden'); # 隐藏/显示商品分组
     Route::get('product/:id/server/config_option', 'admin/product/moduleServerConfigOption'); # 选择接口获取配置
     Route::get('product/:id/config_option', 'admin/product/moduleAdminConfigOption'); # 商品配置页面
     Route::post('product/:id/config_option', 'admin/product/moduleCalculatePrice'); # 修改配置计算价格
     Route::get('product/:id/all_config_option', 'admin/product/moduleAllConfigOption'); # 获取商品所有配置项
     Route::get('module/:module/product', 'admin/product/moduleProductList'); # 根据模块获取商品
+    Route::get('product/search', 'admin/product/productListSearch'); # 商品搜索
 
     # 公共接口
     Route::get('gateway', 'admin/common/gateway'); # 支付接口
@@ -186,6 +198,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('menu', 'admin/common/adminMenu'); # 获取导航
     Route::get('active_plugin', 'admin/common/activePluginList'); # 获取已激活插件
     Route::get('clientarea_auth', 'admin/common/clientareaAuthList'); # 权限列表 
+    Route::get('product/all', 'admin/common/productList'); # 商品列表
 
     # 接口管理
     Route::get('server/group', 'admin/serverGroup/serverGroupList'); # 接口分组列表

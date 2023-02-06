@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
 <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
 <!-- =======内容区域======= -->
-<div id="content" class="host-detail table hasCrumb" v-cloak>
+<div id="content" class="host-detail hasCrumb" v-cloak>
   <!-- crumb -->
   <div class="com-crumb">
     <span>{{lang.user_manage}}</span>
@@ -12,27 +12,42 @@
     <span class="cur">{{lang.product_info}}</span>
   </div>
   <t-card class="list-card-container">
-    <ul class="common-tab">
-      <li>
-        <a :href="`client_detail.html?id=${client_id}`">{{lang.personal}}</a>
-      </li>
-      <li class="active">
-        <a :href="`client_host.html?id=${client_id}`">{{lang.product_info}}</a>
-      </li>
-      <li>
-        <a :href="`client_order.html?id=${client_id}`">{{lang.order_manage}}</a>
-      </li>
-      <li>
-        <a :href="`client_transaction.html?id=${client_id}`">{{lang.flow}}</a>
-      </li>
-      <li>
-        <a :href="`client_log.html?id=${client_id}`">{{lang.log}}</a>
-      </li>
-      <li>
-        <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
-      </li>
-    </ul>
-    <div class="box scrollbar">
+    <div class="com-h-box">
+      <ul class="common-tab">
+        <li>
+          <a :href="`${baseUrl}/client_detail.html?id=${client_id}`">{{lang.personal}}</a>
+        </li>
+        <li class="active">
+          <a :href="`${baseUrl}/client_host.html?id=${client_id}`">{{lang.product_info}}</a>
+        </li>
+        <li>
+          <a :href="`${baseUrl}/client_order.html?id=${client_id}`">{{lang.order_manage}}</a>
+        </li>
+        <li>
+          <a :href="`${baseUrl}/client_transaction.html?id=${client_id}`">{{lang.flow}}</a>
+        </li>
+        <li>
+          <a :href="`${baseUrl}/client_log.html?id=${client_id}`">{{lang.operation}}{{lang.log}}</a>
+        </li>
+        <li>
+          <a :href="`${baseUrl}/client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+        </li>
+        <li v-if="hasTicket && authList.includes('TicketController::ticketList')">
+          <a :href="`${baseUrl}/plugin/idcsmart_ticket/client_ticket.html?id=${id}`">{{lang.auto_order}}</a>
+        </li>
+      </ul>
+      <t-select class="user" v-if="this.clientList" v-model="client_id" :popup-props="popupProps" filterable :filter="filterMethod" @change="changeUser" :loading="searchLoading" reserve-keyword :on-search="remoteMethod">
+        <t-option :key="clientDetail.id" :value="clientDetail.id" :label="calcShow(clientDetail)" v-if="isExist">
+          #{{clientDetail.id}}-{{clientDetail.username ? clientDetail.username : (clientDetail.phone? clientDetail.phone: clientDetail.email)}}
+          <span v-if="clientDetail.company">({{clientDetail.company}})</span>
+        </t-option>
+        <t-option v-for="item in clientList" :value="item.id" :label="calcShow(item)" :key="item.id">
+          #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
+          <span v-if="item.company">({{item.company}})</span>
+        </t-option>
+      </t-select>
+    </div>
+    <div class="box">
       <t-form :data="formData" :rules="rules" ref="userInfo" label-align="top">
         <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 90 }">
           <t-col :xs="12" :xl="6">
@@ -59,9 +74,9 @@
             <t-form-item :label="lang.admin_notes" name="notes">
               <t-textarea v-model="formData.notes" :placeholder="lang.input+lang.admin_notes"></t-textarea>
             </t-form-item>
-            <!-- 1-7 -->
+            <!-- 1-31 后台返回操作按钮模块 -->
             <div class="module-opt">
-              <t-button @click="handlerMoudle('create')" v-if="curStatus === 'Failed'">{{lang.module_create}}</t-button>
+              <!-- <t-button @click="handlerMoudle('create')" v-if="curStatus === 'Failed'">{{lang.module_create}}</t-button>
               <t-button @click="handlerSuspend" v-if="curStatus === 'Active'">{{lang.deactivate}}</t-button>
               <t-button @click="handlerMoudle('unsuspend')" v-if="curStatus === 'Suspended'">{{lang.cancel}}{{lang.deactivate}}</t-button>
               <t-tooltip placement="top-right" :content="lang.module_tip" :show-arrow="false" theme="light" v-if="curStatus !== 'Deleted'">
@@ -69,7 +84,14 @@
                   {{lang.delete}}
                   <t-icon name="help-circle" size="18px" />
                 </t-button>
-              </t-tooltip>
+              </t-tooltip> -->
+              <t-button @click="handlerMoudle(item.func)" v-for="(item,index) in optBtns" :key="index">
+                <template v-if="item.func !== 'terminate'">{{item.name}}</template>
+                <t-tooltip placement="top-right" :content="lang.module_tip" :show-arrow="false" theme="light" v-else>
+                  {{item.name}}
+                  <t-icon name="help-circle" size="18px" />
+                </t-tooltip>
+              </t-button>
             </div>
             <!-- 内页模块 -->
             <div class="config-box" v-if="isShowModule">
@@ -79,7 +101,7 @@
           <t-col :xs="12" :xl="6">
             <p class="com-tit"><span>{{lang.financial_info}}</span></p>
             <!-- 续费 -->
-            <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="(curStatus === 'Active' || curStatus === 'Suspended') && hasPlugin && tempCycle !== 'free'  && tempCycle !== 'onetime'">{{lang.renew}}</t-button>
+            <!-- <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="(curStatus === 'Active' || curStatus === 'Suspended') && hasPlugin && tempCycle !== 'free'  && tempCycle !== 'onetime'">{{lang.renew}}</t-button> -->
             <div class="item">
               <t-form-item :label="lang.buy_amount" name="first_payment_amount">
                 <t-input v-model="formData.first_payment_amount" :placeholder="lang.input+lang.buy_amount">

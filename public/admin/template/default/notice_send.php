@@ -41,7 +41,7 @@
         </t-form>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" >
       <template #name="{row}">
         {{row.name_lang}}
       </template>

@@ -256,6 +256,7 @@ class ClientController extends AdminBaseController
      * @url /admin/v1/client/search
      * @method  GET
      * @param string keywords - 关键字,搜索范围:用户ID,姓名,邮箱,手机号
+     * @param int client_id - 用户ID,精确搜索
      * @return array list - 用户
      * @return int list[].id - 用户ID 
      * @return string list[].username - 姓名
@@ -264,13 +265,12 @@ class ClientController extends AdminBaseController
     {
         // 接收参数
         $param = $this->request->param();
-        $keywords = $param['keywords'] ?? '';
         
         // 实例化模型类
         $ClientModel = new ClientModel();
 
         // 获取用户列表
-        $data = $ClientModel->searchClient($keywords);
+        $data = $ClientModel->searchClient($param);
 
         $result = [
             'status' => 200,

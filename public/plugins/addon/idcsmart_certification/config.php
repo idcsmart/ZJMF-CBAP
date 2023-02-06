@@ -28,7 +28,7 @@ return [
         'size'  => 200,
     ],
     'certification_update_client_name'      => [
-        'title' => '自动给更新姓名',
+        'title' => '自动更新姓名',
         'type'  => 'text',
         'value' => 0,
         'tip'   => '',
@@ -48,8 +48,8 @@ return [
         'tip'   => '',
         'size'  => 200,
     ],
-    'certification_uncertified_suspended_host'      => [
-        'title' => '未认证暂停产品',
+    'certification_uncertified_cannot_buy_product'      => [
+        'title' => '未认证无法购买产品',
         'type'  => 'text',
         'value' => 0,
         'tip'   => '',

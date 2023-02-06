@@ -33,21 +33,31 @@ class ProductGroupModel extends Model
      * @return array list - 商品一级分组
      * @return int list[].id - 商品一级分组ID
      * @return int list[].name - 商品一级分组名称
+     * @return int list[].hidden - 是否隐藏0否1是
      * @return int count - 商品一级分组总数
      */
     public function productGroupFirstList()
     {
-        $where = function (Query $query){
-            $query->where('hidden',0)
-                ->where('parent_id',0);
-            $query->where('name','<>','应用商店');
+        $app = app('http')->getName();
+
+        $where = function (Query $query) use ($app){
+            if($app=='home'){
+                $query->where('hidden',0);
+            }
+            $query->where('parent_id',0);
+            //$query->where('name','<>','应用商店');
         };
 
-        $group = $this->field('id,name')
+        $group = $this->field('id,name,hidden')
             ->where($where)
             ->order('order','desc')
             ->select()
             ->toArray();
+        foreach ($group as $key => $value) {
+            if($app=='home'){
+                unset($group[$key]['hidden']);
+            }
+        }
 
         return ['list'=>$group,'count'=>count($group)];
     }
@@ -63,6 +73,7 @@ class ProductGroupModel extends Model
      * @return int list[].id - 商品二级分组ID
      * @return int list[].name - 商品二级分组名称
      * @return int list[].parent_id - 商品一级分组ID
+     * @return int list[].hidden - 是否隐藏0否1是
      * @return int count - 商品二级分组总数
      */
     public function productGroupSecondList($param)
@@ -70,22 +81,28 @@ class ProductGroupModel extends Model
         $app = app('http')->getName();
 
         $where = function (Query $query) use ($param,$app){
-            $query->where('pg.hidden',0);
+            if($app=='home'){
+                $query->where('pg.hidden',0);
+            }
             if (!empty($param['id']) && intval($param['id'])>0){
                 $query->where('pg.parent_id',intval($param['id'])); # 获取指定一级分组下的二级分组
             }else{
                 $query->where('pg.parent_id','>',0); # 获取所有二级分组
             }
-            $query->where('pgf.name','<>','应用商店');
+            //$query->where('pgf.name','<>','应用商店');
         };
 
-        $group = $this->alias('pg')->field('pg.id,pg.name,pg.parent_id')
-            ->leftJoin('product_group pgf','pgf.id=pg.parent_id')
+        $group = $this->alias('pg')->field('pg.id,pg.name,pg.parent_id,pg.hidden')
+            //->leftJoin('product_group pgf','pgf.id=pg.parent_id')
             ->where($where)
             ->order('pg.order','desc')
             ->select()
             ->toArray();
-
+        foreach ($group as $key => $value) {
+            if($app=='home'){
+                unset($group[$key]['hidden']);
+            }
+        }
         return ['list'=>$group,'count'=>count($group)];
     }
 
@@ -97,6 +114,7 @@ class ProductGroupModel extends Model
      * @version v1
      * @param string param.name 电脑 分组名称 required
      * @param int param.id 1(传0表示创建一级分组) 分组ID required
+     * @param int param.hidden 0 是否隐藏0放1是
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -121,7 +139,7 @@ class ProductGroupModel extends Model
         try{
             $productGroup = $this->create([
                 'name' => $param['name']??'',
-                'hidden' => 0,
+                'hidden' => $param['hidden']??0,
                 'order' => intval($maxOrder)+1,
                 'create_time' => time(),
                 'parent_id' => intval($param['id'])<=0?0:intval($param['id'])
@@ -149,6 +167,7 @@ class ProductGroupModel extends Model
      * @version v1
      * @param int id 1 分组ID required
      * @param string name 电脑 分组名称 required
+     * @param int param.hidden 0 是否隐藏0放1是
      */
     public function updateProductGroup($param)
     {
@@ -164,6 +183,7 @@ class ProductGroupModel extends Model
         try{
             $productGroup->save([
                 'name' => $param['name']??'',
+                'hidden' => $param['hidden']??$productGroup['hidden'],
                 'update_time' => time()
             ]);
 
@@ -452,6 +472,53 @@ class ProductGroupModel extends Model
         }
 
         return ['status'=>200,'msg'=>lang('move_success')];
+    }
+
+    /**
+     * 时间 2023-01-31
+     * @title 隐藏/显示商品分组
+     * @desc 隐藏/显示商品分组
+     * @author theworld
+     * @version v1
+     * @param int param.id 1 商品分组ID required
+     * @param int param.hidden 0 是否隐藏0否1是 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function hiddenProductGroup($param)
+    {
+        $productGroup = $this->find(intval($param['id']));
+        if (empty($productGroup)){
+            return ['status'=>400,'msg'=>lang('product_group_is_not_exist')];
+        }
+
+        $hidden = intval($param['hidden']);
+
+        if ($productGroup['hidden'] == $hidden){
+            return ['status'=>400,'msg'=>lang('cannot_repeat_opreate')];
+        }
+
+        $this->startTrans();
+        try{
+            $this->update([
+                'hidden' => $hidden,
+                'update_time' => time(),
+            ],['id'=>intval($param['id'])]);
+
+            # 记录日志
+            if ($hidden == 1){
+                active_log(lang('log_admin_hidden_product_group',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product_group}'=>$productGroup['name']]),'product_group',$productGroup->id);
+            }else{
+                active_log(lang('log_admin_show_product_group',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product_group}'=>$productGroup['name']]),'product_group',$productGroup->id);
+            }
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+            return ['status'=>400,'msg'=>lang('fail_message')];
+        }
+
+        return ['status'=>200,'msg'=>lang('success_message')];
     }
 
 }

@@ -4,6 +4,8 @@ const lang_obj = {
   display_flag: "CN", // 用于显示图片，使用国家代码大写
   theme_mode: "主题模式",
   theme_color: "主题色",
+  change_password: '修改密码',
+  logout: '退出登录',
   theme_light: "明亮",
   theme_dark: "暗黑",
   input: "请输入",
@@ -159,7 +161,8 @@ const lang_obj = {
   open_status: "启用状态",
   create_product: "新建商品",
   delete_product: "删除商品",
-  auto_setup: "自动开通设置",
+  auto_setup: "付款后自动开通",
+  auto_setup_tip: "付款后，系统将会自动调用接口开通，实现自动化开通",
   basic_info: "基础信息",
   delete_group: "删除分组",
   support_direction: "支持方向",
@@ -197,6 +200,7 @@ const lang_obj = {
   billing_cycle: "计费周期",
   hour: "小时",
   day: "天",
+  delHostTips: "是否需要删除所选产品，删除后不可找回，删除不会执行模块动作",
   ontrial: "试用",
   monthly: "月付",
   quarterly: "季付",
@@ -253,6 +257,7 @@ const lang_obj = {
   qty_manage: "现有库存",
   inventory: "库存",
   hidden: "是否隐藏",
+  showText: '显示',
   connect: "关联",
   host_name: "标识",
   money_cycle: "金额/周期",
@@ -550,7 +555,7 @@ const lang_obj = {
   order_text54: '工单状态',
   order_text55: '请输入工单状态',
   order_text56: '请选择工单完结状态',
-  order_text57: ' 待接单、待回复、已回复、已关闭为默认状态，无法修改',
+  order_text57: ' 待接单、用户已回复、已回复、已关闭、处理中为默认状态，无法修改',
   order_text58: '预设回复',
   order_text59: '保存预设回复',
   order_text60: '您还未保存正在编辑的内容，是否保存？',
@@ -570,6 +575,7 @@ const lang_obj = {
   order_text74: '工单状态名称、工单状态颜色、完结状态是必填的！',
   order_text75: '默认状态不可删除!',
   order_text76: '请先保存正在编辑的回复！',
+  order_text77: '查看所有',
   order_manage_order_type: "管理工单类型",
   order_type_mgt: "工单类型管理",
   order_turn_inside: "工单转内部",
@@ -837,6 +843,7 @@ const lang_obj = {
   // 续费
   renew: "续费",
   batch_renew: "批量续费",
+  batch_dele: "批量删除",
   subtotal: "小计",
   mark_Paid: "标记已支付",
   sure_renew: "确认续费",
@@ -938,14 +945,14 @@ const lang_obj = {
   auto_update: "自动更新姓名",
   upload_img: "上传图片",
   phone_uniformity: "手机一致性",
-  product_stop: "未认证暂停产品",
+  product_stop: "未认证无法购买产品",
   switch_open: "开",
   switch_close: "关",
   real_tip1: "若开启，则第三方实名通过后，需要后台人工审批通过",
   real_tip2: "若开启，则实名通过后，将自动更新姓名为实名",
   real_tip3: "若开启，则提交资料时，需要上传图片",
   real_tip4: "若开启，则用户注册手机号，将与实名手机号一致才可提交认证",
-  real_tip5: "若开启，未进行认证的用户将在暂停期限结束后暂停使用",
+  real_tip5: "若开启，未认证的用户无法订购产品",
 
   // 销售
   sales_id_group: "销售ID分组",
@@ -1040,6 +1047,7 @@ const lang_obj = {
   index_text11: "当前在线管理员",
   index_text12: "序号",
   index_text13: "管理员",
+  index_text14: "上次活动时间",
 
   /* 系统升级 */
   upload_text1: "最新版本",
@@ -1695,6 +1703,8 @@ const lang_obj = {
   upload_tip1: "支持批量上传，尺寸为920px*240px,支持上传格式包括：jpg、jpeg、png。",
   app_tip1: "不输入时，视为无须保证金即可上传应用",
   app_tip2: "系统默认保证金为",
+  wait_confirm: '待确认收货',
+  surplus_days: '剩余自动收货天数',
 
 
   /* 极云 */
@@ -2065,12 +2075,26 @@ const lang_obj = {
   suspend_type: '暂停类型',
   module_tip: "变更产品状态为\“已删除\”",
   module_tip1: "确定开通该产品吗？",
-  module_tip2: "确定取消停用该产品吗？",
+  module_tip2: "确定解除暂停该产品吗？",
   module_tip3: "确定变更产品状态为\“已删除\”？",
-  
+  module_tip4: "确定暂停该产品吗？",
+
   upgrade_plugin: '升级',
   refund_to_balance: '退款至余额',
   refund_to_user: '退款至用户',
+  pas_change_tip: '密码修改成功，请重新登录',
+
+  // 1-30
+  refund_record: '退款记录',
+  refund_time: '退款时间',
+  initiate_refund: '发起退款',
+  refund_to: '退款至',
+  transaction: '流水',
+  balance_used: '已使用余额',
+  deduct: '扣除',
+  order_tip1: '应用余额至订单',
+  order_tip2: '从账单扣除余额',
+  account_balance: '账户余额'
 
 }
 

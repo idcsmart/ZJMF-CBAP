@@ -10,6 +10,7 @@ new Vue({
         cashCoupon
     },
     created() {
+  
         // 获取产品id
         this.id = location.href.split('?')[1].split('=')[1]
 

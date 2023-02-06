@@ -4,9 +4,13 @@
     const template = document.getElementsByClassName("client-detail")[0];
     Vue.prototype.lang = window.lang;
     Vue.prototype.moment = window.moment;
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}`
     new Vue({
       data () {
         return {
+          baseUrl: str,
           id: "", // 用户id
           data: [],
           tableLayout: false,
@@ -179,7 +183,7 @@
           clientTotal: 0,
           clinetParams: {
             page: 1,
-            limit: 1000,
+            limit: 20,
             orderby: "id",
             sort: "desc",
           },
@@ -248,7 +252,9 @@
               width: 140,
             },
           ],
-          refundTip: ''
+          refundTip: '',
+          hasTicket: false, // 是否安装工单
+          searchLoading: false
         };
       },
       computed: {
@@ -260,8 +266,16 @@
           }
         },
         calcRefund () {
-          this.refundTip = `${lang.refund_to_balance}：${this.refundAmount}\n${lang.refund_to_user}：${this.data.refund?.replace('-','')}`
+          this.refundTip = `${lang.refund_to_balance}：${this.refundAmount}\n${lang.refund_to_user}：${this.data.refund?.replace('-', '')}`
           return this.refundAmount * 1 - this.data.refund * 1
+        },
+        calcShow () {
+          return (data) => {
+            return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
+          }
+        },
+        isExist () {
+          return !this.clientList.find(item => item.id === this.data.id)
         }
       },
       created () {
@@ -293,6 +307,14 @@
           localStorage.getItem("back_website_name");
       },
       methods: {
+        // 远程搜素
+        remoteMethod (key) {
+          this.clinetParams.keywords = key
+          this.getClintList()
+        },
+        filterMethod (search, option) {
+          return option
+        },
         async getPlugin () {
           try {
             /* IdcsmartClientLevel */
@@ -302,6 +324,7 @@
               return all;
             }, [])
             this.hasPlugin = temp.includes("IdcsmartClientLevel");
+            this.hasTicket = temp.includes("IdcsmartTicket")
             // 安装了插件才执行
             if (this.hasPlugin) {
               this.getLevel();
@@ -362,14 +385,17 @@
         },
         async getClintList () {
           try {
+            this.searchLoading = true
             const res = await getClientList(this.clinetParams);
             this.clientList = res.data.data.list;
             this.clientTotal = res.data.data.count;
-            if (this.clientList.length < this.clientTotal) {
-              this.clinetParams.limit = this.clientTotal;
-              this.getClintList();
-            }
+            // if (this.clientList.length < this.clientTotal) {
+            //   this.clinetParams.limit = this.clientTotal;
+            //   this.getClintList();
+            // }
+            this.searchLoading = false
           } catch (error) {
+            this.searchLoading = false
             console.log(error.data.msg);
           }
         },
@@ -582,7 +608,6 @@
         // 获取子账户列表
         async getchildAccountList () {
           const res = await getchildAccountListApi({ id: this.id });
-          console.log(res.data);
           this.childList = res.data.data.list;
         },
         // 去往子账户编辑页面

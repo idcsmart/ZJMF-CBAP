@@ -28,6 +28,7 @@ class ProductGroupController extends AdminBaseController
      * @return array list - 商品一级分组
      * @return int list[].id - 商品一级分组ID
      * @return int list[].name - 商品一级分组名称
+     * @return int list[].hidden - 是否隐藏0否1是
      * @return int count - 商品一级分组总数
      */
     public function productGroupFirstList()
@@ -52,6 +53,7 @@ class ProductGroupController extends AdminBaseController
      * @return array list - 商品二级分组
      * @return int list[].id - 商品二级分组ID
      * @return int list[].name - 商品二级分组名称
+     * @return int list[].hidden - 是否隐藏0否1是
      * @return int count - 商品二级分组总数
      */
     public function productGroupSecondList()
@@ -76,6 +78,7 @@ class ProductGroupController extends AdminBaseController
      * @version v1
      * @param string name 电脑 分组名称 required
      * @param int id 1(传0表示创建一级分组) 分组ID required
+     * @param int hidden 0 是否隐藏0否1是
      */
     public function create()
     {
@@ -101,6 +104,7 @@ class ProductGroupController extends AdminBaseController
      * @version v1
      * @param int id 1 分组ID required
      * @param string name 电脑 分组名称 required
+     * @param int hidden 0 是否隐藏0否1是
      */
     public function update()
     {
@@ -205,6 +209,31 @@ class ProductGroupController extends AdminBaseController
         }
 
         $result = (new ProductGroupModel())->orderFristProductGroup($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-31
+     * @title 隐藏/显示商品分组
+     * @desc 隐藏/显示商品分组
+     * @url /admin/v1/product/group/:id/:hidden
+     * @method  put
+     * @author theworld
+     * @version v1
+     * @param int id 1 商品分组ID required
+     * @param int hidden 0 是否隐藏0否1是 required
+     */
+    public function hidden()
+    {
+        $param = $this->request->param();
+
+        //参数验证
+        if (!$this->validate->scene('hidden')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        $result = (new ProductGroupModel())->hiddenProductGroup($param);
 
         return json($result);
     }

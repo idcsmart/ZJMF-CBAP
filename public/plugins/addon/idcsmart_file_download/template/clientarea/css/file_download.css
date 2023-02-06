@@ -151,11 +151,3 @@
 .file_download .mobile {
   display: none;
 }
-@media screen and (max-width: 750px) {
-  .file_download .pc {
-    display: none;
-  }
-  .file_download .mobile {
-    display: block;
-  }
-}

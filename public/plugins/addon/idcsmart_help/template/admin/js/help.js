@@ -4,7 +4,7 @@
     const help = document.getElementsByClassName("help")[0];
     Vue.prototype.lang = window.lang;
     new Vue({
-      data () {
+      data() {
         return {
           message: "help...",
           params: {
@@ -117,10 +117,10 @@
           isUpdate: false // 正在编辑状态
         };
       },
-      created () {
+      created() {
         this.getlist();
       },
-      mounted () {
+      mounted() {
         this.maxHeight = document.getElementById('content').clientHeight - 170
         let timer = null
         window.onresize = () => {
@@ -135,17 +135,17 @@
         }
       },
       methods: {
-        canceledit () {
+        canceledit() {
           this.gettypelist();
         },
         //分页改变
-        changepages (res) {
+        changepages(res) {
           console.log(res, "pagesize");
           this.pagination.current = res.pagination.current;
           this.pagination.pageSize = res.pagination.pageSize;
           this.getlist();
         },
-        async onswitch (e, el) {
+        async onswitch(e, el) {
           try {
             await helphidden({ id: e.id, hidden: el ? 0 : 1 });
             this.$message.success(el ? '显示成功' : '隐藏成功');
@@ -155,15 +155,15 @@
           }
         },
         //编辑
-        edit (id) {
+        edit(id) {
           location.href = "help_create.html?id=" + id;
         },
         //删除
-         deletes (id) {
+        deletes(id) {
           this.delVisible = true
           this.delId = id
         },
-        async sureDelUser () {
+        async sureDelUser() {
           try {
             const res = await helpdelete({ id: this.delId })
             this.$message.success(res.data.msg);
@@ -174,7 +174,7 @@
           }
         },
         //获取文档列表
-        async getlist (page) {
+        async getlist(page) {
           // console.log(111);
           this.loading = true
           let param = {
@@ -188,13 +188,13 @@
           this.loading = false
         },
         //搜索
-        onEnter (e) {
+        onEnter(e) {
           this.params.keywords = e;
           this.pagination.current = 1;
           this.getlist();
         },
 
-        changetabs (data) {
+        changetabs(data) {
           this.activetabs = data;
           if (this.activetabs === 1) {
             location.href = "help_create.html";
@@ -204,11 +204,13 @@
           }
           if (this.activetabs === 3) {
             this.visible = true;
+            this.isUpdate = false;
             this.gettypelist();
           }
         },
         //获取分类列表
-        gettypelist () {
+        gettypelist() {
+          this.isUpdate = false;
           gethelptype().then((res) => {
             for (let i = 0; i < res.data.data.list.length; i++) {
               res.data.data.list[i].isedit = false;
@@ -218,7 +220,7 @@
           });
         },
         // 修改时候的保存
-        edithelptypeform (e, id) {
+        edithelptypeform(e, id) {
           if (!id) {
             return;
           }
@@ -241,7 +243,7 @@
             })
         },
         // 修改单个
-        edithandleClickOp (id) {
+        edithandleClickOp(id) {
           if (this.isUpdate) {
             return this.$message.error('请先保存正在编辑的分类');
           }
@@ -253,7 +255,7 @@
             }
           }
         },
-        deleteClickOp (id) {
+        deleteClickOp(id) {
           deletehelptype({ id })
             .then((res) => {
               this.$message.success(res.data.msg);
@@ -264,7 +266,7 @@
             });
         },
         //新增
-        addtype () {
+        addtype() {
           if (this.isUpdate) {
             return this.$message.error('请先保存正在编辑的分类');
           }
@@ -289,7 +291,7 @@
           }
         },
         // 批量新增
-        savehandleClickadd () {
+        savehandleClickadd() {
           let temp = JSON.parse(JSON.stringify(this.typelist))
           temp = temp.filter(item => !item.id).reduce((all, cur) => {
             all.push({
@@ -321,7 +323,7 @@
               }, 1000)
             })
         },
-        getLocalTime2 (nS) {
+        getLocalTime2(nS) {
           var date = new Date(nS * 1000); //
           var Y = date.getFullYear() + "/";
           var M =
@@ -346,7 +348,7 @@
               : date.getSeconds();
           return Y + M + D + h + m + s;
         },
-        deleteClickadd (name) {
+        deleteClickadd(name) {
           // this.typelist;
           this.typelist.forEach((value, index, array) => {
             if (name === value.name && !value.id) {
@@ -356,35 +358,35 @@
           });
           console.log(this.typelist, " this.typelist");
         },
-        onConfirm (context) {
+        onConfirm(context) {
           console.log(
             "@confirm与onConfirm任选一种方式即可，其他几个事件类似",
             context
           );
           this.visible = false;
         },
-        onConfirmAnother (context) {
+        onConfirmAnother(context) {
           console.log("点击了确认按钮", context);
         },
-        close (context) {
+        close(context) {
           console.log(
             "关闭弹窗，点击关闭按钮、按下ESC、点击蒙层等触发",
             context
           );
         },
-        onCancel (context) {
+        onCancel(context) {
           console.log("点击了取消按钮", context);
         },
-        onKeydownEsc (context) {
+        onKeydownEsc(context) {
           console.log("按下了ESC", context);
         },
-        onClickCloseBtn (context) {
+        onClickCloseBtn(context) {
           console.log("点击了关闭按钮", context);
         },
-        onClickOverlay (context) {
+        onClickOverlay(context) {
           console.log("点击了蒙层", context);
         },
-        getLocalTime (nS) {
+        getLocalTime(nS) {
           return new Date(parseInt(nS) * 1000)
             .toLocaleString()
             .replace(/:\d{1,2}$/, " ");

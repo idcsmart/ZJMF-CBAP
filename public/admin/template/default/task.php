@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/manage.css">
-<div id="content" class="task table" v-cloak>
+<div id="content" class="task" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
       <t-form :data="formData" ref="form" @submit="onSubmit" layout="inline" label-align="left">
@@ -20,7 +20,9 @@
         </t-form-item>
       </t-form>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" 
+    :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" 
+    @sort-change="sortChange" >
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

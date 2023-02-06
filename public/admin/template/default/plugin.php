@@ -2,7 +2,7 @@
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/addon.css">
 <!-- =======内容区域======= -->
-<div id="content" class="addon table" v-cloak>
+<div id="content" class="addon" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
       <!-- <a href="https://market.idcsmart.com/shop/" target="_blank">
@@ -17,7 +17,9 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div> -->
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" 
+    :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" 
+    display-type="fixed-width" :hide-sort-tips="true">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

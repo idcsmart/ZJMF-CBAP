@@ -173,6 +173,32 @@
   }
 }
 
+@media screen and (max-width: 750px) {
+
+  .shopping-item {
+    width: 100%;
+  }
+
+  .search-box .el-select .el-input__inner {
+    height: 40px !important;
+    line-height: 40px;
+  }
+
+  .second-select .el-input__inner {
+    height: 40px !important;
+    line-height: 40px;
+  }
+
+  .search-input .el-input__inner {
+    height: 40px !important;
+    line-height: 40px;
+  }
+
+  .search-btn {
+    height: 40px;
+  }
+}
+
 
 
 

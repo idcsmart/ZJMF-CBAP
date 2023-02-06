@@ -9,7 +9,7 @@
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
-      data () {
+      data() {
         return {
           message: "template...",
           params: {
@@ -45,18 +45,18 @@
         };
       },
       computed: {
-        calStr () {
+        calStr() {
           return (str) => {
             const temp = str && str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').
               replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
               .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
-              return temp
+            return temp
           }
         }
       },
       methods: {
         // html字符转码
-        HTMLDecode (text) {
+        HTMLDecode(text) {
           var temp = document.createElement('div')
           temp.innerHTML = text
           var output = temp.innerText || temp.textContent
@@ -65,11 +65,11 @@
         },
         transformHtml(str) {
           const temp = str && str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').
-          replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
-          .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
+            replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
+            .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
           return temp
         },
-        initTemplate () {
+        initTemplate() {
           tinymce.init({
             selector: '#tiny',
             language_url: '/tinymce/langs/zh_CN.js',
@@ -81,11 +81,33 @@
               'bold italic underline strikethrough | fontsizeselect | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent blockquote | undo redo | link unlink image fullpage code | removeformat',
             images_upload_url: str + 'v1/upload',
             content_css: '../css/reset.css',
-           // convert_urls: false,
+            // convert_urls: false,
             images_upload_handler: this.handlerAddImg
           });
         },
-        handlerAddImg (blobInfo, success, failure) {
+        viewNew() {
+          this.$refs.myform.validate(this.requiredRules).then((res) => {
+            if (res === true) {
+              const arr = []
+              this.files.map((item) => {
+                if (item.response) {
+                  arr.push(item.response.save_name);
+                } else {
+                  arr.push(item.save_name);
+                }
+              })
+              const viewNewObjData = {
+                title: this.detialform.title,
+                keywords: this.detialform.keywords,
+                content: tinyMCE.activeEditor.getContent(),
+                attachment: arr
+              }
+              sessionStorage.viewNewObjData = JSON.stringify(viewNewObjData)
+              window.open('/newsView.html')
+            }
+          })
+        },
+        handlerAddImg(blobInfo, success, failure) {
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
@@ -110,24 +132,24 @@
           })
         },
         // 切换分页
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current;
           this.params.limit = e.pageSize;
           this.params.keywords = "";
         },
         //上传失败
-        handleFail ({ file }) {
+        handleFail({ file }) {
           // console.log('@@@@', file)
           // this.$message.error(`文件 ${file.name} 上传失败`);
         },
         //文档类型
-        async gettype () {
+        async gettype() {
           let resdata = await gethelptype();
           this.typelist = resdata.data.data.list;
           console.log(this.typelist, " this.typelist");
         },
         //上传文件之前
-        beforeUploadfile (e) {
+        beforeUploadfile(e) {
           let isrepeat = false;
           this.files.map((item) => {
             if (item.name === e.name) {
@@ -139,7 +161,7 @@
           return !isrepeat;
         },
         //删除上传文件
-        delfiles (name) {
+        delfiles(name) {
           let arr = [];
           this.files.map((item) => {
             if (item.name !== name) {
@@ -149,7 +171,7 @@
           this.files = arr;
           console.log(this.files, "delfiles");
         },
-        formatResponse (res) {
+        formatResponse(res) {
           if (res.status !== 200) {
             this.$nextTick(() => {
               this.files = []
@@ -159,7 +181,7 @@
           return { save_name: res.data.save_name, url: res.url };
         },
         // 上传附件-进度
-        uploadProgress (val) {
+        uploadProgress(val) {
           if (val.percent) {
             this.uploadTip = "uploaded" + val.percent + "%";
             if (val.percent === 100) {
@@ -167,7 +189,7 @@
             }
           }
         },
-        submit (hidden) {
+        submit(hidden) {
           console.log(
             this.detialform,
             tinyMCE.activeEditor.getContent(),
@@ -241,14 +263,14 @@
             }
           });
         },
-        getdetialcon () {
+        getdetialcon() {
           helpdetial({ id: this.id }).then((res) => {
             if (res.data.status === 200) {
               let obj = res.data.data.help;
               obj.content = this.transformHtml(obj.content)
               Object.assign(this.detialform, obj)
-             tinymce.editors['tiny'].setContent(this.detialform.content)
-            //  tinyMCE.activeEditor.setContent(this.detialform.content);
+              tinymce.editors['tiny'].setContent(this.detialform.content)
+              //  tinyMCE.activeEditor.setContent(this.detialform.content);
               // this.attachment = res.data.data.news.attachment;
               this.files = res.data.data.help.attachment;
               let arr = [];
@@ -262,14 +284,14 @@
             }
           });
         },
-        save () {
+        save() {
           this.submit(1);
         },
-        cancle () {
+        cancle() {
           window.history.go(-1);
         },
         //防抖
-        debounce (fn, ms) {
+        debounce(fn, ms) {
           //fn:要防抖的函数 ms:时间
           let timerId;
           return function () {
@@ -281,14 +303,14 @@
           };
         },
       },
-      created () {
+      created() {
         this.id = window.location.search.slice(1).split("=")[1];
         if (this.id) {
           this.getdetialcon();
         }
         this.gettype();
       },
-      mounted () {
+      mounted() {
         this.initTemplate()
       },
     }).$mount(documents);

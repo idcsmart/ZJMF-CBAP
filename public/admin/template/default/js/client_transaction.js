@@ -5,9 +5,13 @@
     const template = document.getElementsByClassName('transaction')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = moment
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}`
     new Vue({
       data () {
         return {
+          baseUrl: str,
           data: [],
           tableLayout: false,
           bordered: true,
@@ -91,19 +95,19 @@
                 pattern: /^-?\d+(\.\d{0,2})?$/, message: lang.verify10, type: 'warning'
               },
               {
-                validator: val => val != 0,message: lang.verify10, type: 'warning'
+                validator: val => val != 0, message: lang.verify10, type: 'warning'
               }
             ],
             gateway: [{ required: true, message: lang.select + lang.pay_way, type: 'error' }],
             transaction_number: [
-              { pattern: /^[A-Za-z0-9]+$/, message: lang.verify9, type: 'warning'}
+              { pattern: /^[A-Za-z0-9]+$/, message: lang.verify9, type: 'warning' }
             ],
           },
           payList: [],
           maxHeight: '',
           clinetParams: {
             page: 1,
-            limit: 1000,
+            limit: 20,
             orderby: 'id',
             sort: 'desc'
           },
@@ -112,7 +116,13 @@
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
           },
           optType: 'add',
-          optTitle: ''
+          optTitle: '',
+          hasTicket: false,
+          authList: JSON.parse(
+            JSON.stringify(localStorage.getItem("backAuth"))
+          ),
+          clientDetail: {},
+          searchLoading: false
         }
       },
       mounted () {
@@ -128,23 +138,64 @@
             timer = null
           }, 300)
         }
+        this.getPlugin()
         document.title = lang.flow + '-' + localStorage.getItem('back_website_name')
       },
+      computed: {
+        calcShow () {
+          return (data) => {
+            return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
+          }
+        },
+        isExist () {
+          return !this.clientList.find(item => item.id === this.clientDetail.id)
+        }
+      },
       methods: {
+        // 远程搜素
+        remoteMethod (key) {
+          this.clinetParams.keywords = key
+          this.getClintList()
+        },
+        filterMethod (search, option) {
+          return option
+        },
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const temp = res.data.data.list.reduce((all, cur) => {
+              all.push(cur.name)
+              return all
+            }, [])
+            this.hasTicket = temp.includes("IdcsmartTicket")
+          } catch (error) {
+
+          }
+        },
+        
         changeUser (id) {
           this.id = id
           location.href = `client_transaction.html?client_id=${this.id}`
         },
+        // 获取用户详情
+        async getUserDetail () {
+          try {
+            const res = await getClientDetail(this.id);
+            this.clientDetail = res.data.data.client;
+            const temp = res.data.data.client;
+            this.client_name = temp.username;
+            this.client_id = temp.id;
+          } catch (error) { }
+        },
         async getClintList () {
           try {
+            this.searchLoading = true
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
             this.clientTotal = res.data.data.count
-            if (this.clientList.length < this.clientTotal) {
-              this.clinetParams.limit = this.clientTotal
-              this.getClintList()
-            }
+            this.searchLoading = false
           } catch (error) {
+            this.searchLoading = false
             console.log(error.data.msg)
           }
         },
@@ -162,8 +213,8 @@
             this.data = res.data.data.list
             this.total = res.data.data.count
             this.loading = false
-            this.client_name = this.data[0].client_name || ''
-            this.client_id = this.data[0].client_id || ''
+            // this.client_name = this.data[0].client_name || ''
+            // this.client_id = this.data[0].client_id || ''
           } catch (error) {
             this.loading = false
           }
@@ -172,18 +223,18 @@
         addFlow () {
           this.flowModel = true
           this.formData.amount = ''
-          this.formData.gateway = ''
+          this.formData.gateway = this.payList[0].name
           this.formData.transaction_number = ''
           this.optTitle = lang.new_flow
           this.optType = 'add'
-          this.$refs.form.reset()
+          // this.$refs.form.reset()
         },
         updateFlow (row) {
           this.flowModel = true
           this.optTitle = lang.update_flow
           this.optType = 'update'
           this.formData = JSON.parse(JSON.stringify(row))
-          this.formData.gateway = this.payList.filter(item=> item.title === row.gateway)[0].name
+          this.formData.gateway = this.payList.filter(item => item.title === row.gateway)[0].name
         },
         async onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
@@ -246,6 +297,7 @@
         this.getClientList()
         this.getPayway()
         this.getClintList()
+        this.getUserDetail()
         this.currency_prefix = JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥'
       },
     }).$mount(template)

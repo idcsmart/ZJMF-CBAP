@@ -224,6 +224,7 @@ return [
     'product_inventory_shortage' => '商品库存不足',
     'there_are_no_items_in_the_cart' => '购物车内没有商品',
     'please_select_products_in_the_cart' => '请选择购物车商品',
+    'cannot_only_buy_son_product' => '子商品不可直接购买',
 
     # API密钥
     'api_is_not_exist' => 'API密钥不存在',

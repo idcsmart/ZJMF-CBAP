@@ -92,6 +92,18 @@ class IndexController extends PluginBaseController
         // 接收参数
         $param = $this->request->param();
         
+        $param['jwt'] = $param['jwt'] ?? '';
+        $Check = new \app\http\middleware\Check();
+        $result = $Check->checkToken($this->request, false, $param['jwt']);
+        if ($result['status'] != 200){
+            return json($result);
+        }else{
+            $jwtToken = $result['data']['jwt_token'];
+            $this->request->client_id = $jwtToken['id'];
+            $this->request->client_name = $jwtToken['name'];
+            $this->request->client_remember_password = $jwtToken['remember_password'];
+        }
+        
         // 实例化模型类
         $IdcsmartFileModel = new IdcsmartFileModel();
 

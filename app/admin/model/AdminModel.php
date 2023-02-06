@@ -610,6 +610,7 @@ class AdminModel extends Model
      * @return int list[].nickname - 名称
      * @return int list[].name - 用户名
      * @return int list[].email - 邮箱
+     * @return int list[].last_action_time - 上次操作时间
      * @return int count - 管理员总数
      */
     public function onlineAdminList($param)
@@ -619,8 +620,24 @@ class AdminModel extends Model
             $query->where('last_action_time', '>=', time() - 3600);
         };
 
-        $admins = $this->field('id,nickname,name,email')
+        $time = time();
+        $admins = $this->field('id,nickname,name,email,last_action_time')
             ->where($where)
+            ->withAttr('last_action_time', function($value) use ($time) {
+                $visitTime = $time - $value;
+                if($visitTime>365*24*3600){
+                    $value = lang('one_year_ago');
+                }else{
+                    $day = floor($visitTime/(24*3600));
+                    $visitTime = $visitTime%(24*3600);
+                    $hour = floor($visitTime/3600);
+                    $visitTime = $visitTime%60;
+                    $minute = floor($visitTime/60);
+                    $value = ($day>0 ? $day.lang('day') : '').($hour>0 ? $hour.lang('hour') : '').($minute>0 ? $minute.lang('minute') : '');
+                    $value = !empty($value) ? $value.lang('ago') : $minute.lang('minute').lang('ago');
+                }
+                return $value;
+            })
             ->limit($param['limit'])
             ->page($param['page'])
             ->order('last_action_time', 'desc')

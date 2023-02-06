@@ -360,8 +360,9 @@
         }
       },
       created () {
-        this.getRoleList()
-        this.getAuthList()
+        this.getRoleList();
+        this.getAuthList();
+        document.title = lang.group_setting + '-' + localStorage.getItem('back_website_name');
       }
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

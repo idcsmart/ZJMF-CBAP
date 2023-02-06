@@ -564,7 +564,11 @@ function amount_format($amount){
  */
 function get_client_ip($type = 0, $adv = true)
 {
-    return request()->ip($type, $adv);
+    if(getenv('HTTP_X_FORWARDED_FOR')){
+        return getenv('HTTP_X_FORWARDED_FOR');
+    }else{
+        return request()->ip($type, $adv);
+    }
 }
 
 /**

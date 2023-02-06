@@ -64,6 +64,7 @@ class IndexController extends AdminBaseController
      * @return int list[].nickname - 名称
      * @return int list[].name - 用户名
      * @return int list[].email - 邮箱
+     * @return int list[].last_action_time - 上次操作时间
      * @return int count - 管理员总数
      */
     public function onlineAdmin()

@@ -14,7 +14,7 @@ class ProductValidate extends Validate
         'hidden' 		            => 'in:0,1',
         'stock_control' 		    => 'in:0,1',
         'qty' 		                => 'number',
-        'description' 		        => 'max:1000',
+        'description' 		        => 'max:10000',
         'creating_notice_sms' 		=> 'in:0,1',
         'created_notice_sms' 		=> 'in:0,1',
         'creating_notice_mail' 		=> 'in:0,1',

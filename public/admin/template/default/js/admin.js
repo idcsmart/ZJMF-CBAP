@@ -4,7 +4,7 @@
     const template = document.getElementsByClassName('admin')[0]
     Vue.prototype.lang = window.lang
     new Vue({
-      data () {
+      data() {
         return {
           data: [],
           tableLayout: true,
@@ -127,7 +127,7 @@
           maxHeight: ''
         }
       },
-      mounted () {
+      mounted() {
         this.maxHeight = document.getElementById('content').clientHeight - 220
         let timer = null
         window.onresize = () => {
@@ -143,7 +143,7 @@
       },
       methods: {
         // 获取国家列表
-        async getCountry () {
+        async getCountry() {
           try {
             const res = await getCountry()
             this.country = res.data.data.list
@@ -151,14 +151,14 @@
             this.$message.error(error.data.msg)
           }
         },
-        checkPwd (val) {
+        checkPwd(val) {
           if (val !== this.formData.password) {
             return { result: false, message: window.lang.password_tip, type: 'error' };
           }
           return { result: true }
         },
         // 获取列表
-        async getAdminList () {
+        async getAdminList() {
           try {
             this.loading = true
             const res = await getAdminList(this.params)
@@ -170,13 +170,13 @@
           }
         },
         // 切换分页
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current
           this.params.limit = e.pageSize
           this.getAdminList()
         },
         // 排序
-        sortChange (val) {
+        sortChange(val) {
           if (val === undefined) {
             this.params.orderby = 'id'
             this.params.sort = 'desc'
@@ -186,27 +186,28 @@
           }
           this.getAdminList()
         },
-        clearKey () {
+        clearKey() {
           this.params.keywords = ''
           this.seacrh()
         },
-        seacrh () {
+        seacrh() {
           this.params.page = 1
           this.getAdminList()
         },
-        close () {
+        close() {
           this.visible = false
           this.$nextTick(() => {
             this.$refs.userDialog && this.$refs.userDialog.reset()
           })
         },
         // 添加管理员
-        addUser () {
+        addUser() {
           this.optType = 'create'
+          this.formData.phone_code = 86
           this.visible = true
           this.addTip = window.lang.add + window.lang.admin
         },
-        async onSubmit ({ validateResult, firstError }) {
+        async onSubmit({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const params = { ...this.formData }
@@ -217,10 +218,14 @@
                 delete params.repassword
               }
               const res = await createAdmin(this.optType, params)
-              this.$message.success(res.data.msg)
               this.getAdminList()
               this.visible = false
               this.$refs.userDialog.reset()
+              if (this.optType === 'update' && params.password) {
+                this.$message.success(lang.pas_change_tip)
+              } else {
+                this.$message.success(res.data.msg)
+              }
             } catch (error) {
               this.$message.error(error.data.msg)
             }
@@ -230,14 +235,14 @@
           }
         },
         // 编辑管理员
-        updateAdmin (row) {
+        updateAdmin(row) {
           this.optType = 'update'
           this.getAdminDetail(row.id)
           this.visible = true
           this.addTip = window.lang.update + window.lang.admin
           this.$refs.userDialog.reset()
         },
-        async getAdminDetail (id) {
+        async getAdminDetail(id) {
           try {
             const res = await getAdminDetail(id)
             Object.assign(this.formData, res.data.data.admin)
@@ -246,7 +251,7 @@
           }
         },
         // 停用/启用
-        changeStatus (row) {
+        changeStatus(row) {
           if (row.id === 1) {
             return
           }
@@ -255,7 +260,7 @@
           this.statusTip = this.curStatus ? window.lang.sureDisable : window.lang.sure_Open
           this.statusVisble = true
         },
-        async sureChange () {
+        async sureChange() {
           try {
             let tempStatus = this.curStatus === 1 ? 0 : 1
             const params = {
@@ -271,18 +276,18 @@
             this.statusVisble = false
           }
         },
-        closeDialog () {
+        closeDialog() {
           this.statusVisble = false
         },
         // 删除用户
-        deleteUser (row) {
+        deleteUser(row) {
           if (row.id === 1) {
             return
           }
           this.delVisible = true
           this.delId = row.id
         },
-        async sureDel () {
+        async sureDel() {
           try {
             const res = await deleteAdmin(this.delId)
             this.$message.success(res.data.msg)
@@ -295,7 +300,7 @@
           }
         },
         // 获取分组
-        async getRoleList () {
+        async getRoleList() {
           try {
             let res = await getAdminRole(this.roleParams)
             const temp = res.data.data
@@ -312,7 +317,7 @@
           }
         }
       },
-      created () {
+      created() {
         this.getCountry()
         this.getAdminList()
         // 循环加载分组

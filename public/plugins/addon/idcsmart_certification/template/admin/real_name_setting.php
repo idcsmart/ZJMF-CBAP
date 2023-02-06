@@ -44,7 +44,7 @@
         <span>{{lang.real_tip4}}</span>
       </t-form-item>
       <t-form-item :label="lang.product_stop">
-        <t-switch :custom-value="[1,0]" v-model="formData.certification_uncertified_suspended_host" :label="[lang.switch_open, lang.switch_close]">
+        <t-switch :custom-value="[1,0]" v-model="formData.certification_uncertified_cannot_buy_product" :label="[lang.switch_open, lang.switch_close]">
         </t-switch>
         <span>{{lang.real_tip5}}</span>
       </t-form-item>

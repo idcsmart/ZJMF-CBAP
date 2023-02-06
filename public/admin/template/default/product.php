@@ -16,10 +16,7 @@
         </div>
       </div>
     </div>
-    <t-enhanced-table ref="table" row-key="key" drag-sort="row-handler" :data="data" :columns="columns" :key="new Date().getTime()"
-     :tree="{ treeNodeColumnIndex: 1 }" :loading="loading" :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" 
-     :before-drag-sort="beforeDragSort" @abnormal-drag-sort="onAbnormalDragSort" @drag-sort="changeSort" class="product-table" 
-     :row-class-name="rowName">
+    <t-enhanced-table ref="table" row-key="key" drag-sort="row-handler" :data="data" :columns="columns" :key="new Date().getTime()" :tree="{ treeNodeColumnIndex: 1 }" :loading="loading" :hover="hover" :tree-expand-and-fold-icon="treeExpandAndFoldIconRender" :before-drag-sort="beforeDragSort" @abnormal-drag-sort="onAbnormalDragSort" @drag-sort="changeSort" class="product-table" :row-class-name="rowName">
       <template #drag="{row}">
         <t-icon name="move"></t-icon>
       </template>
@@ -37,7 +34,7 @@
         </template> -->
       </template>
       <template #hidden="{row}">
-        <t-switch size="large" :custom-value="[1,0]" v-model="row.hidden" @change="onChange(row)" v-if="row.qty !== undefined"></t-switch>
+        <t-switch size="large" :custom-value="[0,1]" v-model="row.hidden" @change="onChange(row)"></t-switch>
       </template>
       <template #op="{row}">
         <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">

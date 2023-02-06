@@ -11,7 +11,7 @@
           id: '',
           rootRul: url,
           data: [],
-          tableLayout: false,
+          tableLayout: true,
           bordered: true,
           visible: false,
           delVisible: false,
@@ -41,6 +41,7 @@
             {
               colKey: 'product_names',
               title: lang.product_name,
+              width: 200
             },
             // {
             //   colKey: 'host_name',
@@ -50,7 +51,7 @@
             // },
             {
               colKey: 'amount',
-              title: lang.money_cycle,
+              title: lang.money,
               ellipsis: true,
               width: 150
             },
@@ -75,7 +76,7 @@
             {
               colKey: 'op',
               title: lang.operation,
-              width: 100
+              width: 120
             }
           ],
           params: {
@@ -146,6 +147,9 @@
         }
       },
       methods: {
+        lookDetail (row) {
+          location.href = `order_details.html?id=${row.id}`
+        },
         jumpPorduct(client_id, id) {
           location.href = `host_detail.html?client_id=${client_id}&id=${id}`
         },
@@ -301,10 +305,10 @@
         },
         // id点击获取订单详情
         itemClick(row) {
-          if (row.order_item_count < 2) {
-            this.jumpPorduct(row.client_id, row.host_id)
-            return
-          }
+          // if (row.order_item_count < 2) {
+          //   this.jumpPorduct(row.client_id, row.host_id)
+          //   return
+          // }
           row.isExpand = row.isExpand ? false : true
           const rowData = this.$refs.table.getData(row.id);
           this.$refs.table.toggleExpandData(rowData);

@@ -166,7 +166,7 @@
           userParams: {
             keywords: '',
             page: 1,
-            limit: 1000,
+            limit: 20,
             orderby: 'id',
             sort: 'desc'
           },
@@ -266,11 +266,10 @@
         addFlow () {
           this.flowModel = true
           this.formData.amount = ''
-          this.formData.gateway = ''
+          this.formData.gateway = this.payList[0].name
           this.formData.transaction_number = ''
           this.optTitle = lang.new_flow
           this.optType = 'add'
-          this.$refs.form.reset()
         },
         updateFlow (row) {
           this.flowModel = true

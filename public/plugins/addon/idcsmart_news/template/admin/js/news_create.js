@@ -9,7 +9,7 @@
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
-      data () {
+      data() {
         return {
           message: "template...",
           params: {
@@ -41,18 +41,18 @@
               { required: true, message: "文档类型必填" },
             ],
           },
-          uploadUrl:  str + 'v1/upload'
+          uploadUrl: str + 'v1/upload'
         };
       },
 
       methods: {
-        transformHtml (str) {
+        transformHtml(str) {
           const temp = str && str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').
             replace(/&amp;lt;/g, '<').replace(/&amp;gt;/g, '>').replace(/ &amp;lt;/g, '<').replace(/&amp;gt; /g, '>')
             .replace(/&amp;gt; /g, '>').replace(/&amp;quot;/g, '"').replace(/&amp;amp;nbsp;/g, ' ').replace(/&amp;#039;/g, '\'');
           return temp
         },
-        initTemplate () {
+        initTemplate() {
           tinymce.init({
             selector: '#tiny',
             language_url: '/tinymce/langs/zh_CN.js',
@@ -94,7 +94,7 @@
             images_upload_handler: this.handlerAddImg
           });
         },
-        handlerAddImg (blobInfo, success, failure) {
+        handlerAddImg(blobInfo, success, failure) {
           return new Promise((resolve, reject) => {
             const formData = new FormData()
             formData.append('file', blobInfo.blob())
@@ -119,22 +119,22 @@
           })
         },
         // 切换分页
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current;
           this.params.limit = e.pageSize;
           this.params.keywords = "";
         },
         //上传失败
-        handleFail ({ file }) {
+        handleFail({ file }) {
           this.$message.error(`文件 ${file.name} 上传失败`);
         },
         //文档类型
-        async gettype () {
+        async gettype() {
           let resdata = await gethelptype();
           this.typelist = resdata.data.data.list;
           console.log(this.resdata, " this.typelist");
         },
-        formatResponse (res) {
+        formatResponse(res) {
           console.log(res, this.files, "res");
           if (res.status != 200) {
             return { error: res.msg };
@@ -144,10 +144,10 @@
           };
         },
         //文件上传成功
-        onSuccess () { },
+        onSuccess() { },
 
         //上传文件之前
-        beforeUploadfile (e) {
+        beforeUploadfile(e) {
           let isrepeat = false;
           this.files.map((item) => {
             if (item.name === e.name) {
@@ -159,7 +159,7 @@
           return !isrepeat;
         },
         //删除上传文件
-        delfiles (name) {
+        delfiles(name) {
           let arr = [];
           this.files.map((item) => {
             if (item.name !== name) {
@@ -170,7 +170,7 @@
           console.log(this.files, "delfiles");
         },
         // 上传附件-进度
-        uploadProgress (val) {
+        uploadProgress(val) {
           if (val.percent) {
             this.uploadTip = "uploaded" + val.percent + "%";
             if (val.percent === 100) {
@@ -178,9 +178,8 @@
             }
           }
         },
-        submit (hidden) {
+        submit(hidden) {
           this.detialform.content = tinyMCE.activeEditor.getContent();
-
           let arr = [];
           this.files.map((item) => {
             if (item.response) {
@@ -230,24 +229,22 @@
                 } else {
                   this.detialform.hidden = 0;
                 }
-                addhelp(this.detialform)
-                  .then((res) => {
-                    if (res.data.status === 200) {
-                      console.log(res, "res");
-                      this.$message.success(lang.publish + lang.success);
-                      setTimeout(() => {
-                        location.href = "index.html";
-                      }, 500);
-                    }
-                  })
-                  .catch((err) => {
-                    this.$message.error(err.data.msg);
-                  });
+                addhelp(this.detialform).then((res) => {
+                  if (res.data.status === 200) {
+                    console.log(res, "res");
+                    this.$message.success(lang.publish + lang.success);
+                    setTimeout(() => {
+                      location.href = "index.html";
+                    }, 500);
+                  }
+                }).catch((err) => {
+                  this.$message.error(err.data.msg);
+                });
               }
             }
           });
         },
-        getdetialcon () {
+        getdetialcon() {
           helpdetial({ id: this.id }).then((res) => {
             if (res.data.status === 200) {
               let obj = res.data.data.news;
@@ -269,14 +266,36 @@
             }
           });
         },
-        save () {
+        save() {
           this.submit(1);
         },
-        cancle () {
+        viewNew() {
+          this.$refs.myform.validate(this.requiredRules).then((res) => {
+            if (res === true) {
+              const arr = []
+              this.files.map((item) => {
+                if (item.response) {
+                  arr.push(item.response.save_name);
+                } else {
+                  arr.push(item.save_name);
+                }
+              })
+              const viewNewObjData = {
+                title: this.detialform.title,
+                keywords: this.detialform.keywords,
+                content: tinyMCE.activeEditor.getContent(),
+                attachment: arr
+              }
+              sessionStorage.viewNewObjData = JSON.stringify(viewNewObjData)
+              window.open('/newsView.html')
+            }
+          })
+        },
+        cancle() {
           window.history.go(-1);
         },
       },
-      created () {
+      created() {
         console.log(window.location.search.slice(1), "pathname");
         this.id = window.location.search.slice(1).split("=")[1];
         console.log(this.id, "this.id");
@@ -285,7 +304,7 @@
         }
         this.gettype();
       },
-      mounted () {
+      mounted() {
         this.initTemplate()
       },
     }).$mount(documents);

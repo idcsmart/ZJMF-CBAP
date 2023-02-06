@@ -670,6 +670,10 @@ body {
 }
 #layout .cur-img {
   height: 20px;
+  font-size: 0;
+  border: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 #layout .right-box {
   height: 100%;
@@ -681,7 +685,7 @@ body {
   margin-left: 20px;
 }
 #layout .h-search {
-  margin-left: 16px;
+  margin-left: 5px;
 }
 #layout .h-search .t-input {
   border: none;
@@ -822,9 +826,6 @@ a {
 }
 #content .com-crumb .cur {
   color: #000;
-}
-#content.table {
-  height: calc(100% - 72px);
 }
 #content .t-card {
   flex: 1;
@@ -1185,6 +1186,23 @@ textarea {
 .renew-dialog .no-renew {
   color: #999;
 }
+.t-dropdown {
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+}
+.t-dropdown .t-dropdown__item {
+  margin: 0 8px;
+  padding: 5px 8px;
+}
+@media screen and (max-width: 1200px) {
+  .com-h-box .user {
+    width: 150px;
+  }
+  .common-tab li a {
+    padding: 0 10px;
+  }
+}
 @media screen and (max-width: 768px) {
   #layout .header {
     position: relative;
@@ -1195,4 +1213,8 @@ textarea {
   #setting .t-drawer__content-wrapper {
     width: 100% !important;
   }
+}
+.t-menu__popup.t-is-vertical {
+  max-height: 400px !important;
+  overflow-y: auto !important;
 }

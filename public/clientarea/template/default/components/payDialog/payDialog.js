@@ -43,7 +43,7 @@ const payDialog = {
                 </el-select>
 
     
-                <div class="f-btn" v-show="!isNotPayWay">
+                <div class="f-btn" v-show="!isNotPayWay && isUseBalance">
                   <span>
                     <span class="total">
                     <img src="${url}/img/common/money.png" alt="" class="img" /> 
@@ -87,6 +87,7 @@ const payDialog = {
       // 支付方式
       gatewayList: [],
       payLoading: false,
+      isUseBalance: true,
       isShowimg: true,
       // 用户余额
       balance: 0,
@@ -98,6 +99,7 @@ const payDialog = {
       },
       isPaySuccess: false,
       isNotPayWay: false,
+      isCz: false,
       doPayLoading: false,
       loading: false,
     }
@@ -299,8 +301,16 @@ const payDialog = {
         }
       }, 2000)
     },
+    czPay(orderId) {
+      this.isUseBalance = false
+      this.isCz = true
+      this.showPayDialog(orderId)
+    },
     // 点击去支付
     showPayDialog(orderId, amount, payType) {
+      if (!this.isCz) {
+        this.isUseBalance = true
+      }
       this.isPaySuccess = false
       if (this.timer) {  // 清除定时器
         clearInterval(this.timer)
@@ -316,7 +326,7 @@ const payDialog = {
           this.zfData.orderId = Number(orderId)
           this.zfData.amount = detailRes.data.data.order.amount
 
-          if (Number(this.zfData.amount) > 0) {
+          if (Number(this.zfData.amount) > 0 && this.isUseBalance) {
             creditPay(params).then(res => {
               this.errText = ""
               // 默认不使用余额
@@ -334,7 +344,7 @@ const payDialog = {
               account().then(res => {
                 if (res.data.status === 200) {
                   this.balance = res.data.data.account.credit
-                  if (this.balance > 0) {
+                  if (this.balance > 0 && this.isUseBalance) {
                     this.zfData.checked = true
                     this.useBalance()
                   }

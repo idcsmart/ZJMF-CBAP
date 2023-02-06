@@ -23,7 +23,8 @@
           <div class="finance main-card" v-if="!isDetail">
             <div class="top">
               <div class="top-l">{{lang.finance_title}}</div>
-              <div class="top-r" v-if="activeIndex == 3">
+              <!--  v-if="activeIndex == 3" -->
+              <div class="top-r">
                 <div class="item-balance">
                   <div class="money">
                     <div class="money-num">
@@ -68,6 +69,7 @@
                     <div class="content_table">
                       <div class="content_searchbar">
                         <div class="left_tips">
+                          <el-button class="all-pay" @click="handelAllPay" :loading="allLoading" v-if="isShowCombine">合并支付</el-button>
                           <div v-for="(item,index) in tipslist1" class="tips_item" :key="index">
                             <span class="dot" :style="{'background':item.color}"></span>
                             <span>{{item.name}}</span>
@@ -80,7 +82,8 @@
                         </div>
                       </div>
                       <div class="tabledata">
-                        <el-table v-loading="loading1" :data="dataList1" style="width: 100%;margin-bottom: 20px;" :row-key="getRowKey" lazy :load="load" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                        <el-table v-loading="loading1" @selection-change="handleSelectionChange" :data="dataList1" style="width: 100%;margin-bottom: 20px;" :row-key="getRowKey" lazy :load="load" :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                          <el-table-column type="selection" width="80" v-if="isShowCombine"></el-table-column>
                           <el-table-column prop="id" label="ID" width="100" align="left">
                             <template slot-scope="scope">
                               <span>
@@ -88,7 +91,7 @@
                               </span>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="product_names" :label="lang.finance_label1" min-width="400" :show-overflow-tooltip="true">
+                          <el-table-column prop="product_names" :label="lang.finance_label1" min-width="300" :show-overflow-tooltip="true">
                             <template slot-scope="scope">
                               <span class="dot" :class="scope.row.type">
                               </span>
@@ -99,10 +102,16 @@
                               <span v-else>{{scope.row.product_name}}</span>
                             </template>
                           </el-table-column>
-                          <el-table-column prop="billing_cycle" :label="lang.finance_label2" width="300">
+                          <el-table-column prop="billing_cycle" :label="lang.finance_label2" width="200">
                             <template slot-scope="scope">
-                              <span>{{ commonData.currency_prefix + scope.row.amount}}</span>
-                              <span v-if="scope.row.billing_cycle">/{{scope.row.billing_cycle}}</span>
+                              <span v-if="scope.row.status=='Unpaid'" @click="showPayDialog(scope.row)" style="cursor: pointer;">
+                                <span>{{ commonData.currency_prefix + scope.row.amount}}</span>
+                                <span v-if="scope.row.billing_cycle">/{{scope.row.billing_cycle}}</span>
+                              </span>
+                              <span v-else>
+                                <span>{{ commonData.currency_prefix + scope.row.amount}}</span>
+                                <span v-if="scope.row.billing_cycle">/{{scope.row.billing_cycle}}</span>
+                              </span>
                             </template>
                           </el-table-column>
                           <el-table-column prop="create_time" :label="lang.finance_label3" width="200">
@@ -113,7 +122,7 @@
                           <el-table-column prop="status" :label="lang.finance_label4" width="150">
                             <template slot-scope="scope">
                               <!-- 未付款 -->
-                              <el-tag v-if="scope.row.status && scope.row.status=='Unpaid'" class="Unpaid">
+                              <el-tag v-if="scope.row.status && scope.row.status=='Unpaid'" @click="showPayDialog(scope.row)" style="cursor: pointer;" class="Unpaid">
                                 {{lang.finance_text3}}
                               </el-tag>
                               <!-- 已付款 -->
@@ -122,21 +131,18 @@
                               </el-tag>
                               <!-- 已完成 -->
                               <el-tag v-if="scope.row.status && scope.row.status=='Refunded'" class="Refunded">
-                                已完成
+                                已退款
                               </el-tag>
-                              <!-- <el-tag v-if="scope.row.status" :class="scope.row.status=='Unpaid'?'Unpaid':scope.row.status=='Paid'?'Paid':''">
-                                                                {{scope.row.status=='Unpaid'?lang.finance_text3:scope.row.status=='Paid'?lang.finance_text4:''}}
-                                                            </el-tag> -->
                               {{scope.row.host_status?status[scope.row.host_status]:null}}
-                              {{scope.row.host_status||scope.row.status ? null : '--'}}
+                              {{scope.row.host_status || scope.row.status ? null : '--'}}
                             </template>
                           </el-table-column>
-                          <el-table-column prop="gateway" :label="lang.finance_label5" width="100">
+                          <el-table-column prop="gateway" :label="lang.finance_label5" width="200">
                             <template slot-scope="scope">
                               <!-- 存在支付状态 父 -->
                               <div v-if="scope.row.status">
                                 <!-- 已支付 -->
-                                <div v-if="scope.row.status === 'Paid'">
+                                <div v-if="scope.row.gateway">
                                   <!-- 使用余额 -->
                                   <div v-if="scope.row.credit > 0">
                                     <!-- 全部使用余额 -->
@@ -723,25 +729,25 @@
               </div>
               <div class="dialog-form">
                 <el-form :model="czData" label-position="top">
-                  <el-form-item :label="lang.finance_label18">
+                  <!-- <el-form-item :label="lang.finance_label18">
                     <el-select v-model="czData.gateway" @change="czSelectChange">
                       <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
                     </el-select>
-                  </el-form-item>
-                  <el-form-item :label="lang.finance_label19" @keyup.native="czData.amount=oninput(czData.amount)">
+                  </el-form-item> -->
+                  <el-form-item :label="lang.finance_label19" @keyup.native="czData.amount=oninput(czData.amount)" prop="amount">
                     <div class="cz-input">
                       <el-input v-model="czData.amount">
                       </el-input>
                       <el-button class="btn-ok" @click="czInputChange">{{lang.finance_btn6}}</el-button>
                     </div>
                   </el-form-item>
-                  <el-form-item v-if="errText">
+                  <!-- <el-form-item v-if="errText">
                     <el-alert :title="errText" type="error" :closable="false" show-icon>
                     </el-alert>
                   </el-form-item>
                   <el-form-item v-loading="payLoading1">
                     <div class="pay-html" v-show="isShowimg1" v-html="payHtml"></div>
-                  </el-form-item>
+                  </el-form-item> -->
                 </el-form>
               </div>
             </el-dialog>

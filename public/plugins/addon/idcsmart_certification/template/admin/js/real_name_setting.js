@@ -13,7 +13,7 @@
             certification_update_client_name: 0,
             certification_upload: 0,
             certification_update_client_phone: 0,
-            certification_uncertified_suspended_host: 0
+            certification_uncertified_cannot_buy_product: 0
           },
           loading: false
         }

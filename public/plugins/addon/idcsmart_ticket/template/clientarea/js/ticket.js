@@ -12,8 +12,7 @@
             created() {
                 // 获取通用信息
                 this.getCommonData()
-                // 获取工单列表
-                this.getTicketList()
+
                 // 获取工单类型
                 this.getTicketType()
                 // 获取工单状态
@@ -43,7 +42,7 @@
                         orderby: 'id',
                         sort: 'desc',
                         keywords: '',
-                        status: [],
+                        status: [3],
                         ticket_type_id: "",
                     },
                     // 通用数据
@@ -169,6 +168,13 @@
                     this.delFile()
                     this.isShowDialog = false
                 },
+                hexToRgb(hex) {
+                    const color = hex.split('#')[1]
+                    const r = parseInt(color.substring(0, 2), 16);
+                    const g = parseInt(color.substring(2, 4), 16);
+                    const b = parseInt(color.substring(4, 6), 16);
+                    return `rgba(${r},${g},${b},0.12)`
+                },
                 // 获取工单类型
                 getTicketType() {
                     ticketType().then(res => {
@@ -182,8 +188,15 @@
                 getTicketStatus() {
                     ticketStatus().then(res => {
                         if (res.data.status === 200) {
+                            this.params.status = [3]
                             this.ticketStatus = res.data.data.list
-                            console.log(this.ticketType);
+                            res.data.data.list.forEach(item => {
+                                if (item.status === 0) {
+                                    this.params.status.push(item.id)
+                                }
+                            })
+                            // 获取工单列表
+                            this.getTicketList()
                         }
                     })
                 },
@@ -231,17 +244,19 @@
                 },
                 // 催单
                 itemUrge(record) {
-                    const id = record.id
-                    const params = {
-                        id
+                    const nowDate = new Date().getTime()
+                    const last_reply_time = record.last_urge_time * 1000
+                    if (nowDate - last_reply_time < 1000 * 60 * 15) {
+                        this.$message.success('已收到您的催单通知，我们将尽快处理您的工单，感谢您的支持和配合')
+                        return
                     }
+                    const id = record.id
+                    const params = { id }
                     // 调用催单接口 给出结果
                     urgeTicket(params).then(res => {
                         if (res.data.status === 200) {
-                            this.$message({
-                                message: lang.ticket_tips7,
-                                type: 'success'
-                            });
+                            this.$message.success(res.data.msg)
+                            this.getTicketList()
                         }
                     }).catch(err => {
                         this.$message.error(err.data.msg);

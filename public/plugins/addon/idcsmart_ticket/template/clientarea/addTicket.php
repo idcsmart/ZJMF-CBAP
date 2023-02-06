@@ -39,7 +39,7 @@
                                         <el-input class="select-title" v-model="ticketData.title" :placeholder="lang.ticket_tips9" maxlength="20"></el-input>
                                     </el-form-item>
                                     <el-form-item :label="lang.ticket_label7" prop="host_ids">
-                                        <el-select filterable class="select-host" v-model="ticketData.host_ids" :placeholder="lang.ticket_tips10" multiple collapse-tags clearable>
+                                        <el-select filterable class="select-host" v-model="ticketData.host_ids" :placeholder="lang.ticket_tips10" :multiple-limit="1" multiple collapse-tags clearable>
                                             <el-option v-for="item in hostList" :key="item.id" :value="item.id" :label="item.product_name + '('+item.name+')'"></el-option>
                                         </el-select>
                                     </el-form-item>

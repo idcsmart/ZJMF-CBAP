@@ -26,7 +26,7 @@
             </div>
             <!-- search 结束 -->
             <!-- 表格开始 -->
-            <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="true" :loading="loading" table-layout="fixed" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
+            <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="true" :loading="loading" table-layout="fixed" display-type="fixed-width" :hide-sort-tips="true" >
                 <template #create_time="{row}">
                     {{row.create_time ? moment(row.create_time * 1000).format('YYYY-MM-DD HH:mm') : '--'}}
                 </template>

@@ -21,8 +21,7 @@
                 </div> -->
       </div>
       <div class="help_table">
-        <t-table hover row-key="index" :max-height="maxHeight" :pagination="pagination" :loading="loading"
-         :data="list" :columns="columns" @Change="changepages">
+        <t-table hover row-key="index" :pagination="pagination" :loading="loading" :data="list" :columns="columns" @Change="changepages">
           <template #pushorback="slotProps">
             <t-switch v-model="slotProps.row.hidden?false:true" @change="onswitch(slotProps.row,$event)" />
           </template>

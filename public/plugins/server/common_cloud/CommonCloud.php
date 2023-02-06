@@ -1139,7 +1139,11 @@ class CommonCloud{
 		return $result;
 	}
 
-
+	public function getPriceCycle($params)
+	{
+		$PackageModel = new PackageModel();
+		return $PackageModel->getMinPrice($params['product']['id']);
+	}
 
 }
 

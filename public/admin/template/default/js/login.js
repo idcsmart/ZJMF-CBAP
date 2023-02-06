@@ -10,10 +10,10 @@ function captchaCheckSuccsss(bol, captcha, token, login) {
     const login = document.getElementById('login')
     Vue.prototype.lang = window.lang
     if (localStorage.getItem('backJwt')) {
-      const host = location.host
+      const host = location.origin
       const fir = location.pathname.split('/')[1]
       const str = `${host}/${fir}/`
-      location.href = 'http://' + str
+      location.href = str
       return
     }
     const vm = new Vue({

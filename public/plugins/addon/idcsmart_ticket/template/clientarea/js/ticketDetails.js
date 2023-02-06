@@ -100,7 +100,7 @@
                             // 当前状态
                             this.baseMsg.status = this.ticketData.status
                             // 标题
-                            this.baseMsg.title = this.ticketData.ticket_num + "-" + this.ticketData.title
+                            this.baseMsg.title = '#' + this.ticketData.ticket_num + "-" + this.ticketData.title
 
                             this.baseMsg.create_time = this.ticketData.create_time
                             // 关联产品
@@ -246,7 +246,7 @@
                 downloadfile(url) {
                     const name = url
                     const type = name.substring(name.lastIndexOf(".") + 1)
-                    if (['png', 'jpg', 'jepg', 'bmp', 'webp'].includes(type)) {
+                    if (['png', 'jpg', 'jepg', 'bmp', 'webp', 'PNG', 'JPG', 'JEPG', 'BMP', 'WEBP'].includes(type)) {
                         this.preImg = url
                         this.viewer.show()
                     } else {

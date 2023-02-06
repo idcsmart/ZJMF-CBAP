@@ -1,8 +1,8 @@
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/plugins/addon/idcsmart_certification/template/admin/css/real_name.css">
-<link href="//unpkg.com/viewerjs/dist/viewer.css" rel="stylesheet">
-<script src="//unpkg.com/viewerjs"></script>
-<script src="//unpkg.com/v-viewer"></script>
+<link href="/plugins/addon/idcsmart_certification/template/admin/css/viewer.css" rel="stylesheet">
+<script src="/plugins/addon/idcsmart_certification/template/admin/js/viewer.js"></script>
+<script src="/plugins/addon/idcsmart_certification/template/admin/js/v_viewer.js"></script>
 <div id="content" class="real_name_approval" v-cloak>
   <t-card class="list-card-container">
     <ul class="common-tab">

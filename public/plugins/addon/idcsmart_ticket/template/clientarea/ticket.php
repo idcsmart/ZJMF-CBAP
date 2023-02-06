@@ -39,7 +39,7 @@
               <el-table v-loading="tableLoading" :data="dataList" style="width: 100%;margin-bottom: .2rem;" @row-click="(row)=>itemReply(row)">
                 <el-table-column prop="title" min-width="400" :label="lang.ticket_label1" align="left" :show-overflow-tooltip="true">
                   <template slot-scope="scope">
-                    <span>{{scope.row.ticket_num + "-" + scope.row.title }}</span>
+                    <span>{{'#' + scope.row.ticket_num + "-" + scope.row.title }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="name" :label="lang.ticket_label2" width="400" align="left">
@@ -55,8 +55,7 @@
                 </el-table-column>
                 <el-table-column prop="status" :label="lang.ticket_label4" width="150" align="left">
                   <template slot-scope="scope">
-                    <div class="status" :style="`background:${scope.row.color}`"></div>
-                    <span class="status-text" :style="`color:${scope.row.color}`">{{scope.row.status}}</span>
+                    <span class="status-text" :style="{background:hexToRgb(scope.row.color),color:scope.row.color}">{{scope.row.status}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="id" width="100" :label="lang.ticket_label5" align="left">

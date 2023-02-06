@@ -119,7 +119,8 @@
         if (!this.authList.includes('PluginController::pluginList')) {
           return this.$message.error(lang.tip17 + ',' + lang.tip18)
         }
-        this.getAddonList()
+        this.getAddonList();
+        document.title = lang.plugin_list + '-' + localStorage.getItem('back_website_name');
       },
       methods: {
         // 获取列表

@@ -27,6 +27,7 @@ class TransactionController extends AdminBaseController
      * @method  GET
      * @param string keywords - 关键字,搜索范围:交易流水号,订单ID,用户名称,邮箱,手机号
      * @param int client_id - 用户ID
+     * @param int order_id - 订单ID
      * @param string gateway - 支付方式
      * @param int page - 页数
      * @param int limit - 每页条数

@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/manage.css">
-<div id="content" class="log-notice-email table hasCrumb" v-cloak>
+<div id="content" class="log-notice-email hasCrumb" v-cloak>
   <div class="com-crumb">
     <span>{{lang.user_manage}}</span>
     <t-icon name="chevron-right"></t-icon>
@@ -13,26 +13,33 @@
     <div class="com-h-box">
       <ul class="common-tab">
         <li>
-          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
+          <a :href="`${baseUrl}/client_detail.html?id=${id}`">{{lang.personal}}</a>
         </li>
         <li>
-          <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>
+          <a :href="`${baseUrl}/client_host.html?id=${id}`">{{lang.product_info}}</a>
         </li>
         <li>
-          <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
+          <a :href="`${baseUrl}/client_order.html?id=${id}`">{{lang.order_manage}}</a>
         </li>
         <li>
-          <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
+          <a :href="`${baseUrl}/client_transaction.html?id=${id}`">{{lang.flow}}</a>
         </li>
         <li>
-          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+          <a :href="`${baseUrl}/client_log.html?id=${id}`">{{lang.operation}}{{lang.log}}</a>
         </li>
         <li class="active">
           <a>{{lang.notice_log}}</a>
         </li>
+        <li v-if="hasTicket && authList.includes('TicketController::ticketList')">
+          <a :href="`${baseUrl}/plugin/idcsmart_ticket/client_ticket.html?id=${id}`">{{lang.auto_order}}</a>
+        </li>
       </ul>
-      <t-select class="user" v-if="this.clientList.length>0" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
-        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+      <t-select class="user" v-if="this.clientList" v-model="id" :popup-props="popupProps" filterable :filter="filterMethod" @change="changeUser" :loading="searchLoading" reserve-keyword :on-search="remoteMethod">
+        <t-option :key="clientDetail.id" :value="clientDetail.id" :label="calcShow(clientDetail)" v-if="isExist">
+          #{{clientDetail.id}}-{{clientDetail.username ? clientDetail.username : (clientDetail.phone? clientDetail.phone: clientDetail.email)}}
+          <span v-if="clientDetail.company">({{clientDetail.company}})</span>
+        </t-option>
+        <t-option v-for="item in clientList" :value="item.id" :label="calcShow(item)" :key="item.id">
           #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
           <span v-if="item.company">({{item.company}})</span>
         </t-option>
@@ -49,11 +56,18 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover" 
+    :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #subject="{row}">
+        <t-icon v-if="row.status === 1" name="check-circle-filled" style="color:#00a870;"></t-icon>
+        <template v-else>
+          <t-tooltip :content="row.fail_reason" theme="light" :show-arrow="false">
+            <t-icon name="close-circle-filled" class="icon-error" style="color: #e34d59;"></t-icon>
+          </t-tooltip>
+        </template>
         <a class="aHover" @click="showMessage(row)">{{row.subject}}</a>
       </template>
       <template #create_time="{row}">
@@ -74,6 +88,7 @@
   </t-dialog>
 </div>
 <!-- =======页面独有======= -->
+<script src="/{$template_catalog}/template/{$themes}/api/client.js"></script>
 <script src="/{$template_catalog}/template/{$themes}/api/manage.js"></script>
 <script src="/{$template_catalog}/template/{$themes}/js/client_notice_email.js"></script>
 {include file="footer"}

@@ -320,9 +320,7 @@
             return;
           }
           // 企业认证成功时 跳转企业认证成功页面
-          if (
-            this.attestationStatusInfo.status === 20 ||
-            this.attestationStatusInfo.status === 30
+          if (this.attestationStatusInfo.status === 20 || this.attestationStatusInfo.status === 30
           ) {
             location.href = `plugin/${val}/authentication_status.html?type=2`;
             return;

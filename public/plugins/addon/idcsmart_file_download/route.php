@@ -27,6 +27,9 @@ Route::get('country4', 'home/common/countryList')
         'Access-Control-Max-Age'             => 600,
     ]);
 
+Route::get('console/v1/file/:id/download', "\\addon\\idcsmart_file_download\\controller\\clientarea\\IndexController@idcsmartFileDownload")
+    ->append(['_plugin'=>'idcsmart_file_download','_controller'=>'index','_action'=>'idcsmart_file_download'])
+    ->middleware(\app\http\middleware\Check::class);
 
 # 前台
 Route::group('console/v1',function (){
@@ -36,8 +39,8 @@ Route::group('console/v1',function (){
         ->append(['_plugin'=>'idcsmart_file_download','_controller'=>'index','_action'=>'idcsmart_file_folder_list']);
     Route::get('file', "\\addon\\idcsmart_file_download\\controller\\clientarea\\IndexController@idcsmartFileList")
         ->append(['_plugin'=>'idcsmart_file_download','_controller'=>'index','_action'=>'idcsmart_file_list']);
-    Route::get('file/:id/download', "\\addon\\idcsmart_file_download\\controller\\clientarea\\IndexController@idcsmartFileDownload")
-    ->append(['_plugin'=>'idcsmart_file_download','_controller'=>'index','_action'=>'idcsmart_file_download']);
+    /*Route::get('file/:id/download', "\\addon\\idcsmart_file_download\\controller\\clientarea\\IndexController@idcsmartFileDownload")
+    ->append(['_plugin'=>'idcsmart_file_download','_controller'=>'index','_action'=>'idcsmart_file_download']);*/
 })
     ->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,

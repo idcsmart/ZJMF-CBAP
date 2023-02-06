@@ -477,7 +477,6 @@
   margin-left: 15px;
 }
 .upgrade-box .footer-btn .t-button {
-  width: 64px;
   height: 24px;
   border-radius: 3px;
   font-size: 12px;
@@ -491,7 +490,7 @@
 }
 .upgrade-box .s-item {
   display: flex;
-  min-width: 250px;
+  min-width: 400px;
 }
 @media screen and (max-width: 1400px) {
   .configuration-system .special {

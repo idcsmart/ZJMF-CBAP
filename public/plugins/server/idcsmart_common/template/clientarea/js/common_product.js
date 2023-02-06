@@ -9,6 +9,9 @@ new Vue({
     discountCode
   },
   created() {
+    if (window.performance.navigation.type === 2) {
+      sessionStorage.removeItem('product_information')
+    }
     this.id = location.href.split('?')[1].split('=')[1]?.split('&')[0]
     this.getCommonData()
 

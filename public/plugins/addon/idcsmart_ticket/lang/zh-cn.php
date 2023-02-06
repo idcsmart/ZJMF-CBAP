@@ -44,6 +44,7 @@ return [
     'ticket_attachment_name_require' => '附件名必填',
     'ticket_attachment_is_not_exist' => '附件不存在',
     'ticket_admin_is_not_exist' => '人员不存在',
+    'ticket_urge_time_limit_15_m' => '已收到您的催单通知，我们将尽快处理您的工单，感谢您的支持和配合',
 
     # 日志
     'ticket_log_client_create_ticket' => '{client}新建工单:{ticket_id}',
@@ -52,15 +53,15 @@ return [
     'ticket_log_client_urge_ticket' => '{client}催单:{ticket_id}',
     'ticket_log_client_close_ticket' => '{client}关闭工单:{ticket_id}',
 
-    'ticket_log_admin_reply_ticket' => '{admin}回复工单:{ticket_id},回复内容:{content}',
+    'ticket_log_admin_reply_ticket' => '{admin}回复工单:{ticket_id}',
     'ticket_log_admin_receive_ticket' => '{admin}接受工单:{ticket_id}',
     'ticket_log_admin_resolved_ticket' => '{admin}标记工单:{ticket_id}已解决',
     'ticket_log_create_ticket_internal' => '{admin}新增内部工单:{ticket_id}',
     'ticket_log_admin_create_ticket_notes' => '{admin}创建工单{ticket_id}备注:{content}',
     'ticket_log_admin_update_ticket_reply' => '{admin}编辑{name}回复的消息',
     'ticket_log_admin_delete_ticket_reply' => '{admin}删除{name}回复的消息',
-    'ticket_log_admin_update_ticket_status' => '{admin}变更工单状态为{status}',
-    'ticket_log_admin_update_ticket_type' => '{admin}变更工单类型为{type}',
+    'ticket_log_admin_update_ticket_status' => '{admin}变更工单{ticket}工单状态为{status}',
+    'ticket_log_admin_update_ticket_type' => '{admin}变更工单{ticket}工单类型为{type}',
     'ticket_log_admin_reply_ticket_admin' => '工单{ticket_id}跟进人变更为{admin}',
     'ticket_log_admin_update_ticket_content' => '修改工单{ticket_id}内容为{content}',
     'ticket_log_admin_ticket_forwad' => '工单{ticket_id}跟进部门变更为{admin_role}',

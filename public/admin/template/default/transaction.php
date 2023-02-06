@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
-<div id="content" class="transaction table" v-cloak>
+<div id="content" class="transaction" v-cloak>
   <t-card class="list-card-container">
     <div class="common-header">
       <t-button @click="addFlow" class="add">{{lang.new_flow}}</t-button>
@@ -11,7 +11,9 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="true" :max-height="maxHeight">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover"
+     :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange"
+      :hide-sort-tips="true">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -52,7 +54,18 @@
   </t-card>
   <!-- 新增流水 -->
   <t-dialog :header="optTitle" :visible.sync="flowModel" :footer="false">
-    <t-form :data="formData" ref="form" @submit="onSubmit" :rules="rules">
+    <t-form :data="formData" ref="form" @submit="onSubmit" :rules="rules" v-if="flowModel">
+      <t-form-item :label="lang.user" name="client_id" class="user">
+        <t-select v-model="formData.client_id" filterable :placeholder="lang.example" :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false">
+          <t-option v-for="item in userList" :value="item.id" :label="item.username" :key="item.id" class="com-custom">
+            <div>
+              <p>{{item.username}}</p>
+              <p v-if="item.phone" class="tel">+{{item.phone_code}}-{{item.phone}}</p>
+              <p v-else class="tel">{{item.email}}</p>
+            </div>
+          </t-option>
+        </t-select>
+      </t-form-item>
       <t-form-item :label="lang.money" name="amount">
         <t-input v-model="formData.amount" type="tel" :label="currency_prefix" :placeholder="lang.input+lang.money"></t-input>
       </t-form-item>
@@ -64,17 +77,6 @@
       </t-form-item>
       <t-form-item :label="lang.flow_number" name="transaction_number">
         <t-input v-model="formData.transaction_number" :placeholder="lang.input+lang.flow_number"></t-input>
-      </t-form-item>
-      <t-form-item :label="lang.user" name="client_id" class="user">
-        <t-select v-model="formData.client_id" filterable :placeholder="lang.example" :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false">
-          <t-option v-for="item in userList" :value="item.id" :label="item.username" :key="item.id" class="com-custom">
-            <div>
-              <p>{{item.username}}</p>
-              <p v-if="item.phone" class="tel">+{{item.phone_code}}-{{item.phone}}</p>
-              <p v-else class="tel">{{item.email}}</p>
-            </div>
-          </t-option>
-        </t-select>
       </t-form-item>
       <div class="com-f-btn">
         <t-button theme="primary" type="submit" :loading="addLoading">{{lang.submit}}
@@ -134,12 +136,10 @@
         <t-tag theme="default" variant="light" v-if="(row.status || row.host_status)==='Deleted'" class="delted">{{lang.Deleted}}
         </t-tag>
       </template>
-      <template #gateway="{row}">
-        <!-- 其他支付方式 -->
+      <!-- <template #gateway="{row}">
         <template v-if="row.credit == 0 && row.amount !=0">
           {{row.gateway}}
         </template>
-        <!-- 混合支付 -->
         <template v-if="row.credit>0 && row.credit < row.amount">
           <t-tooltip :content="currency_prefix+row.credit" theme="light" placement="bottom-right">
             <span>{{lang.credit}}</span>
@@ -151,7 +151,7 @@
             <span>{{lang.credit}}</span>
           </t-tooltip>
         </template>
-      </template>
+      </template> -->
     </t-enhanced-table>
   </t-dialog>
 </div>

@@ -18,8 +18,8 @@
         </div>
       </div>
       <div class="help_table">
-        <t-table hover row-key="index" :pagination="pagination" :data="list" :columns="columns"
-        :loading="loading"  @Change="changepages" :max-height="maxHeight">
+        <t-table hover row-key="index" :pagination="pagination" :data="list" :columns="columns" :loading="loading" 
+        @Change="changepages">
           <template #pushorback="slotProps">
             <t-switch v-model="slotProps.row.hidden?false:true" @change="onswitch(slotProps.row,$event)" />
           </template>
@@ -49,9 +49,7 @@
       <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
     </template>
   </t-dialog>
-  <t-dialog :header="lang.doc_classific_manage" placement="center" :visible.sync="visible" 
-  :on-cancel="onCancel" :on-esc-keydown="onKeydownEsc" :on-close-btn-click="onClickCloseBtn" 
-  :on-close="close" width="70%"  :footer="false">
+  <t-dialog :header="lang.doc_classific_manage" placement="center" :visible.sync="visible" :on-cancel="onCancel" :on-esc-keydown="onKeydownEsc" :on-close-btn-click="onClickCloseBtn" :on-close="close" width="70%" :footer="false">
     <t-table :key="key" bordered row-key="index" :data="typelist" :columns="columns2" max-height="80%">
       <template #name="slotProps">
         <t-input :placeholder="lang.input" v-model="slotProps.row.name" :disabled="!slotProps.row.isedit" style="width: 250px;" />

@@ -27,7 +27,7 @@ class Task extends Command
 		$task_time = Db::name('configuration')->where('setting','task_time')->value('value');
 		if(empty($task_time)){
 			Db::name('configuration')->where('setting','task_time')->data(['value'=>time()])->update();
-			$task_time = Db::name('configuration')->where('setting','task_time')->value('value');
+			$task_time = time();
 		}
 		$programEnd=true;
 		do{
@@ -46,17 +46,21 @@ class Task extends Command
 	//队列
 	public function taskWait(){
 		Db::startTrans();
-		//$task_lock = Db::name('configuration')->where('setting','task')->lock(true)->value('value');
 		$task_lock = file_exists(__DIR__.'/task.lock') ? file_get_contents(__DIR__.'/task.lock') : 0; 
 			
 		if(empty($task_lock) || time()>($task_lock+2*60)){
 			file_put_contents(__DIR__.'/task.lock', time());
-			//Db::name('configuration')->where('setting','task')->data(['value'=>1])->update();
-			$task_wait = Db::name('task_wait')->limit(10)->select()->toArray();//取10条数据				
-			if($task_wait) Db::name('task_wait')->whereIn('id',array_column($task_wait,'id'))->delete();
+			$task_wait = Db::name('task_wait')->limit(10)
+                ->whereIn('status',['Wait','Failed'])
+                ->where('retry','<=',3) # 重试次数小于等于3
+                ->select()->toArray();//取10条数据
+
+            Db::name('task_wait')->where('retry','>',3)
+                ->whereOr('status','Finish')
+                ->delete(); # 删除重试次数大于3或者状态已完成的任务
+
 			Db::commit();
 			file_put_contents(__DIR__.'/task.lock', 0);
-			//Db::name('configuration')->where('setting','task')->data(['value'=>0])->update();
 			if($task_wait){
 				foreach($task_wait as $v){
 					$task_data = json_decode($v['task_data'],true);
@@ -76,6 +80,12 @@ class Task extends Command
 							'fail_reason' => empty($result['msg'])?'':$result['msg'],
 						];
 						Db::name('task')->where('id',$v['task_id'])->data($task_update)->update();
+
+						Db::name('task_wait')->where('task_id',$v['task_id'])->data([
+                            'status' => $result['status'],
+                            'finish_time' => time(),
+                            'retry' => $v['retry']+1
+                        ])->update();
 					}
 				}
 			}else{

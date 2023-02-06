@@ -89,10 +89,11 @@ class IdcsmartTicket extends Plugin
   `update_time` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;",
-            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(1,'待接单','#1881EB',0,1,0,0);",
-            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(2,'待回复','#ff6600',0,1,0,0);",
-            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(3,'已回复','#0BCF15',1,1,0,0);",
+            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(1,'待接单','#779500',0,1,0,0);",
+            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(2,'用户已回复','#ff6600',0,1,0,0);",
+            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(3,'已回复','#000000',1,1,0,0);",
             "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(4,'已关闭','#888888',1,1,0,0);",
+            "INSERT INTO `idcsmart_addon_idcsmart_ticket_status`(`id`,`name`,`color`,`status`,`default`,`create_time`,`update_time`) VALUES(5,'处理中','#cc0000',0,1,0,0);",
             "DROP TABLE IF EXISTS `idcsmart_addon_idcsmart_ticket_type`;",
             "CREATE TABLE `idcsmart_addon_idcsmart_ticket_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

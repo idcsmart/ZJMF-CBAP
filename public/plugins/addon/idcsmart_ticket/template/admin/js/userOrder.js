@@ -35,6 +35,8 @@
             }),
           },
           searchLoading: false,
+          closeRow: null,
+          closeOrderVisible: false,
           // 转发弹窗
           forwardDialogVisible: false,
           audio_tip: null,
@@ -140,9 +142,15 @@
           uploadUrl: 'http://' + str + 'v1/upload',
           uploadTip: '',
           // 用户工单列表
-          userOrderTableloading: true,
+          userOrderTableloading: false,
           userOrderData: [],
           userOrderColumns: [
+            {
+              align: 'left',
+              width: '70',
+              colKey: 'id',
+              title: 'ID',
+            },
             {
               align: 'left',
               width: '500',
@@ -364,10 +372,11 @@
         },
         // 工单-获取数据
         async getUserOrderList() {
+          this.userOrderTableloading = true;
           const userOrderData = await getUserOrder(this.params);
           if (userOrderData && userOrderData.data) {
             userOrderData.data.data.list.forEach((item) => {
-              item.newTitle = item.ticket_num + '-' + item.title
+              item.newTitle = '#' + item.ticket_num + '-' + item.title
             })
             if (userOrderData.data.data.list.length > 0 && this.isPlayerAudio) {
               this.audio_tip.addEventListener("ended", this.palyAudio)
@@ -403,7 +412,12 @@
           }
         },
         // 工单-查询
-        doUserOrderSearch() {
+        doUserOrderSearch(val) {
+          if (val === 'all') {
+            this.params.status = this.order_status_options.map((item) => {
+              return item.id
+            })
+          }
           this.params.page = 1;
           this.getUserOrderList();
         },
@@ -575,11 +589,19 @@
         userOrderReply(row) {
           location.href = `ticket_detail.html?id=${row.id}`;
         },
+        isClose(row) {
+          this.closeRow = row
+          this.closeOrderVisible = true
+        },
+        closeDia() {
+          this.closeOrderVisible = false
+        },
         // 工单-已解决
         userOrderResolved(row) {
           resolvedUserOrder(row.id).then(result => {
             this.$message.success({ content: result.data.msg, placement: 'top-right' });
             this.getUserOrderList();
+            this.closeDia()
           }).catch(result => {
             this.$message.warning({ content: result.data.msg, placement: 'top-right' });
           });

@@ -16,7 +16,7 @@
         <div class="search-left-top">
           <t-input v-model="params.keywords" :placeholder="lang.please_search_order" clearable></t-input>
           <t-select :placeholder="lang.please_search_order_type" clearable v-model="params.ticket_type_id" :keys="{ label: 'name', value: 'id' }" :options="orderTypeOptions"></t-select>
-          <t-select :placeholder="lang.please_search_order_status" :min-collapsed-num="2" multiple clearable v-model="params.status" :keys="{ label: 'name', value: 'id'}" :options="order_status_options"></t-select>
+          <t-select :placeholder="lang.please_search_order_status" :min-collapsed-num="1" multiple clearable v-model="params.status" :keys="{ label: 'name', value: 'id'}" :options="order_status_options"></t-select>
         </div>
         <div class="search-left-bottom">
           <t-select class="select-496" v-model="params.client_id" filterable :placeholder="lang.please_search_order_user" clearable :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false" :scroll="{ type: 'virtual',threshold:20 }" :popup-props="popupProps">
@@ -31,6 +31,7 @@
           <!-- <t-select :placeholder="lang.please_search_order_user" filterable clearable v-model="params.client_id" :options="clientOptions" :keys="{ label: 'username', value: 'id'}">></t-select> -->
           <t-select :placeholder="lang.please_search_order_admin" filterable clearable v-model="params.admin_id" :options="adminList" :keys="{ label: 'name', value: 'id'}"></t-select>
           <t-button @click="doUserOrderSearch">{{lang.order_text1}}</t-button>
+          <t-button @click="doUserOrderSearch('all')" style="margin-left: 10px;">{{lang.order_text77}}</t-button>
         </div>
       </div>
       <div class="search-box-right">
@@ -45,8 +46,11 @@
       </div>
     </div>
     <t-table class="list-table" :data="userOrderData" :columns="userOrderColumns" @row-click="rowClick" hover :loading="userOrderTableloading" row-key="id" size="small">
+      <template #id="slotProps">
+        <span>#{{slotProps.row.ticket_num}}</span>
+      </template>
       <template #title="slotProps">
-        <span class="order-name" @click="userOrderReply(slotProps.row)">{{slotProps.row.newTitle}}</span>
+        <span class="order-name" @click="userOrderReply(slotProps.row)">{{slotProps.row.title}}</span>
       </template>
       <template #name="slotProps">
         <span>{{slotProps.row.name ? slotProps.row.name : '--'}}</span>
@@ -67,7 +71,7 @@
         <t-button :title="lang.order_ow_new_rder" v-if="showIdcsmartTicketInternal" shape="circle" variant="text" @click.stop="goAddorder(slotProps.row)">
           <t-icon name="file-add" size="small" style="color:#0052D9" />
         </t-button>
-        <t-button :title="lang.order_new_close" shape="circle" variant="text" @click.stop="userOrderResolved(slotProps.row)">
+        <t-button :title="lang.order_new_close" shape="circle" variant="text" @click.stop="isClose(slotProps.row)">
           <t-icon name="close-circle" size="small" style="color:#0052D9" />
         </t-button>
       </template>
@@ -318,6 +322,8 @@
       </t-form-item>
     </t-form>
   </t-dialog>
+  <!-- 关闭工单确认弹窗 -->
+  <t-dialog theme="danger" header="确认关闭该工单？" :visible.sync="closeOrderVisible" @confirm="userOrderResolved(closeRow)" :on-close="closeDia" />
   <audio id="audio_tip" muted src="/plugins/addon/idcsmart_ticket/template/admin/media/tip.wav"></audio>
 </div>
 <script src="/plugins/addon/idcsmart_ticket/template/admin/api/order.js"></script>

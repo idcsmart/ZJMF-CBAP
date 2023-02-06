@@ -26,6 +26,7 @@ class MenuValidate extends Validate
 
     public function checkMenu($value)
     {
+        $navId = [];
         foreach ($value as $k => $v) {
             if(!isset($v['type'])){
                 return false;
@@ -65,6 +66,7 @@ class MenuValidate extends Validate
                 if($v['nav_id']<=0){
                     return false;
                 }
+                $navId[] = $v['nav_id'];
             }
             if(!isset($v['child'])){
                 return false;
@@ -112,9 +114,13 @@ class MenuValidate extends Validate
                         if($cv['nav_id']<=0){
                             return false;
                         }
+                        $navId[] = $cv['nav_id'];
                     }
                 }
             }  
+        }
+        if(count($navId)!=count(array_unique($navId))){
+            return 'nav_cannot_repeat_add';
         }
         return true;
     }
@@ -123,6 +129,7 @@ class MenuValidate extends Validate
     {
         $productId = [];
         $count = 0;
+        $navId = [];
         foreach ($value as $k => $v) {
             if(!isset($v['type'])){
                 return false;
@@ -182,6 +189,7 @@ class MenuValidate extends Validate
                 if($v['nav_id']<=0){
                     return false;
                 }
+                $navId[] = $v['nav_id'];
             }
             if(!isset($v['child'])){
                 return false;
@@ -249,12 +257,16 @@ class MenuValidate extends Validate
                         if($cv['nav_id']<=0){
                             return false;
                         }
+                        $navId[] = $cv['nav_id'];
                     }
                 }
             }  
         }
         if($count!=count(array_filter(array_unique($productId)))){
             return false;
+        }
+        if(count($navId)!=count(array_unique($navId))){
+            return 'nav_cannot_repeat_add';
         }
         return true;
     }

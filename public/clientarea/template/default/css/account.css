@@ -23,15 +23,14 @@
       background: pink;
   } */
 
-/* .right-name { */
-/* display: flex; */
-/* flex-direction: row; */
-/* margin-left: .4rem; */
-/* align-items: center; */
-/* align-items: center; */
-/* } */
+.right-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 
-.right-name>.name-text {
+.name-text {
   font-size: .32rem;
   font-family: Helvetica;
   font-weight: bold;
@@ -45,29 +44,36 @@
   align-items: center;
 }
 
-.right-name>.attestation-status {
+.country-img {
+  height: .25rem;
+  width: .4rem;
+}
+
+.attestation-status {
   display: inline-flex;
   align-items: center;
   cursor: pointer;
   margin-left: .04rem;
 }
 
-.right-name>.attestation-status>img {
-  width: .21rem;
-  height: .21rem;
-}
-
-.right-name>.attestation-status>span {
-  margin-left: .04rem;
-  font-size: .13rem;
+.attestation-text {
+  cursor: pointer;
+  margin-left: .1rem;
+  font-size: .14rem;
   color: #1E2736;
 }
 
-.right-name>.name-country>img {
-  height: .25rem;
-  width: .4rem;
-  /* margin-top: .12rem; */
-  /* margin-left: .09rem; */
+.bule-text {
+  color: #0058FF;
+}
+
+.bule-text .el-icon-arrow-right {
+  margin-left: 0.08rem;
+}
+
+.attestation-status>img {
+  width: 0.26rem;
+  height: 0.26rem;
 }
 
 .box-main {
@@ -372,6 +378,7 @@ th {
   .el-col {
     width: 100%;
   }
+
 
   .box-item-b>.el-input,
   .el-select {

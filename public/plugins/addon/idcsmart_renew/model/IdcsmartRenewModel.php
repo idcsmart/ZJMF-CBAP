@@ -192,13 +192,23 @@ class IdcsmartRenewModel extends Model
                 'create_time' => time()
             ]);
 
+            # 到期时间描述,应该和实际的有差异
+            if ($host->status == 'Suspended'){
+                $upData['due_time'] = time()+$dueTime;
+            }else{
+                $upData['due_time'] = $host->due_time+$dueTime;
+            }
+
+            $ProductModel = new ProductModel();
+            $product = $ProductModel->find($host['product_id']);
+
             $orderItems[] = [
                 'host_id' => $id,
                 'product_id' => $host['product_id'],
                 'type' => 'renew',
                 'rel_id' => $renew->id,
                 'amount' => $amount,
-                'description' => lang_plugins('host_renew'),
+                'description' => lang_plugins('host_renew_description',['{product_name}'=>$product['name'],'{name}'=>$host['name'],'{billing_cycle_name}'=>$billingCycle,'{time}'=>date('Y/m/d H',$host->due_time) . '-' . date('Y/m/d H',$upData['due_time'])]),
             ];
 
             # 创建订单
@@ -428,7 +438,8 @@ class IdcsmartRenewModel extends Model
                 'new_billing_cycle_time' => $dueTime??0,
                 'new_billing_cycle_amount' => $amount,
                 'status' => 'Pending',
-                'create_time' => time()
+                'create_time' => time(),
+                'host_name' => $host['name'],
             ];
             $renewDatas[] = $renewData;
 
@@ -446,15 +457,29 @@ class IdcsmartRenewModel extends Model
         try{
             # 续费记录
             $renewIds = [];
+
+            $ProductModel = new ProductModel();
+
             foreach ($renewDatas as $renewData){
 
                 $this->deleteHostUnpaidUpgradeOrder($renewData['host_id']);
 
                 $productId = $renewData['product_id'];
 
-                unset($renewData['product_id']);
+                $hostName = $renewData['host_name'];
+
+                unset($renewData['product_id'],$renewData['host_name']);
 
                 $renew = $this->create($renewData);
+
+                # 到期时间描述,应该和实际的有差异
+                if ($host->status == 'Suspended'){
+                    $upData['due_time'] = time()+$dueTime;
+                }else{
+                    $upData['due_time'] = $host->due_time+$dueTime;
+                }
+
+                $product = $ProductModel->find($productId);
 
                 $orderItemData = [
                     'host_id' => $renewData['host_id'],
@@ -462,7 +487,7 @@ class IdcsmartRenewModel extends Model
                     'type' => 'renew',
                     'rel_id' => $renew->id,
                     'amount' => $renewData['new_billing_cycle_amount'],
-                    'description' => lang_plugins('host_renew'),
+                    'description' => lang_plugins('host_renew_description',['{product_name}'=>$product['name'],'{name}'=>$hostName,'{billing_cycle_name}'=>$billingCycle,'{time}'=>date('Y/m/d H',$host->due_time) . '-' . date('Y/m/d H',$upData['due_time'])]),
                 ];
                 $orderItems[] = $orderItemData;
 

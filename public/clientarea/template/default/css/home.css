@@ -386,6 +386,11 @@
   display: flex;
   margin-bottom: 0.3rem;
 }
+.WorkOrder-item:hover {
+  cursor: pointer;
+  background-color: #f5f7fa;
+  transition: background-color 0.25s ease;
+}
 .replay-div {
   margin-right: 0.1rem;
   font-weight: 500;
@@ -722,4 +727,23 @@
   background: #E7E7E7;
   border-radius: 3px;
   color: #1E2736;
+}
+@media screen and (max-width: 750px) {
+  .main-content {
+    display: block;
+  }
+  .order-box {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 0.2rem;
+  }
+  .order-box .order-item {
+    flex: 1;
+  }
+  .right-box {
+    width: auto;
+    margin-left: 0.8rem;
+    margin-right: 0.36rem;
+    margin-top: 0.2rem;
+  }
 }

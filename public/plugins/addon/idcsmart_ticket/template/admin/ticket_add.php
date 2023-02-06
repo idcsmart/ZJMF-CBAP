@@ -13,7 +13,7 @@
         <t-input class="title-input" v-model="detialform.title" :placeholder="lang.order_text7" clearable></t-input>
       </t-form-item>
       <t-form-item :label="lang.order_text8" name="client_id" class="form-item-left">
-        <t-select class="select-496" v-model="detialform.client_id" filterable :placeholder="lang.please_search_order_user" clearable :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false" :scroll="{ type: 'virtual',threshold:20 }" :popup-props="popupProps" @change="clientChange" class="user-select">
+        <t-select class="select-496" v-model="detialform.client_id" filterable :placeholder="lang.please_search_order_user" :loading="searchLoading" reserve-keyword :on-search="remoteMethod" clearable @clear="clearKey" :show-arrow="false" :scroll="{ type: 'virtual',threshold:20 }" :popup-props="popupProps" @change="clientChange" class="user-select">
           <t-option v-for="item in clientOptions" :value="item.id" :label="item.username" :key="item.id" class="com-custom">
             <div>
               <p>{{item.username}}</p>
@@ -25,7 +25,7 @@
         <!-- <t-select :placeholder="" clearable filterable @change="clientChange" v-model="detialform.client_id" :options="clientOptions" :keys="{ label: 'username', value: 'id'}"></t-select> -->
       </t-form-item>
       <t-form-item :label="lang.order_text10" name="host_ids">
-        <t-select class="select-496" @change="hostChange" :min-collapsed-num="2" clearable multiple :placeholder="lang.order_text11" clearable v-model="detialform.host_ids" :options="hostOptions" :keys="{ label: 'showName', value: 'id'}"></t-select>
+        <t-select class="select-496" :max="1" :scroll="{ type: 'virtual',threshold:20 }" :popup-props="popupProps" @change="hostChange" :min-collapsed-num="2" multiple :placeholder="lang.order_text11" clearable v-model="detialform.host_ids" :options="hostOptions" :keys="{ label: 'showName', value: 'id'}"></t-select>
       </t-form-item>
     </t-form>
     <div class="text-box">

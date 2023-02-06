@@ -73,8 +73,8 @@
                     <div class="goods-name">{{ item.name }}</div>
                     <div v-html="item.description" class="goods-description"></div>
                     <div class="btn-box">
-                      <span class="item-price">{{commonData.currency_prefix}} {{item.price}}</span>
-                      <el-button type="primary" :key="item.id + 'aaa'"  @click="goOrder(item)">{{lang.buy}}</el-button>
+                      <span class="item-price">{{commonData.currency_prefix}} {{item.price}}{{item.cycle ? '/' + item.cycle : ''}}</span>
+                      <el-button type="primary" :key="item.id + 'aaa'" @click="goOrder(item)">{{lang.buy}}</el-button>
                     </div>
                   </div>
                 </div>

@@ -120,6 +120,9 @@
           if (this.activeName == 3) {
             location.href = "security_log.html";
           }
+          if (this.activeName == 4) {
+            location.href = "security_group.html";
+          }
         },
         showCreateSsh() {
           this.isShowCj = true;

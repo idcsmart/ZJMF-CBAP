@@ -67,6 +67,12 @@
                     this.isUpNow = true
                     this.doUpgrage()
                 },
+                goDivBootm() {
+                    const detailDom = document.querySelector('.down-text')
+                    if (detailDom) {
+                        detailDom.scrollTop = detailDom.scrollHeight
+                    }
+                },
 
                 // 执行升级
                 doUpgrage() {
@@ -118,6 +124,7 @@
                                 this.updateData = res.data
                                 console.log(this.updateData.msg);
                                 console.log(this.updateData.progress);
+                                this.goDivBootm()
                                 if (this.updateData.progress == '70%') {
                                     console.log("70.00% active3");
                                     // 开始数据库更新

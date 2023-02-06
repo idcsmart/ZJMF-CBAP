@@ -13,6 +13,7 @@ class ProductGroupValidate extends Validate
         'name' 		                => 'require|min:1|max:100',
         'pre_product_group_id' 		=> 'require|integer',
         'pre_first_product_group_id'=> 'require|integer',
+        'hidden'                    => 'in:0,1',
     ];
 
     protected $message  =   [
@@ -25,13 +26,15 @@ class ProductGroupValidate extends Validate
         'pre_product_group_id.integer'=> 'pre_product_group_id_integer',
         'pre_first_product_group_id.require'=> 'pre_first_product_group_id_require',
         'pre_first_product_group_id.integer'=> 'pre_first_product_group_id_integer',
+        'hidden.in'                 => 'param_error',
     ];
 
     protected $scene = [
-        'create' => ['id','name'],
-        'edit' => ['id','name'],
+        'create' => ['id','name','hidden'],
+        'edit' => ['id','name','hidden'],
         'order'=> ['pre_product_group_id','pre_first_product_group_id'],
         'order_first'=> ['pre_first_product_group_id'],
+        'hidden' => ['id','hidden'],
     ];
 
 }

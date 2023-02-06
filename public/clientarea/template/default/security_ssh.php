@@ -68,7 +68,8 @@
                             {/if}
                             {/foreach}
                             <el-tab-pane :label="lang.security_tab2" name="3" v-if="isShowAPILog"></el-tab-pane>
-                        </el-tabs>
+                            <el-tab-pane :label="lang.security_group" name="4"></el-tab-pane>
+                          </el-tabs>
 
                         <!-- 删除弹窗 -->
                         <div class="delete-dialog">

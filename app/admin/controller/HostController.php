@@ -183,6 +183,30 @@ class HostController extends AdminBaseController
 	}
 
     /**
+     * 时间 2022-05-13
+     * @title 批量删除产品
+     * @desc 批量删除产品
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/host
+     * @method  DELETE
+     * @param array id - 产品ID required
+     */
+    public function batchDelete()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $HostModel = new HostModel();
+        
+        // 批量删除产品
+        $result = $HostModel->batchDeleteHost($param);
+
+        return json($result);
+    }
+
+    /**
      * 时间 2022-05-30
      * @title 模块开通 
      * @desc 模块开通
@@ -372,5 +396,31 @@ class HostController extends AdminBaseController
         ];
         return json($result);
     }
+
+    /**
+     * 时间 2023-01-31
+     * @title 模块按钮输出
+     * @desc 模块按钮输出
+     * @url /admin/v1/host/:id/module/button
+     * @method  GET
+     * @author hh
+     * @version v1
+     * @param   int id - 产品ID require
+     * @return  string button[].type - 按钮类型(暂时都是default)
+     * @return  string button[].func - 按钮功能(create=开通,suspend=暂停,unsuspend=解除暂停,terminate=删除,renew=续费)
+     * @return  string button[].name - 名称
+     */
+    public function moduleButton()
+    {
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $HostModel = new HostModel();
+
+        $result = $HostModel->moduleAdminButton($param);
+        return json($result);
+    }
+
+
 
 }

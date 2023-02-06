@@ -10,6 +10,7 @@ function getFileList(params) {
 function downloadFile(params) {
   return Axios.get(`/file/${params.id}/download`, {
     responseType: "blob",
-    timeout: 1000 * 60 * 30
+    timeout: 1000 * 60 * 30,
+    params: params
   })
 }

@@ -84,6 +84,7 @@ class ProductController extends HomeBaseController
      * @return string list[].name - 商品名
      * @return string list[].description - 描述
      * @return string list[].price - 商品最低价格
+     * @return string list[].cycle - 商品最低周期
      * @return int count - 商品总数
      */
     public function list()

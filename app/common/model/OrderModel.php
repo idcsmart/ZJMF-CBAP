@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 
+use think\db\Query;
 use think\db\Where;
 use think\Model;
 use app\admin\model\PluginModel;
@@ -33,6 +34,7 @@ class OrderModel extends Model
         'due_time'          => 'int',
         'create_time'       => 'int',
         'update_time'       => 'int',
+        'refund_amount'     => 'float',
     ];
 
 	/**
@@ -54,7 +56,7 @@ class OrderModel extends Model
      * @return string list[].type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return int list[].create_time - 创建时间 
      * @return string list[].amount - 金额 
-     * @return string list[].status - 状态Unpaid未付款Paid已付款Cancelled已取消 
+     * @return string list[].status - 状态Unpaid未付款Paid已付款Cancelled已取消Refunded已退款 
      * @return string list[].gateway - 支付方式 
      * @return float list[].credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
      * @return int list[].client_id - 用户ID,前台接口调用时不返回
@@ -94,6 +96,7 @@ class OrderModel extends Model
             ->leftjoin('client c', 'c.id=o.client_id')
             ->where(function ($query) use($param, $app) {
                 $query->where('o.type', '<>', 'recharge');
+                $query->where('o.type', '<>', 'combine');
                 if($app=='home'){
                     $query->where('o.status', '<>', 'Cancelled');
                 }
@@ -116,6 +119,7 @@ class OrderModel extends Model
             ->leftjoin('client c', 'c.id=o.client_id')
             ->where(function ($query) use($param, $app) {
                 $query->where('o.type', '<>', 'recharge');
+                $query->where('o.type', '<>', 'combine');
                 if($app=='home'){
                     $query->where('o.status', '<>', 'Cancelled');
                 }
@@ -153,6 +157,23 @@ class OrderModel extends Model
         $descriptions = [];
         $hostIds = [];
         foreach ($orderItems as $key => $orderItem) {
+
+            // wyh 20230130 有问题就注释
+            $description = explode("\n",$orderItem['description']);
+            if (!empty($description)){
+                $newDes = '';
+                foreach ($description as $item1){
+                    if (count(explode('=>',$item1))==4){
+                        $arr = explode('=>',$item1);
+                        $itemDes = $arr[0] . ':' . $arr[1] . $arr[2] . $arr[3];
+                        $newDes = $newDes.$itemDes . "\n";
+                    }else{
+                        $newDes = $newDes . $item1 . "\n";
+                    }
+                }
+                $orderItem['description'] = trim($newDes,"\n");
+            }
+
             $orderItemCount[$orderItem['order_id']] = $orderItemCount[$orderItem['order_id']] ?? 0;
             $orderItemCount[$orderItem['order_id']]++;
             // 获取产品ID
@@ -162,7 +183,7 @@ class OrderModel extends Model
             // 获取产品名称
             $names[$orderItem['order_id']][] = $orderItem['name'];
             // 获取产品计费周期
-            $billingCycles[$orderItem['order_id']][] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : '';
+            $billingCycles[$orderItem['order_id']][] = $orderItem['billing_cycle_name'];
             // 获取商品名称
             if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code', 'addon_idcsmart_client_level'])){
                 $productNames[$orderItem['order_id']][] = $orderItem['description'];
@@ -201,12 +222,12 @@ class OrderModel extends Model
         	
 
             // 获取计费周期,计费周期不一致是返回空字符串
-            $billingCycle = isset($billingCycles[$order['id']]) ? array_values(array_unique($billingCycles[$order['id']])) : [];
+            /*$billingCycle = isset($billingCycles[$order['id']]) ? array_values(array_unique($billingCycles[$order['id']])) : [];
             if(!empty($billingCycle) && count($billingCycle)==1){
                 $orders[$key]['billing_cycle'] = $billingCycle[0] ?? '';
             }else{
                 $orders[$key]['billing_cycle'] = '';
-            }
+            }*/
 
             // 获取商品名称
             $orders[$key]['product_names'] = $productNames[$order['id']] ?? [];
@@ -240,9 +261,15 @@ class OrderModel extends Model
      * @return string type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return string amount - 金额 
      * @return int create_time - 创建时间 
-     * @return string status - 状态Unpaid未付款Paid已付款
+     * @return string status - 状态Unpaid未付款Paid已付款Cancelled已取消Refunded已退款
      * @return string gateway - 支付方式 
-     * @return float credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
+     * @return string credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
+     * @return int client_id - 用户ID
+     * @return string client_name - 用户名称
+     * @return string notes - 备注
+     * @return string refund_amount - 订单已退款金额
+     * @return string refundable_amount - 订单可退款金额
+     * @return string apply_credit_amount - 订单可应用余额金额 
      * @return array items - 订单子项 
      * @return int items[].id - 订单子项ID 
      * @return string items[].description - 描述
@@ -259,10 +286,13 @@ class OrderModel extends Model
         // 获取当前应用
         $app = app('http')->getName();
 
-        $order = $this->field('id,type,amount,create_time,status,gateway_name gateway,credit,client_id')->find($id);
+        $order = $this->field('id,type,amount,create_time,status,gateway_name gateway,credit,client_id,notes,refund_amount,amount_unpaid')->find($id);
         if (empty($order)){
             return (object)[]; // 转换为对象
         }
+
+        $client = ClientModel::find($order['client_id']);
+        $order['client_name'] = $client['username'] ?? '';
 
         // 订单的用户ID和前台用户不一致时返回空对象
         if($app=='home'){
@@ -270,10 +300,17 @@ class OrderModel extends Model
             if($order['client_id']!=$client_id || $order['status']=='Cancelled'){
                 return (object)[]; // 转换为对象
             }
+        }else{
+            $amount = TransactionModel::where('order_id', $id)->sum('amount'); // 订单流水金额
+            $refundAmount = RefundRecordModel::where('order_id', $id)->where('type', 'credit')->sum('amount'); // 订单已退款金额
+            $order['refund_amount'] = amount_format($order['refund_amount']);
+            $order['refundable_amount'] = amount_format($amount-$refundAmount); // 订单可退款金额
+            $order['apply_credit_amount'] = $order['amount']-$order['credit']-$order['refundable_amount']; // 订单可应用余额金额
         }
 
         $order['amount'] = amount_format($order['amount']); // 处理金额格式
-        unset($order['client_id']);
+        $order['credit'] = amount_format($order['credit']); // 处理金额格式
+        //unset($order['client_id']);
 
         $orderItems = OrderItemModel::alias('oi')
             ->field('oi.id,oi.type,oi.description,oi.amount,h.id host_id,p.name product_name,h.name host_name,h.billing_cycle,h.billing_cycle_name,h.status host_status')
@@ -288,13 +325,29 @@ class OrderModel extends Model
             $orderItems[$key]['product_name'] = $orderItem['product_name'] ?? ''; // 处理空数据
             $orderItems[$key]['product_name'] = !empty($orderItems[$key]['product_name']) ? $orderItems[$key]['product_name'] : $orderItem['description'];
             $orderItems[$key]['host_name'] = $orderItem['host_name'] ?? ''; // 处理空数据
-            $orderItems[$key]['billing_cycle'] = $orderItem['billing_cycle']!='onetime' ? $orderItem['billing_cycle_name'] : ''; // 处理空数据
+            $orderItems[$key]['billing_cycle'] = $orderItem['billing_cycle_name']; // 处理空数据
             $orderItems[$key]['host_status'] = $orderItem['host_status'] ?? ''; // 处理空数据
 
             if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code', 'addon_idcsmart_client_level'])){
                 $orderItems[$key]['product_name'] = $orderItem['description'];
                 $orderItems[$key]['host_name'] = '';
             }
+
+            $description = explode("\n",$orderItem['description']);
+            if (!empty($description)){
+                $newDes = '';
+                foreach ($description as $item1){
+                    if (count(explode('=>',$item1))==4){
+                        $arr = explode('=>',$item1);
+                        $itemDes = $arr[0] . ':' . $arr[1] . $arr[2] . $arr[3];
+                        $newDes = $newDes.$itemDes . "\n";
+                    }else{
+                        $newDes = $newDes . $item1 . "\n";
+                    }
+                }
+                $orderItems[$key]['description'] = trim($newDes,"\n");
+            }
+
             if($app!='home'){
                 $orderItems[$key]['edit'] = $order['status']=='Unpaid' ? ($orderItem['type']=='manual' ? 1 : 0) : 0;
             }
@@ -370,7 +423,7 @@ class OrderModel extends Model
             } catch (\Exception $e) {
                 // 回滚事务
                 $this->rollback();
-                return ['status' => 400, 'msg' => lang('create_fail')];
+                return ['status' => 400, 'msg' => $e->getMessage()];
             }
             $result = ['status' => 200, 'msg' => lang('create_success'), 'data' => ['id' => $id]];
         }
@@ -413,6 +466,9 @@ class OrderModel extends Model
         }
         $this->startTrans();
         try {
+            $gateway = gateway_list();
+            $gateway = $gateway['list'][0]??[];
+
             // 创建订单
             $clientId = $param['client_id'];
             $time = time();
@@ -423,8 +479,8 @@ class OrderModel extends Model
                 'amount' => $amount,
                 'credit' => 0,
                 'amount_unpaid' => $amount,
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'pay_time' => $amount>0 ? 0 : $time ,
                 'create_time' => $time
             ]);
@@ -713,6 +769,10 @@ class OrderModel extends Model
             $amount = bcsub($pay, $refund, 2);
             
             $param['upgrade_refund'] = $param['upgrade_refund'] ?? 1; // 是否退款,默认退款
+
+            $gateway = gateway_list();
+            $gateway = $gateway['list'][0]??[];
+
             // 创建订单
             $order = $this->create([
                 'client_id' => $host['client_id'],
@@ -722,8 +782,8 @@ class OrderModel extends Model
                 'credit' => 0,
                 'amount_unpaid' => $amount>0 ? $amount : 0,
                 'upgrade_refund' => $param['upgrade_refund'],
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'pay_time' => $amount>0 ? 0 : $time,
                 'create_time' => $time
             ]);
@@ -754,8 +814,8 @@ class OrderModel extends Model
                 'rel_id' => $upgrade->id,
                 'description' => $result['data']['description'],
                 'amount' => $amount,
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'notes' => '',
                 'create_time' => $time,
             ]);
@@ -801,7 +861,7 @@ class OrderModel extends Model
                         'host_id' => $host['id']
                     ]);
                     if(!$result){
-                        throw new Exception(lang('fail_message'));           
+                        throw new \Exception(lang('fail_message'));           
                     }
                 }else if($amount<0 && $param['upgrade_refund']!=1){
                     OrderItemModel::create([
@@ -863,6 +923,10 @@ class OrderModel extends Model
             $amount = $param['amount'];
             
             $param['upgrade_refund'] = $param['upgrade_refund'] ?? 1; // 是否退款,默认退款
+
+            $gateway = gateway_list();
+            $gateway = $gateway['list'][0]??[];
+
             // 创建订单
             $order = $this->create([
                 'client_id' => $host['client_id'],
@@ -872,8 +936,8 @@ class OrderModel extends Model
                 'credit' => 0,
                 'amount_unpaid' => $amount>0 ? $amount : 0,
                 'upgrade_refund' => $param['upgrade_refund'],
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'pay_time' => $amount>0 ? 0 : $time,
                 'create_time' => $time
             ]);
@@ -904,8 +968,8 @@ class OrderModel extends Model
                 'rel_id' => $upgrade->id,
                 'description' => $param['description'] ?? '',
                 'amount' => $amount,
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'notes' => '',
                 'create_time' => $time,
             ]);
@@ -938,7 +1002,7 @@ class OrderModel extends Model
                         'host_id' => $host['id']
                     ]);
                     if(!$result){
-                        throw new Exception(lang('fail_message'));           
+                        throw new \Exception(lang('fail_message'));           
                     }
                 }else if($amount<0 && $param['upgrade_refund']!=1){
                     OrderItemModel::create([
@@ -1011,6 +1075,14 @@ class OrderModel extends Model
 
         // 获取支付接口名称
         $gateway = PluginModel::where('module', 'gateway')->where('name', $param['gateway'])->find();
+        if(!empty($gateway)){
+            $gateway['config'] = json_decode($gateway['config'],true);
+            $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
+        }else{
+            $gateway = gateway_list();
+            $gateway = $gateway['list'][0]??[];
+        }
+
 
         // 新建订单
         $order = $this->create([
@@ -1072,7 +1144,8 @@ class OrderModel extends Model
             return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
         }
 
-        if($order['status']=='Paid' && $order['type']!='artificial'){
+        //if(in_array($order['status'], ['Paid', 'Refunded']) && $order['type']!='artificial'){
+        if(in_array($order['status'], ['Paid', 'Refunded'])){
             return ['status'=>400, 'msg'=>lang('order_already_paid_cannot_adjustment_amount')];
         }
 
@@ -1169,7 +1242,7 @@ class OrderModel extends Model
             return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
         }
 
-        if ($order['status']=='Paid'){
+        if (in_array($order['status'], ['Paid', 'Refunded'])){
             return ['status'=>400, 'msg'=>lang('order_already_paid_cannot_adjustment_amount')];
         }
 
@@ -1225,13 +1298,90 @@ class OrderModel extends Model
     }
 
     /**
+     * 时间 2023-01-30
+     * @title 删除人工调整的订单子项
+     * @desc 删除人工调整的订单子项
+     * @author theworld
+     * @version v1
+     * @param int id - 订单子项ID required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function deleteOrderItem($id)
+    {
+        // 验证订单ID
+        $orderItem = OrderItemModel::find($id);
+        if (empty($orderItem)){
+            return ['status'=>400, 'msg'=>lang('order_item_is_not_exist')];
+        }
+
+        if ($orderItem['type']!='manual'){
+            return ['status'=>400, 'msg'=>lang('order_item_cannot_delete')];
+        }
+
+        // 验证订单ID
+        $order = $this->find($orderItem['order_id']);
+        if (empty($order)){
+            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+        }
+
+        if (in_array($order['status'], ['Paid', 'Refunded'])){
+            return ['status'=>400, 'msg'=>lang('order_already_paid_cannot_adjustment_amount')];
+        }
+
+        // 调整后的订单金额不能小于0
+        $order['amount_unpaid'] = $order['amount_unpaid'] - $orderItem['amount'];
+        if($order['amount_unpaid']<0){
+            return ['status'=>400, 'msg'=>lang('order_amount_adjustment_failed')];
+        }
+
+        $this->startTrans();
+        try {
+            OrderItemModel::destroy($id);
+            // 修改订单金额
+            $this->update(['amount' => $order['amount_unpaid'] + $order['credit'], 'amount_unpaid' => $order['amount_unpaid'], 'update_time' => time()], ['id' => $order['id']]);
+
+            $client = ClientModel::find($order->client_id);
+            if(empty($client)){
+                $clientName = '#'.$order->client_id;
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('admin_adjust_user_order_price', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{old}'=>$order->amount, '{new}'=>($order['amount_unpaid'] + $order['credit'])]), 'order', $order->id);
+            add_task([
+                'type' => 'email',
+                'description' => '后台管理员调整订单价格,发送邮件',
+                'task_data' => [
+                    'name'=>'admin_order_amount',//发送动作名称
+                    'order_id'=>$id,//订单ID
+                ],      
+            ]);
+            add_task([
+                'type' => 'sms',
+                'description' => '后台管理员调整订单价格,发送短信',
+                'task_data' => [
+                    'name'=>'admin_order_amount',//发送动作名称
+                    'order_id'=>$id,//订单ID
+                ],      
+            ]);
+            
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('delete_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('delete_success')];
+    }
+
+    /**
      * 时间 2022-05-17
      * @title 标记支付
      * @desc 标记支付
      * @author theworld
      * @version v1
      * @param int param.id - 订单ID required
-     * @param int param.use_credit - 是否使用余额0否1是 required
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
@@ -1246,11 +1396,11 @@ class OrderModel extends Model
             }
 
             // 已付款的订单不能标记支付
-            if($order['status']=='Paid'){
+            if(in_array($order['status'], ['Paid', 'Refunded'])){
                 throw new \Exception(lang('order_already_paid'));
             }
 
-            if(isset($param['use_credit']) && $param['use_credit']==1){
+            /*if(isset($param['use_credit']) && $param['use_credit']==1){
                 $client = ClientModel::find($order['client_id']);
 
                 if($client['credit']>0){
@@ -1278,7 +1428,7 @@ class OrderModel extends Model
                         $order['credit'] = $order['credit']+$client['credit'];
                     }
                 }
-            }
+            }*/
             if($order['amount_unpaid']>0){
                 // 创建交易流水
                 TransactionModel::create([
@@ -1290,6 +1440,19 @@ class OrderModel extends Model
                     'client_id' => $order['client_id'],
                     'create_time' => time()
                 ]);
+            }
+            if($order['credit']>0){
+                $res = update_credit([
+                    'type' => 'Applied',
+                    'amount' => -$order['credit'],
+                    'notes' => "应用余额至订单#{$param['id']}",
+                    'client_id' => $order->client_id,
+                    'order_id' => $param['id'],
+                    'host_id' => 0,
+                ]);
+                if(!$res){
+                    throw new \Exception(lang('insufficient_credit_deduction_failed'));
+                }
             }
 
             $this->update(['status' => 'Paid', 'credit' => $order['credit'], 'amount_unpaid'=>0, 'pay_time' => time(), 'update_time' => time()], ['id' => $param['id']]);
@@ -1448,6 +1611,418 @@ class OrderModel extends Model
         hook('after_order_cancel',['id'=>$id]);
 
         return ['status' => 200, 'msg' => lang('delete_success')];
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单退款
+     * @desc 订单退款
+     * @author theworld
+     * @version v1
+     * @param int id - 订单ID required
+     * @param string type - 退款类型credit退款到余额transaction退款到流水 required
+     * @param float amount - 退款金额 required
+     * @param string gateway - 支付方式 退款到流水时需传
+     * @param string transaction_number - 流水号 退款到流水时需传
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function orderRefund($param)
+    {
+        $id = $param['id']??0;
+        $adminId = get_admin_id();
+        $param['type'] = $param['type'] ?? '';
+        if(!in_array($param['type'], ['credit', 'transaction'])){
+            return ['status' => 400, 'msg' => lang('param_error')];
+        }
+
+        if($param['type']=='transaction'){
+            $param['gateway'] = $param['gateway'] ?? '';
+            $param['transaction_number'] = $param['transaction_number'] ?? '';
+
+            if(empty($param['gateway'])){
+                // 获取支付接口名称
+                $gateway = PluginModel::where('module', 'gateway')->find();
+                if(empty($gateway)){
+                    return ['status' => 400, 'msg' => lang('gateway_is_not_exist')];
+                }
+                $gateway['config'] = json_decode($gateway['config'],true);
+                $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
+                $param['gateway'] = $gateway['name'] ?? '';
+            }else{
+                // 获取支付接口名称
+                $gateway = PluginModel::where('module', 'gateway')->where('name', $param['gateway'])->find();
+                if(empty($gateway)){
+                    return ['status' => 400, 'msg' => lang('gateway_is_not_exist')];
+                }
+                $gateway['config'] = json_decode($gateway['config'],true);
+                $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
+            }
+        }
+
+        $this->startTrans();
+        try {
+            // 验证订单ID
+            $order = $this->lock(true)->find($id);
+            if (empty($order)){
+                throw new \Exception(lang('order_is_not_exist'));
+            }
+
+            if(!in_array($order['status'], ['Paid', 'Refunded'])){
+                throw new \Exception(lang('order_not_support_refund'));
+            }
+
+            $amount = TransactionModel::where('order_id', $id)->sum('amount');
+            $refundAmount = RefundRecordModel::where('order_id', $id)->where('type', 'credit')->sum('amount');
+
+            $amount = $amount-$refundAmount;
+            if($param['amount']>$amount){
+                throw new \Exception(lang('refund_amount_not_enough'));
+            }
+
+            if($param['type']=='transaction'){
+                $transaction = TransactionModel::create([
+                    'order_id' => $id,
+                    'client_id' => $order['client_id'],
+                    'amount' => -$param['amount'],
+                    'gateway' => $param['gateway'],
+                    'gateway_name' => $gateway['title'] ?? '',
+                    'transaction_number' => $param['transaction_number'],
+                    'create_time' => time()
+                ]);
+            }else{
+                update_credit([
+                    'type' => 'Refund',
+                    'amount' => $param['amount'],
+                    'notes' => "订单#{$id}退款",
+                    'client_id' => $order['client_id'],
+                    'order_id' => $id,
+                    'host_id' => 0
+                ]);
+            }
+
+            RefundRecordModel::create([
+                'order_id'              => $id,
+                'client_id'             => $order['client_id'],
+                'admin_id'              => $adminId,
+                'type'                  => $param['type'],
+                'transaction_id'        => $param['type']=='transaction' ? $transaction->id : 0,
+                'amount'                => $param['amount'],
+                'create_time'           => time(),
+            ]);
+
+            $refundAmount = RefundRecordModel::where('order_id', $id)->sum('amount');
+
+            $this->update([
+                'refund_amount' => $refundAmount,
+                'status' => 'Refunded',
+                'update_time' => time(),
+            ], ['id' => $id]);
+
+            $client = ClientModel::find($order['client_id']);
+            if(empty($client)){
+                $clientName = '#'.$order['client_id'];
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            if($param['type']=='transaction'){
+                active_log(lang('admin_refund_user_order_transaction', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{amount}'=>$param['amount'], '{transaction}'=>$param['transaction_number']]), 'order', $order->id);
+            }else{
+                active_log(lang('admin_refund_user_order_credit', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{amount}'=>$param['amount']]), 'order', $order->id);
+            }
+            
+
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => $e->getMessage()];
+        }
+
+        //hook('after_order_refund',['id'=>$id]);
+
+        return ['status' => 200, 'msg' => lang('success_message')];
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单应用余额
+     * @desc 订单应用余额
+     * @author theworld
+     * @version v1
+     * @param int id - 订单ID required
+     * @param float amount - 金额 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function orderApplyCredit($param)
+    {
+        $id = $param['id']??0;
+        $adminId = get_admin_id();
+
+        $this->startTrans();
+        try {
+            // 验证订单ID
+            $order = $this->lock(true)->find($id);
+            if (empty($order)){
+                throw new \Exception(lang('order_is_not_exist'));
+            }
+
+            $amount = TransactionModel::where('order_id', $id)->sum('amount');
+            $refundAmount = RefundRecordModel::where('order_id', $id)->where('type', 'credit')->sum('amount');
+            $amount = $amount-$refundAmount;
+            if($amount<0){
+                throw new \Exception(lang('order_not_support_apply_credit'));
+            }
+
+            $amount = $order['amount']-$order['credit']-$amount;
+            if($param['amount']>$amount){
+                throw new \Exception(lang('apply_credit_not_enough'));
+            }
+
+
+            $apply = false; // 应用余额
+
+            if(in_array($order['status'], ['Paid', 'Refunded'])){
+                $this->update([
+                    'credit' => $order['credit']+$param['amount'],
+                ], ['id' => $id]);
+                $apply = true;
+            }else if($order['status']=='Unpaid'){
+                $this->update([
+                    'credit' => $order['credit']+$param['amount'],
+                    'status' => $param['amount']==$amount ? 'Paid' : $order['status'],
+                    'amount_unpaid' => $order['amount']-$order['credit']-$param['amount'],
+                ], ['id' => $id]);
+                if($param['amount']==$amount){
+                    $res = update_credit([
+                        'type' => 'Applied',
+                        'amount' => -($order['credit']+$param['amount']),
+                        'notes' => "订单#{$id}使用余额",
+                        'client_id' => $order['client_id'],
+                        'order_id' => $id,
+                        'host_id' => 0,
+                    ]);
+
+                    if(!$res){
+                        throw new \Exception(lang('insufficient_credit_deduction_failed'));
+                    }
+                    $this->processPaidOrder($param['id']);
+                }
+            }else{
+                $this->update([
+                    'credit' => $order['credit']+$param['amount'],
+                    'amount_unpaid' => $order['amount']-$order['credit']-$param['amount'],
+                ], ['id' => $id]);
+            }
+
+            if($apply){
+                $res = update_credit([
+                    'type' => 'Applied',
+                    'amount' => -$param['amount'],
+                    'notes' => "订单#{$id}使用余额",
+                    'client_id' => $order['client_id'],
+                    'order_id' => $id,
+                    'host_id' => 0,
+                ]);
+
+                if(!$res){
+                    throw new \Exception(lang('insufficient_credit_deduction_failed'));
+                }
+            }
+
+            $client = ClientModel::find($order['client_id']);
+            if(empty($client)){
+                $clientName = '#'.$order['client_id'];
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('admin_apply_credit_to_user_order', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{amount}'=>$param['amount']]), 'order', $order->id);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => $e->getMessage()];
+        }
+
+        return ['status' => 200, 'msg' => lang('success_message')];
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单扣除余额
+     * @desc 订单扣除余额
+     * @author theworld
+     * @version v1
+     * @param int id - 订单ID required
+     * @param float amount - 金额 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function orderRemoveCredit($param)
+    {
+        $id = $param['id']??0;
+        $adminId = get_admin_id();
+
+        $this->startTrans();
+        try {
+            // 验证订单ID
+            $order = $this->lock(true)->find($id);
+            if (empty($order)){
+                throw new \Exception(lang('order_is_not_exist'));
+            }
+
+            if($param['amount']>$order['credit']){
+                throw new \Exception(lang('remove_credit_not_enough'));
+            }
+
+            
+
+            if(in_array($order['status'], ['Paid', 'Refunded'])){
+                $this->update([
+                    'credit' => $order['credit']-$param['amount'],
+                    'status' => 'Refunded',
+                ], ['id' => $id]);
+                update_credit([
+                    'type' => 'Refund',
+                    'amount' => $param['amount'],
+                    'notes' => "订单#{$id}移除余额",
+                    'client_id' => $order['client_id'],
+                    'order_id' => $id,
+                    'host_id' => 0,
+                ]);
+            }else{
+                $this->update([
+                    'credit' => $order['credit']-$param['amount'],
+                    'amount_unpaid' => $order['amount']-$order['credit']+$param['amount'],
+                ], ['id' => $id]);
+            }
+
+            $client = ClientModel::find($order['client_id']);
+            if(empty($client)){
+                $clientName = '#'.$order['client_id'];
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('admin_remove_credit_from_user_order', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{amount}'=>$param['amount']]), 'order', $order->id);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => $e->getMessage()];
+        }
+
+        return ['status' => 200, 'msg' => lang('success_message')];
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 修改订单支付方式
+     * @desc 修改订单支付方式
+     * @author theworld
+     * @version v1
+     * @param int param.id - 订单ID required
+     * @param string param.gateway - 支付方式 required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function updateGateway($param)
+    {
+        // 验证订单ID
+        $order = $this->find($param['id']);
+        if (empty($order)){
+            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+        }
+
+        $param['gateway'] = $param['gateway'] ?? '';
+
+        // 获取支付接口名称
+        $gateway = PluginModel::where('module', 'gateway')->where('name', $param['gateway'])->find();
+        if(empty($gateway)){
+            return ['status' => 400, 'msg' => lang('gateway_is_not_exist')];
+        }
+        $gateway['config'] = json_decode($gateway['config'],true);
+        $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
+
+        $this->startTrans();
+        try {
+            // 修改订单支付方式
+            $this->update([
+                'gateway' => $param['gateway'], 
+                'gateway_name' => $gateway['title'], 
+                'update_time' => time()
+            ], ['id' => $param['id']]);
+
+            $client = ClientModel::find($order->client_id);
+            if(empty($client)){
+                $clientName = '#'.$order->client_id;
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('admin_adjust_user_order_gateway', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{old}'=>$order['gateway_name'], '{new}'=>$gateway['title']]), 'order', $order->id);
+            
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 修改订单备注
+     * @desc 修改订单备注
+     * @author theworld
+     * @version v1
+     * @param int param.id - 订单ID required
+     * @param string param.notes - 备注
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function updateNotes($param)
+    {
+        // 验证订单ID
+        $order = $this->find($param['id']);
+        if (empty($order)){
+            return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+        }
+
+        $param['notes'] = $param['notes'] ?? '';
+
+        $this->startTrans();
+        try {
+            // 修改订单备注
+            $this->update([
+                'notes' => $param['notes'], 
+                'update_time' => time()
+            ], ['id' => $param['id']]);
+
+            $client = ClientModel::find($order->client_id);
+            if(empty($client)){
+                $clientName = '#'.$order->client_id;
+            }else{
+                $clientName = 'client#'.$client->id.'#'.$client->username.'#';
+            }
+            # 记录日志
+            active_log(lang('admin_adjust_user_order_notes', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{order}'=>'#'.$order->id, '{old}'=>$order['notes'], '{new}'=>$param['notes']]), 'order', $order->id);
+            
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+
+        return ['status' => 200, 'msg' => lang('update_success')];
     }
 
     # 处理已支付订单

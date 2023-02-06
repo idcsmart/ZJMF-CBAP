@@ -30,6 +30,7 @@ class ClientCreditController extends AdminBaseController
      * @param int end_time - 结束时间，时间戳(s)
      * @param string type - 类型:人工Artificial,充值Recharge,应用至订单Applied,超付Overpayment,少付Underpayment,退款Refund 
      * @param int id - 用户ID required
+     * @param int order_id - 订单ID
      * @param int page - 页数
      * @param int limit - 每页条数
      * @return array list - 记录

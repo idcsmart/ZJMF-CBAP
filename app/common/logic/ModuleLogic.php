@@ -810,7 +810,40 @@ class ModuleLogic
 		return $res;
 	}
 
+	/**
+	 * 时间 2023-01-30
+	 * @title 获取商品最低周期价格
+	 * @desc 获取商品最低周期价格
+	 * @author hh
+	 * @version v1
+	 * @param   int productId - 商品ID
+	 * @return  float price - 价格
+	 * @return  string cycle - 周期
+	 * @return  ProductModel product - ProductModel实例
+	 */
+	public function getPriceCycle($productId)
+	{
+		$res = [
+			'price' => null,
+			'cycle' => null
+		];
+		$ProductModel = ProductModel::findOrEmpty($productId);
 
+		$module = $ProductModel->getModule();
+		if($ImportModule = $this->importModule($module)){
+			if(method_exists($ImportModule, 'getPriceCycle')){
+				$moduleRes = call_user_func([$ImportModule, 'getPriceCycle'], ['product'=>$ProductModel]);
+				if(isset($moduleRes['price']) && is_numeric($moduleRes['price'])){
+					$res['price'] = $moduleRes['price'];
+				}
+				if(isset($moduleRes['cycle'])){
+					$res['cycle'] = $moduleRes['cycle'];
+				}
+			}
+		}
+		$res['product'] = $ProductModel;
+		return $res;
+	}
 
 
 

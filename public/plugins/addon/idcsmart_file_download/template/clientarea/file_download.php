@@ -49,7 +49,7 @@
                   </div>
                 </div>
                 <!-- table -->
-                <el-table :data="tableData" style="width: 100%" v-loading="loading" :element-loading-text="isDownLoading ? '文件下载中' : ''">
+                <el-table :data="tableData" style="width: 100%" v-loading="loading">
                   <el-table-column prop="name" :label="lang.file_name" :show-overflow-tooltip="true">
                   </el-table-column>
                   <el-table-column prop="create_time" :label="lang.file_time" width="200">
@@ -75,15 +75,14 @@
               </div>
             </div>
             <!-- 移动端 -->
-            <div class="box mobile">
+            <!-- <div class="box mobile">
               <div class="com-r-box">移动端</div>
               <div class="com-l-box">
                 在这里写 {{commonData.currency_suffix}}
                 <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange">
                 </pagination>
               </div>
-
-            </div>
+            </div> -->
           </div>
         </el-main>
       </el-container>

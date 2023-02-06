@@ -93,7 +93,11 @@
                   <!-- <el-button v-if="!isEmailOrPhone" class="code-btn" type="primary">获取验证码</el-button> -->
                 </div>
                 <div class="form-item rember-item">
-                  <el-checkbox v-model="formData.isRemember">{{lang.login_remember}}</el-checkbox>
+                  <!-- 1-31 取消原有的记住密码 -->
+                  <el-checkbox v-model="checked">
+                    {{lang.login_read}}<a @click="goHelpUrl('2')">{{lang.read_service}}</a>{{lang.read_and}}<a @click="goHelpUrl('1')">{{lang.read_privacy}}</a>
+                  </el-checkbox>
+                  <!-- <el-checkbox v-model="formData.isRemember">{{lang.login_remember}}</el-checkbox> -->
                   <a @click="toForget">{{lang.login_forget}}</a>
                 </div>
                 <div class="read-item" v-if="errorText.length !== 0">
@@ -103,11 +107,12 @@
                 <div class="form-item">
                   <el-button type="primary" class="login-btn" @click="doLogin">{{lang.login}}</el-button>
                 </div>
-                <div class="form-item read-item">
+                 <!-- 1-31 位置移动 -->
+                <!-- <div class="form-item read-item">
                   <el-checkbox v-model="checked">
                     {{lang.login_read}}<a @click="goHelpUrl('2')">{{lang.read_service}}</a>{{lang.read_and}}<a @click="goHelpUrl('1')">{{lang.read_privacy}}</a>
                   </el-checkbox>
-                </div>
+                </div> -->
 
                 <div class="form-item line-item" v-if="commonData.login_phone_verify == 1">
                   <el-divider><span class="text">or</span></el-divider>

@@ -29,15 +29,19 @@ class Check
     }
 
     # 校验token
-    public function checkToken(Request $request, $is_admin=false)
+    public function checkToken(Request $request, $is_admin=false, $jwt = '')
     {
-        $header = $request->header();
+        if(!empty($jwt)){
+            $authorization = $jwt;
+        }else{
+            $header = $request->header();
 
-        if (!isset($header['authorization'])){
-            return ['status' => 401,'msg' => lang('login_unauthorized')]; # 未授权
+            if (!isset($header['authorization'])){
+                return ['status' => 401,'msg' => lang('login_unauthorized')]; # 未授权
+            }
+
+            $authorization = get_header_jwt();
         }
-
-        $authorization = get_header_jwt();
 
         if( empty($authorization) || $authorization == 'null' ){
             return ['status' => 401,'msg' => lang('login_unauthorized')];

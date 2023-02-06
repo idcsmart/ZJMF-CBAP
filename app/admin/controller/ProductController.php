@@ -52,7 +52,7 @@ class ProductController extends AdminBaseController
         $result = [
             'status'=>200,
             'msg'=>lang('success_message'),
-            'data' =>(new ProductModel())->productList1($param)
+            'data' =>(new ProductModel())->productListSearch($param)
         ];
         return json($result);
     }
@@ -416,7 +416,44 @@ class ProductController extends AdminBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2023-01-29
+     * @title 商品搜索
+     * @desc 商品搜索
+     * @url /admin/v1/product/search
+     * @method  GET
+     * @author hh
+     * @version v1
+     * @param string keywords - 关键字
+     * @param int page - 页数
+     * @param int limit - 每页条数
+     * @param string orderby - 排序 id,name
+     * @param string sort - 升/降序 asc,desc
+     * @return array list - 商品列表
+     * @return int list[].id - ID
+     * @return int list[].name - 商品名
+     * @return int list[].description - 描述
+     * @return int list[].stock_control - 是否开启库存控制:1开启,0关闭
+     * @return int list[].qty - 库存
+     * @return int list[].hidden - 是否隐藏:1隐藏,0显示
+     * @return int list[].product_group_name_second - 二级分组名称
+     * @return int list[].product_group_id_second - 二级分组ID
+     * @return int list[].product_group_name_first - 一级分组名称
+     * @return int list[].product_group_id_first - 一级分组ID
+     * @return int count - 商品总数
+     */
+    public function productListSearch()
+    {
+        # 合并分页参数
+        $param = array_merge($this->request->param(),[]);//['page'=>$this->request->page,'limit'=>$this->request->limit,'sort'=>$this->request->sort]);
 
+        $result = [
+            'status'=>200,
+            'msg'=>lang('success_message'),
+            'data' =>(new ProductModel())->productListSearch($param)
+        ];
+        return json($result);
+    }
 
 }
 

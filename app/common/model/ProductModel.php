@@ -46,6 +46,7 @@ class ProductModel extends Model
         'create_time'                      => 'int',
         'update_time'                      => 'int',
         'price'                            => 'float',
+        'cycle'                            => 'string',
     ];
 
     /**
@@ -100,7 +101,7 @@ class ProductModel extends Model
         };
 
         $products = $this->alias('p')
-            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,p.price,s.module,ss.module module1,
+            ->field('p.id,p.name,p.description,p.stock_control,p.qty,p.hidden,p.pay_type,p.price,p.cycle,s.module,ss.module module1,
             pg.name as product_group_name_second,pg.id as product_group_id_second,
             pgf.name as product_group_name_first,pgf.id as product_group_id_first,pr.name as parent_name,pr.id as parent_id')
             ->leftJoin('product pr','pr.id=p.product_id')
@@ -115,7 +116,7 @@ class ProductModel extends Model
                 }
                 return $value;
             })
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp'])
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp','dcimapp'])
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
@@ -143,7 +144,7 @@ class ProductModel extends Model
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
             ->leftjoin('server ss','ss.server_group_id=sg.id')
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud'])
+            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp','dcimapp'])
             ->where($where)
             ->count();
 
@@ -170,9 +171,9 @@ class ProductModel extends Model
             }
             if($app=='home'){
                 $query->where('p.hidden', 0);
-            }else{
+            }/*else{
                 $query->where('pgf.name','<>','应用商店');
-            }
+            }*/
         };
 
         $products = $this->alias('p')
@@ -669,6 +670,10 @@ class ProductModel extends Model
             return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
         }
 
+        $ModuleLogic = new ModuleLogic();
+        $priceCycle = $ModuleLogic->getPriceCycle($product->id);
+        $this->setPriceCycle($priceCycle['product'], $priceCycle['price'], $priceCycle['cycle']);
+
         hook('after_product_edit',['id'=>$product->id,'customfield'=>$param['customfield']??[]]);
 
         return ['status'=>200,'msg'=>lang('update_success')];
@@ -1127,7 +1132,27 @@ class ProductModel extends Model
         if($product['hidden']==1){
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
+        if(!empty($product['product_id'])){
+            if(!isset($param['config_options']['host_id'])){
+                return ['status'=>400, 'msg'=>lang('cannot_only_buy_son_product')];
+            }
+            $host = HostModel::find($param['config_options']['host_id']);
+            if($host['product_id']!=$product['product_id']){
+                return ['status'=>400, 'msg'=>lang('cannot_only_buy_son_product')];
+            }
+        }
+
         $param['config_options'] = $param['config_options'] ?? [];
+        
+        $clientId = get_client_id();
+
+        $result = hook('before_order_create', ['client_id'=>$clientId, 'param' => $param]);
+
+        foreach ($result as $value){
+            if (isset($value['status']) && $value['status']==400){
+                return ['status'=>400, 'msg'=>$value['msg'] ?? lang('fail_message')];
+            }
+        }
         
         $ModuleLogic = new ModuleLogic();
         $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
@@ -1146,10 +1171,21 @@ class ProductModel extends Model
         $param['description'] = $result['data']['description'];
         $param['config_options'] = $param['config_options'] ?? [];
 
+        if(empty($param['description'])){
+            if($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment'){
+                $param['description'] = $product['name'].'('.date("Y-m-d H:i:s").'-'.date("Y-m-d H:i:s",time()+$param['duration']).')';
+            }else{
+                $param['description'] = $product['name'];
+            }
+        }
+        
+
         $this->startTrans();
         try {
             // 创建订单
-            $clientId = get_client_id();
+            $gateway = gateway_list();
+            $gateway = $gateway['list'][0]??[];
+
             $time = time();
             $order = OrderModel::create([
                 'client_id' => $clientId,
@@ -1158,8 +1194,8 @@ class ProductModel extends Model
                 'amount' => $amount,
                 'credit' => 0,
                 'amount_unpaid' => $amount,
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'pay_time' => $amount>0 ? 0 : $time,
                 'create_time' => $time
             ]);
@@ -1315,5 +1351,123 @@ class ProductModel extends Model
         return $product?:(object)[];
     }
 
+    /**
+     * 时间 2023-01-29
+     * @title 商品搜索
+     * @desc 商品搜索
+     * @author hh
+     * @version v1
+     * @param string param.keywords - 关键字,搜索范围:商品ID,商品名,描述
+     * @param int param.product_group_id - 商品分组ID
+     * @param int param.page - 页数
+     * @param int param.limit - 每页条数
+     * @param string param.orderby - 排序 id,name
+     * @param string param.sort - 升/降序 asc,desc
+     * @return array list - 商品列表
+     * @return int list[].id - ID
+     * @return int list[].name - 商品名
+     * @return int list[].stock_control - 是否开启库存控制:1开启,0关闭
+     * @return int list[].qty - 库存
+     * @return int list[].hidden - 是否隐藏:1隐藏,0显示
+     * @return int list[].product_group_name_second - 二级分组名称
+     * @return int list[].product_group_id_second - 二级分组ID
+     * @return int list[].product_group_name_first - 一级分组名称
+     * @return int list[].product_group_id_first - 一级分组ID
+     * @return int count - 商品总数
+     */
+    public function productListSearch($param)
+    {
+        // 获取当前应用
+       $app = app('http')->getName();
+
+        if (!isset($param['orderby']) || !in_array($param['orderby'],['id','name'])){
+            $param['orderby'] = 'p.id';
+        }else{
+            $param['orderby'] = 'p.'.$param['orderby'];
+        }
+
+        $where = function (Query $query) use($param, $app) {
+            if(!empty($param['keywords'])){
+                $query->where('p.id|p.name|p.description', 'like', "%{$param['keywords']}%");
+            }
+            if(!empty($param['id'])){
+                $query->where('p.product_group_id', $param['id']);
+            }
+            if($app=='home'){
+                $query->where('p.hidden', 0);
+            }/*else{
+                $query->where('pgf.name','<>','应用商店');
+            }*/
+        };
+        if($app=='home'){
+            $field = 'p.id,p.name';
+        }else{
+            $field = 'p.id,p.name,p.stock_control,p.qty,p.hidden,p.pay_type,pg.name as product_group_name_second,pg.id as product_group_id_second,pgf.name as product_group_name_first,pgf.id as product_group_id_first';
+        }
+        $products = $this->alias('p')
+            ->field($field)
+            ->leftjoin('product_group pg','p.product_group_id=pg.id')
+            ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
+            ->where($where)
+            ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
+            ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
+            #->order($param['orderby'], (isset($param['sort']) && !empty($param['sort']))?$param['sort']:"desc")
+            ->order('p.order','desc')
+            ->select()
+            ->toArray();
+
+        $count = $this
+            ->alias('p')
+            ->where($where)
+            ->count();
+
+        return ['list'=>$products, 'count'=>$count];
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 设置商品最低周期价格
+     * @desc 设置商品最低周期价格
+     * @author hh
+     * @version v1
+     * @param   int $id  - 商品ID|ProductModel实例
+     * @param   float $price - 价格
+     * @param   string $cycle - 周期
+     * @return  bool|array - false=未修改,array=修改的数据
+     */
+    public function setPriceCycle($id = null, $price = null, $cycle = null){
+        if(is_numeric($id)){
+            $ProductModel = ProductModel::find($id);
+        }else if($id instanceof ProductModel){
+            $ProductModel = $id;
+        }else{
+            $ProductModel = $this;
+        }
+        if(!isset($ProductModel->id) || empty($ProductModel)){
+            return false;
+        }
+        $update = [];
+        if($ProductModel['pay_type'] == 'free'){
+            $update['price'] = 0;
+            $update['cycle'] = '免费';
+        }else if($ProductModel['pay_type'] == 'onetime'){
+            if(is_numeric($price)){
+                $update['price'] = $price;
+            }
+            $update['cycle'] = '一次性';
+        }else{
+            if(is_numeric($price)){
+                $update['price'] = $price;
+            }
+            if(!is_null($cycle)){
+                $update['cycle'] = $cycle;
+            }
+        }
+        if(empty($update)){
+            return false;
+        }
+        $this->where('id', $ProductModel->id)->update($update);
+        return $update;
+    }
 
 }

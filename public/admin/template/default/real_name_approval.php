@@ -26,7 +26,7 @@
         </div>
       </div>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" >
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

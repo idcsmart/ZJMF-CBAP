@@ -23,26 +23,30 @@ class IdcsmartTicketLogic
     # 工单号生成
     public function ticketNum($prefix='YHGD')
     {
-        if ($prefix == 'YHGD'){
-            $IdcsmartTicketModel = new IdcsmartTicketModel();
+        $IdcsmartTicketModel = new IdcsmartTicketModel();
 
-            $todayMaxNum = $IdcsmartTicketModel->where('create_time','>=',strtotime(date('Y-m-d')))
-                ->where('create_time','<=',strtotime(date('Y-m-d'))+24*3600-1)
-                ->max('num');
-        }else{
-            $IdcsmartTicketInternalModel = new IdcsmartTicketInternalModel();
+        $ticketNum = rand_str(7,'NUMBER');
 
-            $todayMaxNum = $IdcsmartTicketInternalModel->where('create_time','>=',strtotime(date('Y-m-d')))
-                ->where('create_time','<=',strtotime(date('Y-m-d'))+24*3600-1)
-                ->max('num');
+        for ($i=0;$i<10;$i++){ # 至多10次比较
+            $exist = $IdcsmartTicketModel->where('ticket_num',$ticketNum)->find();
+            if (empty($exist)){
+                break;
+            }
+            $ticketNum = rand_str(7,'NUMBER');
         }
+
+        return [$ticketNum,$ticketNum];
+
+        /*$todayMaxNum = $IdcsmartTicketModel->where('create_time','>=',strtotime(date('Y-m-d')))
+            ->where('create_time','<=',strtotime(date('Y-m-d'))+24*3600-1)
+            ->max('num');
 
 
         $num = intval($todayMaxNum) + 1;
 
         $str = str_pad($num,4,'0',STR_PAD_LEFT);
 
-        $ticketNum = $prefix . date('Ymd') . $str;
+        $ticketNum = $prefix . date('Ymd') . $str;*/
 
         return [$ticketNum,$num];
     }

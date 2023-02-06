@@ -280,6 +280,17 @@
   margin-top: 35px;
   display: flex;
 }
+.detail-box .select-box .host-div {
+  width: 500px;
+  margin-right: 57px;
+  white-space: inherit;
+}
+.detail-box .select-box .host-item {
+  cursor: pointer;
+}
+.detail-box .select-box .host-item:hover {
+  text-decoration: underline;
+}
 .detail-box .select-box > div {
   display: flex;
   align-items: center;
@@ -327,6 +338,13 @@
   color: #333333;
   font-weight: bold;
   font-size: 16px;
+  cursor: default;
+}
+.reply-item .reply-top .link-style {
+  cursor: pointer;
+}
+.reply-item .reply-top .link-style:hover {
+  text-decoration: underline;
 }
 .reply-item .reply-top .green-text {
   background: #03B193;

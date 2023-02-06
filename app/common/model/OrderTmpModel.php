@@ -80,6 +80,10 @@ class OrderTmpModel extends Model
 
             if ($gateway!='credit'){
                 $plugin = PluginModel::where('name',$gateway)->where('module','gateway')->find();
+                if(!empty($plugin)){
+                    $plugin['config'] = json_decode($plugin['config'],true);
+                    $plugin['title'] =  (isset($plugin['config']['module_name']) && !empty($plugin['config']['module_name']))?$plugin['config']['module_name']:$plugin['title'];
+                }
             }
 
             $ClientModel = new ClientModel();
@@ -92,7 +96,7 @@ class OrderTmpModel extends Model
                 try{
                     $order->save([
                         'gateway' => $gateway,
-                        'gateway_name' => $plugin['title']??'余额',
+                        'gateway_name' => $plugin['title']??'',
                         'status' => 'Paid',
                         'pay_time' => time()
                     ]);
@@ -110,7 +114,7 @@ class OrderTmpModel extends Model
                     $OrderItemModel = new OrderItemModel();
                     $OrderItemModel->update([
                         'gateway' => $gateway,
-                        'gateway_name' => $plugin['title']??'余额',
+                        'gateway_name' => $plugin['title']??'',
                     ],['order_id'=>$order->id]);
 
                     $this->commit();
@@ -279,7 +283,8 @@ class OrderTmpModel extends Model
             return ['status'=>400,'msg'=>lang('recharge_is_not_open')];
         }
         # 参数错误
-        if (!isset($param['amount']) || !isset($param['gateway'])){
+        //if (!isset($param['amount']) || !isset($param['gateway'])){
+        if (!isset($param['amount'])){
             return ['status'=>400,'msg'=>lang('param_error')];
         }
         # 金额判断
@@ -300,6 +305,11 @@ class OrderTmpModel extends Model
             }
         }
 
+        $param['gateway'] = $param['gateway'] ?? '';
+        if(empty($param['gateway'])){
+            $gateway = gateway_list();
+            $param['gateway'] = $gateway['list'][0]['name'] ?? '';
+        }
         # 支付接口
         if (!check_gateway($param['gateway'])){
             return ['status'=>400,'msg'=>lang('no_support_gateway')];
@@ -507,6 +517,10 @@ class OrderTmpModel extends Model
             $gateway = $order->gateway;
         }
         $plugin = PluginModel::where('name',$gateway)->where('module','gateway')->find();
+        if(!empty($plugin)){
+            $plugin['config'] = json_decode($plugin['config'],true);
+            $plugin['title'] =  (isset($plugin['config']['module_name']) && !empty($plugin['config']['module_name']))?$plugin['config']['module_name']:$plugin['title'];
+        }
         # 货币与系统货币不同(不做处理 20220607)
         /*if ($systemCurrency = configuration('currency_code') != $currency){
             $amount = $order->amount_unpaid;
@@ -521,7 +535,7 @@ class OrderTmpModel extends Model
             'client_id' => $order->client_id,
             'amount' => $amount,
             'gateway' => $gateway,
-            'gateway_name' => $plugin['title'],
+            'gateway_name' => $plugin['title'] ?? '',
             'transaction_number' => $transId,
             'create_time' => $time
         ]);
@@ -565,15 +579,15 @@ class OrderTmpModel extends Model
                             'credit' => $order->amount,
                             'amount_unpaid' => 0,
                             'status' => 'Paid',
-                            'gateway' => '',
-                            'gateway_name' => '',
+                            'gateway' => $gateway,
+                            'gateway_name' => $plugin['title'] ?? '',
                             'pay_time' => $payTime
                         ]);
                         # 修改子项支付方式
                         $OrderItemModel = new OrderItemModel();
                         $OrderItemModel->update([
-                            'gateway' => '',
-                            'gateway_name' => '',
+                            'gateway' => $gateway,
+                            'gateway_name' => $plugin['title'] ?? '',
                         ],['order_id'=>$order->id]);
 
                         $flag = true;
@@ -598,14 +612,14 @@ class OrderTmpModel extends Model
                                     'amount_unpaid' => 0,
                                     'status' => 'Paid',
                                     'gateway' => $gateway,
-                                    'gateway_name' => $plugin['title'],
+                                    'gateway_name' => $plugin['title'] ?? '',
                                     'pay_time' => $payTime
                                 ]);
                                 # 修改子项
                                 $OrderItemModel = new OrderItemModel();
                                 $OrderItemModel->update([
                                     'gateway' => $gateway,
-                                    'gateway_name' => $plugin['title'],
+                                    'gateway_name' => $plugin['title'] ?? '',
                                 ],['order_id'=>$order->id]);
 
                                 # 记录
@@ -640,14 +654,14 @@ class OrderTmpModel extends Model
                                 'amount_unpaid' => 0,
                                 'status' => 'Paid',
                                 'gateway' => $gateway,
-                                'gateway_name' => $plugin['title'],
+                                'gateway_name' => $plugin['title'] ?? '',
                                 'pay_time' => $payTime
                             ]);
                             # 修改子项支付方式
                             $OrderItemModel = new OrderItemModel();
                             $OrderItemModel->update([
                                 'gateway' => $gateway,
-                                'gateway_name' => $plugin['title'],
+                                'gateway_name' => $plugin['title'] ?? '',
                             ],['order_id'=>$order->id]);
 
                             $flag = true;

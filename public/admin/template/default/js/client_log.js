@@ -4,9 +4,13 @@
     const template = document.getElementsByClassName('log')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}`
     new Vue({
       data () {
         return {
+          baseUrl: str,
           data: [],
           tableLayout: false,
           bordered: true,
@@ -63,7 +67,7 @@
           maxHeight: '',
           clinetParams: {
             page: 1,
-            limit: 1000,
+            limit: 20,
             orderby: 'id',
             sort: 'desc'
           },
@@ -71,38 +75,68 @@
           popupProps: {
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
           },
+          hasTicket: false,
+          authList: JSON.parse(
+            JSON.stringify(localStorage.getItem("backAuth"))
+          ),
+          clientDetail: {},
+          searchLoading: false
+        }
+      },
+      computed: {
+        calcShow () {
+          return (data) => {
+            return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
+          }
+        },
+        isExist () {
+          return !this.clientList.find(item => item.id === this.clientDetail.id)
         }
       },
       mounted () {
-        this.maxHeight = document.getElementById('content').clientHeight - 200
-        let timer = null
-        window.onresize = () => {
-          if (timer) {
-            return
-          }
-          timer = setTimeout(() => {
-            this.maxHeight = document.getElementById('content').clientHeight - 200
-            clearTimeout(timer)
-            timer = null
-          }, 300)
-        }
-        document.title = lang.log  + '-' + localStorage.getItem('back_website_name')
+        document.title = lang.log + '-' + localStorage.getItem('back_website_name')
       },
       methods: {
+        // 远程搜素
+        remoteMethod (key) {
+          this.clinetParams.keywords = key
+          this.getClintList()
+        },
+        filterMethod (search, option) {
+          return option
+        },
+        // 获取用户详情
+        async getUserDetail () {
+          try {
+            const res = await getClientDetail(this.id);
+            this.clientDetail = res.data.data.client;
+          } catch (error) { }
+        },
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const temp = res.data.data.list.reduce((all, cur) => {
+              all.push(cur.name)
+              return all
+            }, [])
+            this.hasTicket = temp.includes("IdcsmartTicket")
+          } catch (error) {
+
+          }
+        },
         changeUser (id) {
           this.id = id
           location.href = `client_log.html?client_id=${this.id}`
         },
         async getClintList () {
           try {
+            this.searchLoading = true
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
             this.clientTotal = res.data.data.count
-            if (this.clientList.length < this.clientTotal) {
-              this.clinetParams.limit = this.clientTotal
-              this.getClintList()
-            }
+            this.searchLoading = false
           } catch (error) {
+            this.searchLoading = false
             console.log(error.data.msg)
           }
         },
@@ -139,6 +173,8 @@
         this.id = location.href.split('?')[1].split('=')[1] * 1
         this.getClientList()
         this.getClintList()
+        this.getPlugin()
+        this.getUserDetail()
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

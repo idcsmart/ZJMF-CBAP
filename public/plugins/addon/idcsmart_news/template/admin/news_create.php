@@ -18,8 +18,7 @@
           <t-input :placeholder="lang.input" style="width: 250px;" v-model="detialform.keywords" />
         </t-form-item>
         <t-form-item :label="lang.order_attachment" name="attachment">
-          <t-upload theme="custom" multiple v-model="files" :before-upload="beforeUploadfile" 
-          :action="uploadUrl" :headers="uploadHeaders" :format-response="formatResponse" @fail="handleFail" @success="onSuccess" @progress="uploadProgress">
+          <t-upload theme="custom" multiple v-model="files" :before-upload="beforeUploadfile" :action="uploadUrl" :headers="uploadHeaders" :format-response="formatResponse" @fail="handleFail" @success="onSuccess" @progress="uploadProgress">
             <t-button theme="default" class="upload">
               <t-icon name="attach" color="#ccc"></t-icon> {{lang.enclosure}}
             </t-button>
@@ -40,13 +39,18 @@
     <div class="add_richtext">
       <form method="post">
         <div style="margin-bottom: 10px;">{{lang.content}}</div>
-        <textarea id="tiny" name="content"  v-html="detialform.content"></textarea>
+        <textarea id="tiny" name="content" v-html="detialform.content"></textarea>
       </form>
     </div>
     <div class="rich_btns">
-      <t-button class="rich_btns" @click="submit">{{lang.publish}}</t-button>
-     <!--  <t-button variant="outline" class="rich_btns rich_btns_save" @click="save">保存</t-button> -->
-      <t-button theme="default" class="rich_btns" @click="cancle">{{lang.cancel}}</t-button>
+      <div>
+        <t-button @click="viewNew">预览</t-button>
+      </div>
+      <div class="right-btn">
+        <t-button class="confirm-btn" @click="submit">{{lang.publish}}</t-button>
+        <!--  <t-button variant="outline" class="rich_btns rich_btns_save" @click="save">保存</t-button> -->
+        <t-button theme="default" @click="cancle">{{lang.cancel}}</t-button>
+      </div>
     </div>
   </t-card>
 </div>

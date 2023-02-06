@@ -1,6 +1,6 @@
 {include file="header"}
 <!-- =======内容区域======= -->
-<div id="content" class="host table hasCrumb" v-cloak>
+<div id="content" class="host hasCrumb" v-cloak>
   <!-- crumb -->
   <div class="com-crumb">
     <span>{{lang.user_manage}}</span>
@@ -13,35 +13,41 @@
     <div class="com-h-box">
       <ul class="common-tab">
         <li>
-          <a :href="`client_detail.html?id=${id}`">{{lang.personal}}</a>
+          <a :href="`${baseUrl}/client_detail.html?id=${id}`">{{lang.personal}}</a>
         </li>
         <li class="active">
           <a href="javascript:;">{{lang.product_info}}</a>
         </li>
         <li>
-          <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
+          <a :href="`${baseUrl}/client_order.html?id=${id}`">{{lang.order_manage}}</a>
         </li>
         <li>
-          <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
+          <a :href="`${baseUrl}/client_transaction.html?id=${id}`">{{lang.flow}}</a>
         </li>
         <li>
-          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+          <a :href="`${baseUrl}/client_log.html?id=${id}`">{{lang.operation}}{{lang.log}}</a>
         </li>
         <li>
-          <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+          <a :href="`${baseUrl}/client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+        </li>
+        <li v-if="hasTicket && authList.includes('TicketController::ticketList')">
+          <a :href="`${baseUrl}/plugin/idcsmart_ticket/client_ticket.html?id=${id}`">{{lang.auto_order}}</a>
         </li>
       </ul>
-      <t-select class="user" v-if="this.clientList.length>0" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
-        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+      <t-select class="user" v-if="this.clientList" v-model="id" :popup-props="popupProps" filterable :filter="filterMethod" @change="changeUser" :loading="searchLoading" reserve-keyword :on-search="remoteMethod">
+        <t-option :key="clientDetail.id" :value="clientDetail.id" :label="calcShow(clientDetail)" v-if="isExist">
+          #{{clientDetail.id}}-{{clientDetail.username ? clientDetail.username : (clientDetail.phone? clientDetail.phone: clientDetail.email)}}
+          <span v-if="clientDetail.company">({{clientDetail.company}})</span>
+        </t-option>
+        <t-option v-for="item in clientList" :value="item.id" :label="calcShow(item)" :key="item.id">
           #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
           <span v-if="item.company">({{item.company}})</span>
         </t-option>
       </t-select>
     </div>
-    <t-button @click="batchRenew" class="add" style="margin-bottom: 20px ;" v-if="hasPlugin">
-      {{lang.batch_renew}}
-    </t-button>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight" :hide-sort-tips="true" @sort-change="sortChange" @select-change="rehandleSelectChange" :selected-row-keys="checkId">
+    <t-button @click="batchRenew" class="add" style="margin-bottom: 20px ;" v-if="hasPlugin">{{lang.batch_renew}}</t-button>
+    <t-button @click="batchDel" class="add" style="margin-bottom: 20px ; margin-left: 10px;">{{lang.batch_dele}}</t-button>
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :hide-sort-tips="true" @sort-change="sortChange" @select-change="rehandleSelectChange" :selected-row-keys="checkId">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -82,7 +88,7 @@
     <t-pagination :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions" :on-change="changePage" />
   </t-card>
   <!-- 删除 -->
-  <t-dialog theme="warning" :header="lang.sureDelete" :close-btn="false" :visible.sync="delVisible">
+  <t-dialog theme="warning" :header="lang.delHostTips" :close-btn="false" :visible.sync="delVisible">
     <template slot="footer">
       <div class="common-dialog">
         <t-button @click="onConfirm">{{lang.sure}}</t-button>
@@ -92,7 +98,7 @@
   </t-dialog>
   <!-- 批量续费弹窗 -->
   <t-dialog :header="lang.batch_renew" :close-btn="false" :visible.sync="renewVisible" :footer="false" placement="center" @close="cancelRenew" class="renew-dialog">
-    <t-table row-key="1" :data="renewList" size="medium" :columns="renewColumns" :hover="hover" :table-layout="tableLayout ? 'auto' : 'fixed'" :loading="renewLoading" :max-height="maxHeight">
+    <t-table row-key="1" :data="renewList" size="medium" :columns="renewColumns" :hover="hover" :table-layout="tableLayout ? 'auto' : 'fixed'" :loading="renewLoading" >
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

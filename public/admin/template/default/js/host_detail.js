@@ -10,6 +10,7 @@
     new Vue({
       data () {
         return {
+          baseUrl: str,
           id: '',
           client_id: '',
           data: [],
@@ -156,7 +157,21 @@
             suspend_reason: ''
           },
           moduleLoading: false,
-          isShowModule: false
+          isShowModule: false,
+          optBtns: [],
+          clientDetail: {},
+          searchLoading: false,
+          clientList: [],
+          clinetParams: {
+            page: 1,
+            limit: 20,
+            orderby: 'id',
+            sort: 'desc'
+          },
+          hasTicket: false,
+          authList: JSON.parse(
+            JSON.stringify(localStorage.getItem("backAuth"))
+          ),
         }
       },
       watch: {
@@ -177,9 +192,10 @@
       },
       created () {
         const query = location.href.split('?')[1].split('&')
-        this.client_id = this.getQuery(query[0])
+        this.client_id = this.getQuery(query[0]) * 1
         this.formData.id = this.id = this.getQuery(query[1])
         this.langList = JSON.parse(localStorage.getItem('common_set')).lang_home
+        this.getClintList()
         this.getProDetail()
         this.getproModule()
         this.getPlugin()
@@ -191,13 +207,64 @@
         }, [])
         const curValue = tempArr.filter(item => item.url === 'client.html')[0]?.id
         localStorage.setItem('curValue', curValue)
+        this.getBtns()
+        this.getUserDetail()
       },
       computed: {
         disabled () {
           return this.formData.due_time === '' && this.formData.billing_cycle === 'onetime'
+        },
+        calcShow () {
+          return (data) => {
+            return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
+          }
+        },
+        isExist () {
+          return !this.clientList.find(item => item.id === this.clientDetail.id)
         }
       },
       methods: {
+        changeUser (id) {
+          this.id = id
+          location.href = `client_host.html?client_id=${this.client_id}`
+        },
+        async getClintList () {
+          try {
+            this.searchLoading = true
+            const res = await getClientList(this.clinetParams)
+            this.clientList = res.data.data.list
+            this.clientTotal = res.data.data.count
+            this.searchLoading = false
+          } catch (error) {
+            this.searchLoading = false
+            console.log(error.data.msg)
+          }
+        }, // 远程搜素
+        remoteMethod (key) {
+          this.clinetParams.keywords = key
+          this.getClintList()
+        },
+        filterMethod (search, option) {
+          return option
+        },
+        // 获取用户详情
+        async getUserDetail () {
+          try {
+            const res = await getClientDetail(this.client_id);
+            this.clientDetail = res.data.data.client;
+          } catch (error) { }
+        },
+        /* 1-31 */
+        async getBtns () {
+          try {
+            const res = await getMoudleBtns({
+              id: this.id
+            })
+            this.optBtns = res.data.data.button
+          } catch (error) {
+
+          }
+        },
         /* 1-7 start */
         handlerMoudle (type) {
           this.optType = type
@@ -208,11 +275,20 @@
             case 'unsuspend':
               this.optTilte = lang.module_tip2;
               break;
-            case 'delete':
+            case 'terminate':
               this.optTilte = lang.module_tip3;
               break;
+            case 'suspend':
+              this.optTilte = lang.module_tip4;
+              this.handlerSuspend();
+              break;
+            case 'renew':
+              this.renewDialog()
           }
-          this.moduleVisible = true
+          if (type !== 'renew' && type !== 'suspend') {
+            this.moduleVisible = true
+          }
+
         },
         confirmModule () {
           switch (this.optType) {
@@ -220,7 +296,7 @@
               return this.createHandler();
             case 'unsuspend':
               return this.unsuspendHandler();
-            case 'delete':
+            case 'terminate':
               return this.deleteHandler()
           }
         },
@@ -233,6 +309,7 @@
             })
             this.$message.success(res.data.msg)
             this.getProDetail()
+            this.getBtns()
             this.moduleLoading = false
             this.moduleVisible = false
           } catch (error) {
@@ -250,6 +327,7 @@
             })
             this.$message.success(res.data.msg)
             this.getProDetail()
+            this.getBtns()
             this.moduleLoading = false
             this.moduleVisible = false
           } catch (error) {
@@ -267,6 +345,7 @@
             })
             this.$message.success(res.data.msg)
             this.getProDetail()
+            this.getBtns()
             this.moduleLoading = false
             this.moduleVisible = false
           } catch (error) {
@@ -292,6 +371,7 @@
             })
             this.$message.success(res.data.msg)
             this.getProDetail()
+            this.getBtns()
             this.moduleLoading = false
             this.suspendVisible = false
           } catch (error) {
@@ -303,12 +383,13 @@
         async getPlugin () {
           try {
             const res = await getAddon();
-            this.hasPlugin = res.data.data.list
+            const temp = res.data.data.list
               .reduce((all, cur) => {
                 all.push(cur.name);
                 return all;
               }, [])
-              .includes("PromoCode");
+            this.hasPlugin = temp.includes("PromoCode");
+            this.hasTicket = temp.includes("IdcsmartTicket")
             this.hasPlugin && this.getPromoList()
           } catch (error) { }
         },
@@ -504,7 +585,7 @@
               inter = await getInterface(this.serverParams)
               this.serverList = inter.data.data.list
             }
-            
+
             const res = await getProductDetail(this.id)
             const temp = res.data.data.host
             Object.assign(this.formData, temp)

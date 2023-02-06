@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\common\model\OrderModel;
+use app\common\model\RefundRecordModel;
 use app\admin\validate\OrderValidate;
 
 /**
@@ -38,7 +39,7 @@ class OrderController extends AdminBaseController
      * @return string list[].type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单
      * @return int list[].create_time - 创建时间 
      * @return string list[].amount - 金额 
-     * @return string list[].status - 状态Unpaid未付款Paid已付款Cancelled已取消  
+     * @return string list[].status - 状态Unpaid未付款Paid已付款Cancelled已取消Refunded已退款  
      * @return string list[].gateway - 支付方式 
      * @return float list[].credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
      * @return int list[].client_id - 用户ID
@@ -88,9 +89,15 @@ class OrderController extends AdminBaseController
      * @return string order.type - 类型new新订单renew续费订单upgrade升降级订单artificial人工订单 
      * @return string order.amount - 金额 
      * @return int order.create_time - 创建时间 
-     * @return string order.status - 状态Unpaid未付款Paid已付款Cancelled已取消 
+     * @return string order.status - 状态Unpaid未付款Paid已付款Cancelled已取消Refunded已退款 
      * @return string order.gateway - 支付方式 
-     * @return float order.credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
+     * @return string order.credit - 使用余额,大于0代表订单使用了余额,和金额相同代表订单支付方式为余额 
+     * @return int order.client_id - 用户ID
+     * @return string order.client_name - 用户名称
+     * @return string order.notes - 备注
+     * @return string order.refund_amount - 订单已退款金额
+     * @return string order.refundable_amount - 订单可退款金额
+     * @return string order.apply_credit_amount - 订单可应用余额金额 
      * @return array order.items - 订单子项 
      * @return int order.items[].id - 订单子项ID 
      * @return string order.items[].description - 描述
@@ -268,6 +275,30 @@ class OrderController extends AdminBaseController
     }
 
     /**
+     * 时间 2023-01-30
+     * @title 删除人工调整的订单子项
+     * @desc 删除人工调整的订单子项
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/item/:id
+     * @method  DELETE
+     * @param int id - 订单子项ID required
+     */
+    public function deleteOrderItem()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 修改订单金额
+        $result = $OrderModel->deleteOrderItem($param['id']);
+
+        return json($result);
+    }
+
+    /**
      * 时间 2022-05-17
      * @title 标记支付
      * @desc 标记支付
@@ -276,7 +307,6 @@ class OrderController extends AdminBaseController
      * @url /admin/v1/order/:id/status/paid
      * @method  PUT
      * @param int id - 订单ID required
-     * @param int use_credit - 是否使用余额0否1是 required
      */
 	public function paid()
     {
@@ -326,4 +356,211 @@ class OrderController extends AdminBaseController
 
         return json($result);
 	}
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单退款
+     * @desc 订单退款
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/:id/refund
+     * @method  POST
+     * @param int id - 订单ID required
+     * @param string type - 退款类型credit退款到余额transaction退款到流水 required
+     * @param float amount - 退款金额 required
+     * @param string gateway - 支付方式 退款到流水时需传
+     * @param string transaction_number - 流水号 退款到流水时需传
+     */
+    public function orderRefund()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('refund')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 订单退款
+        $result = $OrderModel->orderRefund($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单应用余额
+     * @desc 订单应用余额
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/:id/apply_credit
+     * @method  POST
+     * @param int id - 订单ID required
+     * @param float amount - 金额 required
+     */
+    public function orderApplyCredit()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('apply')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 订单应用余额
+        $result = $OrderModel->orderApplyCredit($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单扣除余额
+     * @desc 订单扣除余额
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/:id/remove_credit
+     * @method  POST
+     * @param int id - 订单ID required
+     * @param float amount - 金额 required
+     */
+    public function orderRemoveCredit()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('remove')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 订单扣除余额
+        $result = $OrderModel->orderRemoveCredit($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 订单退款记录列表
+     * @desc 订单退款记录列表
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/:id/refund_record
+     * @method  GET
+     * @param int id - 订单ID required
+     * @param int page - 页数
+     * @param int limit - 每页条数
+     * @param string orderby - 排序 id
+     * @param string sort - 升/降序 asc,desc
+     * @return array list - 退款记录
+     * @return int list[].id - 退款记录ID 
+     * @return int list[].create_time - 退款时间 
+     * @return string list[].amount - 金额 
+     * @return int list[].admin_id - 操作人ID 
+     * @return string list[].admin_name - 操作人名称 
+     * @return int count - 退款记录总数
+     */
+    public function refundRecordList()
+    {
+        // 合并分页参数
+        $param = array_merge($this->request->param(), ['page' => $this->request->page, 'limit' => $this->request->limit, 'sort' => $this->request->sort]);
+
+        // 实例化模型类
+        $RefundRecordModel = new RefundRecordModel();
+        
+        // 订单退款记录列表
+        $data = $RefundRecordModel->refundRecordList($param);
+
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => $data
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 删除退款记录
+     * @desc 删除退款记录
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/refund_record/:id
+     * @method  DELETE
+     * @param int id - 退款记录ID required
+     */
+    public function deleteRefundRecord()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $RefundRecordModel = new RefundRecordModel();
+        
+        // 删除退款记录
+        $result = $RefundRecordModel->deleteRefundRecord($param['id']);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 修改订单支付方式
+     * @desc 修改订单支付方式
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/:id/gateway
+     * @method  PUT
+     * @param int id - 订单ID required
+     * @param string gateway - 支付方式 required
+     */
+    public function updateGateway()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 修改订单金额
+        $result = $OrderModel->updateGateway($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-01-29
+     * @title 修改订单备注
+     * @desc 修改订单备注
+     * @author theworld
+     * @version v1
+     * @url /admin/v1/order/:id/notes
+     * @method  PUT
+     * @param int id - 订单ID required
+     * @param string notes - 备注
+     */
+    public function updateNotes()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+        
+        // 修改订单金额
+        $result = $OrderModel->updateNotes($param);
+
+        return json($result);
+    }
 }

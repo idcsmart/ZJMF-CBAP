@@ -4,7 +4,7 @@
     const help = document.getElementsByClassName("news")[0];
     Vue.prototype.lang = window.lang;
     new Vue({
-      data () {
+      data() {
         return {
           message: "help...",
           params: {
@@ -105,7 +105,7 @@
           loading: false
         };
       },
-      mounted () {
+      mounted() {
         this.maxHeight = document.getElementById('content').clientHeight - 170
         let timer = null
         window.onresize = () => {
@@ -119,16 +119,16 @@
           }, 300)
         }
       },
-      created () {
+      created() {
         this.getlist();
       },
       methods: {
-        changepages (res) {
+        changepages(res) {
           this.pagination.current = res.pagination.current;
           this.pagination.pageSize = res.pagination.pageSize;
           this.getlist();
         },
-        async onswitch (e, el) {
+        async onswitch(e, el) {
           try {
             await helphidden({ id: e.id, hidden: el ? 0 : 1 });
             this.$message.success(el ? lang.show_success : lang.none_success);
@@ -138,15 +138,15 @@
           }
         },
         //编辑
-        edit (id) {
+        edit(id) {
           location.href = "news_create.html?id=" + id;
         },
         //删除
-        deletes (id) {
+        deletes(id) {
           this.delVisible = true
           this.delId = id
         },
-        sureDelUser () {
+        sureDelUser() {
           helpdelete({ id: this.delId }).then((res) => {
             this.$message.success(res.data.msg);
             this.getlist();
@@ -154,7 +154,7 @@
           });
         },
         //获取文档列表
-        async getlist (page) {
+        async getlist(page) {
           this.loading = true
           let param = {
             page: page ? page : this.pagination.current,
@@ -167,23 +167,25 @@
           this.loading = false
         },
         //搜索
-        onEnter (e) {
+        onEnter(e) {
           this.params.keywords = e;
           this.pagination.current = 1;
           this.getlist();
         },
-        changetabs (data) {
+        changetabs(data) {
           this.activetabs = data;
           if (this.activetabs === 1) {
             location.href = "news_create.html";
           }
           if (this.activetabs === 3) {
             this.visible = true;
+            this.isUpdate = false
             this.gettypelist();
           }
         },
         //获取分类列表
-        gettypelist () {
+        gettypelist() {
+          this.isUpdate = false;
           gethelptype().then((res) => {
             for (let i = 0; i < res.data.data.list.length; i++) {
               res.data.data.list[i].isedit = false;
@@ -193,7 +195,7 @@
           });
         },
         // 新增
-        edithelptypeform (e, id) {
+        edithelptypeform(e, id) {
           if (!id) {
             return;
           }
@@ -215,7 +217,7 @@
               }, 1000)
             })
         },
-        edithandleClickOp (id) {
+        edithandleClickOp(id) {
           if (this.isUpdate) {
             return this.$message.error(lang.please_save);
           }
@@ -227,7 +229,7 @@
             }
           }
         },
-        deleteClickOp (id) {
+        deleteClickOp(id) {
           deletehelptype({ id })
             .then((res) => {
               this.$message.success(res.data.msg);
@@ -238,11 +240,11 @@
             });
         },
         //取消修改
-        canceledit () {
+        canceledit() {
           this.gettypelist();
         },
         //新增
-        addtype () {
+        addtype() {
           if (this.isUpdate) {
             return this.$message.error(lang.please_save);
           }
@@ -267,7 +269,7 @@
           }
         },
         // 批量新增
-        savehandleClickadd (name) {
+        savehandleClickadd(name) {
           let temp = JSON.parse(JSON.stringify(this.typelist))
           temp = temp.filter(item => !item.id).reduce((all, cur) => {
             all.push({
@@ -299,7 +301,7 @@
               }, 1000)
             })
         },
-        deleteClickadd (name) {
+        deleteClickadd(name) {
           // this.typelist;
           this.typelist.forEach((value, index, array) => {
             if (name === value.name && !value.id) {
@@ -309,35 +311,35 @@
           });
           console.log(this.typelist, " this.typelist");
         },
-        onConfirm (context) {
+        onConfirm(context) {
           console.log(
             "@confirm与onConfirm任选一种方式即可，其他几个事件类似",
             context
           );
           this.visible = false;
         },
-        onConfirmAnother (context) {
+        onConfirmAnother(context) {
           console.log("点击了确认按钮", context);
         },
-        close (context) {
+        close(context) {
           console.log(
             "关闭弹窗，点击关闭按钮、按下ESC、点击蒙层等触发",
             context
           );
         },
-        onCancel (context) {
+        onCancel(context) {
           console.log("点击了取消按钮", context);
         },
-        onKeydownEsc (context) {
+        onKeydownEsc(context) {
           console.log("按下了ESC", context);
         },
-        onClickCloseBtn (context) {
+        onClickCloseBtn(context) {
           console.log("点击了关闭按钮", context);
         },
-        onClickOverlay (context) {
+        onClickOverlay(context) {
           console.log("点击了蒙层", context);
         },
-        getLocalTime (nS) {
+        getLocalTime(nS) {
           var date = new Date(nS * 1000); //
           var Y = date.getFullYear() + "/";
           var M =

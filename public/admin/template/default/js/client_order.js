@@ -5,10 +5,14 @@
     const template = document.getElementsByClassName('client-order')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = window.moment
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}`
     new Vue({
       data () {
         return {
           rootRul: url,
+          baseUrl: str,
           data: [],
           tableLayout: false,
           bordered: true,
@@ -44,7 +48,7 @@
             },
             {
               colKey: 'amount',
-              title: lang.money_cycle,
+              title: lang.money,
               ellipsis: true,
               width: 150
             },
@@ -119,7 +123,7 @@
           use_credit: true,
           clinetParams: {
             page: 1,
-            limit: 1000,
+            limit: 20,
             orderby: 'id',
             sort: 'desc'
           },
@@ -128,7 +132,14 @@
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` })
           },
           curInfo: {},
-          optType: '' // order,sub
+          optType: '', // order,sub
+          hasTicket: false,
+          authList: JSON.parse(
+            JSON.stringify(localStorage.getItem("backAuth"))
+          ),
+          father_client_id: '',
+          clientDetail: {},
+          searchLoading: false
         }
       },
       mounted () {
@@ -144,23 +155,63 @@
             timer = null
           }, 300)
         },
+          this.getPlugin()
         document.title = lang.user_list + '-' + lang.order_manage + '-' + localStorage.getItem('back_website_name')
       },
+      computed: {
+        calcShow () {
+          return (data) => {
+            return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
+          }
+        },
+        isExist () {
+          return !this.clientList.find(item => item.id === this.clientDetail.id)
+        }
+      },
       methods: {
+        // 远程搜素
+        remoteMethod (key) {
+          this.clinetParams.keywords = key
+          this.getClintList()
+        },
+        filterMethod (search, option) {
+          return option
+        },
+        // 获取用户详情
+        async getUserDetail () {
+          try {
+            const res = await getClientDetail(this.id);
+            this.clientDetail = res.data.data.client;
+          } catch (error) { }
+        },
+        lookDetail (row) {
+          location.href = `order_details.html?id=${row.id}`
+        },
+        async getPlugin () {
+          try {
+            const res = await getAddon()
+            const temp = res.data.data.list.reduce((all, cur) => {
+              all.push(cur.name)
+              return all
+            }, [])
+            this.hasTicket = temp.includes("IdcsmartTicket")
+          } catch (error) {
+
+          }
+        },
         changeUser (id) {
           this.id = id
           location.href = `client_order.html?client_id=${this.id}`
         },
         async getClintList () {
           try {
+            this.searchLoading = true
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
             this.clientTotal = res.data.data.count
-            if (this.clientList.length < this.clientTotal) {
-              this.clinetParams.limit = this.clientTotal
-              this.getClintList()
-            }
+            this.searchLoading = false
           } catch (error) {
+            this.searchLoading = false
             console.log(error.data.msg)
           }
         },
@@ -298,6 +349,7 @@
           if (row.list?.length > 0) {
             return
           }
+          this.father_client_id = row.client_id
           this.getOrderDetail(this.optType === 'sub' ? row.pId : row.id)
         },
         // 订单详情
@@ -317,6 +369,7 @@
         this.id = this.params.client_id = location.href.split('?')[1].split('=')[1] * 1
         this.getClientList()
         this.getClintList()
+        this.getUserDetail()
       }
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

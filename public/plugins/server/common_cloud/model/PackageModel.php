@@ -1027,10 +1027,26 @@ class PackageModel extends Model{
      * @param   int productId - 商品ID
      */
     public function saveMinPrice($productId){
+        $minPrice = $this->getMinPrice($productId);
+
+        if($minPrice){
+            $ProductModel = new ProductModel();
+
+            $ProductModel->setPriceCycle($minPrice['product'], $minPrice['price'], $minPrice['cycle']);
+
+            return $minPrice['price'];
+        }else{
+            return false;
+        }
+    }
+
+    public function getMinPrice($productId){
         $ProductModel = ProductModel::find($productId);
         if(empty($ProductModel)){
             return false;
         }
+
+        $cycle = null;
         if($ProductModel['pay_type'] == 'free'){
             $price = 0;
         }else if($ProductModel['pay_type'] == 'onetime'){
@@ -1059,20 +1075,22 @@ class PackageModel extends Model{
                     continue;
                 }
                 if(isset($min)){
-                    $min = min($min, $price['price']);
+                    if($price['price'] < $min){
+                        $min = $price['price'];
+                        $cycle = $v;
+                    }
                 }else{
                     $min = $price['price'];
+                    $cycle = $v;
                 }
             }
             $price = $min;
+            $cycle = lang_plugins($cycle);
         }
-        if(isset($price)){
-            $price = amount_format($price);
-            ProductModel::where('id', $productId)->update(['price'=>$price]);
-        }
-        return $price;
 
+        return ['price'=>$price, 'cycle'=>$cycle, 'product'=>$ProductModel];
     }
+
 
     /**
      * 时间 2022-10-12

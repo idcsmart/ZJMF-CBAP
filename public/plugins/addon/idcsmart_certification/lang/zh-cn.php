@@ -35,4 +35,23 @@ return [
     'certification_img_three' => '请上传营业执照',
     'certification_info_post_again' => '请重新提交实名资料',
     'nav_plugin_addon_idcsmart_certification' => '实名认证',
-    ];
+    'certification_uncertified_cannot_buy_product' => '未实名认证不可购买产品',
+    'addon_idcsmart_certification_open' => '开启',
+    'addon_idcsmart_certification_close' => '关闭',
+
+
+    // 日志记录
+    'addon_idcsmart_certification_post' => '客户{client}提交实名认证',
+    'addon_idcsmart_certification_approve' => '管理员{admin}通过客户{client}提交的实名认证',
+    'addon_idcsmart_certification_reject' => '管理员{admin}驳回客户{client}提交的实名认证',
+
+    'field_idcsmart_certification_certification_open' => '实名认证',
+    'field_idcsmart_certification_certification_approval' => '人工复审',
+    'field_idcsmart_certification_certification_notice' => '后台审批通过后，通知用户',
+    'field_idcsmart_certification_certification_update_client_name' => '自动更新姓名',
+    'field_idcsmart_certification_certification_upload' => '上传图片',
+    'field_idcsmart_certification_certification_update_client_phone' => '手机一致性',
+    'field_idcsmart_certification_certification_uncertified_cannot_buy_product' => '未认证无法购买产品',
+
+    'idcsmart_certification_update_config' => '管理员{admin}修改实名设置，{description}',
+];

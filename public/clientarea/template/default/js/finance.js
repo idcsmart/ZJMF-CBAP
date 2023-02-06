@@ -25,6 +25,10 @@
           // 开启了代金券
           this.isShowCash = true;
         }
+        if (arr.includes("IdcsmartOrderCombine")) {
+          // 开启了代金券
+          this.isShowCombine = true;
+        }
       },
       updated() {
         // 关闭loading
@@ -45,6 +49,7 @@
           payHtml: "",
           // 轮询相关
           timer: null,
+          isShowCombine: false,
           balanceTimer: null,
           isShowCash: false,
           time: 300000,
@@ -100,6 +105,11 @@
             name: "",
             amount: "",
             source: "credit",
+          },
+          rules: {
+            amount: [
+              { required: true, message: '请输入充值金额', trigger: 'blur' },
+            ]
           },
           // 余额记录列表
           balanceType: {
@@ -197,6 +207,7 @@
           isShowBackTop: false,
           scrollY: 0,
           isEnd: false,
+          multipleSelection: [],
           isShowMore: false,
           showCard: false, // 是否显示银行卡提现规则
           statusList: [
@@ -218,7 +229,7 @@
             },
           ],
           isdot: false, // 当提现成功后 在提现记录加一个提示的效果
-
+          allLoading: false,
           // 代金卷
           /* 新增代金券 */
           vParams: {
@@ -644,32 +655,21 @@
         },
         // 充值金额变化时触发
         czInputChange() {
-          let data = this.czData;
-          let isPass = true;
-          if (!data.gateway) {
-            this.errText = "请选择充值方式";
-            isPass = false;
-          }
-          if (!data.amount) {
-            this.errText = "请输入充值金额";
-            isPass = false;
-          }
-
-          if (
-            this.czData.amount == this.czDataOld.amount &&
-            this.czData.gateway == this.czDataOld.gateway
-          ) {
-            isPass = false;
-          }
-
-          if (isPass) {
-            this.errText = "";
-            // 调用充值接口
-            const params = {
-              amount: Number(data.amount),
-              gateway: data.gateway,
-            };
-            this.doRecharge(params);
+          if (this.czData.amount) {
+            let data = this.czData;
+            const params = { amount: Number(data.amount) }
+            recharge(params).then((res) => {
+              if (res.data.status === 200) {
+                this.isShowCz = false
+                const orderId = res.data.data.id;
+                this.$refs.payDialog.czPay(orderId);
+              }
+            }).catch((error) => {
+              this.$message.error(error.data.msg)
+            });
+          } else {
+            this.$message.error('请输入充值金额')
+            return false;
           }
         },
         // 充值方式变化时触发
@@ -704,38 +704,36 @@
           this.payLoading1 = true;
           this.isShowimg1 = true;
           this.czDataOld = { ...this.czData };
-          recharge(params)
-            .then((res) => {
-              if (res.data.status === 200) {
-                const orderId = res.data.data.id;
-                const gateway = params.gateway;
-                // 调用支付接口
-                pay({ id: orderId, gateway })
-                  .then((res) => {
-                    this.payLoading1 = false;
-                    this.isShowimg1 = true;
-                    this.errText = "";
-                    if (res.data.status === 200) {
-                      this.payHtml = res.data.data.html;
-                      // 轮询支付状态
-                      this.pollingStatus(orderId);
-                    }
-                  })
-                  .catch((error) => {
-                    this.payLoading1 = false;
-                    this.isShowimg1 = false;
-                    this.errText = error.data.msg;
-                  });
-              }
-            })
-            .catch((error) => {
-              // 显示错误信息
-              this.errText = error.data.msg;
-              // 关闭loading
-              this.payLoading1 = false;
-              // 第三方支付
-              this.payHtml = "";
-            });
+          recharge(params).then((res) => {
+            if (res.data.status === 200) {
+              const orderId = res.data.data.id;
+              const gateway = params.gateway;
+              // 调用支付接口
+              pay({ id: orderId, gateway })
+                .then((res) => {
+                  this.payLoading1 = false;
+                  this.isShowimg1 = true;
+                  this.errText = "";
+                  if (res.data.status === 200) {
+                    this.payHtml = res.data.data.html;
+                    // 轮询支付状态
+                    this.pollingStatus(orderId);
+                  }
+                })
+                .catch((error) => {
+                  this.payLoading1 = false;
+                  this.isShowimg1 = false;
+                  this.errText = error.data.msg;
+                });
+            }
+          }).catch((error) => {
+            // 显示错误信息
+            this.errText = error.data.msg;
+            // 关闭loading
+            this.payLoading1 = false;
+            // 第三方支付
+            this.payHtml = "";
+          });
         },
         // 轮循支付状态
         pollingStatus(id) {
@@ -851,6 +849,26 @@
               this.payLoading = false;
               this.errText = error.data.msg;
             });
+        },
+        handleSelectionChange(val) {
+          this.multipleSelection = val.map((item) => {
+            return item.id
+          })
+        },
+        handelAllPay() {
+          if (this.multipleSelection.length === 0) {
+            this.$message.warning('请勾选需要合并支付的订单！')
+            return
+          }
+          this.allLoading = true
+          combineOrder({ ids: this.multipleSelection }).then((res) => {
+            this.allLoading = false
+            const orderId = res.data.data.id;
+            this.$refs.payDialog.showPayDialog(orderId);
+          }).catch((err) => {
+            this.$message.error(err.data.msg)
+            this.allLoading = false
+          })
         },
         // 使用余额
         useBalance() {

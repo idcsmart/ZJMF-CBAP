@@ -29,6 +29,17 @@ class HooksController
     public function after_register(){}
 
     /**
+     * 时间 2022-07-18
+     * @title 订单生成前
+     * @url before_order_create
+     * @method  
+     * @author wyh
+     * @version v1
+     * @param   int client_id - 用户ID
+     */
+    public function before_order_create(){}
+
+    /**
      * @title 产品退款
      * @author wyh
      * @time 2022-07-28

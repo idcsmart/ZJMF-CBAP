@@ -77,26 +77,19 @@
 .main-card .tabledata {
   margin-top: 0.2rem;
   padding-bottom: 0.23rem;
-  border: 1px solid #E6E7EB;
+  border: 1px solid #e6e7eb;
 }
 .main-card .tabledata tbody tr:hover {
   cursor: pointer;
 }
-.main-card .tabledata .status {
-  width: 59px;
-  height: 26px;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.12;
-}
 .main-card .tabledata .status-text {
+  display: inline-block;
+  text-align: center;
+  border-radius: 3px;
+  height: 26px;
+  line-height: 26px;
+  padding: 0 8px;
   font-size: 0.13rem;
-  line-height: 1;
-  position: absolute;
-  top: calc(50% - 6.5px);
-  transform: translateX(10px);
 }
 .main-card .tabledata .more-operation {
   width: 0.26rem;

@@ -90,3 +90,7 @@ function voucherMine(params) {
 function voucherGet(params) {
   return Axios.post(`/voucher/${params.id}/get`, params)
 }
+
+function combineOrder(params) {
+  return Axios.post(`/order/combine`, params)
+}

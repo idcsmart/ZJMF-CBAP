@@ -12,7 +12,7 @@
   justify-content: space-between;
 }
 
-.top-l > img {
+.top-l>img {
   cursor: pointer;
   margin-right: 0.25rem;
 }
@@ -85,19 +85,19 @@
   text-align: right;
 }
 
-.money-num > .text {
+.money-num>.text {
   color: #8692b0;
   font-size: 13px;
   margin-top: 0.12rem;
 }
 
-.item-balance > .text {
+.item-balance>.text {
   color: #8692b0;
   font-size: 13px;
   margin-top: 0.12rem;
 }
 
-.item-unbalance > .text {
+.item-unbalance>.text {
   color: #8692b0;
   font-size: 13px;
   margin-top: 0.12rem;
@@ -117,11 +117,20 @@
   align-items: center;
 }
 
+.content_searchbar .left_tips .all-pay {
+  padding: 0 10px;
+  height: 32px;
+  color: #ffffff;
+  background: #0058ff;
+  margin-right: 0.2rem;
+}
+
 .content_searchbar .left_tips .tips_item {
   display: flex;
   align-items: center;
   margin-right: 0.3rem;
 }
+
 .finance .el-tabs__content {
   min-height: 5rem;
 }
@@ -160,7 +169,7 @@
   border: 1px solid #e6e7eb;
 }
 
-.main_table > thead > tr > th:nth-child(1) {
+.main_table>thead>tr>th:nth-child(1) {
   padding-left: 0.3rem;
 }
 
@@ -174,7 +183,7 @@
   justify-content: center;
 }
 
-.pay-html > img {
+.pay-html>img {
   width: 2.5rem;
   height: 2.5rem;
 }
@@ -191,7 +200,7 @@
   border: none;
 }
 
-.Refunded{
+.Refunded {
   background-color: rgb(64, 158, 255, 0.12);
   color: #409EFF;
   border: none;
@@ -236,7 +245,8 @@
   background: rgba(61, 213, 152, 0.12);
   color: rgba(61, 213, 152, 1);
 }
-.Artificial{
+
+.Artificial {
   background: rgba(54, 153, 255, .12);
   color: #3699FF;
 }
@@ -288,7 +298,7 @@
   justify-content: flex-end;
 }
 
-.form-footer > .btn-ok {
+.form-footer>.btn-ok {
   background: #0058ff;
   border-radius: 3px;
   color: rgba(255, 255, 255, 0.9);
@@ -297,7 +307,7 @@
   justify-content: center;
 }
 
-.form-footer > .btn-no {
+.form-footer>.btn-no {
   background: #e7e7e7;
   border-radius: 3px;
   color: #1e2736;
@@ -334,7 +344,7 @@
   align-items: center;
 }
 
-.cz-input > .btn-ok {
+.cz-input>.btn-ok {
   margin-left: 0.1rem;
   height: 0.46rem;
   background: #0058ff;
@@ -484,7 +494,7 @@
     border-radius: 3px 3px 0px 0px;
   }
 
-  .mob-search-input > input {
+  .mob-search-input>input {
     height: 0.8rem;
     background: rgba(134, 146, 176, 0.1);
     border-radius: 3px 3px 0px 0px;
@@ -575,7 +585,7 @@
     height: 0.8rem;
   }
 
-  .cz-input > .btn-ok {
+  .cz-input>.btn-ok {
     height: 0.8rem;
   }
 
@@ -648,15 +658,15 @@
     font-size: 0.4rem;
   }
 
-  .item-balance > .text {
+  .item-balance>.text {
     font-size: 0.26rem;
   }
 
-  .money-num > .text {
+  .money-num>.text {
     font-size: 0.26rem;
   }
 
-  .item-unbalance > .text {
+  .item-unbalance>.text {
     font-size: 0.26rem;
   }
 

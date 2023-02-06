@@ -16,7 +16,7 @@ class ConfigurationValidate extends Validate
         'maintenance_mode' => 'require|in:0,1',
         'website_name' => 'require|max:255',
         'website_url' => 'require|max:255|url',	
-        'terms_service_url' => 'max:255|url',
+        'terms_service_url' => 'require|max:255|url',
         'terms_privacy_url' => 'require|max:255|url',
         'system_logo' => 'require',	
 		
@@ -94,6 +94,7 @@ class ConfigurationValidate extends Validate
         'website_url.require' => 'configuration_website_url',
         'website_url.max' => 'configuration_website_url_cannot_exceed_255_chars',
         'website_url.url' => 'configuration_website_url_error',
+        'terms_service_url.require' => 'configuration_terms_service_url',
         'terms_service_url.max' => 'configuration_terms_service_url_cannot_exceed_255_chars',
         'terms_service_url.url' => 'configuration_website_url_error',
         'terms_privacy_url.require' => 'configuration_terms_privacy_url',
@@ -186,7 +187,7 @@ class ConfigurationValidate extends Validate
 		'certification_uncertified_suspended_host.require' => 'configuration_certification_uncertified_suspended_host_require',
     ];
     protected $scene = [
-        'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url'],
+        'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url','terms_privacy_url'],
         'login_update' => ['register_email','register_phone','login_phone_verify','home_login_check_ip','admin_login_check_ip'],
         'security_update' => ['captcha_client_register','captcha_client_login','captcha_client_login_error','captcha_admin_login'],
         'currency_update' => ['currency_code','currency_prefix','recharge_open','recharge_min','recharge_max'],

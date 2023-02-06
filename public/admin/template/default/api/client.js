@@ -232,15 +232,64 @@ function getchildAccountListApi(params) {
 
 /* 1-7新增产品手动开通等 */
 // 模块开通
-function createModule (params) {
+function createModule(params) {
   return Axios.post(`/host/${params.id}/module/create`)
 }
-function suspendModule (params) {
+function suspendModule(params) {
   return Axios.post(`/host/${params.id}/module/suspend`, params)
 }
-function unsuspendModule (params) {
+function unsuspendModule(params) {
   return Axios.post(`/host/${params.id}/module/unsuspend`, params)
 }
-function delModule (params) {
+function delModule(params) {
   return Axios.post(`/host/${params.id}/module/terminate`, params)
+}
+
+// 批量删除产品
+function deleteHost(params) {
+  return Axios.delete(`/host`, { params });
+}
+
+
+/* 2023-1-30新增订单详情 */
+// 订单详情
+function getOrderDetails (params) {
+  return Axios.get(`/order/${params.id}`)
+}
+// 订单退款
+function orderRefund (params) {
+  return Axios.post(`/order/${params.id}/refund`, params)
+}
+// 订单退款记录列表
+function getOrderRefundRecord (params) {
+  return Axios.get(`/order/${params.id}/refund_record`)
+}
+// 删除退款记录
+function delOrderRecord (params) {
+  return Axios.delete(`/refund_record/${params.id}`)
+}
+// 订单应用余额
+function orderApplyCredit (params) {
+  return Axios.post(`/order/${params.id}/apply_credit`, params)
+}
+// 订单扣除余额
+function orderRemoveCredit (params) {
+  return Axios.post(`/order/${params.id}/remove_credit`, params)
+}
+// 修改订单支付方式
+function changePayway (params) {
+  return Axios.put(`/order/${params.id}/gateway`, params)
+}
+// 修改订单备注
+function changeOrderNotes (params) {
+  return Axios.put(`/order/${params.id}/notes`, params)
+}
+// 订单管理-删除人工调整的订单子项
+function delArtificialOrder (params) {
+  return Axios.delete(`/order/item/${params.id}`, params)
+}
+
+// 1-31 模块按钮输出
+function getMoudleBtns(params) {
+  return Axios.get(`/host/${params.id}/module/button`)
 }

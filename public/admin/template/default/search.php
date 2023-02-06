@@ -65,7 +65,7 @@
             <!-- 表格开始 -->
             <div v-show="isShowTable" class="resule-table">
                 <!-- 表格开始 -->
-                <t-table row-key="id" :data="showData" size="medium" :columns="columns" :hover="true" :loading="loading" table-layout="fixed" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
+                <t-table row-key="id" :data="showData" size="medium" :columns="columns" :hover="true" :loading="loading" table-layout="fixed" display-type="fixed-width" :hide-sort-tips="true" >
                     <template #domainstatus="{row}">
                         {{state[row.domainstatus].text}}
                     </template>

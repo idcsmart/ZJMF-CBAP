@@ -104,6 +104,9 @@
           if (this.activeName == 2) {
             location.href = "security_ssh.html";
           }
+          if (this.activeName == 4) {
+            location.href = "security_group.html";
+          }
         },
 
         getLogList() {

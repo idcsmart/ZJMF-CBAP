@@ -72,7 +72,7 @@
                   <el-table-column prop="ip" label="IP" width="250" :show-overflow-tooltip="true">
                     <template slot-scope="scope">
                       <div>
-                        {{scope.row.ip?scope.row.ip:'--'}}
+                        {{scope.row.ip && scope.row.status!== 'Deleted'?scope.row.ip:'--'}}
                       </div>
                     </template>
                   </el-table-column>

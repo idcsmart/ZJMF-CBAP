@@ -249,8 +249,9 @@ class IdcsmartCommonProductConfigoptionModel extends Model
             }
 
             # 创建子商品
+            $ProductModel = new ProductModel();
             if (isset($param['set_son_product']) && $param['set_son_product']){
-                $ProductModel = new ProductModel();
+
                 $product = $ProductModel->where('product_id',$productId)->find();
                 $result2 = $ProductModel->createProduct([
                     'name' => $param['option_name']??'',
@@ -289,6 +290,11 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                     'hidden' => $param['hidden']??0,
                 ]);
             }
+
+            $product = $ProductModel->where('product_id',$productId)->find();
+
+            # 记录日志
+            active_log(lang_plugins('idcsmart_common_add_product_config_option', ['{admin}'=>request()->admin_name, '{product}'=>'product#'.$product['id'].'#'.$product['name'].'#', '{config_option}'=>$param['option_name']??'']), 'product', $product['id']);
 
             $this->commit();
         }catch (\Exception $e){
@@ -366,6 +372,30 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                 }
             }
 
+            $param['option_name'] = $param['option_name']??'';
+            $param['option_type'] = $param['option_type']??'select';
+            $param['option_param'] = $param['option_param']??'';
+            $param['description'] = $param['description']??'';
+            $param['unit'] = $param['unit']??'';
+            $param['allow_repeat'] = $param['allow_repeat']??0;
+            $param['max_repeat'] = $param['max_repeat']??5;
+            $param['fee_type'] = $param['fee_type']??'qty';
+
+            $description = [];
+            $old = $configoption->toArray();
+            $new = $param;
+            foreach ($old as $key=>$value){
+                if (isset($new[$key]) && ($value != $new[$key])){
+                    if($key=='option_type' || $key=='allow_repeat' || $key=='fee_type'){
+                        $value = lang_plugins('field_idcsmart_common_'.$key.'_'.$value);
+                        $new[$key] = lang_plugins('field_idcsmart_common_'.$key.'_'.$new[$key]);
+                    }
+                    $description[] = lang('log_admin_update_description',['{field}'=>lang_plugins('field_idcsmart_common_'.$key),'{old}'=>$value,'{new}'=>$new[$key]]);
+                }
+            }
+
+            $description = implode(',', $description);
+
             $configoption->save([
                 'option_name' => $param['option_name']??'',
                 'option_type' => $param['option_type']??'select',
@@ -374,12 +404,20 @@ class IdcsmartCommonProductConfigoptionModel extends Model
                 'unit' => $param['unit']??'',
                 'allow_repeat' => $param['allow_repeat']??0,
                 'max_repeat' => $param['max_repeat']??5,
-                'fee_type' => $param['fee_type']??'',
+                'fee_type' => $param['fee_type']??'qty',
             ]);
 
             # 更新商品最低价格
             $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
             $IdcsmartCommonProductModel->updateProductMinPrice($productId);
+
+            if(!empty($description)){
+                $product = $ProductModel->where('product_id',$productId)->find();
+
+                # 记录日志
+                active_log(lang_plugins('idcsmart_common_update_product_config_option', ['{admin}'=>request()->admin_name, '{product}'=>'product#'.$product['id'].'#'.$product['name'].'#', '{description}'=>$description]), 'product', $product['id']);
+            }
+            
 
             $this->commit();
         }catch (\Exception $e){
@@ -444,6 +482,11 @@ class IdcsmartCommonProductConfigoptionModel extends Model
             # 更新商品最低价格
             $IdcsmartCommonProductModel = new IdcsmartCommonProductModel();
             $IdcsmartCommonProductModel->updateProductMinPrice($productId);
+
+            $product = $ProductModel->where('product_id',$productId)->find();
+            
+            # 记录日志
+            active_log(lang_plugins('idcsmart_common_delete_product_config_option', ['{admin}'=>request()->admin_name, '{product}'=>'product#'.$product['id'].'#'.$product['name'].'#', '{config_option}'=>$configoption['option_name']??'']), 'product', $product['id']);
 
             $this->commit();
         }catch (\Exception $e){

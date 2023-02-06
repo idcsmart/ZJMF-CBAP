@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="/plugins/addon/idcsmart_withdraw/template/admin/css/withdrawal.css" />
 <!-- =======内容区域======= -->
 
-<div id="content" class="withdrawal table" v-cloak>
+<div id="content" class="withdrawal" v-cloak>
   <t-card class="list-card-container">
     <ul class="common-tab">
       <li class="active">
@@ -29,7 +29,9 @@
         </div>
       </div>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" 
+    :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange"
+     :hide-sort-tips="hideSortTips">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

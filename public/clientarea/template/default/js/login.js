@@ -1,13 +1,13 @@
 
 // 验证码通过
-function captchaCheckSuccsss(bol, captcha, token) {
+function captchaCheckSuccsss (bol, captcha, token) {
   if (bol) {
     // 验证码验证通过
     getData(captcha, token)
   }
 };
 // 取消验证码验证
-function captchaCheckCancel() {
+function captchaCheckCancel () {
   captchaCancel()
 };
 
@@ -21,7 +21,7 @@ function captchaCheckCancel() {
         countDownButton,
         captchaDialog
       },
-      data() {
+      data () {
         return {
           // 登录是否需要验证
           isCaptcha: false,
@@ -36,7 +36,8 @@ function captchaCheckCancel() {
             password: getCookie("password") ? getCookie("password") : null,
             phoneCode: "",
             emailCode: "",
-            isRemember: getCookie("isRemember") == "1" ? true : false,
+            //  isRemember: getCookie("isRemember") == "1" ? true : false,
+            isRemember: false,
             countryCode: 86
           },
           token: "",
@@ -45,7 +46,7 @@ function captchaCheckCancel() {
           commonData: {}
         }
       },
-      created() {
+      created () {
         if (localStorage.getItem('jwt')) {
           location.href = 'index.html'
           return
@@ -53,11 +54,11 @@ function captchaCheckCancel() {
         this.getCountryList();
         this.getCommonSetting()
       },
-      mounted() {
+      mounted () {
         window.captchaCancel = this.captchaCancel
         window.getData = this.getData
       },
-      updated() {
+      updated () {
         // 关闭loading
         document.getElementById('mainLoading').style.display = 'none';
         document.getElementsByClassName('template')[0].style.display = 'block'
@@ -66,7 +67,7 @@ function captchaCheckCancel() {
       },
       methods: {
         // 验证码验证成功后的回调
-        getData(captchaCode, token) {
+        getData (captchaCode, token) {
           this.isCaptcha = false
           console.log(captchaCode, token);
           this.token = token
@@ -87,11 +88,11 @@ function captchaCheckCancel() {
           }
 
         },
-        goHelpUrl(id) {
+        goHelpUrl (id) {
           window.open(`${location.protocol}//${host}/agreement.html?id=${id}`)
         },
         // 登录
-        doLogin() {
+        doLogin () {
           let isPass = true;
           const form = { ...this.formData };
           // 邮件登录验证
@@ -249,7 +250,7 @@ function captchaCheckCancel() {
           }
         },
         // 获取国家列表
-        getCountryList() {
+        getCountryList () {
           getCountry({}).then(res => {
             if (res.data.status === 200) {
               this.countryList = res.data.data.list
@@ -257,7 +258,7 @@ function captchaCheckCancel() {
           })
         },
         // 加密方法
-        encrypt(str) {
+        encrypt (str) {
           const key = CryptoJS.enc.Utf8.parse("idcsmart.finance");
           const iv = CryptoJS.enc.Utf8.parse("9311019310287172");
           var encrypted = CryptoJS.AES.encrypt(str, key, {
@@ -268,7 +269,7 @@ function captchaCheckCancel() {
           return encrypted;
         },
         // 发送邮箱验证码
-        sendEmailCode() {
+        sendEmailCode () {
           let isPass = true
           const form = this.formData
           if (!form.email) {
@@ -307,7 +308,7 @@ function captchaCheckCancel() {
           }
         },
         // 发送手机短信
-        sendPhoneCode() {
+        sendPhoneCode () {
           let isPass = true
           const form = this.formData
           if (!form.phone) {
@@ -349,14 +350,14 @@ function captchaCheckCancel() {
             })
           }
         },
-        toRegist() {
+        toRegist () {
           location.href = 'regist.html'
         },
-        toForget() {
+        toForget () {
           location.href = 'forget.html'
         },
         // 获取通用配置
-        async getCommonSetting() {
+        async getCommonSetting () {
           try {
             const res = await getCommon()
             this.commonData = res.data.data
@@ -373,23 +374,23 @@ function captchaCheckCancel() {
           }
         },
         // 获取前台导航
-        doGetMenu() {
+        doGetMenu () {
           getMenu().then(res => {
             if (res.data.status === 200) {
               localStorage.setItem('frontMenus', JSON.stringify(res.data.data.menu))
             }
           })
         },
-        toService() {
+        toService () {
           const url = this.commonData.terms_service_url
           window.open(url);
         },
-        toPrivacy() {
+        toPrivacy () {
           const url = this.commonData.terms_privacy_url
           window.open(url);
         },
         // 验证码 关闭
-        captchaCancel() {
+        captchaCancel () {
           this.isShowCaptcha = false
         }
       }

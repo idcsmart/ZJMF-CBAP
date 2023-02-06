@@ -30,29 +30,33 @@ class SmsLogic
     public function sendBase($param)
     {
         $param['phone_code'] = str_replace('+','',$param['phone_code']);
-		if(!empty($param['phone_code'])){		
-			$country = (new CountryModel())->checkPhoneCode($param['phone_code']);
-			if(!$country){
-				return ['status'=>400, 'msg'=>lang('send_sms_area_code_error')];//区号错误
-			}
-		}else{
-			$param['phone_code'] = '';
-		}
-		$data=[
+
+        $data=[
 			'content' => $param['content'],
 			'template_param' => $param['template_param'],
 			'sms_name' => $param['sms_name'],
 		];
-		if(empty($param['phone'])){
-			return ['status'=>400, 'msg'=>lang('sms_phone_number_cannot_be_empty')];//手机号不能为空
-		}
-		if($param['phone_code'] == '86' || empty($param['phone_code'])){	
+        if($param['phone_code'] == '86' || empty($param['phone_code'])){	
 			$data['mobile'] = $param['phone'];
 			$sms_methods = $this->smsMethods('sendCnSms',$data);
 		}else{
 			$data['mobile'] = '+'.$param['phone_code'].$param['phone'];
 			$sms_methods = $this->smsMethods('sendGlobalSms',$data);
 		}
+
+		if(!empty($param['phone_code'])){		
+			$country = (new CountryModel())->checkPhoneCode($param['phone_code']);
+			if(!$country){
+				return ['status'=>400, 'msg'=>lang('send_sms_area_code_error'), 'data'=>$sms_methods];//区号错误
+			}
+		}else{
+			$param['phone_code'] = '';
+		}
+		
+		if(empty($param['phone'])){
+			return ['status'=>400, 'msg'=>lang('sms_phone_number_cannot_be_empty'), 'data'=>$sms_methods];//手机号不能为空
+		}
+		
 
 		if($sms_methods['status'] == 'success'){
 			return ['status'=>200, 'msg'=>lang('send_sms_success'), 'data'=>$sms_methods];//短信发送成功
@@ -84,7 +88,13 @@ class SmsLogic
 				return ['status'=>400, 'msg'=>lang('id_error')];
 			}
 			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			if(empty($index_host)){
+				return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+			}
 			$index_product = Db::name('product')->find($index_host['product_id']);
+			if(empty($index_product)){
+				return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+			}
 			if($index_product['creating_notice_sms_api']>0 && $index_product['creating_notice_sms_api_template']>0){
 				$plugin = Db::name('plugin')->field('id,name')->find($index_product['creating_notice_sms_api']);
 				$index_setting['sms_enable'] = 1;
@@ -99,7 +109,13 @@ class SmsLogic
 				return ['status'=>400, 'msg'=>lang('id_error')];
 			}
 			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			if(empty($index_host)){
+				return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+			}
 			$index_product = Db::name('product')->find($index_host['product_id']);
+			if(empty($index_product)){
+				return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+			}
 			if($index_product['created_notice_sms_api']>0 && $index_product['created_notice_sms_api_template']>0){
 				$plugin = Db::name('plugin')->field('id,name')->find($index_product['created_notice_sms_api']);
 				$index_setting['sms_enable'] = 1;
@@ -116,6 +132,9 @@ class SmsLogic
 		//订单
         if(!empty($param['order_id'])){
 			$index_order = Db::name('order')->field('id,type,amount,create_time,status,gateway_name gateway,credit,client_id')->find($param['order_id']);
+			if(empty($index_order)){
+				return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+			}
 			$order = [
 				'order_id' => $index_order['id'],
 				'order_create_time' => $index_order['create_time'],
@@ -131,7 +150,13 @@ class SmsLogic
 		//产品
         if(!empty($param['host_id'])){	
 			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			if(empty($index_host)){
+				return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+			}
 			$index_product = Db::name('product')->field('id,name')->find($index_host['product_id']);
+			if(empty($index_product)){
+				return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+			}
 			//获取自动化设置
 			$config=(new ConfigurationModel())->cronList();
 			$host = [
@@ -140,8 +165,8 @@ class SmsLogic
 				'product_first_payment_amount' => $index_host['first_payment_amount'],
 				'product_renew_amount' => $index_host['renew_amount'],
 				'product_binlly_cycle' => $index_host['billing_cycle'],
-				'product_active_time' => $index_host['active_time'],
-				'product_due_time' => $index_host['due_time'],
+				'product_active_time' => date("Y-m-d H:i:s", $index_host['active_time']),
+				'product_due_time' => date("Y-m-d H:i:s", $index_host['due_time']),
 				'product_suspend_reason' => $index_host['suspend_reason'],
 				'renewal_first' => $config['cron_due_renewal_first_day'],
 				'renewal_second' => $config['cron_due_renewal_second_day'],
@@ -155,6 +180,9 @@ class SmsLogic
 		//客户
         if(!empty($param['client_id'])){
 			$index_client = Db::name('client')->field('id,username,email,phone_code,phone,company,country,address,language,notes,status,create_time register_time,last_login_time,last_login_ip,credit')->find($param['client_id']);
+			if(empty($index_client)){
+				return ['status'=>400, 'msg'=>lang('client_is_not_exist')];
+			}
 			if($index_client['username']){
 				$account = $index_client['username'];
 			}else if($index_client['phone']){
@@ -164,12 +192,12 @@ class SmsLogic
 			}	
 			
 			$client = [
-				'client_register_time' => $index_client['register_time'],
+				'client_register_time' => date("Y-m-d H:i:s", $index_client['register_time']),
 				'client_username' => $index_client['username'],
 				'client_email' => $index_client['email'],
 				'client_phone' => $index_client['phone_code'].'-'.$index_client['phone'],
 				'client_company' => $index_client['company'],
-				'client_last_login_time' => $index_client['last_login_time'],
+				'client_last_login_time' => date("Y-m-d H:i:s", $index_client['last_login_time']),
 				'client_last_login_ip' => $index_client['last_login_ip'],
 				'account' => $account,
 			];

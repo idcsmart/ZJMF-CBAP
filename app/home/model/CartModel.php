@@ -344,6 +344,9 @@ class CartModel extends Model
                 if(empty($product)){
                     return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
                 }
+                if(!empty($product['product_id'])){
+                    return ['status'=>400, 'msg'=>lang('cannot_only_buy_son_product')];
+                }
                 $value['config_options'] = $value['config_options'] ?? [];
                 
                 $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options'],$value['qty']);
@@ -368,10 +371,22 @@ class CartModel extends Model
         if(empty($cartData)){
             return ['status'=>400, 'msg'=>lang('please_select_products_in_the_cart')];
         }
+        $clientId = get_client_id();
+
+        $result = hook('before_order_create', ['client_id'=>$clientId, 'cart' => $cartData]);
+
+        foreach ($result as $value){
+            if (isset($value['status']) && $value['status']==400){
+                return ['status'=>400, 'msg'=>$value['msg'] ?? lang('fail_message')];
+            }
+        }
+
         $this->startTrans();
         try {
             // 创建订单
-            $clientId = get_client_id();
+            $gateway = gateway_list();
+            $gateway = $gateway['list'][0]??[];
+            
             $time = time();
             $order = OrderModel::create([
                 'client_id' => $clientId,
@@ -380,8 +395,8 @@ class CartModel extends Model
                 'amount' => $amount,
                 'credit' => 0,
                 'amount_unpaid' => $amount,
-                'gateway' => '',
-                'gateway_name' => '',
+                'gateway' => $gateway['name'] ?? '',
+                'gateway_name' => $gateway['title'] ?? '',
                 'pay_time' => $amount>0 ? 0 : $time,
                 'create_time' => $time
             ]);
@@ -396,6 +411,13 @@ class CartModel extends Model
                         throw new \Exception(lang('product_inventory_shortage'));
                     }
                     ProductModel::where('id', $value['product_id'])->dec('qty', $value['qty'])->update();
+                }
+                if(empty($value['description'])){
+                    if($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment'){
+                        $value['description'] = $product['name'].'('.date("Y-m-d H:i:s").'-'.date("Y-m-d H:i:s",time()+$value['duration']).')';
+                    }else{
+                        $value['description'] = $product['name'];
+                    }
                 }
                 $productLog[] = 'product#'.$product['id'].'#'.$product['name'].'#';
 

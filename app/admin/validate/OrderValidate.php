@@ -18,7 +18,6 @@ class OrderValidate extends Validate
         'products'                      => 'requireIf:type,new|checkProducts:thinkphp',
         'host_id'                       => 'requireIf:type,upgrade|integer|gt:0',
         'product'                       => 'requireIf:type,upgrade|checkProduct:thinkphp',
-        'use_credit'                    => 'require|in:0,1',
     ];
 
     protected $message  =   [
@@ -48,14 +47,15 @@ class OrderValidate extends Validate
         'product.require'               => 'please_select_product',
         'product.requireIf'             => 'please_select_product',
         'product.checkProduct'          => 'param_error',
-        'use_credit.require'            => 'param_error',
-        'use_credit.in'                 => 'param_error',
     ];
 
     protected $scene = [
         'create' => ['type', 'amount', 'client_id', 'description', 'products', 'host_id', 'product'],
         'delete' => ['id', 'delete_host'],
         'paid' => ['id', 'use_credit'],
+        'refund' => ['id', 'amount'],
+        'apply' => ['id', 'amount'],
+        'remove' => ['id', 'amount'],
     ];
 
     # 修改金额验证

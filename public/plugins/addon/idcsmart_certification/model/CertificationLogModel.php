@@ -245,6 +245,35 @@ class CertificationLogModel extends Model
             # 解除暂停
             $this->certificationUnsuspend($log['client_id']);
 
+            $clientId = $log['client_id'];
+            $client = ClientModel::find($clientId);
+            # 记录日志
+            active_log(lang_plugins('addon_idcsmart_certification_approve', ['{admin}'=>'admin#'.request()->admin_id.'#'.request()->admin_name.'#','{client}'=>'client#'.$clientId.'#'.$client['username'].'#']), 'addon_idcsmart_certification_log', $id, $clientId);
+
+            if(IdcsmartCertificationLogic::getDefaultConfig('certification_notice')){
+                //实名认证通过通知短信添加到任务队列
+                add_task([
+                    'type' => 'sms',
+                    'description' => '实名认证通过,发送短信',
+                    'task_data' => [
+                        'name'=>'idcsmart_certification_pass',//发送动作名称
+                        'client_id'=>get_client_id(),//客户ID
+                        'template_param'=>[
+                        ],
+                    ],
+                ]);
+                //实名认证通过通知添加到任务队列
+                add_task([
+                    'type' => 'email',
+                    'description' => '实名认证通过,发送邮件',
+                    'task_data' => [
+                        'name'=>'idcsmart_certification_pass',//发送动作名称
+                        'client_id'=>get_client_id(),//客户ID
+                        'template_param'=>[
+                        ],
+                    ],
+                ]);
+            }
 
             $this->commit();
         }catch (\Exception $e){
@@ -302,6 +331,11 @@ class CertificationLogModel extends Model
                     ]);
             }
 
+            $clientId = $log['client_id'];
+            $client = ClientModel::find($clientId);
+            # 记录日志
+            active_log(lang_plugins('addon_idcsmart_certification_reject', ['{admin}'=>'admin#'.request()->admin_id.'#'.request()->admin_name.'#','{client}'=>'client#'.$clientId.'#'.$client['username'].'#']), 'addon_idcsmart_certification_log', $id, $clientId);
+
 
             $this->commit();
         }catch (\Exception $e){
@@ -320,7 +354,7 @@ class CertificationLogModel extends Model
      * @version v1
      * @return int certification_open - 实名认证是否开启:1开启默认,0关
      * @return int certification_upload - 是否需要上传证件照:1是,0否默认
-     * @return int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认
+     * @return int certification_uncertified_cannot_buy_product - 未认证无法购买产品:1是,0否默认
      * @return int is_certification - 是否实名认证:1是,0否默认
      * @return object person - 个人认证信息
      * @return string person.username - 申请人
@@ -345,7 +379,7 @@ class CertificationLogModel extends Model
         $configuration = [
             'certification_open' => $config['certification_open']??0,
             'certification_upload' => $config['certification_upload']??0,
-            'certification_uncertified_suspended_host' => $config['certification_uncertified_suspended_host']??0,
+            'certification_uncertified_cannot_buy_product' => $config['certification_uncertified_cannot_buy_product']??0,
         ];
 
         $CertificationPersonModel = new CertificationPersonModel();
@@ -565,7 +599,10 @@ class CertificationLogModel extends Model
                 'notes' => ''
             ];
 
-            $this->insert($log);
+            $id = $this->insertGetId($log);
+
+            # 记录日志
+            active_log(lang_plugins('addon_idcsmart_certification_post', ['{client}'=>'client#'.$clientId.'#'.request()->client_name.'#']), 'addon_idcsmart_certification_log', $id, $clientId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -715,7 +752,10 @@ class CertificationLogModel extends Model
                 'notes' => ''
             ];
 
-            $this->insert($log);
+            $id = $this->insertGetId($log);
+
+            # 记录日志
+            active_log(lang_plugins('addon_idcsmart_certification_post', ['{client}'=>'client#'.$clientId.'#'.request()->client_name.'#']), 'addon_idcsmart_certification_log', $id, $clientId);
 
             $this->commit();
         }catch (\Exception $e){

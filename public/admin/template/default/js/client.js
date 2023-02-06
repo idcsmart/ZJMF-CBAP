@@ -4,7 +4,7 @@
     const template = document.getElementsByClassName("client")[0];
     Vue.prototype.lang = window.lang;
     new Vue({
-      data () {
+      data() {
         let checkPwd2 = (val) => {
           if (val !== this.formData.password) {
             return {
@@ -126,7 +126,7 @@
         };
       },
       computed: {
-        filterColor () {
+        filterColor() {
           return (level) => {
             if (level) {
               return this.levelList.filter(
@@ -135,7 +135,7 @@
             }
           };
         },
-        filterName () {
+        filterName() {
           return (level) => {
             if (level) {
               return (
@@ -147,7 +147,7 @@
           };
         },
       },
-      mounted () {
+      mounted() {
         this.maxHeight = document.getElementById("content").clientHeight - 170;
         let timer = null;
         window.onresize = () => {
@@ -162,7 +162,7 @@
           }, 300);
         };
       },
-      created () {
+      created() {
         const href = location.href.split("?")[1];
         if (href) {
           this.curLevelId = location.href.split("?")[1]?.split("=")[1] * 1;
@@ -175,38 +175,41 @@
         this.getCountry();
       },
       methods: {
-        async getPlugin () {
+        async getPlugin() {
           try {
             const res = await getAddon();
             this.addonArr = res.data.data.list.map(item => item.name)
             this.hasPlugin = this.addonArr.includes("IdcsmartClientLevel");
             this.hasPlugin && this.getLevel();
             this.addonArr.includes('IdcsmartSubAccount') && this.getSubUser()
+            if (this.addonArr.includes('IdcsmartCertification')) {
+              this.columns.splice(2, 0, { colKey: "certification", title: '实名状态', width: 150 })
+            }
           } catch (error) { }
         },
-        rowClick (e) {
+        rowClick(e) {
           location.href = `client_detail.html?client_id=${e.row.id}`;
         },
         /* 用户等级 */
-        async getLevel () {
+        async getLevel() {
           try {
             const res = await getAllLevel();
             this.levelList = res.data.data.list;
           } catch (error) { }
         },
         // 输入邮箱的时候取消手机号验证
-        cancelPhone (val) {
+        cancelPhone(val) {
           if (val) {
             this.$refs.userDialog.clearValidate(["phone"]);
           }
         },
-        cancelEmail (val) {
+        cancelEmail(val) {
           if (val) {
             this.$refs.userDialog.clearValidate(["email"]);
           }
         },
         // 获取列表
-        async getClientList () {
+        async getClientList() {
           try {
             this.loading = true;
             const res = await getClientList(this.params, this.curLevelId);
@@ -220,7 +223,7 @@
           }
         },
         // 子账户
-        async getSubUser () {
+        async getSubUser() {
           try {
             idList = this.data.map((item) => item.id);
             str = idList.join(",");
@@ -243,14 +246,14 @@
           }
         },
         // 切换分页
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current;
           this.params.limit = e.pageSize;
           this.params.keywords = "";
           this.getClientList();
         },
         // 排序
-        sortChange (val) {
+        sortChange(val) {
           if (!val) {
             this.params.orderby = "id";
             this.params.sort = "desc";
@@ -260,16 +263,16 @@
           }
           this.getClientList();
         },
-        clearKey () {
+        clearKey() {
           this.params.keywords = "";
           this.seacrh();
         },
-        seacrh () {
+        seacrh() {
           this.params.page = 1;
           this.getClientList();
         },
         // 获取国家列表
-        async getCountry () {
+        async getCountry() {
           try {
             const res = await getCountry();
             this.country = res.data.data.list;
@@ -277,15 +280,15 @@
             this.$message.error(error.data.msg);
           }
         },
-        close () {
+        close() {
           this.visible = false;
           this.$refs.userDialog.reset();
         },
         // 添加用户
-        addUser () {
+        addUser() {
           this.visible = true;
         },
-        async onSubmit ({ validateResult, firstError }) {
+        async onSubmit({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const res = await addClient(this.formData);
@@ -298,22 +301,22 @@
             }
           } else {
             console.log("Errors: ", validateResult);
-            this.$message.warning(firstError);
+            // this.$message.warning(firstError);
           }
         },
         // 查看用户详情
-        handleClickDetail (row) {
+        handleClickDetail(row) {
           location.href = `client_detail.html?id=${row.id}`;
         },
         // 停用/启用
-        changeStatus (row) {
+        changeStatus(row) {
           event.stopPropagation();
           this.delId = row.id;
           this.curStatus = row.status;
           this.statusTip = this.curStatus ? lang.sure_Close : lang.sure_Open;
           this.statusVisble = true;
         },
-        async sureChange () {
+        async sureChange() {
           try {
             let tempStatus = this.curStatus === 1 ? 0 : 1;
             const res = await changeOpen(this.delId, { status: tempStatus });
@@ -324,17 +327,17 @@
             console.log(error);
           }
         },
-        closeDialog () {
+        closeDialog() {
           this.statusVisble = false;
         },
 
         // 删除用户
-        deleteUser (row) {
+        deleteUser(row) {
           event.stopPropagation();
           this.delVisible = true;
           this.delId = row.id;
         },
-        async sureDel () {
+        async sureDel() {
           try {
             await deleteClient(this.delId);
             this.$message.success(window.lang.del_success);
@@ -347,11 +350,11 @@
             this.$message.error(error.data.msg);
           }
         },
-        cancelDel () {
+        cancelDel() {
           this.delVisible = false;
         },
         // 子账户
-        goDetail (id) {
+        goDetail(id) {
           console.log(111);
           location.href = `client_detail.html?client_id=${id}`;
         },

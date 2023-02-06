@@ -60,7 +60,7 @@ return [
     'login_phone_is_not_right' => '请输入手机号',
     'login_phone_is_not_register' => '手机号未注册',
     'login_client_is_disabled' => '该帐号已停用/关闭，请联系管理员处理',
-    'permission_denied' => '您没有访问{name}接口权限！',
+    'permission_denied' => '您没有访问【{name}】接口权限！',
 
     # 权限规则
     'auth_rule_admin_list' => '管理员列表',
@@ -255,10 +255,11 @@ return [
     'admin_disable_user' => '{admin}禁用用户{client}',
     'admin_delete_user' => '{admin}删除用户{client}',
     'admin_modify_user_profile' => '{admin}将{client}的{description}',
-    'admin_delete_user_host' => '{admin}将{client}的{host}删除',
-    'admin_adjust_user_order_price' => '{admin}将{client}的{order}的价格{old}改为{new}',
-    'admin_mark_user_order_payment_status' => '{admin}将{client}的{order}标记为已付款',
-    'admin_delete_user_order' => '{admin}将{client}的{order}删除',
+    'admin_delete_user_host' => '{admin}将{client}的产品{host}删除',
+    'admin_batch_delete_user_host' => '{admin}将{client}的产品{host}批量删除',
+    'admin_adjust_user_order_price' => '{admin}将{client}的订单{order}的价格{old}改为{new}',
+    'admin_mark_user_order_payment_status' => '{admin}将{client}的订单{order}标记为已付款',
+    'admin_delete_user_order' => '{admin}将{client}的订单{order}删除',
     'admin_delete_transaction' => '{admin}删除交易流水{transaction}，流水所属用户为{client}',
     'admin_add_transaction' => '{admin}新增交易流水{transaction}，流水所属用户为{client}',
     'admin_create_new_user' => '{admin}新建用户{client}',
@@ -282,6 +283,13 @@ return [
     'admin_sms_template_log_delete' => '{admin}短信接口"{sms_name}"模板删除"{sms_title}"成功',
     'admin_notice_send_log_update' => '{admin}发送设置，{description}',
     'sub_account' => '(子账户)',
+    'admin_refund_user_order_credit' => '{admin}对{client}的订单{order}操作退款，退款到余额，退款金额：{amount}',
+    'admin_refund_user_order_transaction' => '{admin}对{client}的订单{order}操作退款，退款到流水{transaction}，退款金额：{amount}',
+    'admin_apply_credit_to_user_order' => '{admin}应用余额到{client}的订单{order}，应用金额：{amount}',
+    'admin_remove_credit_from_user_order' => '{admin}从{client}的订单{order}移除余额，移除金额：{amount}',
+    'admin_delete_refund_record' => '{admin}删除退款记录{refund_record}',
+    'admin_adjust_user_order_gateway' => '{admin}将{client}的订单{order}的支付方式{old}改为{new}',
+    'admin_adjust_user_order_notes' => '{admin}将{client}的订单{order}的备注{old}改为{new}',
 
     'client_username' => '姓名',
     'client_email' => '邮箱',
@@ -319,7 +327,7 @@ return [
 
 
     # 通用描述
-    'log_admin_update_description' => '{field}{old}为{new}',
+    'log_admin_update_description' => '{field}从{old}改为{new}',
 
     'log_admin_login' => '{admin}登录系统',
     'log_admin_login_not_exist' => '{admin}登录系统失败,管理员不存在',
@@ -375,6 +383,8 @@ return [
     'log_admin_create_product_group' => '{admin}新增商品分组{product_group}',
     'log_admin_update_product_group' => '{admin}修改商品分组名称{old}为{new}',
     'log_admin_delete_product_group' => '{admin}删除商品分组{product_group}',
+    'log_admin_hidden_product_group' => '{admin}隐藏商品分组{product_group}',
+    'log_admin_show_product_group' => '{admin}显示商品分组{product_group}',
 
     'log_admin_plugin_gateway' => '支付',
     'log_admin_plugin_sms' => '短信',
@@ -415,6 +425,7 @@ return [
     'order_is_not_exist' => '订单不存在',
     'order_item_is_not_exist' => '订单子项不存在',
     'order_item_cannot_update' => '非人工调整的订单子项不可修改',
+    'order_item_cannot_delete' => '非人工调整的订单子项不可删除',
     'order_amount_adjustment_failed' => '订单金额调整失败，调整后的待付金额不得小于0',
     'please_select_order_type' => '请选择订单类型',
     'order_type_error' => '订单类型错误',
@@ -435,6 +446,11 @@ return [
     'host_id_error' => '产品ID错误',
     'client_host_error' => '产品用户和选择的用户不一致',
     'update_amount' => '调整金额',
+    'order_not_support_refund' => '未付款的订单不支持退款',
+    'refund_amount_not_enough' => '订单可退款金额不足',
+    'order_not_support_apply_credit' => '订单不支持应用余额',
+    'apply_credit_not_enough' => '应用余额不得超过可应用余额金额',
+    'remove_credit_not_enough' => '扣除余额不得超过已应用余额金额',
 
     # 产品管理
     'host_is_not_exist' => '产品不存在',
@@ -506,6 +522,7 @@ return [
     'configuration_website_url' => '网站域名地址不能为空',
     'configuration_website_url_cannot_exceed_255_chars' => '网站域名地址最多不能超过255个字符',
     'configuration_website_url_error' => '请输入这样https://wwww.a.com的域名地址',
+    'configuration_terms_service_url' => '服务条款地址不能为空',
     'configuration_terms_service_url_cannot_exceed_255_chars' => '服务条款地址最多不能超过255个字符',
     'configuration_terms_privacy_url' => '隐私条款地址不能为空',
     'configuration_terms_privacy_url_cannot_exceed_255_chars' => '隐私条款地址最多不能超过255个字符',
@@ -891,6 +908,7 @@ return [
     # 导航管理
     'nav_is_not_exist' => '默认导航不存在',
     'product_error' => '商品错误',
+    'nav_cannot_repeat_add' => '默认导航不可重复添加',
 
     # 首页管理
     'one_year_ago' => '一年前',
@@ -948,5 +966,8 @@ return [
     'log_module_unsuspend_account_failed' => '产品{host}模块取消暂停失败,原因:{reason}',
     'log_module_terminate_account_success' => '产品{host}模块删除成功',
     'log_module_terminate_account_failed' => '产品{host}模块删除失败,原因:{reason}',
+
+    # 退款记录
+    'refund_record_is_not_exist' => '退款记录不存在',
 
 ];

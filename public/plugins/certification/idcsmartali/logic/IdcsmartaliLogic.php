@@ -57,23 +57,28 @@ class IdcsmartaliLogic
 
         if(isset($result['status']) && $result['status']==200){
 			$status = 1; # 通过
+            $errorMsg = '';
         }else{
             $status = 2; # 未通过
             $errorMsg = $result['msg']?:'未通过';
+        }
+
+        if ($errorMsg){
+            $errorMsg = '接口智简魔方-芝麻信用:'.$errorMsg . ',实名认证失败';
         }
 
         if ($type == 'person'){
             $data = [
                 'client_id' => $client_id,
                 'status' => $status,
-                'auth_fail' => $errorMsg??""
+                'auth_fail' => $errorMsg
             ];
             hook('update_certification_person',$data);
         }else{
             $data = [
                 'client_id' => $client_id,
                 'status' => $status,
-                'auth_fail' => $errorMsg??""
+                'auth_fail' => $errorMsg
             ];
             hook('update_certification_company',$data);
         }

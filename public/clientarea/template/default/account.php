@@ -27,23 +27,25 @@
                 <el-tab-pane :label="lang.account_menu1" name="1" v-if="showAccountController">
                   <div class="box-top">
                     <div class="right-name">
-                      <span class="name-text">{{userName}}</span>
+                      <div>
+                        <span class="name-text">{{userName}}</span>
+                        <p class="name-country">
+                          <img v-show="imgShow" class="country-img" :src="curSrc">
+                        </p>
+                      </div>
                       {foreach $addons as $addon}
                       {if ($addon.name=='IdcsmartCertification')}
                       {php}$PluginModel=new app\admin\model\PluginModel();$config=$PluginModel->where('name','IdcsmartCertification')->value('config');$config=json_decode($config,true);{/php}
                       {if (isset($config.certification_open) && $config.certification_open)}
                       <div class="attestation-status" v-show="attestationStatusInfo.iocnShow" @click="handelAttestation({$addon.id})">
                         <img :src="attestationStatusInfo.iconUrl" alt="">
-                        <span>{{ attestationStatusInfo.text }}</span>
+                        <span class="attestation-text" v-if="attestationStatusInfo.status === 0">未认证，前往<span class="bule-text">实名认证<i class="el-icon-arrow-right"></i></span></span>
+                        <span class="attestation-text" v-else-if="attestationStatusInfo.status === 10">个人认证已完成，前往<span class="bule-text">企业认证<i class="el-icon-arrow-right"></i></span></span>
+                        <span class="attestation-text" v-else-if="attestationStatusInfo.status === 20 || attestationStatusInfo.status === 30">实名认证已完成</span>
                       </div>
                       {/if}
                       {/if}
                       {/foreach}
-
-                      <p class="name-country">
-                        <!-- <img src="./img/ali/user.png"> -->
-                        <img v-show="imgShow" :src="curSrc">
-                      </p>
                     </div>
                   </div>
                   <div class="box-main">
@@ -131,9 +133,9 @@
                         <el-col :span="7">
                           <div class="box-item">
                             <div class="box-item-t">{{lang.account_label6}}</div>
-                            <div class="box-item-b">
+                            <div class="box-item-b" @click="showPhone">
                               <el-input :disabled="true" v-model="accountData.phone">
-                                <i class="el-icon-edit edit-icon" slot="suffix" @click="showPhone"></i>
+                                <i class="el-icon-edit edit-icon" slot="suffix"></i>
                               </el-input>
                             </div>
                           </div>
@@ -141,9 +143,9 @@
                         <el-col :span="7">
                           <div class="box-item">
                             <div class="box-item-t">{{lang.account_label7}}</div>
-                            <div class="box-item-b">
+                            <div class="box-item-b" @click="showEmail">
                               <el-input :disabled="true" v-model="accountData.email">
-                                <i class="el-icon-edit edit-icon" slot="suffix" @click="showEmail"></i>
+                                <i class="el-icon-edit edit-icon" slot="suffix"></i>
                               </el-input>
                             </div>
                           </div>
@@ -151,9 +153,9 @@
                         <el-col :span="7">
                           <div class="box-item">
                             <div class="box-item-t">{{lang.account_label8}}</div>
-                            <div class="box-item-b">
+                            <div class="box-item-b" @click="showPass">
                               <el-input :disabled="true" type="password" value="********">
-                                <i class="el-icon-edit edit-icon" slot="suffix" @click="showPass"></i>
+                                <i class="el-icon-edit edit-icon" slot="suffix"></i>
                               </el-input>
                             </div>
                           </div>

@@ -7,7 +7,7 @@
     <div class="top-box">
       <t-divider class="reply-divider" align="left">{{lang.order_detail}}</t-divider>
       <div class="top-title">
-        <div class="ticket-title">{{orderDetailData.ticket_num}}-{{orderDetailData.title}}</div>
+        <div class="ticket-title">#{{orderDetailData.ticket_num}}-{{orderDetailData.title}}</div>
         <div class="ticket-info">
           <span class="info-title" @click="goUserPagr">{{lang.order_text18}}：<span class="blue-text">{{orderDetailData.username}}</span></span>
           <span class="info-title">{{lang.order_text19}}：<span class="info-item">{{ orderDetailData.create_time ? formatDate(orderDetailData.create_time) : '--'}}</span></span>
@@ -18,7 +18,16 @@
       <div class="select-box">
         <div>
           <span>{{lang.order_text22}}：</span>
-          <t-select class="select-240" @change="hostChange" :min-collapsed-num="1" clearable multiple :placeholder="lang.order_text24" clearable v-model="params.selectHostList" :options="hostList" :keys="{ label: 'showName', value: 'id'}" :scroll="{ type: 'virtual' }" :popup-props="{ overlayStyle: { height: '300px' } }"></t-select>
+          <span class="host-div" v-if="product_obj_list !==0">
+            <span v-for="(item,index) in product_obj_list" :key="item.id" class="host-item" @click="goProductDetail(item)">
+              {{item.showName}}
+              <span v-if="(index !== product_obj_list.length - 1) && product_obj_list.length !== 1">、</span>
+            </span>
+          </span>
+          <span class="host-div" v-else>
+            <span class="host-item">--</span>
+          </span>
+          <!-- <t-select class="select-240" @change="hostChange" :min-collapsed-num="1" clearable multiple :placeholder="lang.order_text24" clearable v-model="params.selectHostList" :options="hostList" :keys="{ label: 'showName', value: 'id'}" :scroll="{ type: 'virtual' }" :popup-props="{ overlayStyle: { height: '300px' } }"></t-select> -->
         </div>
         <div>
           <span>{{lang.order_text65}}：</span>
@@ -40,11 +49,11 @@
           <div class="reply-item">
             <div class="reply-top" v-if="orderDetailData.post_admin_id > 0 && item.id == 0">
               <span class="reply-user red-text">{{lang.order_text28 }}</span>
-              <span class="user-name">{{item.type === 'Client' ? item.client_name : item.type === 'Admin' ?  item.admin_name : item.name ? item.name : '--'}}</span>
+              <span class="user-name" :class="item.client_id ? 'link-style' : ''" @click="goClientPage(item.client_id)">{{item.type === 'Client' ? item.client_name : item.type === 'Admin' ?  item.admin_name : item.name ? item.name : '--'}}</span>
             </div>
             <div class="reply-top" v-else>
               <span class="reply-user" :class="item.type === 'Client' ? 'green-text' : item.type === 'Admin' ? 'red-text' : 'pink-text'">{{item.type === 'Client' ? lang.order_text27 : item.type === 'Admin' ? lang.order_text28 : lang.order_text29 }}</span>
-              <span class="user-name">{{item.type === 'Client' ? item.client_name : item.type === 'Admin' ?  item.admin_name : item.name ? item.name : '--'}}</span>
+              <span class="user-name" :class="item.client_id ? 'link-style' : ''" @click="goClientPage(item.client_id)">{{item.type === 'Client' ? item.client_name : item.type === 'Admin' ?  item.admin_name : item.name ? item.name : '--'}}</span>
             </div>
             <div class="reply-main">
               <div class="reply-middle" :class="item.type === 'Client' ? 'green-bg' : item.type === 'Admin' ? 'blue-bg' : 'pink-bg'" @mouseover="mouseOver(item)" @mouseleave="mouseLeave(item)">

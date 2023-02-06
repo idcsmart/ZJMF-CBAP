@@ -5,6 +5,8 @@ use think\Model;
 use think\Db;
 use app\common\logic\ModuleLogic;
 use app\common\model\NoticeSettingModel;
+use app\admin\model\PluginModel;
+
 /**
  * @title 产品模型
  * @desc 产品模型
@@ -539,6 +541,61 @@ class HostModel extends Model
         }
 
         hook('after_host_delete',['id'=>$id]);
+
+        return ['status' => 200, 'msg' => lang('delete_success')];
+    }
+
+    /**
+     * 时间 2023-01-30
+     * @title 批量删除产品
+     * @desc 批量删除产品
+     * @author theworld
+     * @version v1
+     * @param array id - 产品ID required
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */
+    public function batchDeleteHost($param)
+    {
+        $id = $param['id']??[];
+        // 验证产品ID
+        $host = $this->whereIn('id', $id)->select()->toArray();
+        if (empty($host)){
+            return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+        }
+        if(count($host)!=count($id)){
+            return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+        }
+
+        $client = ClientModel::whereIn('id', array_column($host, 'client_id'))->select()->toArray();
+        $clientArr = [];
+        foreach ($client as $key => $value) {
+            $clientArr[$value['id']] = $value;
+        }
+        
+        $this->startTrans();
+        try {
+            foreach ($host as $key => $value) {
+                $this->destroy($value['id']);
+
+                hook('after_host_delete',['id'=>$value['id']]);
+
+                $client = $clientArr[$value['client_id']] ?? [];
+                if(empty($client)){
+                    $clientName = '#'.$value['client_id'];
+                }else{
+                    $clientName = 'client#'.$client['id'].'#'.$client['username'].'#';
+                }
+                # 记录日志
+                active_log(lang('admin_batch_delete_user_host', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{host}'=>$value['name']]), 'host', $value['id']);
+            }
+            
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('delete_fail')];
+        }
 
         return ['status' => 200, 'msg' => lang('delete_success')];
     }
@@ -1301,5 +1358,74 @@ class HostModel extends Model
 
         return ['list' => $hosts, 'count' => $count];
     }
+
+    /**
+     * 时间 2023-01-31
+     * @title 模块按钮输出
+     * @desc 模块按钮输出
+     * @author hh
+     * @version v1
+     * @param   int id - 产品ID require
+     * @return  string button[].type - 按钮类型(暂时都是default)
+     * @return  string button[].func - 按钮功能(create=开通,suspend=暂停,unsuspend=解除暂停,terminate=删除,renew=续费)
+     * @return  string button[].name - 名称
+     */
+    public function moduleAdminButton($param){
+        $result = [
+            'status' => 200,
+            'msg'    => lang('success_message'),
+            'data'   => [
+                'button' => [],
+            ],
+        ];
+        $host = $this->find($param['id']);
+        if(empty($host)){
+            return $result;
+        }
+        $button = [];
+        if(in_array($host['status'], ['Unpaid','Pending','Active','Suspended','Deleted','Failed'])){
+            $button[] = [
+                'type' => 'default',
+                'func' => 'create',
+                'name' => '开通',
+            ];
+        }
+        if(in_array($host['status'], ['Pending','Active'])){
+            $button[] = [
+                'type' => 'default',
+                'func' => 'suspend',
+                'name' => '暂停',
+            ];
+        }
+        if(in_array($host['status'], ['Suspended'])){
+            $button[] = [
+                'type' => 'default',
+                'func' => 'unsuspend',
+                'name' => '解除暂停',
+            ];
+        }
+        if(in_array($host['status'], ['Pending','Active','Suspended','Failed'])){
+            $button[] = [
+                'type' => 'default',
+                'func' => 'terminate',
+                'name' => '删除',
+            ];
+        }
+        if(in_array($host['status'], ['Active'])){
+            // 判断下续费插件
+            $renew = PluginModel::where('name', 'IdcsmartRenew')->where('status', 1)->value('id');
+            if($renew){
+                $button[] = [
+                    'type' => 'default',
+                    'func' => 'renew',
+                    'name' => '续费',
+                ];
+            }
+        }
+        $result['data']['button'] = $button;
+        return $result;
+    }
+
+
 
 }

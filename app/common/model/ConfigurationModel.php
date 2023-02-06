@@ -560,13 +560,13 @@ class ConfigurationModel extends Model
         $data['cron_shell'] = 'php '. root_path() .'cron/cron.php';
 
         // 任务队列命令及状态
-        $TaskModel = new TaskModel();
-        $task = $TaskModel->order('id','desc')->find();
-        if (!empty($task) && $task['status']=='Finish'){
-            $data['cron_task_status'] = 'success';
-        }else{
+        $task_time = $this->where('setting','task_time')->value('value');
+        if((time()-$task_time)>=2*60 || empty($task_time)){
             $data['cron_task_status'] = 'error';
+        }else{
+            $data['cron_task_status'] = 'success';
         }
+
         $data['cron_task_shell'] = 'php '. root_path() .'cron/task.php';
 
         return $data;

@@ -18,7 +18,7 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :max-height="maxHeight">
+    <t-table row-key="id" :data="data" size="medium" :hide-sort-tips="true" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" >
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>

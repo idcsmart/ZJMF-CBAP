@@ -862,6 +862,8 @@ class PackageModel extends Model{
         if(empty($ProductModel)){
             return false;
         }
+
+        $cycle = null;
         if($ProductModel['pay_type'] == 'free'){
             $price = 0;
         }else if($ProductModel['pay_type'] == 'onetime'){
@@ -890,17 +892,19 @@ class PackageModel extends Model{
                     continue;
                 }
                 if(isset($min)){
-                    $min = min($min, $price['price']);
+                    if($price['price'] < $min){
+                        $min = $price['price'];
+                        $cycle = $v;
+                    }
                 }else{
                     $min = $price['price'];
+                    $cycle = $v;
                 }
             }
             $price = $min;
+            $cycle = lang_plugins($cycle);
         }
-        if(isset($price)){
-            $price = amount_format($price);
-            ProductModel::where('id', $productId)->update(['price'=>$price]);
-        }
+        $ProductModel->setPriceCycle('', $price, $cycle);
         return $price;
     }
 

@@ -224,10 +224,10 @@
                     <div class="more" @click="goWorkPage({$addon.id})">···</div>
                   </div>
                   <div class="WorkOrder-content">
-                    <div class="WorkOrder-item" v-for="item in ticketList" :key="item.id">
+                    <div class="WorkOrder-item" v-for="item in ticketList" :key="item.id" @click="goTickDetail({$addon.id},item.id)">
                       <div class="replay-div" :style="{'background':`${item.color}`}">{{item.status}}</div>
                       <div class="replay-box">
-                        <div class="replay-title">{{item.title}}</div>
+                        <div class="replay-title">#{{item.ticket_num}} - {{item.title}}</div>
                         <div class="replay-name">{{item.name}}</div>
                       </div>
                     </div>
@@ -261,26 +261,30 @@
           <!-- 充值 dialog -->
           <div class="cz-dialog">
             <el-dialog width="6.8rem" :visible.sync="isShowCz" :show-close=false @close="czClose">
-              <div class="dialog-title">{{lang.index_text24}}</div>
+              <div class="dialog-title">
+                {{lang.finance_title4}}
+              </div>
               <div class="dialog-form">
                 <el-form :model="czData" label-position="top">
-                  <el-form-item :label="lang.index_text25">
-                    <el-select v-model="czData.gateway" @change="czSelectChange" class="ty-select">
-                      <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
-                    </el-select>
-                  </el-form-item>
-                  <el-form-item :label="lang.index_text26" @keyup.native="czData.amount=oninput(czData.amount)">
+                  <!-- <el-form-item :label="lang.finance_label18">
+                        <el-select v-model="czData.gateway" @change="czSelectChange">
+                          <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
+                        </el-select>
+                      </el-form-item> -->
+                  <el-form-item :label="lang.finance_label19" @keyup.native="czData.amount=oninput(czData.amount)" prop="amount">
                     <div class="cz-input">
-                      <el-input v-model="czData.amount"></el-input>
-                      <el-button class="btn-ok" @click="czInputChange">{{lang.index_text27}}</el-button>
+                      <el-input v-model="czData.amount">
+                      </el-input>
+                      <el-button class="btn-ok" @click="czInputChange">{{lang.finance_btn6}}</el-button>
                     </div>
                   </el-form-item>
-                  <el-form-item v-if="errText">
-                    <el-alert :title="errText" type="error" :closable="false" show-icon></el-alert>
-                  </el-form-item>
-                  <el-form-item v-loading="payLoading1">
-                    <div class="pay-html" v-show="isShowimg1" v-html="payHtml"></div>
-                  </el-form-item>
+                  <!-- <el-form-item v-if="errText">
+                        <el-alert :title="errText" type="error" :closable="false" show-icon>
+                        </el-alert>
+                      </el-form-item>
+                      <el-form-item v-loading="payLoading1">
+                        <div class="pay-html" v-show="isShowimg1" v-html="payHtml"></div>
+                      </el-form-item> -->
                 </el-form>
               </div>
             </el-dialog>
@@ -293,6 +297,7 @@
               <el-button class="btn-no" @click="openVisible = false">{{lang.referral_btn7}}</el-button>
             </span>
           </el-dialog>
+          <pay-dialog ref="payDialog" @payok="paySuccess" @paycancel="payCancel"></pay-dialog>
         </el-main>
       </el-container>
     </el-container>
@@ -302,6 +307,7 @@
   <script src="/{$template_catalog}/template/{$themes}/api/finance.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/api/home.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/js/home.js"></script>
+  <script src="/{$template_catalog}/template/{$themes}/components/payDialog/payDialog.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/utils/util.js"></script>
 
   {include file="footer"}

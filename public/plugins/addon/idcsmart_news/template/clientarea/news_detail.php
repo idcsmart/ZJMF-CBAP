@@ -32,7 +32,7 @@
                 {{lang.news_key}}：{{newDetail.keywords}}
               </p>
               <div class="content" v-html="calStr(newDetail.content)"></div>
-              <div class="news_annex">
+              <div class="news_annex" v-if="newDetail.attachment.length > 0">
                 <p>{{lang.news_annex}}： </p>
                 <p v-for="(item,index) in newDetail.attachment">
                   <a :href="item" :key="index">

@@ -4,9 +4,13 @@
     const template = document.getElementsByClassName('host')[0]
     Vue.prototype.lang = window.lang
     Vue.prototype.moment = moment
+    const host = location.origin
+    const fir = location.pathname.split('/')[1]
+    const str = `${host}/${fir}`
     new Vue({
       data () {
         return {
+          baseUrl: str,
           data: [],
           tableLayout: false,
           bordered: true,
@@ -43,7 +47,7 @@
             },
             {
               colKey: 'renew_amount',
-              title: `${lang.renew}${lang.money_cycle}`,
+              title: `${lang.money_cycle}`,
               width: 200,
               ellipsis: true
             },
@@ -89,7 +93,7 @@
           maxHeight: '',
           clinetParams: {
             page: 1,
-            limit: 1000,
+            limit: 20,
             orderby: 'id',
             sort: 'desc'
           },
@@ -131,7 +135,13 @@
           currency_prefix: JSON.parse(localStorage.getItem('common_set')).currency_prefix || '¥',
           pay: false,
           submitLoading: false,
-          hasPlugin: false
+          hasPlugin: false,
+          hasTicket: false, // 是否安装工单
+          authList: JSON.parse(
+            JSON.stringify(localStorage.getItem("backAuth"))
+          ),
+          clientDetail: {},
+          searchLoading: false
         }
       },
       mounted () {
@@ -156,16 +166,41 @@
             all += Number(cur.renew_amount)
             return all
           }, 0)
+        },
+        calcShow () {
+          return (data) => {
+            return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
+          }
+        },
+        isExist () {
+          return !this.clientList.find(item => item.id === this.clientDetail.id)
         }
       },
       methods: {
+        // 远程搜素
+        remoteMethod (key) {
+          this.clinetParams.keywords = key
+          this.getClintList()
+        },
+        filterMethod (search, option) {
+          return option
+        },
+        // 获取用户详情
+        async getUserDetail () {
+          try {
+            const res = await getClientDetail(this.id);
+            this.clientDetail = res.data.data.client;
+          } catch (error) { }
+        },
         async getPlugin () {
           try {
-            const res = await getAddon() 
-            this.hasPlugin = res.data.data.list.reduce((all, cur) => {
+            const res = await getAddon()
+            const temp = res.data.data.list.reduce((all, cur) => {
               all.push(cur.name)
               return all
-            }, []).includes('IdcsmartRenew')
+            }, [])
+            this.hasPlugin = temp.includes('IdcsmartRenew')
+            this.hasTicket = temp.includes("IdcsmartTicket")
           } catch (error) {
 
           }
@@ -191,10 +226,18 @@
               return item
             })
             this.renewLoading = false
-            
+
           } catch (error) {
             this.renewLoading = false
           }
+        },
+        // 批量删除
+        async batchDel () {
+          if (this.checkId.length === 0) {
+            return this.$message.error(lang.select)
+          }
+          this.delVisible = true
+
         },
         rehandleSelectChange (value, { selectedRowData }) {
           this.checkId = value
@@ -241,10 +284,6 @@
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
             this.clientTotal = res.data.data.count
-            if (this.clientList.length < this.clientTotal) {
-              this.clinetParams.limit = this.clientTotal
-              this.getClintList()
-            }
           } catch (error) {
             console.log(error.data.msg)
           }
@@ -260,14 +299,13 @@
         },
         async getClintList () {
           try {
+            this.searchLoading = true
             const res = await getClientList(this.clinetParams)
             this.clientList = res.data.data.list
             this.clientTotal = res.data.data.count
-            if (this.clientList.length < this.clientTotal) {
-              this.clinetParams.limit = this.clientTotal
-              this.getClintList()
-            }
+            this.searchLoading = false
           } catch (error) {
+            this.searchLoading = false
             console.log(error.data.msg)
           }
         },
@@ -298,7 +336,7 @@
         },
         async onConfirm () {
           try {
-            const res = await deletePro(this.delId)
+            const res = await deleteHost({ id: this.checkId })
             this.$message.success(res.data.msg)
             this.delVisible = false
             this.getClientList()
@@ -316,6 +354,7 @@
         this.id = location.href.split('?')[1].split('=')[1] * 1
         this.getClientList()
         this.getClintList()
+        this.getUserDetail()
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

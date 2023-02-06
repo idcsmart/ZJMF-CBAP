@@ -34,7 +34,7 @@
             </div>
             <!-- 搜索框结束 -->
             <!-- 表格开始 -->
-            <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="true" :loading="loading" table-layout="fixed" display-type="fixed-width" :hide-sort-tips="true" :max-height="maxHeight">
+            <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="true" :loading="loading" table-layout="fixed" display-type="fixed-width" :hide-sort-tips="true" >
                 <template #id="{row}">
                     <span>{{row.id}}</span>
                 </template>

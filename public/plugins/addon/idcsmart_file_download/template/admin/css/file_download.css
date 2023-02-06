@@ -5,7 +5,9 @@
   justify-content: space-between;
 }
 .tabs_item {
-  width: 88px;
+  width: auto;
+  padding: 0 30px;
+  white-space: nowrap;
   height: 32px;
   line-height: 32px;
   background: rgba(0, 82, 217, 0.2);
@@ -161,6 +163,7 @@
   line-height: 42px;
   justify-content: space-between;
   padding-right: 30px;
+  white-space: nowrap;
 }
 .file-box .fileIcon{
   position: relative;
@@ -179,6 +182,7 @@
   align-items: center;
   cursor: pointer;
   width: 65%;
+  overflow: hidden;
 }
 .file-box .icon{
   width: 35%;
@@ -201,6 +205,15 @@
   .filenum{
     margin-right: 20px;
   }
+  .foldername{
+    padding-left: 10px;
+  }
+  .download .fileLoading{
+    padding-left: 0;
+  }
+  .file-box{
+    padding-right: 15px;
+  }
 }
 
 
@@ -214,6 +227,9 @@
   .menucard{
     min-width: 25%;
   }
+  .file-box{
+    padding-right: 0;
+  }
 }
 
 .custom-search{
@@ -225,4 +241,9 @@
 }
 .custom-search + .t-select__list{
   margin-top: 30px;
+}
+@media screen and (max-width: 1100px) {
+  .tabs_item {
+    padding: 0 10px;
+  }
 }

@@ -69,7 +69,7 @@
               { pattern: /^([1-9]\d{0,8}|0)$/, message: lang.verify13 + '0~999999999',type: 'warning' }
             ],
             description: [
-              { validator: val=> val.length <= 1000, message: lang.verify3 + 1000, type: 'warning' }
+              { validator: val=> val.length <= 10000, message: lang.verify3 + 10000, type: 'warning' }
             ]
           },
           visibleMoney: false,

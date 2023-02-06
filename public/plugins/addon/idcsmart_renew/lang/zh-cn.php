@@ -7,6 +7,7 @@ return [
     'get_fail' => '获取失败',
     'host_billing_cycle_is_invalid' => '无效周期',
     'host_renew' => '产品续费',
+    'host_renew_description' => '续费-{product_name}({name}),购买时长:{billing_cycle_name}({time})',
     'renew_success' => '续费成功',
     'renew_fail' => '续费失败',
     'param_error' => '参数错误',

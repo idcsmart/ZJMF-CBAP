@@ -121,7 +121,7 @@ class IdcsmartTicketModel extends Model
                 ->find();
 
             $tickets = $this->alias('t')
-                ->field('t.id,t.client_id,t.ticket_num,t.title,tt.name,t.post_time,c.username,GROUP_CONCAT(p.name Separator \'^#@^\') as hosts,GROUP_CONCAT(h.id Separator \'^#@^\') as host_ids,t.last_reply_time,ts.name as status,ts.color,a.name as admin_name,c.id as client_level,tt.id as ticket_internal')
+                ->field('t.id,t.client_id,t.ticket_num,t.title,tt.name,t.post_time,c.username,GROUP_CONCAT(p.name Separator \'^#@^\') as hosts,GROUP_CONCAT(h.id Separator \'^#@^\') as host_ids,t.last_reply_time,ts.name as status,ts.color,a.name as admin_name,c.id as client_level,tt.id as ticket_internal,(CASE WHEN t.last_reply_time=0 THEN t.post_time WHEN t.last_reply_time>0 THEN t.last_reply_time END) last_time')
                 ->leftJoin('addon_idcsmart_ticket_type tt','t.ticket_type_id=tt.id')
                 ->leftJoin('addon_idcsmart_ticket_status ts','ts.id=t.status')
                 ->leftJoin('admin a','a.id=t.last_reply_admin_id')
@@ -159,6 +159,7 @@ class IdcsmartTicketModel extends Model
                 ->group('t.id')
                 ->limit($param['limit'])
                 ->page($param['page'])
+                ->order('last_time','desc')
                 ->order('t.last_reply_time','desc')
                 ->order('t.post_time','desc')
                 ->order('t.id','desc')
@@ -190,6 +191,10 @@ class IdcsmartTicketModel extends Model
                 ->order('t.last_reply_time','desc')
                 ->select()
                 ->toArray();
+
+            foreach($tickets as $k=>$v){
+                $tickets[$k]['last_urge_time'] = cache('ticket_urge_time_limit_'.$v['id']) ?? '0';
+            }
 
             $count = $this->alias('t')
                 ->leftJoin('addon_idcsmart_ticket_type tt','t.ticket_type_id=tt.id')
@@ -263,9 +268,9 @@ class IdcsmartTicketModel extends Model
         $IdcsmartTicketReplyModel = new IdcsmartTicketReplyModel();
 
         if ($this->isAdmin){
-            $field = 'tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.name as admin_name';
+            $field = 'tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.name as admin_name,c.id as client_id';
         }else{
-            $field = 'tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.nickname as admin_name';
+            $field = 'tr.id,tr.content,tr.attachment,tr.create_time,tr.type,c.username as client_name,a.nickname as admin_name,c.id as client_id';
         }
 
         $ticketReplies = $IdcsmartTicketReplyModel->alias('tr')
@@ -309,7 +314,7 @@ class IdcsmartTicketModel extends Model
             ->order('tr.create_time','desc')
             ->select()->toArray();
 
-        array_push($ticketReplies,['id'=>0,'content'=>$ticket->content,'attachment'=>$ticket->attachment,'create_time'=>$ticket->create_time,'type'=>'Client','client_name'=>$ticket->post_admin_id?$ticket['admin_name']:$ticket->username,'admin_name'=>'']);
+        array_push($ticketReplies,['id'=>0,'content'=>$ticket->content,'attachment'=>$ticket->attachment,'create_time'=>$ticket->create_time,'type'=>'Client','client_name'=>$ticket->post_admin_id?$ticket['admin_name']:$ticket->username,'admin_name'=>'','client_id'=>$ticket['client_id']]);
 
         $ticket['replies'] = $ticketReplies;
         $data = [
@@ -483,7 +488,7 @@ class IdcsmartTicketModel extends Model
             # 记录日志
             if ($this->isAdmin){
                 active_log(lang_plugins('ticket_log_admin_reply_ticket_admin', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#']), 'addon_idcsmart_ticket', $ticket->id);
-                active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#','{content}'=>$ticketReply->content]), 'addon_idcsmart_ticket', $ticket->id);
+                active_log(lang_plugins('ticket_log_admin_reply_ticket', ['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{ticket_id}'=>'ticket#'.$ticket->id .'#'.$ticket->ticket_num .'#']), 'addon_idcsmart_ticket', $ticket->id);
 				//管理员回复工单短信添加到任务队列
 				add_task([
 					'type' => 'sms',
@@ -541,14 +546,22 @@ class IdcsmartTicketModel extends Model
                 throw new \Exception(lang_plugins('ticket_is_not_exist'));
             }
 
+            $lastUrgeTime = cache('ticket_urge_time_limit_'.$id);
+
+            if ($lastUrgeTime && ($lastUrgeTime+15*60)>$time){
+                throw new \Exception(lang_plugins('ticket_urge_time_limit_15_m'));
+            }
+
             if ($ticket->status == 1){
                 $ticket->save([
                     'post_time' => $time,
                     'update_time' => $time
                 ]);
+                cache('ticket_urge_time_limit_'.$id,$time);
             }elseif (in_array($ticket->status,[2,3])){
                 # 发送站内通知
 
+                cache('ticket_urge_time_limit_'.$id,$time);
             }else{ # 已解决或已关闭不可催单
                 throw new \Exception(lang_plugins('ticket_status_is_not_allowed_urge'));
             }
@@ -833,13 +846,13 @@ class IdcsmartTicketModel extends Model
             $IdcsmartTicketHostLinkModel->insertAll($insert);
 
             if ($oldStatus!=$param['status']){
-                active_log(lang_plugins('ticket_log_admin_update_ticket_status', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{status}'=>$ticketStatus['name']]), 'addon_idcsmart_ticket', $id);
+                active_log(lang_plugins('ticket_log_admin_update_ticket_status', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{ticket}'=>'ticket#'.$ticket['ticket_num'],'{status}'=>$ticketStatus['name']]), 'addon_idcsmart_ticket', $id);
             }
 
             if ($oldType!=$param['ticket_type_id']){
                 $IdcsmartTicketTypeModel = new IdcsmartTicketTypeModel();
                 $ticketType = $IdcsmartTicketTypeModel->where('id',$param['ticket_type_id'])->find();
-                active_log(lang_plugins('ticket_log_admin_update_ticket_type', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{type}'=>$ticketType['name']]), 'addon_idcsmart_ticket', $id);
+                active_log(lang_plugins('ticket_log_admin_update_ticket_type', ['{admin}'=>'admin#'.request()->admin_id.'#' .request()->admin_name.'#','{ticket}'=>'ticket#'.$ticket['ticket_num'],'{type}'=>$ticketType['name']]), 'addon_idcsmart_ticket', $id);
             }
 
             $this->commit();

@@ -365,7 +365,7 @@ class CommonController extends AdminBaseController
         $param = $this->request->param();
         $keywords = $param['keywords'] ?? '';
         if(!empty($keywords)){
-            $clients = (new ClientModel())->searchClient($keywords, 'global');
+            $clients = (new ClientModel())->searchClient($param, 'global');
             $products = (new ProductModel())->searchProduct($keywords);
             $hosts = (new HostModel())->searchHost($keywords);
             $data = [
@@ -381,6 +381,31 @@ class CommonController extends AdminBaseController
             ];
         }
 
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => $data
+        ];
+        return json($result);
+    }
+
+     /**
+     * 时间 2022-07-22
+     * @title 全局搜索
+     * @desc 全局搜索
+     * @url /admin/v1/product/all
+     * @method GET
+     * @author theworld
+     * @version v1
+     * @return array list - 商品
+     * @return int list[].id - 商品ID 
+     * @return string list[].name - 商品名称
+     * @return string list[].product_group_name_first - 商品一级分组名称
+     * @return string list[].product_group_name_second - 商品二级分组名称
+     */
+    public function productList()
+    {
+        $data = (new ProductModel())->searchProduct('');
         $result = [
             'status' => 200,
             'msg' => lang('success_message'),

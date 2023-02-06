@@ -22,7 +22,8 @@
                                 </div> -->
       </div>
       <div class="help_table">
-        <t-table hover row-key='id' :pagination="pagination" :data="list" @Change="changepages" @select-change="rehandleSelectChange" :columns="columns" :max-Height="maxHeight" :loading="loading" :selected-row-keys="selectedRowKeys">
+        <t-table hover row-key='id' :pagination="pagination" :data="list" @Change="changepages" @select-change="rehandleSelectChange" :columns="columns" 
+        :loading="loading" :selected-row-keys="selectedRowKeys">
           <template #name="slotProps">
             <t-tooltip placement="top-left" :content="slotProps.row.name" theme="light">
               <div class="filename">
@@ -135,7 +136,8 @@
 
     <div class="addclass operations" @click="append">{{lang.add_folder}}</div>
   </t-card>
-  <t-dialog :header="lang.attachment" placement="center" :visible.sync="visible" @Cancel="onCancel" @EscKeydown="onKeydownEsc" @CloseBtnClick="onClickCloseBtn" @Close="close" width="70%" @Confirm="uploadConfirm" @progress="uploadProgress">
+  <t-dialog :header="lang.attachment" placement="center" :visible.sync="visible" @Cancel="onCancel" :footer="false"
+  @EscKeydown="onKeydownEsc" @CloseBtnClick="onClickCloseBtn" @Close="close" width="70%" @Confirm="uploadConfirm" @progress="uploadProgress">
     <div class="uploadfile">
       <t-upload :action="uploadUrl" :format-response="formatResponse" :headers="uploadHeaders" @Change="changeupload" v-model="files" allow-upload-duplicateFile="false" @progress="uploadProgress" theme="custom" multiple>
         <t-button theme="default">{{lang.attachment_file}}</t-button>
@@ -177,6 +179,10 @@
       </template>
       </template>
     </t-table>
+    <div class="com-f-btn">
+        <t-button theme="primary" type="submit" @click="uploadConfirm" :disabled="uploadfilelist.length === 0">{{lang.sure}}</t-button>
+        <t-button theme="default" variant="base" @click="visible = false">{{lang.cancel}}</t-button>
+      </div>
   </t-dialog>
   <t-dialog :header="lang.edit" placement="center" :visible.sync="showinfo" :on-cancel="onCancel" :on-esc-keydown="onKeydownEsc" :on-close-btn-click="onClickCloseBtn" :on-close="close" max-width="50%" confirm-btn='保存' @Confirm="onSubmit" :footer="false">
     <t-form :data="formData" :rules="rules" ref="form" @submit="onSubmit" v-if="formData">

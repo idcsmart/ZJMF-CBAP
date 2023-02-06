@@ -1,9 +1,12 @@
 <?php
 namespace addon\idcsmart_certification;
 
+use addon\idcsmart_certification\model\CertificationCompanyModel;
 use addon\idcsmart_certification\model\CertificationLogModel;
+use addon\idcsmart_certification\model\CertificationPersonModel;
 use app\common\lib\Plugin;
 use think\facade\Db;
+use addon\idcsmart_certification\logic\IdcsmartCertificationLogic;
 
 /*
  * 智简魔方实名认证插件
@@ -115,6 +118,13 @@ class IdcsmartCertification extends Plugin
         foreach ($sql as $v){
             Db::execute($v);
         }
+
+        # 插入邮件短信模板
+        $templates = IdcsmartCertificationLogic::getDefaultConfig('certification_notice_template');
+        foreach ($templates as $key=>$template){
+            $template['name'] = $key;
+            notice_action_create($template);
+        }
         # 安装成功返回true，失败false
         return true;
     }
@@ -128,6 +138,11 @@ class IdcsmartCertification extends Plugin
         ];
         foreach ($sql as $v){
             Db::execute($v);
+        }
+        # 删除插入的邮件短信模板
+        $templates = IdcsmartCertificationLogic::getDefaultConfig('certification_notice_template');
+        foreach ($templates as $key=>$template){
+            notice_action_delete($key);
         }
         return true;
     }
@@ -151,6 +166,48 @@ class IdcsmartCertification extends Plugin
         $CertificationLogModel = new CertificationLogModel();
 
         return $CertificationLogModel->updateCertificationCompany($param);
+    }
+
+    # 获取已实名认证客户及认证类型(个人/企业)
+    public function getCertificationList()
+    {
+        $CertificationPersonModel = new CertificationPersonModel();
+        $person = $CertificationPersonModel->where('status',1)
+            ->select()
+            ->toArray();
+
+        $re1 = [];
+
+        foreach ($person as $item1){
+            $re1[$item1['client_id']] = 'person';
+        }
+
+        $CertificationCompanyModel = new CertificationCompanyModel();
+        $company = $CertificationCompanyModel->where('status',1)
+            ->select()
+            ->toArray();
+        foreach ($company as $item2){
+            $re1[$item2['client_id']] = 'company';
+        }
+
+        return $re1;
+    }
+    
+    public function beforeOrderCreate($param)
+    {
+        $config = IdcsmartCertificationLogic::getDefaultConfig();
+
+        if(isset($config['certification_uncertified_cannot_buy_product']) && $config['certification_uncertified_cannot_buy_product']==1){
+            $CertificationLogModel = new CertificationLogModel();
+
+            $res = $CertificationLogModel->checkCertification($param['client_id']??0);
+
+            if(!$res){
+                return ['status' => 400, 'msg' => lang_plugins('certification_uncertified_cannot_buy_product')];
+            }
+        }
+        return ['status' => 200];
+        
     }
 
 }

@@ -413,6 +413,8 @@ class IdcsmartWithdrawModel extends Model
         if (empty($gateway)){
             return ['status'=>400, 'msg'=>lang('gateway_is_not_exist')];
         }
+        $gateway['config'] = json_decode($gateway['config'],true);
+        $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
 
 
         $this->startTrans();
@@ -420,7 +422,7 @@ class IdcsmartWithdrawModel extends Model
             $adminId = get_admin_id();
 
             $transaction = TransactionModel::create([
-                'amount' => $idcsmartWithdraw['amount'],
+                'amount' => -($idcsmartWithdraw['amount']-$idcsmartWithdraw['fee']),
                 'gateway' => 'UserCustom',
                 'gateway_name' => $gateway['title'],
                 'transaction_number' => $param['transaction_number'] ?? '',
@@ -437,7 +439,7 @@ class IdcsmartWithdrawModel extends Model
             $client = ClientModel::find($idcsmartWithdraw['client_id']);
 
             # 记录日志
-            active_log(lang_plugins('admin_remit_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{amount}'=>configuration("currency_prefix").$idcsmartWithdraw['amount'].configuration("currency_suffix")]), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id);
+            active_log(lang_plugins('admin_remit_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{amount}'=>configuration("currency_prefix").$idcsmartWithdraw['amount'].configuration("currency_suffix")]), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id, $idcsmartWithdraw['client_id']);
 
             $this->commit();
         } catch (\Exception $e) {
@@ -491,10 +493,10 @@ class IdcsmartWithdrawModel extends Model
             $client = ClientModel::find($idcsmartWithdraw['client_id']);
             if($param['status']==1){
                 # 记录日志
-                active_log(lang_plugins('admin_pass_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{amount}'=>configuration("currency_prefix").$idcsmartWithdraw['amount'].configuration("currency_suffix")]), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id);
+                active_log(lang_plugins('admin_pass_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{amount}'=>configuration("currency_prefix").$idcsmartWithdraw['amount'].configuration("currency_suffix")]), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id, $idcsmartWithdraw['client_id']);
             }else{
                 # 记录日志
-                active_log(lang_plugins('admin_update_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#']), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id);
+                active_log(lang_plugins('admin_update_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#']), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id, $idcsmartWithdraw['client_id']);
             }
 
             $this->commit();
@@ -563,7 +565,7 @@ class IdcsmartWithdrawModel extends Model
             $client = ClientModel::find($idcsmartWithdraw['client_id']);
 
             # 记录日志
-            active_log(lang_plugins('admin_update_remit_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{old}'=>$transaction['transaction_number'], 'new' => $param['transaction_number'] ?? '']), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id);
+            active_log(lang_plugins('admin_update_remit_client_withdraw', ['{admin}'=>request()->admin_name,'{client}'=>'client#'.$client['id'].'#'.$client['username'].'#','{old}'=>$transaction['transaction_number'], 'new' => $param['transaction_number'] ?? '']), 'addon_idcsmart_withdraw', $idcsmartWithdraw->id, $idcsmartWithdraw['client_id']);
 
             $this->commit();
         } catch (\Exception $e) {

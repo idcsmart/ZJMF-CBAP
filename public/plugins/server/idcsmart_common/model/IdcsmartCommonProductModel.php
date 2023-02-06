@@ -880,14 +880,11 @@ class IdcsmartCommonProductModel extends Model
     # 更新商品最低配置价格数据
     public function updateProductMinPrice($product_id)
     {
-        $price = $this->productMinPrice($product_id);
+        $res = $this->productMinPrice($product_id);
 
         $ProductModel = new ProductModel();
 
-        $ProductModel->where('id',$product_id)->update([
-            'price' => $price
-        ]);
-
+        $ProductModel->setPriceCycle($product_id, $res['price'], $res['cycle']);
         return true;
     }
 
@@ -903,6 +900,7 @@ class IdcsmartCommonProductModel extends Model
 
         $IdcsmartCommonProductConfigoptionSubModel = new IdcsmartCommonProductConfigoptionSubModel();
 
+        $cycle = null;
         if ($product['pay_type']=='free'){
             $price = 0;
         }elseif ($product['pay_type']=='onetime'){
@@ -985,8 +983,9 @@ class IdcsmartCommonProductModel extends Model
                 ->select()
                 ->toArray();
 
-            $priceArray = [];
+            // $priceArray = [];
 
+            $minPrice = null;
             foreach ($customCycles as $customCycle){
 
                 $customPrice = $customCycle['amount']??0;
@@ -1040,12 +1039,21 @@ class IdcsmartCommonProductModel extends Model
                     }
                 }
 
-                $priceArray[] = $customPrice;
+                if(is_numeric($minPrice)){
+                    if($customPrice < $minPrice){
+                        $minPrice = $customPrice;
+                        $cycle = $customCycle['name'];
+                    }
+                }else{
+                    $minPrice = $customPrice;
+                    $cycle = $customCycle['name'];
+                }
+                // $priceArray[] = $customPrice;
             }
 
-            $price = !empty($priceArray) ? min($priceArray) : 0;
+            $price = $minPrice ?? 0;
         }
 
-        return $price;
+        return ['price'=>$price, 'cycle'=>$cycle];
     }
 }

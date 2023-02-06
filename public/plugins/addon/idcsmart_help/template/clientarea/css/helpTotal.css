@@ -136,6 +136,8 @@
 }
 .main-card .main-card-content .contnet-right-out {
   height: 100%;
+  min-width: 9.33rem;
+  min-height: 5rem;
 }
 .main-card .main-card-content .contnet-right-out a:target {
   padding-top: 0.7rem !important;

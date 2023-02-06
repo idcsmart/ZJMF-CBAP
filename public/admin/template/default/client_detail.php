@@ -6,7 +6,7 @@
     white-space: pre-wrap;
   }
 </style>
-<div id="content" class="client-detail table hasCrumb" v-cloak>
+<div id="content" class="client-detail hasCrumb" v-cloak>
   <!-- crumb -->
   <div class="com-crumb">
     <span>{{lang.user_manage}}</span>
@@ -22,23 +22,31 @@
           <a>{{lang.personal}}</a>
         </li>
         <li>
-          <a :href="`client_host.html?id=${id}`">{{lang.product_info}}</a>
+          <a :href="`${baseUrl}/client_host.html?id=${id}`">{{lang.product_info}}</a>
         </li>
         <li>
-          <a :href="`client_order.html?id=${id}`">{{lang.order_manage}}</a>
+          <a :href="`${baseUrl}/client_order.html?id=${id}`">{{lang.order_manage}}</a>
         </li>
         <li>
-          <a :href="`client_transaction.html?id=${id}`">{{lang.flow}}</a>
+          <a :href="`${baseUrl}/client_transaction.html?id=${id}`">{{lang.flow}}</a>
         </li>
         <li>
-          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+          <a :href="`${baseUrl}/client_log.html?id=${id}`">{{lang.operation}}{{lang.log}}</a>
         </li>
         <li>
-          <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+          <a :href="`${baseUrl}/client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
+        </li>
+        <li v-if="hasTicket && authList.includes('TicketController::ticketList')">
+          <a :href="`${baseUrl}/plugin/idcsmart_ticket/client_ticket.html?id=${id}`">{{lang.auto_order}}</a>
         </li>
       </ul>
-      <t-select class="user" v-if="this.clientList" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
-        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+      <t-select class="user" v-if="this.clientList" v-model="id" :popup-props="popupProps" filterable 
+      @change="changeUser" :loading="searchLoading" reserve-keyword :on-search="remoteMethod" :filter="filterMethod">
+        <t-option :key="data.id" :value="data.id" :label="calcShow(data)" v-if="isExist">
+          #{{data.id}}-{{data.username ? data.username : (data.phone? data.phone: data.email)}}
+          <span v-if="data.company">({{data.company}})</span>
+        </t-option>
+        <t-option v-for="item in clientList" :value="item.id" :label="calcShow(item)" :key="item.id">
           #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
           <span v-if="item.company">({{item.company}})</span>
         </t-option>
@@ -72,10 +80,10 @@
               </t-form-item>
               <t-form-item :label="lang.email" name="email" :rules="formData.phone ? 
                 [{ required: false },
-                {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
+                {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z_])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
                 message: lang.email_tip, type: 'warning' }]: 
                 [{ required: true,message: lang.input + lang.email, type: 'error'},
-                {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
+                {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z_])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
                 message: lang.email_tip, type: 'warning' }
                 ]">
                 <t-input v-model="formData.email" :placeholder="lang.input+lang.email"></t-input>
@@ -167,11 +175,11 @@
             </t-col>
             <t-col :xs="12" :xl="4">
               <p>{{lang.last_login_time}}</p>
-              <t-input disabled v-model="data.last_login_time === 0 ? '-' :moment(data.last_login_time * 1000).format('YYYY-MM-DD HH:mm:ss')" />
+              <t-input disabled v-model="data.last_login_time === 0 ? '--' :moment(data.last_login_time * 1000).format('YYYY-MM-DD HH:mm:ss')" />
             </t-col>
             <t-col :xs="12" :xl="4">
               <p>{{lang.last_login_ip}}</p>
-              <t-input disabled v-model="data.last_login_ip" />
+              <t-input disabled v-model="data.last_login_ip || '--'" />
             </t-col>
           </t-row>
         </t-col>

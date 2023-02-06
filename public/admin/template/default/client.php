@@ -13,20 +13,27 @@
           <t-option v-for="item in levelList" :value="item.id" :label="item.name" :key="item.name">
           </t-option>
         </t-select>
-        <t-input v-model="params.keywords" @keyup.enter.native="seacrh" :on-clear="clearKey"
-         :placeholder="`${lang.please_search}ID、${lang.username}、${lang.email}、${lang.phone}`" clearable>
+        <t-input v-model="params.keywords" @keyup.enter.native="seacrh" :on-clear="clearKey" :placeholder="`${lang.please_search}ID、${lang.username}、${lang.email}、${lang.phone}`" clearable>
         </t-input>
         <t-button @click="seacrh">{{lang.query}}</t-button>
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"  @row-click="rowClick"
-    :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true" >
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width" :hide-sort-tips="true">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
       <template #id="{row}">
         <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-if="authList.includes('ClientController::index')">{{row.id}}</a>
         <span v-else>{{row.id}}</span>
+      </template>
+      <template #certification="{row}">
+        <t-tooltip :show-arrow="false" theme="light">
+          <span slot="content">{{!row.certification ? '未认证' : row.certification_type === 'person' ? '个人认证' : '企业认证'}}</span>
+          <t-icon :class="row.certification ? 'green-icon' : ''" :name="!row.certification ? 'user-clear': row.certification_type === 'person' ? 'user' : 'usergroup'" />
+        </t-tooltip>
+      </template>
+      <template #email="{row}">
+        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-if="authList.includes('ClientController::index')">{{row.email || '--'}}</a>
       </template>
       <template #username="{row}">
         <t-tooltip :content="filterName(row.custom_field)" :show-arrow="false" theme="light" :disabled="row.custom_field.length === 0 || !hasPlugin">
@@ -36,16 +43,15 @@
             <span @click="goDetail(row.parent_id)" slot="content" style="cursor: pointer">
               #{{row.parent_id}} {{row.parent_name}}
             </span>
-           <t-tag >子账户</t-tag>
-        </t-tooltip></template>
-          
-        </t-tooltip>
+            <t-tag>子账户</t-tag>
+          </t-tooltip>
       </template>
       <template #host_active_num="{row}">
         {{row.host_active_num}}({{row.host_num}})
       </template>
       <template #phone="{row}">
-        <span v-if="row.phone">+{{row.phone_code}}&nbsp;-&nbsp;{{row.phone}}</span>
+        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-if="row.phone">+{{row.phone_code}}&nbsp;-&nbsp;{{row.phone}}</a>
+        <a :href="`client_detail.html?client_id=${row.id}`" class="aHover" v-else>--</a>
       </template>
       <template #status="{row}">
         <t-tag theme="success" class="com-status" v-if="row.status" variant="light">{{lang.enable}}</t-tag>
@@ -78,14 +84,14 @@
       </t-form-item>
       <t-form-item :label="lang.email" name="email" class="email" :rules="formData.phone ? 
         [{ required: false }, 
-        {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
+        {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z_])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
         message: lang.email_tip, type: 'warning' }]: 
         [{ required: true,message: lang.input + lang.email, type: 'error'},
-        {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
+        {pattern: /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z_])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{1,9})$/,
         message: lang.email_tip, type: 'warning' }
         ]">
         <t-input :placeholder="lang.input+lang.email" v-model="formData.email" @change="cancelPhone"></t-input>
-        <p class="tip">{{lang.user_tip}}</p>
+        <p class="tip" v-show="!formData.phone && !formData.email">{{lang.user_tip}}</p>
       </t-form-item>
       <t-form-item :label="lang.password" name="password">
         <t-input :placeholder="lang.input+lang.password" type="password" v-model="formData.password" />

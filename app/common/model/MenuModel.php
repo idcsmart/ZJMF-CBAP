@@ -541,6 +541,14 @@ class MenuModel extends Model
         $menus = array_values($menus);
         
         $url = '';
+        $result = hook('admin_menu_get_url', []); //获取跳转地址
+
+        foreach ($result as $value){
+            if ($value){
+                $url = $value;
+            }
+        }
+
         $menuId = 0;
         // 将数组转换成树形结构
         $tree = [];
@@ -587,8 +595,8 @@ class MenuModel extends Model
             foreach ($navs as $key => $value) {
                 $navs[$key]['name'] = !empty($value['plugin']) ? lang_plugins($value['name']) : lang($value['name']);
             }
-
-            $language = get_system_lang(false); 
+            $client = ClientModel::find($clientId);
+            $language = $client['language'] ?? get_system_lang(false); 
 
             $this->createHomeMenu();
 

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'display_name' => '中文简体',//用于在语言切换下拉中显示
+    'display_name' => '中文繁體',//用于在语言切换下拉中显示
     'display_flag' => 'CN',//用于显示图片，使用国家代码大写
     'not_found' => '页面找不到了',
 
@@ -60,7 +60,7 @@ return [
     'login_phone_is_not_right' => '请输入手机号',
     'login_phone_is_not_register' => '手机号未注册',
     'login_client_is_disabled' => '该帐号已停用/关闭，请联系管理员处理',
-    'permission_denied' => '您没有访问{name}接口权限！',
+    'permission_denied' => '您没有访问【{name}】接口权限！',
 
     # 权限规则
     'auth_rule_admin_list' => '管理员列表',

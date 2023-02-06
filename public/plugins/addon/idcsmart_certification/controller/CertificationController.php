@@ -28,7 +28,7 @@ class CertificationController extends PluginBaseController
      * @return int certification_update_client_name - 是否自动更新姓名:1是,0否默认
      * @return int certification_upload - 是否需要上传证件照:1是,0否默认
      * @return int certification_update_client_phone - 手机一致性:1是,0否默认
-     * @return int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认
+     * @return int certification_uncertified_cannot_buy_product - 未认证无法购买产品:1是,0否默认
      */
     public function getConfig()
     {
@@ -55,12 +55,12 @@ class CertificationController extends PluginBaseController
      * @param int certification_update_client_name - 是否自动更新姓名:1是,0否默认 required
      * @param int certification_upload - 是否需要上传证件照:1是,0否默认 required
      * @param int certification_update_client_phone - 手机一致性:1是,0否默认 required
-     * @param int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认 required
+     * @param int certification_uncertified_cannot_buy_product - 未认证无法购买产品:1是,0否默认 required
      */
     public function setConfig()
     {
         $param = $this->request->only(['certification_open', 'certification_approval', 'certification_notice' ,'certification_update_client_name',
-            'certification_upload', 'certification_update_client_phone', 'certification_uncertified_suspended_host']);
+            'certification_upload', 'certification_update_client_phone', 'certification_uncertified_cannot_buy_product']);
 
         $validate = new CertificationValidate();
         if (!$validate->scene('set_config')->check($param)){

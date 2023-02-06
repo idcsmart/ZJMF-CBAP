@@ -43,7 +43,7 @@
             },
             {
               colKey: 'renew_amount',
-              title: `${lang.renew}${lang.money_cycle}`,
+              title: `${lang.money_cycle}`,
               width: 166,
               ellipsis: true
             },

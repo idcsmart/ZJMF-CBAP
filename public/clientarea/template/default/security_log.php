@@ -59,6 +59,7 @@
                                     </div>
                                 </div>
                             </el-tab-pane>
+                            <el-tab-pane :label="lang.security_group" name="4"></el-tab-pane>
                         </el-tabs>
                     </div>
                 </el-main>

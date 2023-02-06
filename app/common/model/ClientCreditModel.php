@@ -63,11 +63,19 @@ class ClientCreditModel extends Model
         }else{
             $param['id'] = isset($param['id']) ? intval($param['id']) : 0;
         }
+        $param['keywords'] = $param['keywords'] ?? '';
+        $param['order_id'] = $param['order_id'] ?? 0;
+        $param['type'] = $param['type'] ?? '';
+        $param['start_time'] = $param['start_time'] ?? 0;
+        $param['end_time'] = $param['end_time'] ?? 0;
 
         $where = function (Query $query) use($param) {
             $query->where('cc.client_id', $param['id']);
             if(isset($param['keywords']) && trim($param['keywords']) !== ''){
                 $query->where('cc.id|cc.notes', 'like', "%{$param['keywords']}%");
+            }
+            if(!empty($param['order_id'])){
+                $query->where('cc.order_id', $param['order_id']);
             }
             if(!empty($param['type'])){
                 $query->where('cc.type', $param['type']);
@@ -103,6 +111,7 @@ class ClientCreditModel extends Model
 
     	return ['list' => $credits, 'count' => $count];
     }
+
 
     /**
      * 时间 2022-05-11

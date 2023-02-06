@@ -39,6 +39,7 @@
           order_status_options: [],
           // 回复列表
           replyList: [],
+          product_obj_list: [],
           prereplyList: [],
           // 日志列表
           logList: [],
@@ -113,6 +114,12 @@
           const url = 'http://' + str + `client_detail.html?client_id=${this.orderDetailData.client_id}`
           window.open(url)
         },
+        goClientPage(id) {
+          if (id) {
+            const url = 'http://' + str + `client_detail.html?client_id=${id}`
+            window.open(url)
+          }
+        },
         // 获取工单预设回复列表
         getTicketPrereply() {
           ticketPrereply().then((res) => {
@@ -121,6 +128,10 @@
         },
         goList() {
           location.href = 'index.html'
+        },
+        goProductDetail(item) {
+          const url = 'http://' + str + `host_detail.html?client_id=${item.client_id}&id=${item.id}`
+          window.open(url)
         },
         // 确认添加备注
         handelAddNotes() {
@@ -324,8 +335,12 @@
             host_ids: this.params.selectHostList
           }
           editOrderStatus(obj).then((result) => {
-            this.$message.success({ content: result.data.msg, placement: 'top-right' });
-            this.getOrderDetailData()
+            if (obj.status == 4) {
+              this.goList()
+            } else {
+              this.$message.success({ content: result.data.msg, placement: 'top-right' });
+              this.getOrderDetailData()
+            }
           })
         },
         handelLog() {
@@ -379,7 +394,7 @@
         downloadfile(url) {
           const name = url
           const type = name.substring(name.lastIndexOf(".") + 1)
-          if (['png', 'jpg', 'jepg', 'bmp', 'webp'].includes(type)) {
+          if (['png', 'jpg', 'jepg', 'bmp', 'webp', 'PNG', 'JPG', 'JEPG', 'BMP', 'WEBP'].includes(type)) {
             this.preImg = url
             this.viewer.show()
           } else {
@@ -475,10 +490,12 @@
             })
             this.hostList = data
             const arr = []
+            this.product_obj_list = []
             this.orderDetailData.host_ids.forEach(id => {
               data.forEach((item) => {
                 if (item.id == id) {
                   arr.push(item.id)
+                  this.product_obj_list.push(item)
                 }
               })
             });

@@ -26,7 +26,13 @@
         <t-col :xs="12" :xl="6">
           <t-form :data="formData" ref="userInfo" @submit="onSubmit">
             <div class="item">
-              <t-form-item :label="lang.auto_setup">
+              <t-form-item>
+                <template slot="label">
+                  {{lang.auto_setup}}
+                  <t-tooltip :content="lang.auto_setup_tip" :show-arrow="false" theme="light" placement="top-left">
+                    <t-icon name="help-circle" class="pack-tip"></t-icon>
+                  </t-tooltip>
+                </template>
                 <t-radio-group name="creating_notice_sms" v-model="formData.auto_setup" :options="checkOptions">
                 </t-radio-group>
               </t-form-item>

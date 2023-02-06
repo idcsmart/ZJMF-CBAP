@@ -2,7 +2,7 @@
   var old_onload = window.onload;
   window.onload = function () {
     // 全局搜索
-    function globalSearch(keywords) {
+    function globalSearch (keywords) {
       return Axios.get(`/global_search?keywords=${keywords}`)
     }
     const aside = document.getElementById('aside')
@@ -83,7 +83,7 @@
         },
       },
       computed: {
-        logUrl() {
+        logUrl () {
           if (this.collapsed) {
             return `${url}/img/small-logo.png`
           } else {
@@ -91,7 +91,7 @@
           }
         }
       },
-      mounted() {
+      mounted () {
         const auth = JSON.parse(localStorage.getItem('backMenus'))
         this.navList = JSON.parse(localStorage.getItem('backMenus'))
 
@@ -105,12 +105,12 @@
         })
         this.langList = JSON.parse(localStorage.getItem('common_set')).lang_admin
       },
-      created() {
+      created () {
         // this.getSystemConfig()
         this.setWebTitle()
       },
       methods: {
-        setWebTitle() {
+        setWebTitle () {
           const urlArr = location.pathname.split('/')
           // const url = urlArr.at(urlArr.length > 3 ? -2 : -1)
           const url = urlArr.length > 3 ? urlArr[urlArr.length - 2] : urlArr[urlArr.length - 1]
@@ -123,9 +123,21 @@
                 document.title = (url === 'index.html' ? lang.home : sec.name) + '-' + website_name
               }
             })
+            if (temp.length > 0) {
+              let menu_id = ''
+              if (location.pathname.includes('client_') && !location.pathname.includes('idcsmart_client_level')) {
+                menu_id = temp.filter(e => e.url === 'client.html')[0]?.id
+              } else {
+                menu_id = temp.filter(e => location.pathname.includes(e.url))[0]?.id
+              }
+              if (menu_id) {
+                localStorage.setItem('curValue', menu_id)
+                this.curValue = menu_id
+              }
+            }
           })
         },
-        async getSystemConfig() {
+        async getSystemConfig () {
           try {
             const res = await getCommon()
             document.title = res.data.data.website_name
@@ -133,13 +145,13 @@
             console.log(error)
           }
         },
-        getAuth(auth) {
+        getAuth (auth) {
           return auth.map(item => {
             item.child = item.child.filter(el => el.url)
             return item
           })
         },
-        jumpHandler(e) {
+        jumpHandler (e) {
           localStorage.setItem('curValue', e.id)
           this.audio_tip = new Audio('/admin/template/default/media/tip.wav')
           this.audio_tip.play();
@@ -149,21 +161,21 @@
             location.href = str + e.url || (e.child && str + e.child[0].url)
           }, 5)
         },
-        changeCollapsed() {
+        changeCollapsed () {
           this.collapsed = !this.collapsed
         },
-        goIndex() {
+        goIndex () {
           localStorage.setItem('curValue', 0)
           location.href = str + 'index.html'
         },
-        changeSearch(e) {
+        changeSearch (e) {
           this.isSearchFocus = e
           this.isShow = true
           this.noData = false
           this.globalSearchList()
         },
         // 全局搜索
-        async globalSearchList() {
+        async globalSearchList () {
           try {
             this.loadingSearch = true
             const res = await globalSearch(this.isSearchFocus)
@@ -179,7 +191,7 @@
             this.loadingSearch = false
           }
         },
-        changeSearchFocus(value) {
+        changeSearchFocus (value) {
           if (!value) {
             this.searchData = ''
             setTimeout(() => {
@@ -189,11 +201,11 @@
           this.isSearchFocus = value
         },
         // 个人中心
-        handleNav() {
+        handleNav () {
 
         },
         // 退出登录
-        async handleLogout() {
+        async handleLogout () {
           try {
             const res = await Axios.post('/logout')
             this.$message.success(res.data.msg)
@@ -209,7 +221,7 @@
           }
         },
         // 语言切换
-        changeLang(e) {
+        changeLang (e) {
           const index = this.langList.findIndex(item => item.display_lang === e.value)
           if (localStorage.getItem('lang') !== e.value || !localStorage.getItem('lang')) {
             if (localStorage.getItem('lang')) {
@@ -220,21 +232,21 @@
           }
         },
         // 颜色配置
-        toUnderline(name) {
+        toUnderline (name) {
           return name.replace(/([A-Z])/g, '_$1').toUpperCase();
         },
-        getBrandColor(type, colorList) {
+        getBrandColor (type, colorList) {
           const name = /^#[A-F\d]{6}$/i.test(type) ? type : this.toUnderline(type);
           return colorList[name || 'DEFAULT'];
         },
         /* 页面配置 */
-        toggleSettingPanel() {
+        toggleSettingPanel () {
           this.visible = true
         },
-        handleClick() {
+        handleClick () {
           this.visible = true
         },
-        getModeIcon(mode) {
+        getModeIcon (mode) {
           if (mode === 'light') {
             return SettingLightIcon
           }
@@ -244,13 +256,13 @@
           return SettingAutoIcon
         },
         // 主题
-        onPopupVisibleChange(visible, context) {
+        onPopupVisibleChange (visible, context) {
           if (!visible && context.trigger === 'document') this.isColoPickerDisplay = visible
         },
 
         // 修改密码相关
         // 关闭修改密码弹窗
-        editPassClose() {
+        editPassClose () {
           this.editPassVisible = false
           this.editPassFormData = {
             password: '',
@@ -258,7 +270,7 @@
           }
         },
         // 修改密码提交
-        onSubmit({ validateResult, firstError }) {
+        onSubmit ({ validateResult, firstError }) {
           if (validateResult === true) {
             const params = {
               password: this.editPassFormData.password,
@@ -280,7 +292,7 @@
           }
         },
         // 确认密码检查
-        checkPwd(val) {
+        checkPwd (val) {
           if (val !== this.editPassFormData.password) {
             return { result: false, message: window.lang.password_tip, type: 'error' };
           }
@@ -288,7 +300,7 @@
         },
       },
       watch: {
-        'formData.mode'() {
+        'formData.mode' () {
           if (this.formData.mode === 'auto') {
             document.documentElement.setAttribute('theme-mode', '')
           } else {
@@ -296,7 +308,7 @@
           }
           localStorage.setItem('theme-mode', this.formData.mode)
         },
-        'formData.brandTheme'() {
+        'formData.brandTheme' () {
           document.documentElement.setAttribute('theme-color', this.formData.brandTheme);
           localStorage.setItem('theme-color', this.formData.brandTheme)
         }
@@ -305,7 +317,7 @@
 
     /* footer */
     footer && new Vue({
-      data() {
+      data () {
         return {}
       }
     }).$mount(footer)
@@ -320,13 +332,13 @@
 
 
 const mixin = {
-  data() {
+  data () {
     return {
       addonArr: [] // 已激活的插件
     }
   },
   methods: {
-    async getAddonList() {
+    async getAddonList () {
       try {
         const res = await getAddon()
         this.addonArr = res.data.data.list.map(item => item.name)
@@ -334,7 +346,7 @@ const mixin = {
       }
     }
   },
-  created() {
+  created () {
     this.getAddonList()
   }
 }

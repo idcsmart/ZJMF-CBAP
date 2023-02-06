@@ -22,7 +22,7 @@ class CertificationValidate extends Validate
         'certification_update_client_name'=> 'require|in:0,1',
         'certification_upload'=> 'require|in:0,1',
         'certification_update_client_phone'=> 'require|in:0,1',
-        'certification_uncertified_suspended_host'=> 'require|in:0,1',
+        'certification_uncertified_cannot_buy_product'=> 'require|in:0,1',
     ];
 
     protected $message  =   [
@@ -43,7 +43,7 @@ class CertificationValidate extends Validate
         'create_person' => ['plugin_name', 'card_name', 'card_type', 'card_number'],
         'create_company' => ['plugin_name', 'company', 'company_organ_code'],
         'set_config' => ['certification_open', 'certification_approval', 'certification_notice' ,'certification_update_client_name',
-            'certification_upload', 'certification_update_client_phone', 'certification_uncertified_suspended_host'],
+            'certification_upload', 'certification_update_client_phone', 'certification_uncertified_cannot_buy_product'],
     ];
 
     protected function checkPlugin($value)

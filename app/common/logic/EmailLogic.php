@@ -70,7 +70,13 @@ class EmailLogic
 				return ['status'=>400, 'msg'=>lang('id_error')];
 			}
 			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			if(empty($index_host)){
+				return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+			}
 			$index_product = Db::name('product')->find($index_host['product_id']);
+			if(empty($index_product)){
+				return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+			}
 			if($index_product['creating_notice_mail_api']>0 && $index_product['creating_notice_mail_template']>0){
 				$plugin = Db::name('plugin')->field('id,name')->find($index_product['creating_notice_mail_api']);
 				$index_setting['email_enable'] = 1;
@@ -85,7 +91,13 @@ class EmailLogic
 				return ['status'=>400, 'msg'=>lang('id_error')];
 			}
 			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			if(empty($index_host)){
+				return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+			}
 			$index_product = Db::name('product')->find($index_host['product_id']);
+			if(empty($index_product)){
+				return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+			}
 			if($index_product['created_notice_mail_api']>0 && $index_product['created_notice_mail_template']>0){
 				$plugin = Db::name('plugin')->field('id,name')->find($$index_product['created_notice_mail_api']);
 				$index_setting['email_enable'] = 1;
@@ -124,6 +136,9 @@ class EmailLogic
 		//订单
         if(!empty($param['order_id'])){
 			$index_order = Db::name('order')->field('id,type,amount,create_time,status,gateway_name gateway,credit,client_id')->find($param['order_id']);
+			if(empty($index_order)){
+				return ['status'=>400, 'msg'=>lang('order_is_not_exist')];
+			}
 			$order = [
 				'order_id' => $index_order['id'],
 				'order_create_time' => $index_order['create_time'],
@@ -138,7 +153,13 @@ class EmailLogic
 		//产品
         if(!empty($param['host_id'])){	
 			$index_host = Db::name('host')->field('id,product_id,server_id,name,notes,first_payment_amount,renew_amount,billing_cycle,billing_cycle_name,billing_cycle_time,active_time,due_time,status,client_id,suspend_reason')->find($param['host_id']);
+			if(empty($index_host)){
+				return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
+			}
 			$index_product = Db::name('product')->field('id,name')->find($index_host['product_id']);
+			if(empty($index_product)){
+				return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+			}
 			//获取自动化设置
 			$config=(new ConfigurationModel())->cronList();
 			$host = [
@@ -147,8 +168,8 @@ class EmailLogic
 				'product_first_payment_amount' => $index_host['first_payment_amount'],
 				'product_renew_amount' => $index_host['renew_amount'],
 				'product_binlly_cycle' => $index_host['billing_cycle'],
-				'product_active_time' => $index_host['active_time'],
-				'product_due_time' => $index_host['due_time'],
+				'product_active_time' => date("Y-m-d H:i:s", $index_host['active_time']),
+				'product_due_time' => date("Y-m-d H:i:s", $index_host['due_time']),
 				'product_suspend_reason' => $index_host['suspend_reason'],
 				'renewal_first' => $config['cron_due_renewal_first_day'],
 				'renewal_second' => $config['cron_due_renewal_second_day'],
@@ -162,6 +183,9 @@ class EmailLogic
 		//客户
         if(!empty($param['client_id'])){
 			$index_client = Db::name('client')->field('id,username,email,phone_code,phone,company,country,address,language,notes,status,create_time register_time,last_login_time,last_login_ip,credit')->find($param['client_id']);
+			if(empty($index_client)){
+				return ['status'=>400, 'msg'=>lang('client_is_not_exist')];
+			}
 			if($index_client['username']){
 				$account = $index_client['username'];
 			}else if($index_client['phone']){
@@ -171,23 +195,23 @@ class EmailLogic
 			}	
 			
 			$client = [
-				'client_register_time' => $index_client['register_time'],
+				'client_register_time' => date("Y-m-d H:i:s", $index_client['register_time']),
 				'client_username' => $index_client['username'],
 				'client_email' => $index_client['email'],
 				'client_phone' => $index_client['phone_code'].$index_client['phone'],
 				'client_company' => $index_client['company'],
-				'client_last_login_time' => $index_client['last_login_time'],
+				'client_last_login_time' => date("Y-m-d H:i:s", $index_client['last_login_time']),
 				'client_last_login_ip' => $index_client['last_login_ip'],
 				'account' => $account,
 			];
 			$client_id = $param['client_id'];	
 			$param['email'] = $index_client['email'];
-		}		
+		}	
 		
 		if(!empty($param['template_param'])) $template_param = $param['template_param'];
 		$template_param=array_merge($system,$client,$order,$host,$template_param);
 		$data = [
-			'email' => $param['email'],
+			'email' => $param['email']??'',
 			'subject' => $index_mail_template['subject'],
 			'message' => $index_mail_template['message'],
 			'attachments' => $index_mail_template['attachments'],

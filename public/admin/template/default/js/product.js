@@ -41,7 +41,7 @@
             },
             {
               colKey: 'hidden',
-              title: lang.hidden,
+              title: lang.showText,
               align: 'center',
               width: 120,
               ellipsis: true
@@ -64,8 +64,8 @@
           total: 0,
           pageSizeOptions: [20, 50, 100],
           curId: '',
-          firstGroup: [],
-          secondGroup: [],
+          firstGroup: [], // 一级分组
+          secondGroup: [], // 二级分组
           groupList: [],
           tempSecondGroup: [],
           rules: {
@@ -138,20 +138,20 @@
           isFilter: false // 是否过滤其他分组
         }
       },
-      mounted () {
-        this.maxHeight = document.getElementById('content').clientHeight - 150
-        let timer = null
-        window.onresize = () => {
-          if (timer) {
-            return
-          }
-          timer = setTimeout(() => {
-            this.maxHeight = document.getElementById('content').clientHeight - 150
-            clearTimeout(timer)
-            timer = null
-          }, 300)
-        }
-      },
+      // mounted() {
+      //   this.maxHeight = document.getElementById('content').clientHeight - 150
+      //   let timer = null
+      //   window.onresize = () => {
+      //     if (timer) {
+      //       return
+      //     }
+      //     timer = setTimeout(() => {
+      //       this.maxHeight = document.getElementById('content').clientHeight - 150
+      //       clearTimeout(timer)
+      //       timer = null
+      //     }, 300)
+      //   }
+      // },
       watch: {
         concat_shop (val) {
           if (val) {
@@ -373,13 +373,12 @@
             }
             // 特殊情况：拖动商品到无商品二级栏目下
             if ((current.key.indexOf('t') !== -1) && (target.key.indexOf('s') !== -1)) {
-             // console.log('@@@@', target.children.length > 0, target)
-              const pArr = this.data.filter(item=> item.id === target.parent_id)[0]
-              console.log('~~~~~', pArr.children)
+              // console.log('@@@@', target.children.length > 0, target)
+              const pArr = this.data.filter(item => item.id === target.parent_id)[0]
               const index = pArr.children.findIndex(item => item.key === target.key)
               this.dragForm.id = current.id
               // // 目标节点对应的数组
-              const _temp = pArr.children[tempForward ? index : index - 1] || { children: [], id: target.id}
+              const _temp = pArr.children[tempForward ? index : index - 1] || { children: [], id: target.id }
               this.dragForm.pre_product_id = _temp.children.length > 0 ? _temp.children.at(-1).id : 0
               this.dragForm.product_group_id = _temp.children.length > 0 ? _temp.children.at(-1).product_group_id_second : _temp.id
               this.dragForm.backward = _temp.children.length > 0 ? 1 : tempForward
@@ -392,7 +391,11 @@
         },
         async onChange (row) {
           try {
-            const res = await toggleShow(row.id, row.hidden)
+            if (row.qty !== undefined) {
+              await toggleShow(row.id, row.hidden)
+            } else {
+              await groupListShow(row.id, row.hidden)
+            }
             this.getProductList()
           } catch (error) {
 
@@ -501,69 +504,102 @@
           this.getProductList()
         },
 
-        // 获取列表
-        async getProductList () {
+        // 获取一级分组
+        async getFirPro () {
+          try {
+            const res = await getFirstGroup()
+            this.firstGroup = res.data.data.list
+          } catch (error) {
+          }
+        },
+        // 获取二级分组
+        async getSecPro () {
+          try {
+            const res = await getSecondGroup()
+            this.secondGroup = res.data.data.list
+          } catch (error) {
+          }
+        },
+        // 获取商品列表
+        async getProList () {
+          try {
+            const res = await getProduct(this.params)
+            this.shopList = res.data.data.list
+          } catch (error) {
+          }
+        },
+
+        // 初始化
+        getProductList () {
           try {
             this.loading = true
             // 获取商品，一级，二级分组
-            const shopList = await getProduct(this.params)
-            const firstGroup = await getFirstGroup()
-            const secondGroup = await getSecondGroup()
-            // 如果是搜索的时候需要过滤掉该商品之外的一二级分组
-            if (this.isFilter) {
-              const temp = shopList.data.data.list
-              const filerFist = temp.reduce((all, cur) => {
-                all.push(cur.product_group_id_first)
-                return all
-              }, [])
-              const filerSecond = temp.reduce((all, cur) => {
-                all.push(cur.product_group_id_second)
-                return all
-              }, [])
-              this.firstGroup = firstGroup.data.data.list.filter(item => {
-                return Array.from(new Set(filerFist)).includes(item.id)
-              })
-              this.tempSecondGroup = secondGroup.data.data.list.filter(item => {
-                return Array.from(new Set(filerSecond)).includes(item.id)
-              })
-            } else {
-              this.firstGroup = firstGroup.data.data.list
-              this.tempSecondGroup = secondGroup.data.data.list
-            }
-            // this.firstGroup = firstGroup.data.data.list
-            // this.tempSecondGroup = secondGroup.data.data.list
-            // 组装数据，一级分组装二级分组，二级分组填入符合需求的数据
-            this.firstGroup.forEach(item => {
-              item.key = 'f-' + item.id  // 多级Id会重复，故需要设置独一的key
-              let secondArr = []
-              this.tempSecondGroup.forEach(sItem => {
-                if (sItem.parent_id === item.id) {
-                  sItem.key = 's-' + sItem.id
-                  secondArr.push(sItem)
-                }
-              })
-              item.children = secondArr
-            })
-            this.firstGroup.forEach(item => {
-              item.children.forEach(ele => {
-                let temp = []
-                shopList.data.data.list.forEach(e => {
-                  if (e.product_group_id_second === ele.id) {
-                    e.key = 't-' + e.id
-                    temp.push(e)
+            Promise.all([this.getProList(), this.getFirPro(), this.getSecPro()]).then(res => {
+              // 如果是搜索的时候需要过滤掉该商品之外的一二级分组
+              if (this.isFilter) {
+                const temp = this.shopList
+                const filerFist = temp.reduce((all, cur) => {
+                  all.push(cur.product_group_id_first)
+                  return all
+                }, [])
+                const filerSecond = temp.reduce((all, cur) => {
+                  all.push(cur.product_group_id_second)
+                  return all
+                }, [])
+                this.firstGroup = this.firstGroup.filter(item => {
+                  return Array.from(new Set(filerFist)).includes(item.id)
+                })
+                this.tempSecondGroup = this.secondGroup.filter(item => {
+                  return Array.from(new Set(filerSecond)).includes(item.id)
+                })
+              } else {
+                this.firstGroup = this.firstGroup
+                this.tempSecondGroup = this.secondGroup
+              }
+              // this.firstGroup = firstGroup.data.data.list
+              // this.tempSecondGroup = secondGroup.data.data.list
+              // 组装数据，一级分组装二级分组，二级分组填入符合需求的数据
+              this.firstGroup.forEach(item => {
+                item.key = 'f-' + item.id  // 多级Id会重复，故需要设置独一的key
+                let secondArr = []
+                this.tempSecondGroup.forEach(sItem => {
+                  if (sItem.parent_id === item.id) {
+                    sItem.key = 's-' + sItem.id
+                    secondArr.push(sItem)
                   }
                 })
-                ele.children = temp
+                item.children = secondArr
               })
+              this.data = this.firstGroup
+              this.loading = false
+              //  this.total = firstGroup.data.data.count
+              // 展开全部
+              // this.$nextTick(() => {
+              //   this.$refs.table.expandAll()
+              // })
+              setTimeout(() => {
+                this.firstGroup.forEach(item => {
+                  item.children.forEach(ele => {
+                    let temp = []
+                    this.shopList.forEach(e => {
+                      if (e.product_group_id_second === ele.id) {
+                        e.key = 't-' + e.id
+                        temp.push(e)
+                      }
+                    })
+                    ele.children = temp
+                  })
+                })
+                this.data = this.firstGroup
+                this.$forceUpdate()
+                this.$nextTick(() => {
+                  this.$refs.table.expandAll()
+                })
+              }, 0)
             })
-            this.data = this.firstGroup
-            this.total = firstGroup.data.data.count
-            // 展开全部
-            this.$nextTick(() => {
-              this.$refs.table.expandAll()
-            })
-            this.loading = false
+
           } catch (error) {
+            console.log('@@@@', error)
             this.loading = false
           }
         }

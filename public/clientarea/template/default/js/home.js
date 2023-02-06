@@ -7,6 +7,7 @@
             components: {
                 asideMenu,
                 topMenu,
+                payDialog
             },
             // beforeCreate() {
             //     if (!localStorage.getItem('jwt')) {
@@ -113,6 +114,9 @@
                 goProductPage(id) {
                     location.href = `/productdetail.html?id=${id}`
                 },
+                goTickDetail(tickid, orderid) {
+                    location.href = `/plugin/${tickid}/ticketDetails.html?id=${orderid}`
+                },
                 initData() {
                     const arr = this.addons_js_arr.map((item) => {
                         return item.name
@@ -191,6 +195,17 @@
                 goUser() {
                     location.href = `account.html`
                 },
+                // 支付成功回调
+                paySuccess(e) {
+                    indexData().then((res) => {
+                        this.account = res.data.data.account
+                        this.account.firstName = res.data.data.account.username.substring(0, 1)
+                        this.percentage = (Number(this.account.this_month_consume) / Number(this.account.consume)) * 100
+                    })
+                },
+                // 取消支付回调
+                payCancel(e) {
+                },
                 // 返回两位小数
                 oninput(value) {
                     let str = value;
@@ -241,31 +256,50 @@
                 },
                 // 充值金额变化时触发
                 czInputChange() {
-                    let data = this.czData
-                    let isPass = true
-                    if (!data.gateway) {
-                        this.errText = "请选择充值方式"
-                        isPass = false
-                    }
-                    if (!data.amount) {
-                        this.errText = "请输入充值金额"
-                        isPass = false
-                    }
-
-                    if (this.czData.amount == this.czDataOld.amount && this.czData.gateway == this.czDataOld.gateway) {
-                        isPass = false
-                    }
-
-                    if (isPass) {
-                        this.errText = ""
-                        // 调用充值接口
-                        const params = {
-                            amount: Number(data.amount),
-                            gateway: data.gateway
-                        }
-                        this.doRecharge(params)
+                    if (this.czData.amount) {
+                        let data = this.czData;
+                        const params = { amount: Number(data.amount) }
+                        recharge(params).then((res) => {
+                            if (res.data.status === 200) {
+                                this.isShowCz = false
+                                const orderId = res.data.data.id;
+                                this.$refs.payDialog.czPay(orderId);
+                            }
+                        }).catch((error) => {
+                            this.$message.error(error.data.msg)
+                        });
+                    } else {
+                        this.$message.error('请输入充值金额')
+                        return false;
                     }
                 },
+                // // 充值金额变化时触发
+                // czInputChange() {
+                //     let data = this.czData
+                //     let isPass = true
+                //     if (!data.gateway) {
+                //         this.errText = "请选择充值方式"
+                //         isPass = false
+                //     }
+                //     if (!data.amount) {
+                //         this.errText = "请输入充值金额"
+                //         isPass = false
+                //     }
+
+                //     if (this.czData.amount == this.czDataOld.amount && this.czData.gateway == this.czDataOld.gateway) {
+                //         isPass = false
+                //     }
+
+                //     if (isPass) {
+                //         this.errText = ""
+                //         // 调用充值接口
+                //         const params = {
+                //             amount: Number(data.amount),
+                //             gateway: data.gateway
+                //         }
+                //         this.doRecharge(params)
+                //     }
+                // },
                 // 充值方式变化时触发
                 czSelectChange() {
                     let data = this.czData

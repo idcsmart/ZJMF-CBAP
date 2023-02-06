@@ -68,8 +68,10 @@ class TransactionModel extends Model
             if(empty($param['client_id'])){
                 return ['list' => [], 'count' => 0];
             }
+            $param['order_id'] = isset($param['order_id']) ? intval($param['order_id']) : 0;
         }else{
             $param['client_id'] = isset($param['client_id']) ? intval($param['client_id']) : 0;
+            $param['order_id'] = isset($param['order_id']) ? intval($param['order_id']) : 0;
         }
 
         $param['keywords'] = $param['keywords'] ?? '';
@@ -79,6 +81,9 @@ class TransactionModel extends Model
             ->field('t.id')
             ->leftjoin('client c', 'c.id=t.client_id')
             ->where(function ($query) use($param) {
+                if(!empty($param['order_id'])){
+                    $query->where('t.order_id', $param['order_id']);
+                }
                 if(!empty($param['client_id'])){
                     $query->where('t.client_id', $param['client_id']);
                 }
@@ -95,6 +100,9 @@ class TransactionModel extends Model
             ->leftjoin('client c', 'c.id=t.client_id')
             ->leftjoin('order o', 'o.id=t.order_id')
             ->where(function ($query) use($param) {
+                if(!empty($param['order_id'])){
+                    $query->where('t.order_id', $param['order_id']);
+                }
                 if(!empty($param['client_id'])){
                     $query->where('t.client_id', $param['client_id']);
                 }
@@ -171,6 +179,8 @@ class TransactionModel extends Model
         if (empty($gateway)){
             return ['status'=>400, 'msg'=>lang('gateway_is_not_exist')];
         }
+        $gateway['config'] = json_decode($gateway['config'],true);
+        $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
 
 	    $this->startTrans();
 		try {
@@ -231,6 +241,8 @@ class TransactionModel extends Model
         if (empty($gateway)){
             return ['status'=>400, 'msg'=>lang('gateway_is_not_exist')];
         }
+        $gateway['config'] = json_decode($gateway['config'],true);
+        $gateway['title'] =  (isset($gateway['config']['module_name']) && !empty($gateway['config']['module_name']))?$gateway['config']['module_name']:$gateway['title'];
 
         $this->startTrans();
         try {

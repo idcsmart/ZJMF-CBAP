@@ -91,6 +91,7 @@ class ClientModel extends Model
                 }
 		    })
 		    ->count();
+    	// 大数据量分页优化(不做)
     	$clients = $this->alias('c')
             ->field('c.id,c.username,c.email,c.phone_code,c.phone,c.status,c.company')
             ->leftJoin('client_custom_field ccf', 'ccf.client_id=c.id')
@@ -130,10 +131,14 @@ class ClientModel extends Model
             $customFieldArr[$value['client_id']][] = ['name' => $value['name'], 'value' => $value['value']];
         }
 
+        $certificationHookResult = hook_one('get_certification_list');
+
     	foreach ($clients as $key => $client) {
     		$clients[$key]['host_num'] = $hostNum[$client['id']] ?? 0; // 产品数量
     		$clients[$key]['host_active_num'] = $hostActiveNum[$client['id']] ?? 0; // 已激活产品数量
             $clients[$key]['custom_field'] = $customFieldArr[$client['id']] ?? []; // 自定义字段
+            $clients[$key]['certification'] = isset($certificationHookResult[$client['id']]) && $certificationHookResult[$client['id']]?true:false;
+            $clients[$key]['certification_type'] = $certificationHookResult[$client['id']]??'person';
     	}
 
     	return ['list' => $clients, 'count' => $count];
@@ -572,14 +577,20 @@ class ClientModel extends Model
      * @return string list[].phone_code - 国际电话区号
      * @return string list[].phone - 手机号
      */
-    public function searchClient($keywords, $type = '')
+    public function searchClient($param, $type = '')
     {
+        $param['keywords'] = $param['keywords'] ?? '';
+        $param['client_id'] = intval($param['client_id'] ?? 0);
+
         if($type=='global'){
             //全局搜索
             $clients = $this->field('id,username,company,email,phone_code,phone')
-                ->where(function ($query) use($keywords) {
-                    if(!empty($keywords)){
-                        $query->where('username|company|email|phone', 'like', "%{$keywords}%");
+                ->where(function ($query) use($param) {
+                    if(!empty($param['keywords'])){
+                        $query->where('username|company|email|phone', 'like', "%{$param['keywords']}%");
+                    }
+                    if(!empty($param['client_id'])){
+                        $query->where('id', 'like', $param['client_id']);
                     }
                 })
                 ->select()
@@ -587,9 +598,12 @@ class ClientModel extends Model
         }else{
             //搜索20条数据
             $clients = $this->field('id,username')
-                ->where(function ($query) use($keywords) {
-                    if(!empty($keywords)){
-                        $query->where('id|username|email|phone', 'like', "%{$keywords}%");
+                ->where(function ($query) use($param) {
+                    if(!empty($param['keywords'])){
+                        $query->where('id|username|email|phone', 'like', "%{$param['keywords']}%");
+                    }
+                    if(!empty($param['client_id'])){
+                        $query->where('id', 'like', $param['client_id']);
                     }
                 })
                 ->limit(20)
@@ -1513,6 +1527,7 @@ class ClientModel extends Model
                 'last_login_ip' => get_client_ip(),
                 'last_action_time' => $time,
                 'language' => configuration('lang_home')??'zh-cn',
+                'country' => '中国',
                 'create_time' => $time
             ]);
 
@@ -1620,6 +1635,7 @@ class ClientModel extends Model
                 'last_login_ip' => get_client_ip(),
                 'last_action_time' => $time,
                 'language' => configuration('lang_home')??'zh-cn',
+                'country' => '中国',
                 'create_time' => $time
             ]);
 

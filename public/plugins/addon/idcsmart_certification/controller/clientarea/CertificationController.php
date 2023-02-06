@@ -34,7 +34,7 @@ class CertificationController extends PluginBaseController
      * @version v1
      * @return int certification_open - 实名认证是否开启:1开启默认,0关
      * @return int certification_upload - 是否需要上传证件照:1是,0否默认
-     * @return int certification_uncertified_suspended_host - 未认证暂停产品:1是,0否默认
+     * @return int certification_uncertified_cannot_buy_product - 未认证无法购买产品:1是,0否默认
      * @return int is_certification - 是否实名认证:1是,0否默认
      * @return object person - 个人认证信息
      * @return string person.username - 申请人

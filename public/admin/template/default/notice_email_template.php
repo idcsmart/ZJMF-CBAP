@@ -40,7 +40,7 @@
         </t-input>
       </div> -->
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :max-height="maxHeight" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"  :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template #type="{row}">
         <span>{{ row.type === 1 ? lang.international : lang.domestic }}</span>
       </template>

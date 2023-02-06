@@ -117,7 +117,8 @@
         },
       },
       created () {
-        this.getClientList()
+        this.getClientList();
+        document.title = lang.sms_notice + '-' + localStorage.getItem('back_website_name');
       },
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

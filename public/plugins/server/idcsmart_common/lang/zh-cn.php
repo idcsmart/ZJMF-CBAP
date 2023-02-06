@@ -36,7 +36,30 @@ return [
     'idcsmart_common_configoption_id_quantity'=>'仅可关联数量拖动或数量输入类型选项',
     'idcsmart_common_son_product_pay_type_require'=>'请选择子商品费用类型',
     'idcsmart_common_product_is_son'=>'当前商品为子商品,不可继续创建子商品',
+    
+    'idcsmart_common_add_product_config_option' => '{admin}修改商品{product}，新增配置选项{config_option}',
+    'idcsmart_common_update_product_config_option' => '{admin}修改商品{product}，配置选项{description}',
+    'idcsmart_common_delete_product_config_option' => '{admin}修改商品{product}，删除配置选项{config_option}',
 
+    'field_idcsmart_common_option_name' => '配置项名称',
+    'field_idcsmart_common_option_type' => '配置项类型',
+    'field_idcsmart_common_option_type_select' => '下拉单选',
+    'field_idcsmart_common_option_type_multi_select' => '下拉多选',
+    'field_idcsmart_common_option_type_radio' => '点击单选',
+    'field_idcsmart_common_option_type_quantity' => '数量输入',
+    'field_idcsmart_common_option_type_quantity_range' => '数量拖动',
+    'field_idcsmart_common_option_type_yes_no' => '是否',
+    'field_idcsmart_common_option_type_area' => '区域',
+    'field_idcsmart_common_option_param' => '参数:请求接口',
+    'field_idcsmart_common_description' => '说明',
+    'field_idcsmart_common_unit' => '单位',
+    'field_idcsmart_common_allow_repeat' => '是否允许重复',
+    'field_idcsmart_common_allow_repeat_0' => '否',
+    'field_idcsmart_common_allow_repeat_1' => '是',
+    'field_idcsmart_common_max_repeat' => '最大允许重复数量',
+    'field_idcsmart_common_fee_type' => '数量计费方式',
+    'field_idcsmart_common_fee_type_stage' => '阶梯计费',
+    'field_idcsmart_common_fee_type_qty' => '数量计费',
 ];
 
 

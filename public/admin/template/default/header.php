@@ -35,9 +35,9 @@
           <img :src="logUrl" alt="logo">
         </div>
         <div class="h-left">
-          <t-button theme="default" shape="square" variant="text" @click.native="changeCollapsed">
+          <!-- <t-button theme="default" shape="square" variant="text" @click.native="changeCollapsed">
             <t-icon name="view-list"></t-icon>
-          </t-button>
+          </t-button> -->
           <div class="global-search">
             <t-input :class="{ 'hover-active': isSearchFocus, 'h-search': true}" :placeholder="lang.please_search" @blur="changeSearchFocus(false)" @focus="changeSearchFocus(true)" @change="changeSearch">
               <template #prefix-icon>
@@ -128,16 +128,22 @@
           </t-dropdown>
           <t-dropdown :min-column-width="125" trigger="click" class="user-btn" size="small">
             <template #dropdown>
-              <t-dropdown-item style="height: 25px;" class="operations-dropdown-container-item" @click="editPassVisible = true">
+              <t-dropdown-item class="operations-dropdown-container-item" @click="toggleSettingPanel">
+                <template>
+                  <t-icon name="setting"></t-icon>
+                  {{lang.theme_setting}}
+                </template>
+              </t-dropdown-item>
+              <t-dropdown-item class="operations-dropdown-container-item" @click="editPassVisible = true">
                 <template>
                   <t-icon name="lock-off"></t-icon>
-                  修改密码
+                  {{lang.change_password}}
                 </template>
               </t-dropdown-item>
               <t-dropdown-item class="operations-dropdown-container-item" @click="handleLogout">
                 <template>
                   <t-icon name="poweroff"></t-icon>
-                  退出登录
+                  {{lang.logout}}
                 </template>
               </t-dropdown-item>
               </t-dropdown-menu>
@@ -152,11 +158,11 @@
               </div>
             </t-button>
           </t-dropdown>
-          <t-tooltip placement="bottom" :content="lang.system_setting">
+          <!-- <t-tooltip placement="bottom" :content="lang.system_setting">
             <t-button theme="default" shape="square" variant="text" @click="toggleSettingPanel">
               <t-icon name="setting" size="20px"></t-icon>
             </t-button>
-          </t-tooltip>
+          </t-tooltip> -->
         </div>
         <!-- system-setting -->
         <t-drawer :visible.sync="visible" :header="lang.system_setting" :footer="false" id="setting">
@@ -193,7 +199,7 @@
             <template #icon>
               <t-icon :name="item.icon" />
             </template>
-            <span>{{item.name}}}</span>
+            <span>{{item.name}}</span>
           </t-menu-item>
           <t-submenu :value="item.id" mode="popup" v-else>
             <template #icon>
@@ -213,6 +219,13 @@
             </div>
           </t-submenu>
         </div>
+        <template #operations>
+          <t-button variant="text" shape="square">
+            <t-button variant="text" shape="square" @click.native="changeCollapsed">
+              <t-icon name="view-list"></t-icon>
+            </t-button>
+          </t-button>
+        </template>
       </t-menu>
     </t-layout>
     <t-layout class="t-layout right-box">

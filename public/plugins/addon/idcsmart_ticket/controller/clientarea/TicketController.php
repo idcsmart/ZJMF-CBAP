@@ -68,6 +68,7 @@ class TicketController extends PluginBaseController
      * @return int list[].last_reply_time - 最近回复时间
      * @return string list[].status - 状态
      * @return string list[].color - 状态颜色
+     * @return string list[].last_urge_time - 上次催单时间戳(0代表未催单)
      * @return int count - 工单总数
      */
     public function ticketList()

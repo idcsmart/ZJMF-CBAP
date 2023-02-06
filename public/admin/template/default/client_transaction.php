@@ -1,7 +1,7 @@
 {include file="header"}
 <!-- =======内容区域======= -->
 <link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/client.css">
-<div id="content" class="transaction table hasCrumb" v-cloak>
+<div id="content" class="transaction hasCrumb" v-cloak>
   <div class="com-crumb">
     <span>{{lang.user_manage}}</span>
     <t-icon name="chevron-right"></t-icon>
@@ -25,14 +25,21 @@
           <a href="javascript:;">{{lang.flow}}</a>
         </li>
         <li>
-          <a :href="`client_log.html?id=${id}`">{{lang.log}}</a>
+          <a :href="`client_log.html?id=${id}`">{{lang.operation}}{{lang.log}}</a>
         </li>
         <li>
           <a :href="`client_notice_sms.html?id=${id}`">{{lang.notice_log}}</a>
         </li>
+        <li v-if="hasTicket && authList.includes('TicketController::ticketList')">
+          <a :href="`${baseUrl}/plugin/idcsmart_ticket/client_ticket.html?id=${id}`">{{lang.auto_order}}</a>
+        </li>
       </ul>
-      <t-select class="user" v-if="this.clientList.length>0" v-model="id" :popup-props="popupProps" filterable @change="changeUser">
-        <t-option v-for="item in clientList" :value="item.id" :label="item.username?item.username:(item.phone?item.phone:item.email)" :key="item.id">
+      <t-select class="user" v-if="this.clientList" v-model="id" :popup-props="popupProps" filterable @change="changeUser" :loading="searchLoading" reserve-keyword :on-search="remoteMethod" :filter="filterMethod">
+        <t-option :key="clientDetail.id" :value="clientDetail.id" :label="calcShow(clientDetail)" v-if="isExist">
+          #{{clientDetail.id}}-{{clientDetail.username ? clientDetail.username : (clientDetail.phone? clientDetail.phone: clientDetail.email)}}
+          <span v-if="clientDetail.company">({{clientDetail.company}})</span>
+        </t-option>
+        <t-option v-for="item in clientList" :value="item.id" :label="calcShow(item)" :key="item.id">
           #{{item.id}}-{{item.username ? item.username : (item.phone? item.phone: item.email)}}
           <span v-if="item.company">({{item.company}})</span>
         </t-option>
@@ -41,7 +48,7 @@
     <div class="common-header">
       <t-button @click="addFlow" class="add">{{lang.new_flow}}</t-button>
     </div>
-    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" :max-height="maxHeight" @sort-change="sortChange" :hide-sort-tips="true">
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="true">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -70,7 +77,10 @@
   </t-card>
   <!-- 新增流水 -->
   <t-dialog :header="optTitle" :visible.sync="flowModel" :footer="false">
-    <t-form :data="formData" ref="form" @submit="onSubmit" :rules="rules">
+    <t-form :data="formData" ref="form" @submit="onSubmit" :rules="rules" v-if="flowModel">
+      <t-form-item :label="lang.user" name="client_id" class="user">
+        <t-input v-model="client_name" disabled :placeholder="lang.select+lang.user"></t-input>
+      </t-form-item>
       <t-form-item :label="lang.money" name="amount">
         <t-input v-model="formData.amount" type="tel" :label="currency_prefix" :placeholder="lang.input+lang.money"></t-input>
       </t-form-item>
@@ -82,9 +92,6 @@
       </t-form-item>
       <t-form-item :label="lang.flow_number" name="transaction_number">
         <t-input v-model="formData.transaction_number" :placeholder="lang.input+lang.flow_number"></t-input>
-      </t-form-item>
-      <t-form-item :label="lang.user" name="client_id" class="user">
-        <t-input v-model="client_name" disabled :placeholder="lang.select+lang.user"></t-input>
       </t-form-item>
       <div class="com-f-btn">
         <t-button theme="primary" type="submit" :loading="addLoading">{{lang.submit}}</t-button>
