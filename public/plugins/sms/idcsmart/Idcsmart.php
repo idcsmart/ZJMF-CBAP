@@ -13,7 +13,7 @@ class Idcsmart extends Plugin
         'description' => '智简魔方官方短信平台接口',
         'status'      => 1,
         'author'      => '智简魔方',
-        'version'     => '1.0',
+        'version'     => '1.0.0',
         'help_url'     => 'https://my.idcsmart.com/goods.html?id=922',//申请接口地址
     );
 

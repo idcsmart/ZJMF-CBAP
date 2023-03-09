@@ -147,7 +147,7 @@
         }
       },
       methods: {
-        lookDetail (row) {
+        lookDetail(row) {
           location.href = `order_details.html?id=${row.id}`
         },
         jumpPorduct(client_id, id) {

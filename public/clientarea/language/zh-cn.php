@@ -46,6 +46,7 @@ return [
     'login_captcha' => '请输入图形验证码',
     'login_captcha_token' => '请输入图形验证码唯一识别码',
     'login_captcha_error' => '行为验证码错误,请查看配置是否正确',
+    'certification_uncertified_cannot_buy_product' => '未实名认证不可购买产品',
 
     # 权限规则
     'clientarea_auth_rule_account_index' => '账户详情',
@@ -235,11 +236,35 @@ return [
     'please_enter_api_ip' => '请输入白名单IP',
     'api_ip_error' => '白名单IP格式错误',
     'api_key_create_max' => '单个用户最多只允许创建10个API密钥',
+    'api_auth_fail' => '鉴权失败',
 
     # 产品
     'host_notes_cannot_exceed_1000_chars' => '备注最多不能超过1000个字符',
+    'upstream_host_is_not_exist' => '上游产品不存在',
 
     # 订单
     'order_cannot_cancel' => '未支付订单才可以取消',
     'order_host_not_unpaid' => '订单下产品不是未支付状态，不可取消订单',
+
+    # 日志
+    'log_api_auth_login' => '{client}API鉴权登录',
+
+    # 意见反馈
+    'please_enter_feedback_title' => '请输入标题',
+    'feedback_title_cannot_exceed_255_chars' => '标题不能超过255个字符',
+    'please_enter_feedback_description' => '请输入描述',
+    'feedback_contact_cannot_exceed_255_chars' => '联系方式不能超过255个字符',
+
+    # 方案咨询
+    'please_enter_consult_contact' => '请输入联系人',
+    'consult_contact_cannot_exceed_50_chars' => '联系人不能超过50个字符',
+    'consult_company_cannot_exceed_255_chars' => '公司名称不能超过255个字符',
+    'please_enter_consult_phone'  => '请输入手机号码',
+    'consult_phone_cannot_exceed_20_chars' => '手机号码不能超过20个字符',
+    'please_enter_consult_email' => '请输入联系邮箱', 
+    'consult_email_error' => '联系邮箱格式错误', 
+    'please_enter_consult_matter' => '请输入咨询产品', 
+    'consult_matter_cannot_exceed_1000_chars' => '咨询产品不能超过1000个字符', 
+
+
 ];

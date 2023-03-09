@@ -459,6 +459,7 @@ class App extends Container
         date_default_timezone_set($this->config->get('app.default_timezone', 'Asia/Shanghai'));
 
         // 初始化
+
         foreach ($this->initializers as $initializer) {
             $this->make($initializer)->init($this);
         }

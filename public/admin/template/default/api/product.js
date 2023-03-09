@@ -20,6 +20,10 @@ function editProduct(params) {
 function editProductServer(id, params) {
   return Axios.put(`/product/${id}/server`, params)
 }
+// 插件列表
+function getAddon(params) {
+  return Axios.get(`/active_plugin`, { params });
+}
 
 // 选择接口获取配置 
 function getProductConfig(id, params) {
@@ -107,4 +111,9 @@ function getInterface(params) {
 // 接口分组
 function getGroup(params) {
   return Axios.get('/server/group', { params })
+}
+
+// 保存可代理商品
+function agentable(params) {
+  return Axios.put(`/product/agentable`, params)
 }

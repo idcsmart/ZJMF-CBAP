@@ -22,6 +22,8 @@ class ApiModel extends Model
         'token'         => 'string',
         'status'        => 'int',
         'ip'            => 'string',
+        'public_key'    => 'string',
+        'private_key'   => 'string',
         'create_time'   => 'int',
         'update_time'   => 'int',
     ];
@@ -117,11 +119,16 @@ class ApiModel extends Model
         $this->startTrans();
         try {
             $token = rand_str(32);
+
+            $res = idcsmart_openssl_rsa_key_create();
+
             $api = $this->create([
                 'client_id' => $clientId,
                 'name' => $param['name'] ?? '',
                 'token' => aes_password_encode($token), // token加密
                 'ip' => '',
+                'public_key' => aes_password_encode($res['public_key']),
+                'private_key' => aes_password_encode($res['private_key']),
                 'create_time' => time()
             ]);
 
@@ -134,7 +141,7 @@ class ApiModel extends Model
             $this->rollback();
             return ['status' => 400, 'msg' => lang('create_fail')];
         }
-        return ['status' => 200, 'msg' => lang('create_success'), 'data' => ['name' => $param['name'] ?? '', 'id' => $api->id, 'token' => $token, 'create_time' => $api->create_time]];
+        return ['status' => 200, 'msg' => lang('create_success'), 'data' => ['name' => $param['name'] ?? '', 'id' => $api->id, 'token' => $token, 'private_key' => $res['private_key'], 'create_time' => $api->create_time]];
     } 
 
     /**

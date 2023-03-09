@@ -16,7 +16,7 @@
   <script src="/{$template_catalog}/template/{$themes}/js/common/lang.js"></script>
   <script src="/{$template_catalog}/template/{$themes}/js/common/common.js"></script>
   <style>
-    [v-clock] {
+    [v-cloak] {
       display: none !important;
     }
   </style>

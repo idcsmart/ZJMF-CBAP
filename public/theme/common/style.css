@@ -1,0 +1,111 @@
+/* ======================================================================== 标签布局所用 */
+/* 定位布局 */
+.position-fixed{ position: fixed; }  .position-sticky{ position: sticky; }
+.position-relative{ position: relative; }  .position-absolute{ position: absolute; }
+.fl{float: left;}  .fr{float: right;}
+.tl{text-align: left;}  .tc{text-align: center;} .tr{text-align: right;} 
+
+/* 弹性盒子布局 */
+.fboxRow{ display: flex; flex-direction: row; }    
+.fboxCol{ display: flex; flex-direction: column; }
+.fboxWrap{ display: flex;
+   flex-wrap: wrap;  
+  }
+.flex1{ flex: 1; }
+.flex2{ flex: 2; }
+.flex3{ flex: 3; }
+.flex4{ flex: 4; }
+.flex5{ flex: 5; }
+.flex6{ flex: 6; }
+/**/
+.Xstart{ justify-content: flex-start; }
+.Xcenter{ justify-content: center; }
+.Xend{ justify-content: flex-end; }
+.Xbetween{ justify-content: space-between; }
+.Xaround{ justify-content: space-around; }
+/**/
+.Ystart{ align-items: flex-start; }
+.Ycenter{ align-items: center; }
+.Yend{ align-items: flex-end; }
+.Ybaseline{ align-items: baseline; }
+.Ystretch{ align-items: stretch; }
+
+
+/* margin间距 */
+.mt-0{ margin-top: 0px;} .mt-10{ margin-top: 10px;} .mt-15{ margin-top: 15px;} .mt-16{ margin-top: 16px;} .mt-20{ margin-top: 20px;} .mt-30{ margin-top: 30px;} .mt-40{ margin-top: 40px;}
+.ml-0{ margin-left: 0px;} .ml-10{ margin-left: 10px;} .ml-15{ margin-left: 15px;} .ml-20{ margin-left: 20px;} .ml-30{ margin-left: 30px;} .ml-40{ margin-left: 40px;} 
+.mr-0{ margin-right: 0px;} .mr-10{ margin-right: 10px;} .mr-15{ margin-right: 15px;} .mr-20{ margin-right: 20px;} .mr-30{ margin-right: 30px;} .mr-40{ margin-right: 40px;}
+.mb-0{ margin-bottom: 0px;} .mb-10{ margin-bottom: 10px;} .mb-15{ margin-bottom: 15px;} .mb-20{ margin-bottom: 20px;} .mb-30{ margin-bottom: 30px;} .mb-40{ margin-bottom: 40px;}
+
+/* padding间距 */
+.pt-10{padding-top: 10px;} .pt-20{ padding-top: 20px;} .pt-30{ padding-top: 30px;} .pt-40{ padding-top: 40px;}
+.pl-10{padding-left: 10px;} .pl-20{ padding-left: 20px;} .pl-30{ padding-left: 30px;} .pl-40{ padding-left: 40px;}
+.pr-10{padding-right: 10px;} .pr-20{ padding-right: 20px;} .pr-30{ padding-right: 30px;} .pr-40{ padding-right: 40px;}
+.pb-10{padding-bottom: 10px;} .pb-20{padding-bottom: 20px;} .pb-30{padding-bottom: 30px;} .pb-40{padding-bottom: 40px;} 
+
+/* ======================================================================== 页面公用 */
+/* 文字格式 */
+.font12{ font-size: 12px; } .font13{ font-size: 13px; } .font14{ font-size: 14px; } 
+.font15{ font-size: 15px; } .font16{ font-size: 16px; } .font17{ font-size: 17px; } 
+.font18{ font-size: 18px; } .font19{ font-size: 19px; } .font20{ font-size: 20px; } 
+.font21{ font-size: 21px; } .font22{ font-size: 22px; } .font23{ font-size: 23px; } 
+.font24{ font-size: 24px; } .font25{ font-size: 25px; } .font26{ font-size: 26px; } 
+.font27{ font-size: 27px; } .font28{ font-size: 28px; } .font29{ font-size: 29px; } 
+.font30{ font-size: 30px; } .font31{ font-size: 31px; } .font32{ font-size: 32px; } 
+.font33{ font-size: 33px; } .font34{ font-size: 34px; } .font35{ font-size: 35px; } 
+.font36{ font-size: 36px; } .font37{ font-size: 37px; } .font38{ font-size: 38px; } 
+.font39{ font-size: 39px; } .font40{ font-size: 40px; } .font41{ font-size: 41px; }
+.font42{ font-size: 42px; } .font43{ font-size: 43px; } .font44{ font-size: 44px; }
+.font45{ font-size: 45px; } .font46{ font-size: 46px; } .font47{ font-size: 47px; }
+.font48{ font-size: 48px; } .font49{ font-size: 49px; } .font50{ font-size: 50px; }
+
+/* 文字显示行数，超出部分会是"..." */
+.font-ell1{ overflow: hidden; text-overflow: ellipsis; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.font-ell2{ overflow: hidden; text-overflow: ellipsis; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.font-ell3{ overflow: hidden; text-overflow: ellipsis; word-break: break-all; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+/* 文字对齐方式 */
+.font-left{ text-align: left; }
+.font-center{ text-align: center; }
+.font-right{ text-align: right; }
+/* 文字间隔 */
+.font-spacing-1px{ letter-spacing: 1px; }
+.font-spacing-2px{ letter-spacing: 2px; }
+.font-spacing-3px{ letter-spacing: 3px; }
+/* 文字行高 */
+.font-line-1o2{ line-height: 1.2; }
+.font-line-1o5{ line-height: 1.5; }
+.font-line-1o8{ line-height: 1.8; }
+/* 文字加粗 */
+.font-weight{ font-weight: bold; }
+
+/* 文字颜色 */
+.font-red{ color: #EA5B2F; }
+.font-orange{ color: #f37b1d; }
+.font-yellow{ color: #fbbd08; }
+.font-olive{ color: #8dc63f; } /* 橄榄绿 */
+.font-green{ color: #39b54a; }
+.font-cyan{ color: #1cbbb4; } /* 青 */
+.font-blue{ color: #1890ff; }
+.font-purple{ color: #6739b6; } /* 紫色 */
+.font-mauve{ color: #9c26b0; } /* 玫瑰红 */
+.font-pink{ color: #e03997; }
+.font-brown{ color: #a5673f; }
+.font-grey{ color: rgba(0, 0, 0, 0.40); }
+.font-gray{ color: #999999; }
+.font-black{ color: #333333; }
+.font-white{ color: #ffffff; }
+.font-primary{ color: #2F54EA; }
+
+/* 宽高 */
+.w-100{ width: 100%;}
+.h-100{ height: 100%; }
+.overflow{
+  overflow: hidden;
+}
+
+.line-wrap{
+  word-wrap: break-word;
+  white-space: normal;
+  word-break: break-all;
+  white-space: pre-line
+}

@@ -2,12 +2,15 @@
 namespace addon\idcsmart_renew\model;
 
 use app\common\logic\ModuleLogic;
+use app\common\logic\ResModuleLogic;
 use app\common\model\HostModel;
 use app\common\model\OrderItemModel;
 use app\common\model\OrderModel;
 use app\common\model\ProductModel;
 use app\common\model\UpgradeModel;
 use app\common\model\ClientModel;
+use app\common\model\UpstreamOrderModel;
+use app\common\model\UpstreamProductModel;
 use think\db\Query;
 use think\Model;
 
@@ -107,7 +110,13 @@ class IdcsmartRenewModel extends Model
         }
 
         $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->durationPrice($host);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->durationPrice($host);
+        }else{
+            $result = $ModuleLogic->durationPrice($host);
+        }
         if ($result['status'] != 200){
             return ['status'=>400,'msg'=>$result['msg']?:lang_plugins('get_fail')];
         }
@@ -151,7 +160,13 @@ class IdcsmartRenewModel extends Model
         $billingCycle = $param['billing_cycle'];
 
         $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->durationPrice($host);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->durationPrice($host);
+        }else{
+            $result = $ModuleLogic->durationPrice($host);
+        }
         $cycles = $result['status'] == 200 ? $result['data'] :[];
         # 可续费周期
         $cycles = $this->cyclesFilter($host,$cycles,$param['customfield']['promo_code']??'');
@@ -169,6 +184,7 @@ class IdcsmartRenewModel extends Model
         foreach ($cycles as $value){
             if ($billingCycle == $value['billing_cycle']){
                 $amount = $value['price'];
+                $profit = $value['profit'] ?? 0;
                 $dueTime = $value['duration'];
                 break; # 只取一个值(存在开发者在模块中把周期写一样的情况)
             }
@@ -221,8 +237,19 @@ class IdcsmartRenewModel extends Model
             ];
             $OrderModel = new OrderModel();
             $orderId = $OrderModel->createOrderBase($data);
-
+            if($upstreamProduct){
+                UpstreamOrderModel::create([
+                    'supplier_id' => $upstreamProduct['supplier_id'],
+                    'order_id' => $orderId,
+                    'host_id' => $host->id,
+                    'amount' => $amount,
+                    'profit' => $profit,
+                    'create_time' => time()
+                ]);
+            }
             hook('after_order_create',['id'=>$orderId,'customfield'=>$param['customfield']??[]]);
+
+            update_upstream_order_profit($orderId);
 
             // 自动续费
             if(isset($param['auto_renew'])){
@@ -319,7 +346,13 @@ class IdcsmartRenewModel extends Model
         # 过滤不可续费产品
         $hostsFilter = [];
         foreach ($hosts as $host) {
-            $result = $ModuleLogic->durationPrice($host);
+            $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+            if($upstreamProduct){
+                $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                $result = $ResModuleLogic->durationPrice($host);
+            }else{
+                $result = $ModuleLogic->durationPrice($host);
+            }
 
             $cycles = isset($result['status']) && $result['status'] == 200 ? $result['data'] :[];
 
@@ -376,6 +409,8 @@ class IdcsmartRenewModel extends Model
 
         $productIds = [];
 
+        $upstreamOrders = [];
+
         foreach ($ids as $id){
             $host = $HostModel->find($id);
             if (empty($host)){
@@ -401,7 +436,13 @@ class IdcsmartRenewModel extends Model
 
             # 判断周期
             $billingCycle = $billingCycles[$id];
-            $result = $ModuleLogic->durationPrice($host);
+            $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+            if($upstreamProduct){
+                $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                $result = $ResModuleLogic->durationPrice($host);
+            }else{
+                $result = $ModuleLogic->durationPrice($host);
+            }
 
             $cycles = $result['status'] == 200 ? $result['data'] :[];
 
@@ -421,6 +462,7 @@ class IdcsmartRenewModel extends Model
             foreach ($cycles as $value){
                 if ($billingCycle == $value['billing_cycle']){
                     $amount = $value['price']??0;
+                    $profit = $value['profit']??0;
                     $dueTime = $value['duration']??0;
                     break; # 只取一个值(存在开发者在模块中把周期写一样的情况)
                 }
@@ -449,6 +491,17 @@ class IdcsmartRenewModel extends Model
             }
 
             $productIds[$id] = $host['product_id'];
+
+            if($upstreamProduct){
+                $upstreamOrders[] = [
+                    'supplier_id' => $upstreamProduct['supplier_id'],
+                    'order_id' => 0,
+                    'host_id' => $id,
+                    'amount' => $amount,
+                    'profit' => $profit,
+                    'create_time' => time()
+                ];
+            }
 
         }
 
@@ -505,7 +558,17 @@ class IdcsmartRenewModel extends Model
             $OrderModel = new OrderModel();
             $orderId = $OrderModel->createOrderBase($data);
 
+            if(!empty($upstreamOrders)){
+                foreach ($upstreamOrders as $key => $value) {
+                    $upstreamOrders[$key]['order_id'] = $orderId;
+                }
+                $UpstreamOrderModel = new UpstreamOrderModel();
+                $UpstreamOrderModel->saveAll($upstreamOrders);
+            }
+
             hook('after_order_create',['id'=>$orderId,'customfield'=>$param['customfield']??[]]);
+
+            update_upstream_order_profit($orderId);
 
             $this->commit();
         }catch (\Exception $e){
@@ -601,7 +664,14 @@ class IdcsmartRenewModel extends Model
 
         # 解除产品暂停
         if ($host->status == 'Suspended'){
-            $result = $ModuleLogic->unsuspendAccount($host);
+            $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+            if($upstreamProduct){
+                $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                $result = $ResModuleLogic->suspendAccount($host);
+            }else{
+                $result = $ModuleLogic->unsuspendAccount($host);
+            }
+
             if ($result['status']==200){
                 $host->save([
                     'status' => 'Active'
@@ -636,7 +706,16 @@ class IdcsmartRenewModel extends Model
         # 记录日志
 
         # 调模块
-        $result = $ModuleLogic->renew($host);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+        if ($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->renew($host);
+        }else{
+            $result = $ModuleLogic->renew($host);
+        }
+
+        upstream_sync_host($host['id'], 'host_renew');
+
 
         # 任务队列
 

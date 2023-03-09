@@ -21,7 +21,7 @@ class IdcsmartFileDownload extends Plugin
         'title'       => '文件下载',
         'description' => '文件下载',
         'author'      => '智简魔方',  //开发者
-        'version'     => '1.0',      // 版本号
+        'version'     => '1.0.0',      // 版本号
     );
     # 插件安装
     public function install()

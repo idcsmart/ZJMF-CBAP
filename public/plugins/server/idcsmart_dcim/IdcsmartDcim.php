@@ -26,7 +26,7 @@ class IdcsmartDcim{
 	 * @version v1
 	 */
 	public function metaData(){
-		return ['display_name'=>'魔方DCIM', 'version'=>'1.0'];
+		return ['display_name'=>'魔方DCIM', 'version'=>'1.0.0'];
 	}
 
 	/**
@@ -666,7 +666,7 @@ class IdcsmartDcim{
 	 * @param   string x             - x
 	 * @return  [type] [description]
 	 */
-	public function currentConfigOptioin($params){
+	public function currentConfigOption($params){
 		$result = [
 			'status'=>200,
 			'msg'=>lang_plugins('success_message'),

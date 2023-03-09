@@ -41,6 +41,15 @@ Route::group('console/v1',function (){
     Route::delete('cart/batch', 'home/cart/batchDelete'); // 批量删除购物车商品
     Route::put('cart/:position/qty', 'home/cart/updateQty'); // 获取购物车
     Route::delete('cart', 'home/cart/clear'); // 清空购物车
+
+    // 上下游
+    Route::post('upstream/sync', 'home/upstream/sync'); // 产品列表
+
+    // 意见反馈
+    Route::post('feedback', 'home/common/createFeedback'); // 提交意见反馈
+
+    // 方案咨询
+    Route::post('consult', 'home/common/createConsult'); // 提交方案咨询
 })
     ->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,
@@ -79,6 +88,8 @@ Route::group('console/v1',function (){
 	Route::rule('module/:module/:controller/:method', 'home/module/customFunction', 'GET|POST'); // 模块自定义方法
     Route::put('host/:id/notes', 'home/host/updateHostNotes'); // 修改产品备注
     Route::get('host/all', 'home/host/clientHost'); // 获取用户所有产品
+    Route::post('host/:id/module/suspend', 'home/host/suspendAccount'); // 暂停
+    Route::post('host/:id/module/unsuspend', 'home/host/unsuspendAccount'); // 解除暂停
 
 	// 订单管理
 	Route::get('order', 'home/order/list'); // 订单列表

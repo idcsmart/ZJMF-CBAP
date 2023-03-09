@@ -7,12 +7,7 @@
   <div class="main-card">
     <div class="main-card-title">
       <span class="title-text">{{lang.cloud_title}}</span>
-      <!-- <div class="add-btn" @click="toOrder">
-                <i class="el-icon-plus"></i>
-                添加
-              </div> -->
     </div>
-
     <!-- 表格 -->
     <div class="main-card-table">
       <!-- 筛选 -->

@@ -865,4 +865,16 @@ th {
   .el-message-box__message {
     font-size: 0.32rem;
   }
+  .myPage .page-total {
+    display: none !important;
+  }
+  .myPage .el-pagination .el-pagination__sizes {
+    display: none;
+  }
+  .zf-dialog .el-dialog__headerbtn {
+    top: 0.1rem;
+  }
+  .zf-dialog .pay-select {
+    width: 4rem !important;
+  }
 }

@@ -96,6 +96,7 @@ class HostController extends AdminBaseController
      * @return string host.suspend_reason - 暂停原因
      * @return array status - 状态Unpaid未付款Pending开通中Active已开通Suspended已暂停Deleted已删除Failed开通失败
      * @return string host.product_name - 商品名称
+     * @return string host.agent - 代理产品0否1是
      */
 	public function index()
     {

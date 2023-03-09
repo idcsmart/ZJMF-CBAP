@@ -6,6 +6,7 @@ use think\Db;
 use app\admin\model\PluginModel;
 use app\admin\model\AuthModel;
 use app\common\logic\ModuleLogic;
+use app\common\logic\ResModuleLogic;
 
 /**
  * @title 导航管理模型
@@ -182,6 +183,10 @@ class MenuModel extends Model
 
         $module = $ModuleLogic->getModuleList();
 
+        $ResModuleLogic = new ResModuleLogic();
+
+        $resModule = $ResModuleLogic->getModuleList();
+
         $menus = $this->field('id,menu_type type,name,language,url,icon,nav_id,parent_id,module,product_id')
             ->where('type', 'home')
             ->order('order','asc')
@@ -227,7 +232,7 @@ class MenuModel extends Model
                 }
             }
         }
-        return ['menu' => $tree, 'language' => lang_list('home'), 'system_nav' => $navs, 'plugin_nav' => $plugins, 'module' => $module];
+        return ['menu' => $tree, 'language' => lang_list('home'), 'system_nav' => $navs, 'plugin_nav' => $plugins, 'module' => $module, 'res_module' => $resModule];
     }
 
     /**
@@ -325,9 +330,12 @@ class MenuModel extends Model
     public function saveHomeMenu($param)
     {
         $ModuleLogic = new ModuleLogic();
-
         $module = $ModuleLogic->getModuleList();
         $module = array_column($module, 'name');
+
+        $ResModuleLogic = new ResModuleLogic();
+        $resModule = $ResModuleLogic->getModuleList();
+        $resModule = array_column($resModule, 'name');
 
         foreach ($param['menu'] as $key => $value) {
             if(in_array($value['type'], ['system', 'plugin'])){
@@ -348,6 +356,18 @@ class MenuModel extends Model
                     ->leftjoin('server ss','ss.server_group_id=sg.id')
                     ->where('p.hidden', 0)
                     ->where('s.module|ss.module', $value['module'])
+                    ->column('p.id');
+                if(count(array_diff($value['product_id'], $products))>0){
+                    return ['status' => 400, 'msg' => lang('product_error')];
+                }
+            }else if($value['type']=='res_module'){
+                if(!in_array($value['module'], $resModule)){
+                    return ['status' => 400, 'msg' => lang('module_error')];
+                }
+                $products = ProductModel::alias('p')
+                    ->leftjoin('upstream_product up','up.product_id=p.id')
+                    ->where('p.hidden', 0)
+                    ->where('up.res_module', $value['module'])
                     ->column('p.id');
                 if(count(array_diff($value['product_id'], $products))>0){
                     return ['status' => 400, 'msg' => lang('product_error')];
@@ -373,6 +393,18 @@ class MenuModel extends Model
                             ->leftjoin('server ss','ss.server_group_id=sg.id')
                             ->where('p.hidden', 0)
                             ->whereIn('s.module|ss.module', $v['module'])
+                            ->column('p.id');
+                        if(count(array_diff($v['product_id'], $products))>0){
+                            return ['status' => 400, 'msg' => lang('product_error')];
+                        }
+                    }else if($v['type']=='res_module'){
+                        if(!in_array($v['module'], $resModule)){
+                            return ['status' => 400, 'msg' => lang('module_error')];
+                        }
+                        $products = ProductModel::alias('p')
+                            ->leftjoin('upstream_product up','up.product_id=p.id')
+                            ->where('p.hidden', 0)
+                            ->where('up.res_module', $v['module'])
                             ->column('p.id');
                         if(count(array_diff($v['product_id'], $products))>0){
                             return ['status' => 400, 'msg' => lang('product_error')];
@@ -611,7 +643,7 @@ class MenuModel extends Model
                 $data['language'] = json_decode($data['language'], true);
                 $menus[$key]['name'] = $data['language'][$language] ?? $data['name'];
                 $menus[$key]['url'] = $data['nav_url'] ?? $data['url'];
-                if($data['menu_type']=='module'){
+                if($data['menu_type']=='module' || $data['menu_type']=='res_module'){
                     $menus[$key]['url'] = 'product.html?m='.$data['id'];
                 }
 

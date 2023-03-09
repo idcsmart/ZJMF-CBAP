@@ -16,9 +16,10 @@ function saveAdminMenu(params){
 }
 
 // 根据模块获取商品列表
-function productBymodule(params){
-    return Axios.get(`/module/${params.module}/product`)
+function productBymodule(type,params){
+    return Axios.get(`/${type}/${params.module}/product`)
 }
+
 
 // 获取后台导航
 function leftMenu(){

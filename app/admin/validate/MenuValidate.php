@@ -134,7 +134,7 @@ class MenuValidate extends Validate
             if(!isset($v['type'])){
                 return false;
             }
-            if(!in_array($v['type'], ['system', 'plugin', 'custom', 'module'])){
+            if(!in_array($v['type'], ['system', 'plugin', 'custom', 'module', 'res_module'])){
                 return false;
             }
             if(!isset($v['name'])){
@@ -159,7 +159,7 @@ class MenuValidate extends Validate
                 if(strlen($v['url'])>255){
                     return false;
                 }
-            }else if($v['type']=='module'){
+            }else if(in_array($v['type'], ['module', 'res_module'])){
                 if(!isset($v['module'])){
                     return false;
                 }
@@ -202,7 +202,7 @@ class MenuValidate extends Validate
                     if(!isset($cv['type'])){
                         return false;
                     }
-                    if(!in_array($cv['type'], ['system', 'plugin', 'custom', 'module'])){
+                    if(!in_array($cv['type'], ['system', 'plugin', 'custom', 'module', 'res_module'])){
                         return false;
                     }
                     if(!isset($cv['name'])){
@@ -227,7 +227,7 @@ class MenuValidate extends Validate
                         if(strlen($cv['url'])>255){
                             return false;
                         }
-                    }else if($cv['type']=='module'){
+                    }else if(in_array($cv['type'], ['module', 'res_module'])){
                         if(!isset($cv['module'])){
                             return false;
                         }

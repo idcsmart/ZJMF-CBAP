@@ -23,7 +23,7 @@ class IdcsmartTicket extends Plugin
         'title'       => '用户工单', //插件名称
         'description' => '用户工单', //插件描述
         'author'      => '智简魔方',  //开发者
-        'version'     => '1.0',      // 版本号
+        'version'     => '1.0.0',      // 版本号
     );
     # 插件安装
     public function install()

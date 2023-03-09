@@ -3,11 +3,13 @@ namespace addon\idcsmart_refund\model;
 
 use addon\idcsmart_refund\IdcsmartRefund;
 use app\common\logic\ModuleLogic;
+use app\common\logic\ResModuleLogic;
 use app\common\model\ClientModel;
 use app\common\model\HostModel;
 use app\common\model\OrderItemModel;
 use app\common\model\OrderModel;
 use app\common\model\ProductModel;
+use app\common\model\UpstreamProductModel;
 use think\db\Query;
 use think\Model;
 
@@ -428,6 +430,9 @@ class IdcsmartRefundModel extends Model
             return ['status'=>400,'msg'=>$e->getMessage()];
         }
 
+        //TODO 测试使用,后面删除
+        $this->dailyCron();
+
         return ['status'=>200,'msg'=>lang_plugins('success_message')];
     }
 
@@ -653,7 +658,14 @@ class IdcsmartRefundModel extends Model
             if (empty($host)){ # 考虑产品被删除的情况
                 $status = 'Suspended';
             }else{
-                $result = $ModuleLogic->suspendAccount($host);
+                $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+                if($upstreamProduct){
+                    $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                    $result = $ResModuleLogic->terminateAccount($host);
+                }else{
+                    $result = $ModuleLogic->suspendAccount($host);
+                }
+
                 if ($result['status'] == 200){
                     if ($refund['amount'] == -1){ # 不需要退款
                         $status = 'Suspended'; # 已停用
@@ -686,6 +698,8 @@ class IdcsmartRefundModel extends Model
                 'status' => $status,
                 'update_time' => time()
             ],['id'=>$refund['id']]);
+
+            upstream_sync_host($refund['host_id'],'refund');
         }
 
         return true;

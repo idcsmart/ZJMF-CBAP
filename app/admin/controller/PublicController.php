@@ -3,7 +3,6 @@ namespace app\admin\controller;
 
 use app\admin\model\AdminModel;
 use app\admin\validate\AdminValidate;
-use app\common\model\ClientModel;
 
 /**
  * @title 后台开放类
@@ -96,103 +95,6 @@ class PublicController extends BaseController
         ];
 
         return json($result);
-    }
-
-    public function test()
-    {
-        $arr = [500,1,42,34,5,7,235,645,654,6455,62,253,25,2,2453];
-        var_dump($this->bubbleSort($arr));die;
-        $array = array(1,1);foreach ($array as $k=>$v){ $v = 2;}
-        var_dump($array);
-        $a = new ClientModel();
-        var_dump(11);die;
-
-        $array = [
-            1 => [
-                'id' => 10,
-                'name' => 'wuyuhua'
-            ],
-            2 => [
-                'id' => 20,
-                'name' => 'test'
-            ],
-            3 => [
-                'id' => 30,
-                'name' => 'teaast'
-            ],
-        ];
-
-        $array2 = [
-            'wuyuhua' => 'aldfjklad',
-            'test' => 'aldfjkasdf',
-            'teaast' => 'adsfhasjkdf'
-        ];
-
-        $result = array_walk_recursive($array,function(&$value,$key,$other){
-            $value = $key . ':' . $value . '-' . ($other[$value]??'');
-            return $value;
-        },$array2);
-        var_dump($array,$result);die;
-
-        var_dump(111);die;
-        $IdcsmartCommonProductConfigoptionModel = new \server\zjmfapp\model\IdcsmartCommonProductConfigoptionModel();
-
-        $IdcsmartCommonProductConfigoptionSubModel = new \server\zjmfapp\model\IdcsmartCommonProductConfigoptionSubModel();
-
-        $IdcsmartCommonCustomCycleModel = new \server\zjmfapp\model\IdcsmartCommonCustomCycleModel();
-
-        $IdcsmartCommonCustomCyclePricingModel = new \server\zjmfapp\model\IdcsmartCommonCustomCyclePricingModel();
-
-        $ProductModel = new \app\common\model\ProductModel();
-
-        $products = $ProductModel->select()->toArray();
-
-        $ProductModel->startTrans();
-
-        try{
-            foreach ($products as $product){
-                $productId = $product['id'];
-                $customCycles = $IdcsmartCommonCustomCycleModel->alias('cc')
-                    ->field('cc.id,cc.name,cc.cycle_time,cc.cycle_unit,ccp.amount,ccp.id as pricing_id')
-                    ->leftJoin('module_zjmfapp_custom_cycle_pricing ccp','ccp.custom_cycle_id=cc.id AND ccp.type=\'product\'')
-                    ->where('cc.product_id',$productId)
-                    ->where('ccp.rel_id',$productId)
-                    ->select()
-                    ->toArray();
-                $configoptions = $IdcsmartCommonProductConfigoptionModel->where('product_id',$productId)->select()->toArray();
-
-                foreach ($customCycles as $customCycle){
-                    $totalPrice = $customCycle['amount']??0;
-                    foreach ($configoptions as $configoption){
-                        $subs = $IdcsmartCommonProductConfigoptionSubModel->where('product_configoption_id',$configoption['id'])->select()->toArray();
-                        foreach ($subs as $sub){
-                            $subAmount = $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])
-                                ->where('rel_id',$sub['id'])
-                                ->where('type','configoption')
-                                ->value('amount');
-                            $totalPrice += $subAmount??0;
-                        }
-                    }
-                    if ($totalPrice<=0){
-                        $IdcsmartCommonCustomCycleModel->where('id',$customCycle['id'])->delete();
-                        $IdcsmartCommonCustomCyclePricingModel->where('custom_cycle_id',$customCycle['id'])->delete();
-                    }
-                }
-            }
-
-            $ProductModel->commit();
-        }catch (\Exception $e){
-            $ProductModel->rollback();
-            return json([
-                'status' => 400,
-                'msg' => $e->getMessage()
-            ]);
-        }
-
-        return json([
-            'status' => 200,
-            'msg' => lang_plugins('success_message')
-        ]);
     }
 
 }

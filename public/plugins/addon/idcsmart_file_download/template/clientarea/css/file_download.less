@@ -44,6 +44,7 @@
       position: absolute;
       top: -.3rem;
       right: 1.84rem;
+      z-index: -1;
     }
   }
 
@@ -190,15 +191,21 @@
   }
 }
 
-// @media screen and (max-width: 750px) {
-//   .file_download {
-//     .pc {
-//       display: none;
-//     }
+@media screen and (max-width: 750px) {
+  .file_download {
+    .pc {
+      display: flex;
+      flex-wrap: wrap;
+    }
 
-//     .mobile {
-//       display: block;
-//     }
-//   }
+    .com-l-box {
+      width: 100%;
+    }
 
-// }
+    .com-r-box {
+      width: 65% !important;
+    }
+
+  }
+
+}

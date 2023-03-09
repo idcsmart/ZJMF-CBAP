@@ -59,7 +59,7 @@
                   </t-option>
                 </t-select>
               </t-form-item>
-              <t-form-item :label="lang.interface" v-if="done">
+              <t-form-item :label="lang.interface" v-if="!isAgent">
                 <t-select v-model="formData.server_id" :popup-props="popupProps">
                   <t-option v-for="item in serverList" :value="item.id" :label="item.name" :key="item.id">
                   </t-option>
@@ -99,7 +99,7 @@
             </div>
           </t-col>
           <t-col :xs="12" :xl="6">
-            <p class="com-tit"><span>{{lang.financial_info}}</span></p>
+            <p class="com-tit"><span>{{lang.financial_infos}}</span></p>
             <!-- 续费 -->
             <!-- <t-button theme="primary" class="renew-btn" @click="renewDialog" v-if="(curStatus === 'Active' || curStatus === 'Suspended') && hasPlugin && tempCycle !== 'free'  && tempCycle !== 'onetime'">{{lang.renew}}</t-button> -->
             <div class="item">
@@ -140,6 +140,33 @@
               <!-- <t-form-item>
                 <t-button @click="renew">续费</t-button>
               </t-form-item> -->
+            </div>
+            <p class="com-tit" v-if="upData && upData.id"><span>上游信息</span></p>
+            <div class="item" v-if="upData && upData.id">
+              <t-form-item :label="lang.buy_amount">
+                <div>{{upData.first_payment_amount}}</div>
+              </t-form-item>
+              <t-form-item :label="lang.renew_amount">
+                <div>{{upData.renew_amount}}</div>
+              </t-form-item>
+              <t-form-item :label="lang.billing_way">
+                <div>{{cycleObj[upData.billing_cycle]}}</div>
+              </t-form-item>
+              <t-form-item :label="lang.billing_cycle">
+                <div>{{upData.billing_cycle_name}}</div>
+              </t-form-item>
+              <t-form-item :label="lang.open_time">
+                <div>{{upData.active_time ? moment(upData.active_time * 1000).format('YYYY-MM-DD HH:mm:ss') : '--' }}</div>
+              </t-form-item>
+              <t-form-item :label="lang.due_time">
+                <div>{{upData.due_time ? moment(upData.due_time * 1000).format('YYYY-MM-DD HH:mm:ss') : '--' }}</div>
+              </t-form-item>
+              <t-form-item :label="lang.status">
+                <div>{{lang[upData.status]}}</div>
+              </t-form-item>
+              <t-form-item label="标识">
+                <div>{{upData.name}}</div>
+              </t-form-item>
             </div>
             <!-- 优惠码 -->
             <template v-if="hasPlugin">

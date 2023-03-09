@@ -16,32 +16,20 @@ class CheckHome extends Check
     {
         $result = parent::checkToken($request);
         if ($result['status'] != 200){
-            $param = $request->param();
-            if (isset($param['login_token'])){
-                $result = parent::checkApi($request);
-                if ($result['status'] != 200){
-                    return json($result);
-                }
-            }else{
-                return json($result);
-            }
-            
+            return json($result);
         }
 
-        if(isset($result['data']['api'])){
-            $api = $result['data']['api'];
+        $jwtToken = $result['data']['jwt_token'];
 
-            $request->client_id = $api['client_id'];
-            $request->api_id = $api['id'];
-            $request->api_name = $api['name'];
-        }else{
-            $jwtToken = $result['data']['jwt_token'];
+        $request->client_id = $jwtToken['id'];
+        $request->client_name = $jwtToken['name'];
+        $request->client_remember_password = $jwtToken['remember_password'];
 
-            $request->client_id = $jwtToken['id'];
-            $request->client_name = $jwtToken['name'];
-            $request->client_remember_password = $jwtToken['remember_password'];
+        if (isset($jwtToken['is_api']) && $jwtToken['is_api']){
+            $request->is_api = $jwtToken['is_api'];
+            $request->api_id = $jwtToken['api_id']??0;
+            $request->api_name = $jwtToken['api_name']??'';
         }
-        
 
         $time = time();
         $ClientModel = new ClientModel();

@@ -8,7 +8,7 @@
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}`
     new Vue({
-      data () {
+      data() {
         return {
           baseUrl: str,
           id: "", // 用户id
@@ -258,27 +258,27 @@
         };
       },
       computed: {
-        inputLabel () {
+        inputLabel() {
           if (this.moneyData.type === "recharge") {
             return this.currency_prefix;
           } else {
             return "-" + this.currency_prefix;
           }
         },
-        calcRefund () {
+        calcRefund() {
           this.refundTip = `${lang.refund_to_balance}：${this.refundAmount}\n${lang.refund_to_user}：${this.data.refund?.replace('-', '')}`
           return this.refundAmount * 1 - this.data.refund * 1
         },
-        calcShow () {
+        calcShow() {
           return (data) => {
             return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
           }
         },
-        isExist () {
+        isExist() {
           return !this.clientList.find(item => item.id === this.data.id)
         }
       },
-      created () {
+      created() {
         const query = location.href.split("?")[1].split("&");
         this.moneyData.id = this.id = Number(this.getQuery(query[0]));
         this.langList = JSON.parse(
@@ -308,14 +308,14 @@
       },
       methods: {
         // 远程搜素
-        remoteMethod (key) {
+        remoteMethod(key) {
           this.clinetParams.keywords = key
           this.getClintList()
         },
-        filterMethod (search, option) {
+        filterMethod(search, option) {
           return option
         },
-        async getPlugin () {
+        async getPlugin() {
           try {
             /* IdcsmartClientLevel */
             const res = await getAddon();
@@ -334,13 +334,13 @@
             temp.includes('IdcsmartRefund') && this.getRefundAmount();
           } catch (error) { }
         },
-        async getLevel () {
+        async getLevel() {
           try {
             const res = await getAllLevel();
             this.levelList = res.data.data.list;
           } catch (error) { }
         },
-        async getLevelDetail () {
+        async getLevelDetail() {
           try {
             const res = await getClientLevel(this.id);
             this.formData.level_id = res.data.data.client_level?.id;
@@ -348,28 +348,28 @@
           } catch (error) { }
         },
         // 获取退款
-        async getRefundAmount () {
+        async getRefundAmount() {
           try {
             const res = await getRefund(this.id);
             this.refundAmount = res.data.data.amount;
           } catch (error) { }
         },
         // 获取后台配置的路径
-        async getSystemOption () {
+        async getSystemOption() {
           try {
             const res = await getSystemOpt();
             this.website_url = res.data.data.website_url;
           } catch (error) { }
         },
         // 以用户登录
-        async loginByUser () {
+        async loginByUser() {
           try {
             const res = await loginByUserId(this.id);
             localStorage.setItem("jwt", res.data.data.jwt);
             // 获取前台导航存入 locaStorage  frontMenus
 
             // const url = '/reactmember/#/'
-            const url = this.website_url;
+            const url = this.website_url + '/home.html';
             window.open(url, "_blank");
             // const newPage = window.open("https://www.baidu.com/", "_blank");
             // console.log(newPage, url);
@@ -379,11 +379,11 @@
             this.$message.error(error.data.msg);
           }
         },
-        changeUser (id) {
+        changeUser(id) {
           this.id = id;
           location.href = `client_detail.html?client_id=${this.id}`;
         },
-        async getClintList () {
+        async getClintList() {
           try {
             this.searchLoading = true
             const res = await getClientList(this.clinetParams);
@@ -399,14 +399,14 @@
             console.log(error.data.msg);
           }
         },
-        getQuery (val) {
+        getQuery(val) {
           return val.split("=")[1];
         },
         // 删除用户
-        deleteUser () {
+        deleteUser() {
           this.delVisible = true;
         },
-        async sureDelUser () {
+        async sureDelUser() {
           try {
             const res = await deleteClient(this.id);
             this.delVisible = false;
@@ -420,11 +420,11 @@
           }
         },
         // 启用/停用
-        changeStatus () {
+        changeStatus() {
           this.statusVisble = true;
           this.statusTip = this.data.status ? lang.sure_Close : lang.sure_Open;
         },
-        async sureChange () {
+        async sureChange() {
           try {
             const params = {
               status: this.data.status === 1 ? 0 : 1,
@@ -438,7 +438,7 @@
           }
         },
         // 充值/扣费
-        changeMoney () {
+        changeMoney() {
           this.moneyData.type = "recharge";
           this.moneyData.amount = "";
           this.moneyData.notes = "";
@@ -446,18 +446,18 @@
         },
         // 充值相关开始
         // 显示充值弹窗
-        showRecharge () {
+        showRecharge() {
           // 初始化充值数据
           this.rechargeData.gateway = this.gatewayList[0].name;
           this.rechargeData.amount = "";
           this.visibleRecharge = true;
         },
         // 取消充值
-        closeRechorge () {
+        closeRechorge() {
           this.visibleRecharge = false;
         },
         // 充值提交
-        confirmRecharge ({ validateResult, firstError }) {
+        confirmRecharge({ validateResult, firstError }) {
           if (validateResult === true) {
             // 调用充值接口
             const params = {
@@ -483,7 +483,7 @@
           }
         },
         // 获取充值列表
-        getGatewayList () {
+        getGatewayList() {
           getPayList().then((res) => {
             if (res.data.status === 200) {
               this.gatewayList = res.data.data.list;
@@ -493,7 +493,7 @@
 
         // 充值相关结束
 
-        async confirmMoney ({ validateResult, firstError }) {
+        async confirmMoney({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const res = await updateClientDetail(this.id, this.moneyData);
@@ -508,7 +508,7 @@
             this.$message.warning(firstError);
           }
         },
-        closeMoney () {
+        closeMoney() {
           this.visibleMoney = false;
           this.moneyData.amount = "";
           this.moneyData.notes = "";
@@ -516,12 +516,12 @@
           this.$refs.moneyRef && this.$refs.moneyRef.reset();
         },
         // 变更记录
-        changeLog () {
+        changeLog() {
           this.visibleLog = true;
           this.getChangeLog();
         },
         // 获取变更记录列表
-        async getChangeLog () {
+        async getChangeLog() {
           try {
             this.moneyLoading = true;
             const res = await getMoneyDetail(this.id, this.moneyPage);
@@ -533,11 +533,11 @@
             this.$message.error(error.data.msg);
           }
         },
-        closeLog () {
+        closeLog() {
           this.visibleLog = false;
         },
         // 提交修改用户信息
-        updateUserInfo () {
+        updateUserInfo() {
           this.$refs.userInfo
             .validate()
             .then(async (res) => {
@@ -571,13 +571,13 @@
             });
         },
         // 金额变更分页
-        changePage (e) {
+        changePage(e) {
           this.moneyPage.page = e.current;
           this.moneyPage.limit = e.pageSize;
           this.getChangeLog();
         },
         // 获取用户详情
-        async getUserDetail () {
+        async getUserDetail() {
           try {
             const res = await getClientDetail(this.id);
             const temp = res.data.data.client;
@@ -594,7 +594,7 @@
           } catch (error) { }
         },
         // 获取国家列表
-        async getCountry () {
+        async getCountry() {
           try {
             const res = await getCountry();
             this.country = res.data.data.list;
@@ -606,12 +606,12 @@
         // 子账户
 
         // 获取子账户列表
-        async getchildAccountList () {
+        async getchildAccountList() {
           const res = await getchildAccountListApi({ id: this.id });
           this.childList = res.data.data.list;
         },
         // 去往子账户编辑页面
-        goEdit (id) {
+        goEdit(id) {
           location.href = `childAccount.html?client_id=${id}&pId=${this.id}`;
         },
       },

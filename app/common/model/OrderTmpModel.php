@@ -90,13 +90,13 @@ class OrderTmpModel extends Model
             $client = $ClientModel->find($order->client_id);
 
             # 客户余额足够
-            if ($client->credit >= $order->credit){
+            if (($client->credit >= $order->credit && $order->amount_unpaid <= 0) || ($client->credit >= $order->amount && $param['gateway']=='credit')){
                 $this->startTrans();
 
                 try{
                     $order->save([
                         'gateway' => $gateway,
-                        'gateway_name' => $plugin['title']??'',
+                        'gateway_name' => $plugin['title']??'余额支付',
                         'status' => 'Paid',
                         'pay_time' => time()
                     ]);
@@ -114,7 +114,7 @@ class OrderTmpModel extends Model
                     $OrderItemModel = new OrderItemModel();
                     $OrderItemModel->update([
                         'gateway' => $gateway,
-                        'gateway_name' => $plugin['title']??'',
+                        'gateway_name' => $plugin['title']??'余额支付',
                     ],['order_id'=>$order->id]);
 
                     $this->commit();

@@ -24,7 +24,7 @@
       <t-row>
         <p class="com-tit"><span>{{ lang.interface_manage }}</span></p>
         <t-col :xs="12" :xl="6">
-          <t-form :data="formData" ref="userInfo" @submit="onSubmit">
+          <t-form :data="formData" ref="userInfo" @submit="onSubmit" label-align="top">
             <div class="item">
               <t-form-item>
                 <template slot="label">

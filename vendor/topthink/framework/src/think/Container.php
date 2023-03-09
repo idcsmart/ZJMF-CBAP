@@ -241,7 +241,6 @@ class Container implements ContainerInterface, ArrayAccess, IteratorAggregate, C
     public function make(string $abstract, array $vars = [], bool $newInstance = false)
     {
         $abstract = $this->getAlias($abstract);
-
         if (isset($this->instances[$abstract]) && !$newInstance) {
             return $this->instances[$abstract];
         }

@@ -49,6 +49,9 @@ function cancelConcatCloud (params) {
   return Axios.delete(`/security_group/${params.id}/host/${params.host_id}`);
 }
 // 获取所有可用实例
-function getAllCloud () {
-  return Axios.get(`/idcsmart_cloud/all`);
+// function getAllCloud () {
+//   return Axios.get(`/idcsmart_cloud/all`);
+// }
+function getAllCloud (params) {
+  return Axios.get(`/mf_cloud`, {params});
 }

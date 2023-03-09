@@ -2115,4 +2115,80 @@ class ClientModel extends Model
 
         return ['list'=>$clients, 'count'=>$count];
     }
+
+    /**
+     * 时间 2023-02-16
+     * @title API鉴权登录
+     * @desc API鉴权登录
+     * @author wyh
+     * @version v1
+     * @url /api/v1/auth
+     * @method  POST
+     * @param string username - 用户名(用户注册时的邮箱或手机号)
+     * @param string password - 密码(api信息的token)
+     */
+    public function apiAuth($param)
+    {
+        $this->startTrans();
+
+        try{
+            $username = trim($param['username']);
+
+            $password = trim($param['password']);
+
+            if (strpos($username,'@') !== false){
+                $client = $this->where('email',$username)->find();
+            }else{
+                $client = $this->where('phone',$username)->find();
+            }
+
+            if (empty($client)){
+                throw new \Exception(lang('client_is_not_exist'));
+            }
+
+            $ApiModel = new ApiModel();
+
+            $api = $ApiModel->where('client_id',$client['id'])->where('token',aes_password_encode($password))->find();
+
+            if (empty($api)){
+                throw new \Exception(lang('api_auth_fail'));
+            }
+
+            if ($api['status']==1 && !in_array(get_client_ip(),explode("\n",$api['ip']))){
+                throw new \Exception(lang('api_auth_fail'));
+            }
+
+            /*if (aes_password_encode($password)!=$api['token']){
+                throw new \Exception(lang('api_auth_fail'));
+            }*/
+
+            $upData = [
+                'last_login_time' => time(),
+                'last_login_ip' => get_client_ip()
+            ];
+
+            $client->save($upData);
+
+            $info = [
+                'id' => $client['id'],
+                'name' => $client['username'],
+                'remember_password' => 0,
+                'is_api' => true,
+                'api_id' => $api['id'],
+                'api_name' => $api['name']
+            ];
+
+            active_log(lang('log_api_auth_login',['{client}'=>'client#'.$client['id'].'#'.$client['username'].'#']),'client',$client['id']);
+
+            hook('client_api_login',['id'=>$client['id'],'username'=>$username,'password'=>$password]);
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+
+            return ['status'=>400,'msg'=>$e->getMessage()];
+        }
+
+        return ['status'=>200,'msg'=>lang('success_message'),'data'=>['jwt'=>create_jwt($info)]];
+    }
 }

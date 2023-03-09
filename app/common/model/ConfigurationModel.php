@@ -93,6 +93,14 @@ class ConfigurationModel extends Model
             'certification_update_client_phone',
             'certification_uncertified_suspended_host',
         ],
+        'info' => [
+            'put_on_record',
+            'enterprise_name',
+            'enterprise_telephone',
+            'enterprise_mailbox',
+            'enterprise_qrcode',
+            'online_customer_service_link',
+        ],
     ];
     /**
      * 时间 2022-5-10
@@ -856,8 +864,8 @@ class ConfigurationModel extends Model
 
     /**
      * 时间 2022-08-12
-     * @title 保存主题设置
-     * @desc 保存主题设置
+     * @title 保存实名设置
+     * @desc 保存实名设置
      * @author theworld
      * @version v1
      * @param int certification_open - 实名认证是否开启:1开启默认,0关 required
@@ -873,6 +881,65 @@ class ConfigurationModel extends Model
         $this->startTrans();
         try {
             foreach($this->config['certification'] as $v){
+                $list[] = [
+                    'setting'=>$v,
+                    'value'=>$param[$v],
+                ];
+            }
+            $this->saveAll($list);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            // 回滚事务
+            $this->rollback();
+            return ['status' => 400, 'msg' => lang('update_fail')];
+        }
+        return ['status' => 200, 'msg' => lang('update_success')];
+    }
+
+    /**
+     * 时间 2023-02-28
+     * @title 获取信息配置
+     * @desc 获取信息配置
+     * @author theworld
+     * @version v1
+     * @return string put_on_record - 备案信息
+     * @return string enterprise_name - 企业名称
+     * @return string enterprise_telephone - 企业电话
+     * @return string enterprise_mailbox - 企业邮箱
+     * @return string enterprise_qrcode - 企业二维码
+     * @return string online_customer_service_link - 在线客服链接
+     */
+    public function infoList()
+    {
+        $configuration = $this->index();
+        $data = [];
+        foreach($configuration as $v){
+            if(in_array($v['setting'], $this->config['info'])){
+                $data[$v['setting']] = (string)$v['value'];
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * 时间 2023-02-28
+     * @title 保存信息配置
+     * @desc 保存信息配置
+     * @author theworld
+     * @version v1
+     * @param string put_on_record - 备案信息 required
+     * @param string enterprise_name - 企业名称 required
+     * @param string enterprise_telephone - 企业电话 required
+     * @param string enterprise_mailbox - 企业邮箱 required
+     * @param string enterprise_qrcode - 企业二维码 required
+     * @param string online_customer_service_link - 在线客服链接 required
+     */
+    public function infoUpdate($param)
+    {
+        $this->startTrans();
+        try {
+            foreach($this->config['info'] as $v){
                 $list[] = [
                     'setting'=>$v,
                     'value'=>$param[$v],

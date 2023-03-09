@@ -45,24 +45,41 @@ class Task extends Command
     }
 	//队列
 	public function taskWait(){
-		Db::startTrans();
 		$task_lock = file_exists(__DIR__.'/task.lock') ? file_get_contents(__DIR__.'/task.lock') : 0; 
 			
 		if(empty($task_lock) || time()>($task_lock+2*60)){
 			file_put_contents(__DIR__.'/task.lock', time());
-			$task_wait = Db::name('task_wait')->limit(10)
-                ->whereIn('status',['Wait','Failed'])
-                ->where('retry','<=',3) # 重试次数小于等于3
-                ->select()->toArray();//取10条数据
 
-            Db::name('task_wait')->where('retry','>',3)
-                ->whereOr('status','Finish')
-                ->delete(); # 删除重试次数大于3或者状态已完成的任务
+			Db::startTrans();
 
-			Db::commit();
-			file_put_contents(__DIR__.'/task.lock', 0);
+			try{
+				$task_wait = Db::name('task_wait')->limit(10)
+	                //->lock(true) # 加悲观锁,不允许其它进程访问(supervisor开启5个进程)
+	                ->whereIn('status',['Wait','Failed'])
+	                ->where('retry','<=',3) # 重试次数小于等于3
+	                ->select()->toArray();//取10条数据
+
+	            Db::name('task_wait')->where('retry','>',3)
+	                ->whereOr('status','Finish')
+	                ->delete(); # 删除重试次数大于3或者状态已完成的任务
+
+	            Db::commit();
+			}catch(\think\db\exception\PDOException $e){
+				// file_put_contents(__DIR__.'/task.lock', 0);
+                Db::rollback();
+				return ;
+			}catch(\Exception $e){
+				// file_put_contents(__DIR__.'/task.lock', 0);
+                Db::rollback();
+				return ;
+			}
+
 			if($task_wait){
 				foreach($task_wait as $v){
+					$start = Db::name('task_wait')->where('id', $v['id'])->whereIn('status',['Wait','Failed'])->update(['status'=>'Exec']);
+					if(empty($start)){
+						continue;
+					}
 					$task_data = json_decode($v['task_data'],true);
 					if(strpos($v['type'],'host_')===0){
 						$result = $this->host(str_replace('host_','',$v['type']),$task_data);
@@ -86,13 +103,18 @@ class Task extends Command
                             'finish_time' => time(),
                             'retry' => $v['retry']+1
                         ])->update();
+					}else{
+						Db::name('task_wait')->where('id', $v['id'])->update(['status'=>$result['status'] ]);
 					}
+
 				}
+                // Db::commit(); # 当前进程的任务执行完毕,释放锁
 			}else{
+                // Db::commit();
 				sleep(3);
 			}
-		}else{
-			Db::commit();
+
+			file_put_contents(__DIR__.'/task.lock', 0);
 		}
 		
 

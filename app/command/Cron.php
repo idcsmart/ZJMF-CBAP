@@ -11,6 +11,9 @@ use think\console\Output;
 use app\common\model\ConfigurationModel;
 use app\common\model\SmsTemplateModel;
 use app\common\model\TransactionModel;
+use app\common\model\SupplierModel;
+use app\common\model\UpstreamProductModel;
+use app\common\logic\UpstreamLogic;
 
 class Cron extends Command
 {
@@ -76,6 +79,7 @@ class Cron extends Command
 		$this->hostDue($config);//主机续费提示
 		$this->hostOverdue($config);//主机逾期提示
 		$this->orderOverdue($config);//订单未付款
+		$this->downstreamSyncProduct();//订单未付款
 		$output->writeln('续费提醒结束:'.date('Y-m-d H:i:s'));
 
 		hook('daily_cron');// 每日执行一次定时任务钩子
@@ -101,6 +105,9 @@ class Cron extends Command
 
 		$this->hostModule($config);// 主机暂停、删除
 		$output->writeln('自动暂停、删除结束:'.date('Y-m-d H:i:s'));
+
+		// TODO 删除，测试！
+        $this->downstreamSyncProduct();//订单未付款
 
 		hook('five_minute_cron');// 每五分钟执行一次定时任务钩子
 		$this->configurationUpdate('cron_lock_five_minute_last_time',time());
@@ -493,5 +500,41 @@ class Cron extends Command
         }
 
         return ['this_year_amount' => amount_format($thisYearAmount), 'this_year_amount_percent' => $thisYearAmountPercent, 'this_month_amount' => amount_format($thisMonthAmount), 'this_month_amount_percent' => $thisMonthAmountPercent, 'this_year_month_amount' => $thisYearMonthAmount, 'clients' => $clients];
+    }
+
+    public function downstreamSyncProduct()
+    {
+    	$SupplierModel = new SupplierModel();
+    	$supplier = $SupplierModel->select()->toArray();
+
+    	$UpstreamProductModel = new UpstreamProductModel();
+    	$product = $UpstreamProductModel->select()->toArray();
+    	$productArr = [];
+    	foreach ($product as $key => $value) {
+    		$productArr[$value['supplier_id']][$value['upstream_product_id']] = ['id' => $value['product_id'], 'profit_percent' => $value['profit_percent']];
+    	}
+    	foreach ($supplier as $key => $value) {
+    		// 从上游商品拉取
+        	$UpstreamLogic = new UpstreamLogic();
+        	$res = $UpstreamLogic->upstreamProductList(['url' => $value['url']]);
+        	foreach ($res['list'] as $k => $v) {
+        		if(isset($productArr[$value['id']][$v['id']])){
+        			$id = $productArr[$value['id']][$v['id']]['id'];
+        			$profit_percent = $productArr[$value['id']][$v['id']]['profit_percent'];
+        			$price = $v['price'] ?? 0;
+            		$price = bcdiv($price*(100+$profit_percent), 100, 2); 
+        			ProductModel::update([
+        				'pay_type' => $v['pay_type'] ?? 'recurring_prepayment',
+		                'price' => $price,
+		                'cycle' => $v['cycle'] ?? '',
+        			], ['id' => $id]);
+        		}
+        	}
+        	if(isset($res['list'][0]['id'])){
+        		$UpstreamLogic->upstreamProductDownloadResource(['url' => $value['url'], 'id' => $res['list'][0]['id']]);
+        	}
+        	
+    	}
+    	
     }
 }

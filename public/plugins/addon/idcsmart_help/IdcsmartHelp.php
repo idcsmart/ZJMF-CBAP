@@ -21,7 +21,7 @@ class IdcsmartHelp extends Plugin
         'title'       => '帮助中心',
         'description' => '帮助中心',
         'author'      => '智简魔方',  //开发者
-        'version'     => '1.0',      // 版本号
+        'version'     => '1.0.0',      // 版本号
     );
     # 插件安装
     public function install()

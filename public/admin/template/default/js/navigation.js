@@ -17,6 +17,8 @@
           pluginList: [],
           // 模块导航列表
           moduleList: [],
+          // 上游列表
+          reModuleList: [],
           // 语言
           language: [],
           // 导航类型
@@ -24,7 +26,8 @@
             { id: 1, label: "系统页面", value: "system" },
             { id: 2, label: "插件", value: "plugin" },
             { id: 3, label: "自定义", value: "custom" },
-            { id: 4, label: "模块", value: "module" }
+            { id: 4, label: "模块", value: "module" },
+            { id: 5, label: "上游模块", value: "res_module" },
           ],
           // 正在拖拽的导航数据
           draggleItem: 0,
@@ -137,6 +140,13 @@
           }, 300)
         }
       },
+      computed: {
+        calcMoudleList () {
+          return (type) => {
+            return type === 'module' ? this.moduleList : this.reModuleList
+          }
+        }
+      },
       methods: {
         // 获取前台导航
         getHomeMenu () {
@@ -171,6 +181,8 @@
               this.pluginList = res.data.data.plugin_nav
               // 模块默认导航
               this.moduleList = res.data.data.module
+              // 上游模块默认导航
+              this.reModuleList = res.data.data.res_module
               // 语言列表
               this.language = res.data.data.language
               console.log("language", this.language);
@@ -510,7 +522,7 @@
               return false
             }
 
-          } else if (this.formData.type != 'module') {
+          } else if (this.formData.type != 'module' && this.formData.type != 'res_module') {
 
             // if (this.value == 1) {
             if (!this.formData.nav_id) {
@@ -615,6 +627,11 @@
             this.selectList = [...this.moduleList]
             this.formData.module = ''
           }
+          // 上游模块
+          if (this.formData.type === 'res_module') {
+            this.selectList = [...this.reModuleList]
+            this.formData.module = ''
+          }
           this.formData.url = ''
 
           this.formData.url = ""
@@ -675,6 +692,7 @@
           if (this.newFormData.type == 'system' || this.newFormData.type == 'plugin') {
 
             if (!this.newFormData.nav_id) {
+              console.log(2222)
               this.$message.warning("请选择页面")
               return false
             }
@@ -825,7 +843,8 @@
           const params = {
             module
           }
-          productBymodule(params).then(res => {
+          const type = this.visible ? this.newFormData.type : this.formData.type
+          productBymodule(type,params).then(res => {
             if (res.data.status === 200) {
               this.productList = res.data.data.list
               this.changeId(this.productList)

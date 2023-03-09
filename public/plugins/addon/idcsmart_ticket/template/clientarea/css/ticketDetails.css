@@ -256,3 +256,8 @@
   width: 0;
   height: 0;
 }
+@media screen and (max-width: 750px) {
+  .ticket-details .main-card .card .card-footer .send-btn {
+    height: auto;
+  }
+}

@@ -237,7 +237,9 @@ function captchaCheckCancel() {
                 this.$message.success(res.data.msg);
                 // 存入 jwt
                 localStorage.setItem("jwt", res.data.data.jwt);
-                location.href = "index.html";
+                const goPage = sessionStorage.redirectUrl || '/home.html'
+                sessionStorage.redirectUrl && sessionStorage.removeItem('redirectUrl')
+                location.href = goPage
               }
             }).catch((err) => {
               this.errorText = err.data.msg;

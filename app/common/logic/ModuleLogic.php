@@ -792,15 +792,15 @@ class ModuleLogic
 	 * @return  string msg - 提示信息
 	 * @return  array data - 数据
 	 */
-	public function currentConfigOptioin(HostModel $HostModel)
+	public function currentConfigOption(HostModel $HostModel)
 	{
 		$res = [];
 		$module = $HostModel->getModule();
 		if($ImportModule = $this->importModule($module)){
-			if(method_exists($ImportModule, 'currentConfigOptioin')){
+			if(method_exists($ImportModule, 'currentConfigOption')){
 				// 获取模块通用参数
 				$moduleParams = $HostModel->getModuleParams();
-				$res = call_user_func([$ImportModule, 'currentConfigOptioin'], $moduleParams);
+				$res = call_user_func([$ImportModule, 'currentConfigOption'], $moduleParams);
 				// TODO 验证返回
 			}
 		}
@@ -844,6 +844,33 @@ class ModuleLogic
 		$res['product'] = $ProductModel;
 		return $res;
 	}
+
+	/**
+	 * 时间 2023-02-14
+	 * @title 下载上游资源
+	 * @desc 下载上游资源
+	 * @author hh
+	 * @version v1
+	 * @param   ProductModel $ProductModel - 商品实例 require
+	 */
+	public function downloadResource(ProductModel $ProductModel){
+		$res = [];
+		$module = $ProductModel->getModule();
+		if($ImportModule = $this->importModule($module)){
+			if(method_exists($ImportModule, 'downloadResource')){
+				$res = call_user_func([$ImportModule, 'downloadResource'], ['product'=>$ProductModel]);
+				// TODO 验证返回
+				
+			}
+		}
+		if(empty($res)){
+			// 未实现该方法返回成功
+			$res = ['status'=>200, 'msg'=>'module_file_is_not_exist', 'data'=>[] ];
+		}
+		return $res;
+	}
+
+
 
 
 

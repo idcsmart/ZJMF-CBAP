@@ -51,7 +51,7 @@
                     <t-option v-for="item in menuType" :key="item.id" :label="item.label" :value="item.value" />
                   </t-select>
                 </t-form-item>
-                <t-form-item v-show="(formData.type !== 'custom') && (formData.type !== 'module')" name="url" label="选择页面">
+                <t-form-item v-show="(formData.type !== 'custom') && (formData.type !== 'module') && (formData.type !== 'res_module')" name="url" label="选择页面">
                   <!-- 系统页面 -->
                   <t-select v-if="formData.type == 'system'" v-model="formData.nav_id" @change="urlSelectChange">
                     <t-option v-for="item in selectList" :key="item.id" :value="item.id" :label="item.name" />
@@ -67,9 +67,9 @@
                     <t-option v-for="(item,index) in moduleList" :key="item.index" :value="item.name" :label="item.display_name" />
                   </t-select>
                 </t-form-item>
-                <t-form-item v-show="formData.type == 'module'" name="url" label="模块类型">
+                <t-form-item v-show="formData.type == 'module' || formData.type == 'res_module'" name="url" label="模块类型">
                   <t-select v-model="formData.module" @change="moduleChange">
-                    <t-option v-for="(item,index) in moduleList" :key="index" :value="item.name" :label="item.display_name" />
+                    <t-option v-for="(item,index) in calcMoudleList(formData.type)" :key="index" :value="item.name" :label="item.display_name" />
                   </t-select>
                 </t-form-item>
                 <t-form-item v-show="formData.type == 'custom'" name="url" label="URL地址">
@@ -97,10 +97,10 @@
                 <t-form-item name="name" label="导航名称">
                   <t-input v-model="formData.name" :maxlength="8" @blur="nameInputChange"></t-input>
                 </t-form-item>
-                <t-form-item name="product_id" label="关联页面" v-show="formData.type == 'module'">
+                <t-form-item name="product_id" label="关联页面" v-show="formData.type == 'module'|| formData.type == 'res_module'">
                   <t-tree-select @change='saveSet' :min-collapsed-num="1" v-model="formData.product_id" :data="productList" :tree-props="treeProps" multiple clearable placeholder="请选择"> </t-tree-select>
                 </t-form-item>
-                <t-checkbox v-model="formData.isChecked" v-show="language.length>1">多语言</t-checkbox>
+                <t-checkbox v-model="formData.isChecked" v-show="language.length>1"  @change="changeCheck">多语言</t-checkbox>
                 <div v-show="formData.isChecked">
                   <t-form-item name="language" v-for="item in language" :key="item.display_lang" :label="item.display_name">
                     <t-input v-model="formData.language[item.display_lang]"></t-input>
@@ -232,7 +232,7 @@
           <t-option v-for="item in menuType" :key="item.id" :label="item.label" :value="item.value" />
         </t-select>
       </t-form-item>
-      <t-form-item v-show="(newFormData.type !== 'custom') && (newFormData.type != 'module')" name="url" label="选择页面">
+      <t-form-item v-show="(newFormData.type !== 'custom') && (newFormData.type != 'module') && (newFormData.type != 'res_module')" name="url" label="选择页面">
         <!-- <t-select v-model="newFormData.url" @change="newUrlSelectChange">
                     <t-option v-for="item in selectList" :key="item.id" :value="item.url" :label="item.name" />
                 </t-select> -->
@@ -250,9 +250,9 @@
       <t-form-item v-show="(newFormData.type === 'custom') && (newFormData.type != 'module')" name="url" label="URL地址">
         <t-input v-model="newFormData.url"></t-input>
       </t-form-item>
-      <t-form-item v-show="newFormData.type == 'module'" name="url" label="模块类型">
+      <t-form-item v-show="newFormData.type == 'module' || newFormData.type == 'res_module'" name="url" label="模块类型">
         <t-select v-model="newFormData.module" @change="newModuleChange">
-          <t-option v-for="(item,index) in moduleList" :key="index" :value="item.name" :label="item.display_name" />
+          <t-option v-for="(item,index) in calcMoudleList(newFormData.type)" :key="index" :value="item.name" :label="item.display_name" />
         </t-select>
       </t-form-item>
       <!-- 前台图标 -->
@@ -301,7 +301,7 @@
       <t-form-item name="name" label="导航名称">
         <t-input v-model="newFormData.name" :maxlength="8"></t-input>
       </t-form-item>
-      <t-form-item name="product_id" label="关联页面" v-show="newFormData.type == 'module'">
+      <t-form-item name="product_id" label="关联页面" v-show="newFormData.type == 'module' || newFormData.type == 'res_module'">
         <t-tree-select :min-collapsed-num="1" v-model="newFormData.product_id" :data="productList" :tree-props="treeProps" multiple clearable placeholder="请选择"> </t-tree-select>
       </t-form-item>
       <!-- <t-tree :data="productList" :keys="treeKey" activable hover transition /> -->

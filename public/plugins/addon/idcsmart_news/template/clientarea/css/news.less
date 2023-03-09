@@ -43,6 +43,7 @@
       position: absolute;
       top: -.3rem;
       right: 1.84rem;
+      z-index: -1;
     }
   }
 
@@ -382,16 +383,33 @@
 
 @media screen and (max-width: 750px) {
   .news {
+    .com-l-box {
+      width: 100%;
+      margin-top: 10px;
+      margin-right: 0;
+    }
+
     .pc {
-      display: none;
+      // display: none;
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .tit {
+      font-size: 0.3rem;
     }
 
     .mobile {
-      display: block;
+      // display: block;
     }
 
     .main-card-title {
       font-size: .48rem;
+    }
+
+    .com-r-box {
+      font-size: 0.16rem;
+      width: 100% !important;
     }
   }
 

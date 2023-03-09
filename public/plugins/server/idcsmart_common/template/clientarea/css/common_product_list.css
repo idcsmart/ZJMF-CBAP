@@ -157,3 +157,8 @@ tbody tr:hover {
   padding-right: 0.1rem;
   cursor: pointer;
 }
+@media screen and (max-width: 750px) {
+  .search-btn {
+    height: 40px;
+  }
+}

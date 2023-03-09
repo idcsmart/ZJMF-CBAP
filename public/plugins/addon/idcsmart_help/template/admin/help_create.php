@@ -56,7 +56,6 @@
       </div>
       <div class="right-btn">
         <t-button class="confirm-btn" @click="submit">发布</t-button>
-        <!-- <t-button variant="outline" class="rich_btns rich_btns_save" @click="save">保存</t-button> -->
         <t-button theme="default" @click="cancle">取消</t-button>
       </div>
 

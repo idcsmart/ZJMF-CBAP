@@ -671,7 +671,7 @@ class IdcsmartCommonLogic
     }
 
     # TODO 当前所选配置项,排除数量类型和多选类型,未处理(优惠码使用)
-    public function currentConfigOptioin($host_id)
+    public function currentConfigOption($host_id)
     {
         $IdcsmartCommonHostConfigoptionModel = new IdcsmartCommonHostConfigoptionModel();
         $configoptions = $IdcsmartCommonHostConfigoptionModel->alias('hc')

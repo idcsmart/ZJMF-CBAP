@@ -79,6 +79,14 @@ class ConfigurationValidate extends Validate
         'certification_update_client_phone' => 'require|in:0,1',
         'certification_uncertified_suspended_host' => 'require|in:0,1',
 
+        # 实名设置
+        'put_on_record' => 'require|max:255',
+        'enterprise_name' => 'require|max:255',
+        'enterprise_telephone' => 'require|max:50',
+        'enterprise_mailbox' => 'require|max:255',
+        'enterprise_qrcode' => 'require',
+        'online_customer_service_link' => 'require',
+
     ];
 
     protected $message  =  [
@@ -185,6 +193,18 @@ class ConfigurationValidate extends Validate
         'certification_upload.require' => 'configuration_certification_upload_require',
 		'certification_update_client_phone.require' => 'configuration_certification_update_client_phone_require',
 		'certification_uncertified_suspended_host.require' => 'configuration_certification_uncertified_suspended_host_require',
+
+		# 实名设置
+        'put_on_record.require' => 'put_on_record_require',
+        'put_on_record.max' => 'put_on_record_max',
+        'enterprise_name.require' => 'enterprise_name_require',
+        'enterprise_name.max' => 'enterprise_name_max',
+        'enterprise_telephone.require' => 'enterprise_telephone_require',
+        'enterprise_telephone.max' => 'enterprise_telephone_max',
+        'enterprise_mailbox.require' => 'enterprise_mailbox_require',
+        'enterprise_mailbox.max' => 'enterprise_mailbox_max',
+        'enterprise_qrcode.require' => 'enterprise_qrcode_require',
+        'online_customer_service_link.require' => 'online_customer_service_link_require',
     ];
     protected $scene = [
         'system_update' => ['lang_admin','lang_home_open','lang_home','maintenance_mode','website_name','website_url','terms_service_url','terms_privacy_url'],
@@ -223,6 +243,14 @@ class ConfigurationValidate extends Validate
             'certification_update_client_phone',
             'certification_uncertified_suspended_host',
             'certification_upload'
+        ],
+        'info_update' => [
+		    'put_on_record',
+	        'enterprise_name',
+	        'enterprise_telephone',
+	        'enterprise_mailbox',
+	        'enterprise_qrcode',
+	        'online_customer_service_link',
         ],
     ];
 }

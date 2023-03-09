@@ -86,6 +86,20 @@ class  AppInit
                 include_once  $serverDir . $server . '/route.php';
             }
         }
+
+        # 加载RES模块钩子文件
+        $serverDir = WEB_ROOT . 'plugins/reserver/';
+        $servers = array_map('basename', glob($serverDir . '*', GLOB_ONLYDIR));
+        foreach ($servers as $server){
+            if (is_file($serverDir . $server . '/hooks.php')){
+                include_once  $serverDir . $server . '/hooks.php';
+            }
+            # 允许模块自定义路由(不管是否与系统冲突)
+            if (is_file($serverDir . $server . '/route.php')){
+                include_once  $serverDir . $server . '/route.php';
+            }
+        }
+
     }
 
     // 缓存插件钩子

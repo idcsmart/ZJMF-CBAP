@@ -3,7 +3,6 @@
   font-family: PingFang SC;
   font-weight: 400;
 }
-
 .top {
   padding: 0;
   font-size: 0.3rem;
@@ -11,31 +10,26 @@
   display: flex;
   justify-content: space-between;
 }
-
-.top-l>img {
+.top-l > img {
   cursor: pointer;
   margin-right: 0.25rem;
 }
-
 .top-line {
   width: 100%;
   height: 1px;
   background: #e6e7eb;
   opacity: 1;
 }
-
 .top-r {
   display: flex;
   flex-direction: row;
 }
-
 .item-balance {
   margin-right: 0.92rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .money {
   display: flex;
   /* align-items: center; */
@@ -43,7 +37,6 @@
   line-height: 24px;
   color: #1e2736;
 }
-
 .btn-tx,
 .btn-cz {
   margin-left: 0.2rem;
@@ -56,17 +49,14 @@
   font-size: 0.12rem;
   cursor: pointer;
 }
-
 .btn-tx {
   background: #0058ff;
   color: rgba(255, 255, 255, 0.9);
 }
-
 .btn-cz {
   color: #0058ff;
   border: 1px solid #0058ff;
 }
-
 .money .tx-list {
   font-size: 0.12rem;
   font-family: PingFang SC;
@@ -75,48 +65,40 @@
   color: #0058ff;
   cursor: pointer;
 }
-
 .item-unbalance {
   display: flex;
   flex-direction: column;
 }
-
 .money-num {
   text-align: right;
 }
-
-.money-num>.text {
+.money-num > .text {
   color: #8692b0;
   font-size: 13px;
   margin-top: 0.12rem;
 }
-
-.item-balance>.text {
+.item-balance > .text {
   color: #8692b0;
   font-size: 13px;
   margin-top: 0.12rem;
 }
-
-.item-unbalance>.text {
+.item-unbalance > .text {
   color: #8692b0;
   font-size: 13px;
   margin-top: 0.12rem;
   display: flex;
   flex-direction: row-reverse;
 }
-
 .content_searchbar {
   display: flex;
   justify-content: space-between;
   margin-top: 0.4rem;
   margin-bottom: 0.2rem;
 }
-
 .content_searchbar .left_tips {
   display: flex;
   align-items: center;
 }
-
 .content_searchbar .left_tips .all-pay {
   padding: 0 10px;
   height: 32px;
@@ -124,17 +106,14 @@
   background: #0058ff;
   margin-right: 0.2rem;
 }
-
 .content_searchbar .left_tips .tips_item {
   display: flex;
   align-items: center;
   margin-right: 0.3rem;
 }
-
 .finance .el-tabs__content {
   min-height: 5rem;
 }
-
 .dot {
   width: 0.08rem;
   height: 0.08rem;
@@ -143,125 +122,102 @@
   display: inline-block;
   margin-right: 0.1rem;
 }
-
 /* 新订单 */
 .new {
   background: #0058ff;
 }
-
 /* 续费订单 */
 .renew {
   background: #3dd598;
 }
-
 /* 升降级订单 */
 .upgrade {
   background: #f0142f;
 }
-
 /* 人工订单 */
 .artificial {
   background: #f99600;
 }
-
 .main_table {
   margin-top: 0.7rem;
   border: 1px solid #e6e7eb;
 }
-
-.main_table>thead>tr>th:nth-child(1) {
+.main_table > thead > tr > th:nth-child(1) {
   padding-left: 0.3rem;
 }
-
 .tabledata {
   padding-bottom: 0.23rem;
   border: 1px solid #e6e7eb;
 }
-
 .pay-html {
   display: flex;
   justify-content: center;
 }
-
-.pay-html>img {
+.pay-html > img {
   width: 2.5rem;
   height: 2.5rem;
 }
-
 .Unpaid {
-  background-color: rgb(240, 20, 47, 0.08);
+  background-color: rgba(240, 20, 47, 0.08);
   color: #f0142f;
   border: none;
 }
-
 .Paid {
-  background-color: rgb(61, 213, 152, 0.12);
+  background-color: rgba(61, 213, 152, 0.12);
   color: #3dd598;
   border: none;
 }
-
 .Refunded {
-  background-color: rgb(64, 158, 255, 0.12);
+  background-color: rgba(64, 158, 255, 0.12);
   color: #409EFF;
   border: none;
 }
-
 .gateway-pay {
   color: #5c5ee4;
   cursor: pointer;
 }
-
 .tooltip {
   text-align: center;
 }
-
 /* 余额记录类型 */
 .balance-tag {
   padding: 0.04rem 0.1rem;
   border-radius: 3px;
   font-size: 13px;
 }
-
 /* 充值 */
 .Recharge {
   background: rgba(54, 153, 255, 0.12);
-  color: rgba(54, 153, 255, 1);
+  color: #3699ff;
 }
-
 /* 应用至订单 - 扣费 */
 .Applied {
   background: rgba(249, 150, 0, 0.12);
-  color: rgba(249, 150, 0, 1);
+  color: #f99600;
 }
-
 /* 退款 */
 .Refund {
   background: rgba(240, 20, 47, 0.12);
-  color: rgba(240, 20, 47, 1);
+  color: #f0142f;
 }
-
 /* 提现 */
 .Withdraw {
   background: rgba(61, 213, 152, 0.12);
-  color: rgba(61, 213, 152, 1);
+  color: #3dd598;
 }
-
 .Artificial {
-  background: rgba(54, 153, 255, .12);
+  background: rgba(54, 153, 255, 0.12);
   color: #3699FF;
 }
-
 /* 提现弹窗 */
 .tx-dialog .el-dialog__body,
 .cz-dialog .el-dialog__body {
   padding: 0.3rem 0.8rem;
 }
-
 .el-form,
 .el-select {
   width: 100%;
 }
-
 /* el-form label 样式 */
 .el-form-item__label {
   font-size: 0.16rem;
@@ -269,36 +225,30 @@
   font-weight: 400;
   color: #1e2736;
 }
-
 .tx-dialog .el-input__suffix {
   display: flex;
   align-items: center;
   padding-right: 0.16rem;
 }
-
 /* 支付弹窗开始 */
 .zf-dialog .el-dialog__body {
   padding: 0.3rem 0.8rem;
   font-size: 0.16rem;
 }
-
 .dialog-form {
   display: flex;
   flex-direction: column;
 }
-
 .el-row {
   display: flex;
   align-items: center;
   margin-top: 0.3rem;
 }
-
 .form-footer {
   display: flex;
   justify-content: flex-end;
 }
-
-.form-footer>.btn-ok {
+.form-footer > .btn-ok {
   background: #0058ff;
   border-radius: 3px;
   color: rgba(255, 255, 255, 0.9);
@@ -306,8 +256,7 @@
   align-items: center;
   justify-content: center;
 }
-
-.form-footer>.btn-no {
+.form-footer > .btn-no {
   background: #e7e7e7;
   border-radius: 3px;
   color: #1e2736;
@@ -315,36 +264,29 @@
   align-items: center;
   justify-content: center;
 }
-
 .true-money {
   color: #ffa800;
 }
-
 .orderid_a {
   cursor: pointer;
 }
-
 .orderid_a:hover {
   border-bottom: 2px solid #808080;
 }
-
 .el-input__suffix {
   display: flex;
   align-items: center;
 }
-
 .input-search {
   padding-right: 0.1rem;
   cursor: pointer;
 }
-
 .cz-input {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
-
-.cz-input>.btn-ok {
+.cz-input > .btn-ok {
   margin-left: 0.1rem;
   height: 0.46rem;
   background: #0058ff;
@@ -354,30 +296,24 @@
   align-items: center;
   justify-content: center;
 }
-
 .el-table__expand-icon {
   position: absolute;
   left: 0.1rem;
 }
-
 .el-table__indent {
   padding: 0 !important;
 }
-
 .mobel {
   display: none;
 }
-
 .el-icon-more {
   font-size: 0.16rem;
   color: #0058ff;
   cursor: pointer;
 }
-
 .el-popover {
   min-width: 0.5rem !important;
 }
-
 .operation-box {
   width: 100%;
   display: flex;
@@ -385,21 +321,17 @@
   justify-content: center;
   align-items: center;
 }
-
 .operation-item {
   margin-top: 0.05rem;
   margin-bottom: 0.05rem;
   cursor: pointer;
 }
-
 .delete-dialog .el-dialog__header {
   padding: 0;
 }
-
 .delete-dialog .el-dialog__body {
   padding: 0;
 }
-
 .delete-box {
   height: 2.56rem;
   display: flex;
@@ -408,16 +340,13 @@
   align-items: center;
   background: #ffffff;
 }
-
 .delete-content {
   font-size: 0.18rem;
   color: #171725;
 }
-
 .delete-btn {
   margin-top: 0.4rem;
 }
-
 .delete-btn .confirm-btn {
   cursor: pointer;
   display: inline-block;
@@ -431,11 +360,9 @@
   color: rgba(255, 255, 255, 0.9);
   border-radius: 0.03rem;
 }
-
 .delete-btn .cancel-btn {
   cursor: pointer;
   display: inline-block;
-  font-size: 0.16rem;
   color: #1e2736;
   background: #e7e7e7;
   border-radius: 0.03rem;
@@ -446,60 +373,49 @@
   font-size: 0.16rem;
   color: rgba(255, 255, 255, 0.9);
 }
-
 @media screen and (max-width: 750px) {
   .top {
     flex-direction: column;
     height: auto;
   }
-
   .top-l {
     font-size: 0.48rem;
   }
-
   .top-r {
     margin-top: 0.4rem;
     margin-bottom: 0.1rem;
     justify-content: space-between;
     flex-flow: wrap;
   }
-
   .item-balance {
     margin-right: 0;
   }
-
-  .mobel {
-    display: block;
-  }
-
   .content_searchbar .left_tips .tips_item {
     margin-right: 0.1rem;
   }
-
   .searchbar {
-    display: none;
+    width: 100%;
   }
-
-  .tabledata {
-    display: none;
+  .searchbar .el-input {
+    width: 100% !important;
+    margin-left: 0 !important;
   }
-
+  .content_searchbar {
+    flex-wrap: wrap;
+  }
   .mob-searchbar {
     margin-top: 0.53rem;
   }
-
   .mob-search-input {
     height: 0.8rem;
     background: rgba(134, 146, 176, 0.1);
     border-radius: 3px 3px 0px 0px;
   }
-
-  .mob-search-input>input {
+  .mob-search-input > input {
     height: 0.8rem;
     background: rgba(134, 146, 176, 0.1);
     border-radius: 3px 3px 0px 0px;
   }
-
   /* 订单记录表格开始 */
   .mob-tabledata {
     display: flex;
@@ -507,7 +423,6 @@
     border: 1px solid #d7d8db;
     border-radius: 0px 0px 3px 3px;
   }
-
   .mob-tabledata-item {
     /* height: 2.32rem; */
     height: auto;
@@ -516,13 +431,11 @@
     flex-direction: column;
     padding: 0 0.3rem;
   }
-
   .mob-item-row {
     display: flex;
     justify-content: space-between;
     margin-top: 0.2rem;
   }
-
   .mob-item-row1,
   .mob-item-row3,
   .mob-item-row-notes {
@@ -531,32 +444,26 @@
     color: #8692b0;
     margin-left: 0.26rem;
   }
-
   .mob-item-row1 {
     margin-top: 0.41rem;
     align-items: center;
   }
-
   .mob-item-row2 {
     font-size: 0.3rem;
     line-height: 0.31rem;
     color: #1e2736;
   }
-
   .mob-item-row3 {
     margin-bottom: 0.33rem;
   }
-
   .mob-item-row2-name {
     width: 50%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-
   /* 
   .row2-name-text {} */
-
   .bottom-text {
     font-size: 0.26rem;
     line-height: 0.26rem;
@@ -565,60 +472,48 @@
     display: flex;
     justify-content: center;
   }
-
   .back-top-img {
     width: 0.88rem;
     position: fixed;
     right: 0.3rem;
     bottom: 1.17rem;
   }
-
   /* 订单记录表格结束 */
-
   /* 充值弹窗 */
   .el-form-item__label {
     font-size: 0.32rem;
     line-height: 0.32rem;
   }
-
   .dialog-form .el-input__inner {
     height: 0.8rem;
   }
-
-  .cz-input>.btn-ok {
+  .cz-input > .btn-ok {
     height: 0.8rem;
   }
-
   /* 提现弹窗 */
   .dialog-footer {
     flex-direction: column;
   }
-
   .dialog-footer .btn-ok,
   .dialog-footer .btn-no {
     width: 100%;
     height: 0.8rem;
     font-size: 0.34rem;
   }
-
   .dialog-footer .btn-no {
     margin-left: 0;
     margin-top: 0.2rem;
   }
-
   /* 订单详情 */
   .top-line {
     display: none;
   }
-
   .order-detail-table {
     margin-top: 0.5rem;
   }
-
   .main_table {
     display: none;
   }
-
   .mob-item-row-child {
     /* padding-left: .26rem;
     padding-right: .2rem;
@@ -629,7 +524,6 @@
     display: flex;
     flex-direction: column;
   }
-
   .child-row {
     display: flex;
     flex-direction: row;
@@ -641,61 +535,45 @@
     margin-left: 0.26rem;
     margin-right: 0.2rem;
   }
-
   .child-row:nth-child(1) {
     margin-top: 0.16rem;
   }
-
   .child-row-name {
-    color: rgba(30, 39, 54, 1);
+    color: #1e2736;
     width: 2.86rem;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-
   .money {
     font-size: 0.4rem;
   }
-
-  .item-balance>.text {
+  .item-balance > .text {
     font-size: 0.26rem;
   }
-
-  .money-num>.text {
+  .money-num > .text {
     font-size: 0.26rem;
   }
-
-  .item-unbalance>.text {
+  .item-unbalance > .text {
     font-size: 0.26rem;
   }
-
   .btn-tx,
   .btn-cz {
     height: 0.42rem;
     width: 0.76rem;
     font-size: 0.22rem;
   }
-
   .balance-tag {
     font-size: 0.24rem;
   }
-
   .left_tips {
     font-size: 0.26rem;
   }
-
   .balance-searchbar {
     margin-top: 0;
   }
-
   .form-footer {
     display: flex;
     flex-direction: column;
-  }
-
-  .form-footer .btn-no {
-    margin-left: 0;
-    margin-top: 0.2rem;
   }
 }

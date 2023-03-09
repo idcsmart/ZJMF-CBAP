@@ -198,7 +198,7 @@
 
                 {foreach $addons as $addon}
                 {if ($addon.name=='IdcsmartRenew')}
-                <span v-show="hostData.status == 'Active'" class="renew-btn" v-loading="renewBtnLoading" @click="showRenew" v-if="!refundData || (refundData && refundData.status=='Cancelled') || (refundData && refundData.status=='Reject')">{{lang.cloud_re_btn}}</span>
+                <span v-show="hostData.status == 'Active'" class="renew-btn" v-loading="renewBtnLoading" @click="showRenew" v-if="!refundData || refundData || (refundData && refundData.status=='Cancelled') || (refundData && refundData.status=='Reject')">{{lang.cloud_re_btn}}</span>
                 <span v-show="hostData.status == 'Active'" class="renew-btn-disable" v-else>{{lang.cloud_re_btn}}</span>
                 {/if}
                 {/foreach}

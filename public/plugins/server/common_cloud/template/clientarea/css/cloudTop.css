@@ -743,3 +743,43 @@
 .option-label .option-text {
   margin-left: 0.1rem;
 }
+@media screen and (max-width: 750px) {
+  .template .main-card .card-top .top-msg .msg-r .r-b .row .row-l .renew-btn {
+    width: 0.8rem;
+    height: 0.48rem;
+  }
+  .template .main-card .card-top .top-msg .msg-l .system-t .btn-port .re-btn {
+    height: 0.48rem;
+  }
+  .main-card .manage-content .el-row .el-col:nth-child(2) .manage-item {
+    margin: 0 !important;
+  }
+  .main-card .manage-content .manage-item .item-top-btn {
+    height: 0.5rem;
+  }
+  .manage-content .el-row .el-col-8 {
+    width: 100%;
+  }
+  .main-card .manage-content .el-row .el-col:nth-child(3) .manage-item {
+    float: none !important;
+  }
+  .template .main-card .card-top .tabs {
+    width: 6.5rem;
+  }
+  .template .main-card .card-top .top-msg .msg-r .r-t .r-t-r .help {
+    width: 0.24rem;
+    height: 0.24rem;
+  }
+  .template .main-card .card-top .top-operation {
+    width: 6.5rem;
+  }
+  .template .main-card .card-top .top-operation .operation-row2 {
+    flex-wrap: wrap;
+  }
+  .template .main-card .card-top .top-msg {
+    display: block;
+  }
+  .template .main-card .card-top .top-msg .msg-r {
+    margin-top: 20px;
+  }
+}

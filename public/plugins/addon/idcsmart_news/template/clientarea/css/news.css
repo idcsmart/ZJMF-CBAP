@@ -35,6 +35,7 @@
   position: absolute;
   top: -0.3rem;
   right: 1.84rem;
+  z-index: -1;
 }
 .news .top-search {
   display: flex;
@@ -288,14 +289,24 @@
   }
 }
 @media screen and (max-width: 750px) {
-  .news .pc {
-    display: none;
+  .news .com-l-box {
+    width: 100%;
+    margin-top: 10px;
+    margin-right: 0;
   }
-  .news .mobile {
-    display: block;
+  .news .pc {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .news .tit {
+    font-size: 0.3rem;
   }
   .news .main-card-title {
     font-size: 0.48rem;
+  }
+  .news .com-r-box {
+    font-size: 0.16rem;
+    width: 100% !important;
   }
   .news_detail .back {
     width: 0.42rem;

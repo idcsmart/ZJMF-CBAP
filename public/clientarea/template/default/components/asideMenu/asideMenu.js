@@ -7,7 +7,6 @@ const asideMenu = {
         <template v-for="item in menu1">
             <!-- 只有一级菜单 -->
             <el-menu-item v-if="!item.child || item.child?.length === 0" :key="item.id" :index="item.url" :id="item.url">
-
                     <i class="iconfont" :class="item.icon"></i>
                     <span class="aside-menu-text" slot="title">{{item.name}}</span>
             </el-menu-item>
@@ -62,7 +61,7 @@ const asideMenu = {
       iconsData: [],
       commonData: {},
       noRepeat: [],
-      hasSeparate:false
+      hasSeparate: false
     };
   },
   mounted() { },
@@ -119,7 +118,7 @@ const asideMenu = {
     },
     goHome() {
       localStorage.frontMenusActiveId = "";
-      location.href = "/index.html";
+      location.href = "/home.html";
     },
     // 获取前台导航
     doGetMenu() {

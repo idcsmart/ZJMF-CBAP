@@ -6,13 +6,18 @@ const topMenu = {
         <div>
         <el-drawer :visible.sync="isShowMenu" direction="ltr" :before-close="handleClose" :with-header="false" size="3.8rem" custom-class="drawer-menu">
           <div class="drawer-menu-top">
-            <img class="drawer-menu-logo" :src="logo"></img>
+            <img class="drawer-menu-logo" @click="goHome" :src="logo"></img>
           </div>
           <div class="drawer-menu-list-top">
             <div class="drawer-menu-item" :class="item.id == menuActiveId ? 'drawer-menu-active':''" v-for="item in menu1" :key="item.id" @click="toPage(item)">
               <img :src="item.icon" class="drawer-item-img">
               <span class="drawer-item-text">{{item.name}}</span>
             </div>
+            <div class="line" v-if="hasSeparate"></div>
+            <div class="drawer-menu-item" :class="item.id == menuActiveId ? 'drawer-menu-active':''" v-for="item in menu2" :key="item.id" @click="toPage(item)">
+            <img :src="item.icon" class="drawer-item-img">
+            <span class="drawer-item-text">{{item.name}}</span>
+          </div>
           </div>
         </el-drawer>
       
@@ -88,8 +93,10 @@ const topMenu = {
             isShowMenu: false,
             logo: `/upload/logo.png`,
             menu1: [],
+            menu2: [],
             menuActiveId: 0,
             firstName: '',
+            hasSeparate: false,
             produclData: [],
             selectValue: '',
             shoppingCarNum: 0,
@@ -148,6 +155,10 @@ const topMenu = {
         },
         goLogin() {
             location.href = '/login.html'
+        },
+        goHome() {
+            localStorage.frontMenusActiveId = "";
+            location.href = "/home.html";
         },
         // 获取购物车数量
         getCartList() {
@@ -239,23 +250,31 @@ const topMenu = {
             // 判断本地缓存是否有 前台导航，没有则调用接口获取，有则直接使用
             if (JSON.parse(localStorage.getItem('frontMenus'))) {
                 const menu = JSON.parse(localStorage.getItem('frontMenus'))
-                menu.map(item => {
-                    if (item.icon) {
-                        item.icon = `${url}img/common/${item.icon}.png`
-                    }
-                })
-                this.menu1 = menu
+                let index = menu.findIndex((item) => item.name == "分隔符");
+                if (index != -1) {
+                    this.hasSeparate = true
+                    this.menu1 = menu.slice(0, index);
+                    this.menu2 = menu.slice(index + 1);
+                } else {
+                    this.hasSeparate = false
+                    this.menu1 = menu;
+                }
+                this.setActiveMenu();
             } else {
                 getMenu().then(res => {
                     if (res.data.status === 200) {
-                        localStorage.setItem('frontMenus', JSON.stringify(res.data.data.menu))
-                        const menu = JSON.parse(localStorage.getItem('frontMenus'))
-                        menu.map(item => {
-                            if (item.icon) {
-                                item.icon = `${url}img/common/${item.icon}.png`
-                            }
-                        })
-                        this.menu1 = menu
+                        const menu = res.data.data.menu;
+                        localStorage.setItem("frontMenus", JSON.stringify(menu));
+                        let index = menu.findIndex((item) => item.name == "分隔符");
+                        if (index != -1) {
+                            this.hasSeparate = true
+                            this.menu1 = menu.slice(0, index);
+                            this.menu2 = menu.slice(index + 1);
+                        } else {
+                            this.hasSeparate = false
+                            this.menu1 = menu;
+                        }
+                        this.setActiveMenu();
                     }
                 })
             }

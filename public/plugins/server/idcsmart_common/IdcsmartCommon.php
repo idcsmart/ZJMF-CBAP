@@ -20,7 +20,7 @@ class IdcsmartCommon
 	 */
 	public function metaData()
     {
-		return ['display_name'=>'通用产品', 'version'=>'1.0'];
+		return ['display_name'=>'通用产品', 'version'=>'1.0.0'];
 	}
 
 	/**
@@ -449,11 +449,11 @@ class IdcsmartCommon
      * @param int host_id - 产品ID
      * @return  array ["配置项ID":"子项ID"]
      */
-	public function currentConfigOptioin($params)
+	public function currentConfigOption($params)
     {
         $IdcsmartCommonLogic = new IdcsmartCommonLogic();
 
-        $result = $IdcsmartCommonLogic->currentConfigOptioin($params['host']['id']);
+        $result = $IdcsmartCommonLogic->currentConfigOption($params['host']['id']);
 
         return $result;
 	}

@@ -60,6 +60,7 @@ class ModuleController extends HomeBaseController
         ];
         return json($result);
 	}
-} 
+
+}
 
 

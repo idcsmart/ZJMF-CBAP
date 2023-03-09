@@ -401,7 +401,11 @@
         // 获取所有可用实例
         async getAllCloudList () {
           try {
-            const res = await getAllCloud()
+            const res = await getAllCloud({
+              status: 'Active',
+              page: 1,
+              limit: 10000
+            })
             let temp = res.data.data.list
             this.availableCloud = temp.sort((a, b) => {
               return b.id - a.id
@@ -428,7 +432,7 @@
                 const res = await concatCloud(params)
                 this.submitLoading = false
                 this.relationVisible = false
-                this.$message.success(res.data.msg)
+                this.$message.success(lang.add_cloud_success)
                 this.getRelation()
               } catch (error) {
                 this.submitLoading = false
@@ -454,6 +458,8 @@
             this.delTile = `${lang.referral_title9}${lang.in_rules}`
           } else if (type === 'out') {
             this.delTile = `${lang.referral_title9}${lang.out_rules}`
+          } else if (type === 'relation') {
+            this.delTile = `${lang.referral_title9}${row.name}`
           }
         },
         // 单个删除
@@ -503,7 +509,7 @@
             }
             this.submitLoading = true
             const res = await cancelConcatCloud(params)
-            this.$message.success(res.data.msg)
+            this.$message.success(lang.delete_cloud_success)
             this.submitLoading = false
             this.isShowDel = false
             this.getRelation()

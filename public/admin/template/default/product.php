@@ -7,6 +7,8 @@
       <div class="left">
         <t-button @click="addGroup" class="add">{{lang.create_group}}</t-button>
         <t-button theme="default" @click="addProduct" class="add">{{lang.create_product}}</t-button>
+        <t-button theme="default" v-if="hasBaidu" @click="addBaiduProduct" class="add">{{lang.baidu_create}}</t-button>
+        <t-button theme="default" class="add anget-btn" @click="handelAngenBtn">管理可被代理商品</t-button>
       </div>
       <div class="common-header">
         <div class="com-search">
@@ -27,8 +29,7 @@
         <span v-else-if="row.parent_id" class="second-name">{{row.name}}</span>
       </template>
       <template #name="{row}">
-        <a :href="`product_detail.html?id=${row.id}`" v-if="row.qty !== undefined" class="product-name">{{row.name}}
-        </a>
+        <span v-if="row.qty !== undefined" class="product-name" style="cursor: pointer;" @click="editHandler(row)">{{row.name}}</span>
         <!-- <template v-else>
           <t-icon :name="row.isExpand ? 'caret-up-small' : 'caret-down-small'"></t-icon>
         </template> -->
@@ -46,6 +47,23 @@
       </template>
     </t-enhanced-table>
   </t-card>
+
+  <!-- 可代理商品弹窗 -->
+  <t-dialog :visible.sync="agentVisble" header="可被代理商品" :on-close="closeAgentDia" :footer="false" width="600" class="auth-dialog" placement="center">
+    <div class="opt">
+      <span>
+        <t-checkbox v-model="checkExpand" @change="expandAll">{{lang.isExpand}}</t-checkbox>
+        <t-checkbox v-model="checkAll" @change="chooseAll" :disabled="formData.id===1">{{lang.isCheckAll}}</t-checkbox>
+      </span>
+    </div>
+    <div class="auth">
+      <t-tree :data="authArr" checkable activable :line="true" :expand-on-click-node="false" :active-multiple="false" v-model="authList" value-mode="all" :expanded="expandArr" :keys="{value: 'key', label:'name', children:'children'}" ref="tree" :expand-all="checkExpand" @click="clickNode" :expand-on-click-node="false" :indeterminate="true"></t-tree>
+    </div>
+    <div class="com-f-btn">
+      <t-button theme="primary" @click="handelAgentable">{{lang.hold}}</t-button>
+      <t-button theme="default" variant="base" @click="closeAgentDia">{{lang.cancel}}</t-button>
+    </div>
+  </t-dialog>
   <!-- 修改分组名 -->
   <t-dialog :header="updateNameTip" :visible.sync="updateNameVisble" :footer="false">
     <t-form :data="updataData" ref="groupForm" @submit="submitUpdateName" :rules="rules">

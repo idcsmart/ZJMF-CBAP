@@ -20,7 +20,9 @@
                     this.selectGoodsList = JSON.parse(sessionStorage.shoppingCartList)
                     this.isFormShoppingCart = true
                 } else {
-                    const obj = JSON.parse(sessionStorage.product_information)
+                    const obj = sessionStorage.product_information ? JSON.parse(sessionStorage.product_information) : sessionStorage.settleItem ? JSON.parse(sessionStorage.settleItem) : {}
+                    sessionStorage.settleItem = sessionStorage.product_information
+                    sessionStorage.removeItem('product_information')
                     this.isFormShoppingCart = false
                     this.productObj = {
                         product_id: temp.id ? temp.id : obj.id ? obj.id : '',

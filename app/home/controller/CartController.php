@@ -209,11 +209,12 @@ class CartController extends HomeBaseController
      */
 	public function clear()
 	{
+	    $param = $this->request->param();
 		// 实例化模型类
         $CartModel = new CartModel();
         
         // 清空购物车
-        $result = $CartModel->clearCart();
+        $result = $CartModel->clearCart($param);
 
         return json($result);
 	}
@@ -244,7 +245,7 @@ class CartController extends HomeBaseController
         $CartModel = new CartModel();
         
         // 结算购物车
-        $result = $CartModel->settle($param['positions'],$param['customfield']??[]);
+        $result = $CartModel->settle($param['positions'],$param['customfield']??[],$param);
 
         return json($result);
 	}

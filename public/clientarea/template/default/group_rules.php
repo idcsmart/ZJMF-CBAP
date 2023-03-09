@@ -152,9 +152,12 @@
                   </div>
                   <div class="tabledata">
                     <el-table v-loading="loading" :data="dataList" style="width: 100%;margin-bottom: .2rem;">
-                      <el-table-column prop="host_num" :label="lang.cloud_menu_1" align="left" width="300">
+                      <el-table-column prop="name" :label="lang.cloud_menu_1" align="left" width="300">
                       </el-table-column>
                       <el-table-column prop="ip" label="IP" align="left">
+                      <template slot-scope="{row}">
+                          <span>{{row.ip || '--'}}</span>
+                        </template>
                       </el-table-column>
                       <el-table-column prop="type" :label="lang.security_label3" width="100" align="left">
                         <template slot-scope="scope">
@@ -237,7 +240,7 @@
             </div>
             <!-- 关联实例 -->
             <div class="create-api-dialog">
-              <el-dialog width="5.2rem" :visible.sync="relationVisible" :show-close=false  @close="reClose">
+              <el-dialog width="5.2rem" :visible.sync="relationVisible" :show-close=false @close="reClose">
                 <p class="dia-tit">{{optTitle}}</p>
                 <el-form :model="relationForm" ref="relationForm" v-if="relationVisible" label-width=".8rem" :rules="relationRules" label-position="left">
                   <el-form-item class="re-tip">

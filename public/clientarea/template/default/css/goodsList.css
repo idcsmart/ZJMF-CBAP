@@ -25,7 +25,12 @@
 
 .search-box .el-select .el-input__inner {
   height: 0.46rem !important;
+
   line-height: 0.46rem;
+}
+
+.search-box .el-select .el-input__suffix .el-input__icon {
+  line-height: 1;
 }
 
 

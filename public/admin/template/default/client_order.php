@@ -74,7 +74,7 @@
             <t-tooltip theme="light" :show-arrow="false" placement="top-right">
               <div slot="content" class="tool-content">{{row.description}}</div>
               <!--  <span @click="itemClick(row)" class="hover">{{row.product_names[0]}}</span> -->
-              <a class="aHover" :href="`host_detail.html?client_id=${row.client_id}&id=${row.host_id}`">{{row.product_names[0]}}</a>
+              <a class="aHover" :href="row.host_id ? `host_detail.html?client_id=${row.client_id}&id=${row.host_id}` : 'javascript:;'">{{row.product_names[0]}}</a>
               <span v-if="row.product_names.length>1" @click="itemClick(row)" class="hover">{{lang.wait}}{{row.product_names.length}}{{lang.products}}</span>
             </t-tooltip>
           </div>
@@ -89,7 +89,7 @@
             <!-- <span @click="childItemClick(row)">{{row.product_name ? row.product_name : row.description}}
               <span class="host-name" v-if="row.host_name">({{row.host_name}})</span>
             </span> -->
-            <a :href="`host_detail.html?client_id=${father_client_id}&id=${row.host_id}`" class="aHover">{{row.product_name ? row.product_name : row.description}}
+            <a :href="row.host_id ? `host_detail.html?client_id=${father_client_id}&id=${row.host_id}` : 'javascript:;'" class="aHover">{{row.product_name ? row.product_name : row.description}}
               <span class="host-name" v-if="row.host_name">({{row.host_name}})</span>
             </a>
           </t-tooltip>

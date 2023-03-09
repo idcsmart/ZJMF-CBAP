@@ -38,7 +38,7 @@ const payDialog = {
                       <div class="pay-html" v-show="isShowimg" v-html="payHtml"></div>
                   </div>
                 </div>
-                <el-select style="width:2rem;margin:0 auto .6rem" :disabled="!isShowPay"  @change="zfSelectChange" v-model="zfData.gateway">
+                <el-select style="width:2rem;margin:0 auto .6rem" :disabled="!isShowPay"  @change="zfSelectChange" v-model="zfData.gateway" class="pay-select">
                     <el-option v-for="item in gatewayList" :key="item.id" :label="item.title" :value="item.name"></el-option>
                 </el-select>
 

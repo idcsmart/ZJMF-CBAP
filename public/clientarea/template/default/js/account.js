@@ -908,6 +908,7 @@
         },
         // 监测滚动
         computeScroll() {
+          return
           let sizeWidth = document.documentElement.clientWidth; // 初始宽宽度
           if (sizeWidth > 750) {
             return false;

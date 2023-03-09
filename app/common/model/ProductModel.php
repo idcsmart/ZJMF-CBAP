@@ -6,6 +6,7 @@ use think\db\Query;
 use think\facade\Db;
 use think\Model;
 use app\common\logic\ModuleLogic;
+use app\common\logic\ResModuleLogic;
 
 /**
  * @title 商品模型
@@ -47,6 +48,7 @@ class ProductModel extends Model
         'update_time'                      => 'int',
         'price'                            => 'float',
         'cycle'                            => 'string',
+        'agentable'                        => 'int',
     ];
 
     /**
@@ -116,7 +118,7 @@ class ProductModel extends Model
                 }
                 return $value;
             })
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp','dcimapp'])
+            /*->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp','dcimapp','mf_cloud','mf_dcim'])*/
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
@@ -144,9 +146,9 @@ class ProductModel extends Model
             ->leftjoin('server s','p.type=\'server\' AND p.rel_id=s.id')
             ->leftjoin('server_group sg','p.type=\'server_group\' AND p.rel_id=sg.id')
             ->leftjoin('server ss','ss.server_group_id=sg.id')
-            ->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp','dcimapp'])
+            /*->whereIn('s.module|ss.module',['idcsmart_common','common_cloud','idcsmart_dcim','baidu_cloud','room_box','idcsmart_common_finance','idcsmart_common_dcim','idcsmart_common_cloud','idcsmart_common_business','idcsmart_cert','idcsmart_email','idcsmart_sms','zjmfapp','dcimapp','mf_cloud','mf_dcim'])*/
             ->where($where)
-            ->count();
+            ->count(); 
 
         return ['list'=>$products,'count'=>$count];
     }
@@ -315,7 +317,7 @@ class ProductModel extends Model
         $product = $this->field('id,name,product_group_id,description,hidden,stock_control,qty,
         creating_notice_sms,creating_notice_sms_api,creating_notice_sms_api_template,created_notice_sms,
         created_notice_sms_api,created_notice_sms_api_template,creating_notice_mail,creating_notice_mail_api,creating_notice_mail_template,
-        created_notice_mail,created_notice_mail_api,created_notice_mail_template,pay_type,auto_setup,type,rel_id,product_id')
+        created_notice_mail,created_notice_mail_api,created_notice_mail_template,pay_type,auto_setup,type,rel_id,product_id,price,cycle')
             ->find($id);
 
         if (!empty($product->description)){
@@ -328,7 +330,7 @@ class ProductModel extends Model
         if (!empty($product)){
             $product['upgrade'] = $upgradeProducts;
             if($app=='home'){
-                $product = ['id' => $product['id'], 'name' => $product['name']];
+                $product = ['id' => $product['id'], 'name' => $product['name'], 'pay_type' => $product['pay_type'], 'price' => $product['price'], 'cycle' => $product['cycle']];
             }
         }
 
@@ -406,6 +408,9 @@ class ProductModel extends Model
 
         $maxOrder = $this->max('order');
 
+        // 双删
+        idcsmart_cache('product:list',null);
+
         $this->startTrans();
 
         try{
@@ -426,6 +431,8 @@ class ProductModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('create_fail')];
         }
+
+        idcsmart_cache('product:list',null);
 
         hook('after_product_create',['id'=>$product->id,'customfield'=>$param['customfield']??[]]);
 
@@ -619,6 +626,9 @@ class ProductModel extends Model
             $logDescription .= ',' . lang('log_admin_update_product_upgrade_product',['{old}'=>implode(',',array_column($old,'upgrade_product_id')),'{new}'=>implode(',',$upgradeIds)]);
         }
 
+        // 双删
+        idcsmart_cache('product:list',null);
+
         $this->startTrans();
 
         try{
@@ -670,9 +680,13 @@ class ProductModel extends Model
             return ['status'=>400,'msg'=>lang('update_fail') . ':' . $e->getMessage()];
         }
 
-        $ModuleLogic = new ModuleLogic();
-        $priceCycle = $ModuleLogic->getPriceCycle($product->id);
-        $this->setPriceCycle($priceCycle['product'], $priceCycle['price'], $priceCycle['cycle']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $id)->find();
+        if(empty($upstreamProduct)){
+            $ModuleLogic = new ModuleLogic();
+            $priceCycle = $ModuleLogic->getPriceCycle($product->id);
+            $this->setPriceCycle($priceCycle['product'], $priceCycle['price'], $priceCycle['cycle']);
+        }
+        idcsmart_cache('product:list',null);
 
         hook('after_product_edit',['id'=>$product->id,'customfield'=>$param['customfield']??[]]);
 
@@ -768,6 +782,8 @@ class ProductModel extends Model
             return ['status'=>400,'msg'=>lang('product_has_host')];
         }
 
+        idcsmart_cache('product:list',null);
+
         $this->startTrans();
         try{
             # 删除商品
@@ -791,6 +807,8 @@ class ProductModel extends Model
             $MenuModel = new MenuModel();
             $MenuModel->deleteHomeModuleMenu($id);
 
+            UpstreamProductModel::where('product_id', $id)->delete();
+
             # 记录日志
             active_log(lang('log_admin_delete_product',['{admin}'=>'admin#'.get_admin_id().'#'.request()->admin_name.'#','{product}'=>'product#'.$id.'#'.$product['name'].'#']),'product',$id);
 
@@ -799,6 +817,9 @@ class ProductModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('delete_fail') . $e->getMessage()];
         }
+
+        idcsmart_cache('product:list',null);
+
         hook('after_product_delete', ['id'=>$id]);
 
         return ['status'=>200,'msg'=>lang('delete_success')];
@@ -830,6 +851,8 @@ class ProductModel extends Model
             return ['status'=>400,'msg'=>lang('cannot_repeat_opreate')];
         }
 
+        idcsmart_cache('product:list',null);
+
         $this->startTrans();
         try{
             $this->update([
@@ -849,6 +872,8 @@ class ProductModel extends Model
             $this->rollback();
             return ['status'=>400,'msg'=>lang('fail_message')];
         }
+
+        idcsmart_cache('product:list',null);
 
         return ['status'=>200,'msg'=>lang('success_message')];
     }
@@ -897,6 +922,9 @@ class ProductModel extends Model
         if (empty($productGroup)){
             return ['status'=>400,'msg'=>lang('product_group_is_not_exist')];
         }
+
+        idcsmart_cache('product:list',null);
+
         # 排序处理
         $this->startTrans();
         try{
@@ -955,6 +983,8 @@ class ProductModel extends Model
 
             return ['status'=>400,'msg'=>lang('move_fail') . ':' . $e->getMessage()];
         }
+
+        idcsmart_cache('product:list',null);
 
         return ['status'=>200,'msg'=>lang('move_success')];
     }
@@ -1024,12 +1054,17 @@ class ProductModel extends Model
         if(empty($ProductModel)){
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
-        // 商品
-        // $oldModule = $ProductModel->getModule();
-        $newModule = $this->getModule($param['rel_id'], $param['type']);
+        $content = '';
+        $upstreamProduct = UpstreamProductModel::where('product_id', $ProductModel['product_id'])->find();
 
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->serverConfigOption($newModule, $ProductModel);
+        if(empty($upstreamProduct)){
+            // 商品
+            // $oldModule = $ProductModel->getModule();
+            $newModule = $this->getModule($param['rel_id'], $param['type']);
+
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->serverConfigOption($newModule, $ProductModel);
+        }
 
         $result = [
             'status' => 200,
@@ -1061,8 +1096,15 @@ class ProductModel extends Model
         }
         $param['tag'] = $param['tag'] ?? '';
 
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->clientProductConfigOption($ProductModel, $param['tag']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $ProductModel['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $content = $ResModuleLogic->clientProductConfigOption($ProductModel, $param['tag']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->clientProductConfigOption($ProductModel, $param['tag']);
+        }
 
         $result = [
             'status'=> 200,
@@ -1095,8 +1137,15 @@ class ProductModel extends Model
         }
         $param['tag'] = $param['tag'] ?? '';
 
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->adminProductConfigOption($ProductModel, $param['tag']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $ProductModel['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $content = $ResModuleLogic->adminProductConfigOption($ProductModel, $param['tag']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->adminProductConfigOption($ProductModel, $param['tag']);
+        }
 
         $result = [
             'status'=> 200,
@@ -1145,6 +1194,7 @@ class ProductModel extends Model
         $param['config_options'] = $param['config_options'] ?? [];
         
         $clientId = get_client_id();
+        $certification = check_certification($clientId);
 
         $result = hook('before_order_create', ['client_id'=>$clientId, 'param' => $param]);
 
@@ -1154,8 +1204,18 @@ class ProductModel extends Model
             }
         }
         
-        $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $product['id'])->find();
+
+        if($upstreamProduct){
+            if($upstreamProduct['certification']==1 && !$certification){
+                return ['status'=>400, 'msg'=>lang('certification_uncertified_cannot_buy_product')];
+            }
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
+        }
 
         if($result['status']!=200){
             return $result;
@@ -1170,6 +1230,9 @@ class ProductModel extends Model
         $param['duration'] = $result['data']['duration'];
         $param['description'] = $result['data']['description'];
         $param['config_options'] = $param['config_options'] ?? [];
+        if($upstreamProduct){
+            $param['profit'] = $result['data']['profit'] ?? 0;
+        }
 
         if(empty($param['description'])){
             if($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment'){
@@ -1215,6 +1278,8 @@ class ProductModel extends Model
             }else{
                 $serverId = $product['rel_id'];
             }
+
+            $upstreamProduct = UpstreamProductModel::where('product_id', $param['product_id'])->find();
             for ($i=1; $i<=$param['qty']; $i++) {
                 $host = HostModel::create([
                     'client_id' => $clientId,
@@ -1232,7 +1297,27 @@ class ProductModel extends Model
                     'due_time' => $product['pay_type']!='onetime' ? $time : 0,
                     'create_time' => $time
                 ]);
-                $ModuleLogic->afterSettle($product, $host->id, $param['config_options']);
+
+                if($upstreamProduct){
+                    UpstreamHostModel::create([
+                        'supplier_id' => $upstreamProduct['supplier_id'],
+                        'host_id' => $host->id,
+                        'upstream_configoption' => json_encode($param['config_options']),
+                        'create_time' => $time
+                    ]);
+                    UpstreamOrderModel::create([
+                        'supplier_id' => $upstreamProduct['supplier_id'],
+                        'order_id' => $order->id,
+                        'host_id' => $host->id,
+                        'amount' => $param['price'],
+                        'profit' => $param['profit'],
+                        'create_time' => $time
+                    ]);
+                    $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                    $ResModuleLogic->afterSettle($product, $host->id, $param['config_options']);
+                }else{
+                    $ModuleLogic->afterSettle($product, $host->id, $param['config_options']);
+                }
                 $orderItem[] = [
                     'order_id' => $order->id,
                     'client_id' => $clientId,
@@ -1251,6 +1336,8 @@ class ProductModel extends Model
             $OrderItemModel->saveAll($orderItem);
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
+            update_upstream_order_profit($order->id);
 
             $OrderModel = new OrderModel();
             # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
@@ -1300,8 +1387,18 @@ class ProductModel extends Model
         }
         $param['config_options'] = $param['config_options'] ?? [];
         
-        $ModuleLogic = new ModuleLogic();
-        return $ModuleLogic->cartCalculatePrice($ProductModel, $param['config_options'], 1, 'cal_price');
+        $upstreamProduct = UpstreamProductModel::where('product_id', $ProductModel['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->cartCalculatePrice($ProductModel, $param['config_options'], 1, 'cal_price');
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->cartCalculatePrice($ProductModel, $param['config_options'], 1, 'cal_price');
+        }
+        if(isset($result['data']['profit'])) unset($result['data']['profit']);
+        
+        return $result;
     }
 
     /**
@@ -1326,8 +1423,16 @@ class ProductModel extends Model
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
         
-        $ModuleLogic = new ModuleLogic();
-        return $ModuleLogic->allConfigOption($ProductModel);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $ProductModel['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->allConfigOption($ProductModel);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->allConfigOption($ProductModel);
+        }
+        return $result;
     }
 
     /**
@@ -1402,12 +1507,13 @@ class ProductModel extends Model
         if($app=='home'){
             $field = 'p.id,p.name';
         }else{
-            $field = 'p.id,p.name,p.stock_control,p.qty,p.hidden,p.pay_type,pg.name as product_group_name_second,pg.id as product_group_id_second,pgf.name as product_group_name_first,pgf.id as product_group_id_first';
+            $field = 'p.id,p.name,p.stock_control,p.qty,p.hidden,p.pay_type,pg.name as product_group_name_second,pg.id as product_group_id_second,pgf.name as product_group_name_first,pgf.id as product_group_id_first,up.id upstream_product_id,p.agentable';
         }
         $products = $this->alias('p')
             ->field($field)
             ->leftjoin('product_group pg','p.product_group_id=pg.id')
             ->leftjoin('product_group pgf','pg.parent_id=pgf.id')
+            ->leftjoin('upstream_product up','up.product_id=p.id')
             ->where($where)
             ->limit((isset($param['limit']) && !empty($param['limit']))?intval($param['limit']):1000000)
             ->page((isset($param['page']) && !empty($param['page']))?intval($param['page']):1)
@@ -1420,6 +1526,12 @@ class ProductModel extends Model
             ->alias('p')
             ->where($where)
             ->count();
+        if($app!='home'){
+            foreach ($products as $key => $value) {
+                $products[$key]['agent'] = !empty($value['upstream_product_id']) ? 1 : 0;
+                unset($products[$key]['upstream_product_id']);
+            }
+        }
 
         return ['list'=>$products, 'count'=>$count];
     }
@@ -1469,5 +1581,133 @@ class ProductModel extends Model
         $this->where('id', $ProductModel->id)->update($update);
         return $update;
     }
+
+    /**
+     * 时间 2023-02-16
+     * @title 获取上游模块资源
+     * @desc 获取上游模块资源
+     * @author hh
+     * @version v1
+     * @param   int param.id - 商品ID require
+     * @return  string module - resmodule名称
+     * @return  string url - zip包完整下载路径
+     */
+    public function downloadResource($param){
+        $ProductModel = $this->find((int)$param['id']);
+        if(empty($ProductModel)){
+            return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
+        }
+        $upstreamProduct = UpstreamProductModel::where('product_id', $ProductModel['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->downloadResource($ProductModel);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->downloadResource($ProductModel);
+        }
+        return $result;
+    }
+
+    /**
+     * 时间 2023-02-20
+     * @title 保存可代理商品
+     * @desc 保存可代理商品
+     * @author theworld
+     * @version v1
+     * @param array param.id - 商品ID require
+     * @return int status - 状态码,200成功,400失败
+     * @return string msg - 提示信息
+     */ 
+    public function saveAgentableProduct($param)
+    {
+        $param['id'] = $param['id'] ?? [];
+        if(!is_array($param['id']) || empty($param['id'])){
+            return ['status'=>400,'msg'=>lang('param_error')];
+        }
+        $product = $this->whereIn('id', $param['id'])->select()->toArray();
+        if (empty($product)){
+            return ['status'=>400,'msg'=>lang('param_error')];
+        }
+
+        idcsmart_cache('product:list',null);
+
+        $this->startTrans();
+        try{
+            $this->where('agentable', 1)->update(['agentable' => 0]);
+            $this->whereIn('id', $param['id'])->update(['agentable' => 1]);
+
+            $this->commit();
+        }catch (\Exception $e){
+            $this->rollback();
+            return ['status'=>400,'msg'=>lang('fail_message') . $e->getMessage()];
+        }
+
+        idcsmart_cache('product:list',null);
+
+        return ['status'=>200,'msg'=>lang('success_message')];
+    }
+
+
+    /**
+     * 时间 2022-10-12
+     * @title 根据模块获取商品列表
+     * @desc 根据模块获取商品列表
+     * @author theworld
+     * @version v1
+     * @param string param.module - 模块名称
+     * @return array list - 一级分组列表
+     * @return int list[].id - 一级分组ID
+     * @return string list[].name - 一级分组名称
+     * @return array list[].child - 二级分组
+     * @return int list[].child[].id - 二级分组ID
+     * @return string list[].child[].name - 二级分组名称
+     * @return array list[].child[].child - 商品
+     * @return int list[].child[].child[].id - 商品ID
+     * @return string list[].child[].child[].name - 商品名称
+     */
+    public function resModuleProductList($param)
+    {
+        $where = function (Query $query) use($param) {
+            $query->where('p.hidden', 0)->where('up.res_module', '<>', '');
+            if(!empty($param['module'])){
+                $query->where('up.res_module', $param['module']);
+            }
+        };
+
+        $ProductGroupModel = new ProductGroupModel();
+        $firstGroup = $ProductGroupModel->productGroupFirstList();
+        $firstGroup = $firstGroup['list'];
+
+        $secondGroup = $ProductGroupModel->productGroupSecondList([]);
+        $secondGroup = $secondGroup['list'];
+
+        $products = $this->alias('p')
+            ->field('p.id,p.name,p.product_group_id')
+            ->leftjoin('upstream_product up','up.product_id=p.id')
+            ->where($where)
+            ->order('p.order','desc')
+            ->select()
+            ->toArray();
+        $productArr = [];
+        foreach ($products as $key => $value) {
+            $productArr[$value['product_group_id']][] = ['id' => $value['id'], 'name' => $value['name']];
+        }
+        $secondGroupArr = [];
+        foreach ($secondGroup as $key => $value) {
+            if(isset($productArr[$value['id']])){
+                $secondGroupArr[$value['parent_id']][] = ['id' => $value['id'], 'name' => $value['name'], 'child' => $productArr[$value['id']]];
+            }
+        }
+        $list = [];
+        foreach ($firstGroup as $key => $value) {
+            if(isset($secondGroupArr[$value['id']])){
+                $list[] = ['id' => $value['id'], 'name' => $value['name'], 'child' => $secondGroupArr[$value['id']]];
+            }
+        }
+
+        return ['list'=>$list];
+    }
+
 
 }

@@ -2,8 +2,7 @@ const host = location.host;
 const baseURL = `/console/v1`;
 const Axios = axios.create({ baseURL, timeout: 12000 });
 Axios.defaults.withCredentials = true;
-if (
-  location.href.indexOf("login.html") === -1
+if (location.href.indexOf("login.html") === -1
   && location.href.indexOf("regist.html") === -1
   && location.href.indexOf("forget.html") === -1
   && location.href.indexOf("goodsList.html") === -1
@@ -12,10 +11,11 @@ if (
   && location.href.indexOf("helpTotal.html") === -1
   && location.href.indexOf("agreement.html") === -1
   && location.href.indexOf("goods.html") === -1
+  && location.href.indexOf("userStatus.html") === -1
 ) {
   if (!localStorage.getItem('jwt')) {
     sessionStorage.redirectUrl = location.href
-    location.href = 'login.html'
+    location.href = '/login.html'
     throw new Error()
   }
 }
@@ -55,10 +55,13 @@ Axios.interceptors.response.use(
           return Promise.reject(response);
         case 401: // 未授权:2个小时未操作自动退出登录
           // 几个特定页面不跳转登录页面
-          if (location.href.indexOf("login.html") === -1 && location.href.indexOf("goodsList.html") === -1 && location.href.indexOf("source.html") === -1 && location.href.indexOf("news_detail.html") === -1 && location.href.indexOf("helpTotal.html") === -1) {
+          if (location.href.indexOf("login.html") === -1 && location.href.indexOf("userStatus.html") === -1 &&
+            location.href.indexOf("goodsList.html") === -1 && location.href.indexOf("source.html") === -1 &&
+            location.href.indexOf("news_detail.html") === -1 && location.href.indexOf("helpTotal.html") === -1
+            && location.href.indexOf("goods.html") === -1) {
             localStorage.removeItem("jwt");
             sessionStorage.redirectUrl = location.href
-            location.href = `login.html`;
+            location.href = `/login.html`;
           } else {
             return Promise.reject(response)
           }

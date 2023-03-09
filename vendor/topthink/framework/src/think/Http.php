@@ -163,7 +163,9 @@ class Http
         $this->initialize();
 
         //自动创建request对象
+
         $request = $request ?? $this->app->make('request', [], true);
+
         $this->app->instance('request', $request);
 
         try {
@@ -209,6 +211,7 @@ class Http
 
     protected function dispatchToRoute($request)
     {
+
         $withRoute = $this->app->config->get('app.with_route', true) ? function () {
             $this->loadRoutes();
         } : null;

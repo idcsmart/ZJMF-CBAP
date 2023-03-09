@@ -253,43 +253,48 @@ function deleteHost(params) {
 
 /* 2023-1-30新增订单详情 */
 // 订单详情
-function getOrderDetails (params) {
+function getOrderDetails(params) {
   return Axios.get(`/order/${params.id}`)
 }
 // 订单退款
-function orderRefund (params) {
+function orderRefund(params) {
   return Axios.post(`/order/${params.id}/refund`, params)
 }
 // 订单退款记录列表
-function getOrderRefundRecord (params) {
+function getOrderRefundRecord(params) {
   return Axios.get(`/order/${params.id}/refund_record`)
 }
 // 删除退款记录
-function delOrderRecord (params) {
+function delOrderRecord(params) {
   return Axios.delete(`/refund_record/${params.id}`)
 }
 // 订单应用余额
-function orderApplyCredit (params) {
+function orderApplyCredit(params) {
   return Axios.post(`/order/${params.id}/apply_credit`, params)
 }
 // 订单扣除余额
-function orderRemoveCredit (params) {
+function orderRemoveCredit(params) {
   return Axios.post(`/order/${params.id}/remove_credit`, params)
 }
 // 修改订单支付方式
-function changePayway (params) {
+function changePayway(params) {
   return Axios.put(`/order/${params.id}/gateway`, params)
 }
 // 修改订单备注
-function changeOrderNotes (params) {
+function changeOrderNotes(params) {
   return Axios.put(`/order/${params.id}/notes`, params)
 }
 // 订单管理-删除人工调整的订单子项
-function delArtificialOrder (params) {
+function delArtificialOrder(params) {
   return Axios.delete(`/order/item/${params.id}`, params)
 }
 
 // 1-31 模块按钮输出
 function getMoudleBtns(params) {
   return Axios.get(`/host/${params.id}/module/button`)
+}
+
+//产品详情
+function upHostDetail(id) {
+  return Axios.get(`/upstream/host/${id}`)
 }

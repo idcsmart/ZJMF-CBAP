@@ -137,7 +137,7 @@ class AppMarketController extends AdminBaseController
 
 			$dir = WEB_ROOT.$result['data']['app']['uuid'].'.zip';
 
-    		$content = curl_download($this->market_url."/console/v1/app_market/market/download?id={$id}&from=".request()->domain().'/'.DIR_ADMIN.'&token='.$token.'&time='.time(), $dir);
+    		$content = $this->curl_download($this->market_url."/console/v1/app_market/market/download?id={$id}&from=".request()->domain().'/'.DIR_ADMIN.'&token='.$token.'&time='.time(), $dir);
 
     		if($content){
 
@@ -163,7 +163,7 @@ class AppMarketController extends AdminBaseController
     		}
     	}else{
     		$dir = WEB_ROOT."plugins/".$result['data']['app']['type'].'/'.$result['data']['app']['uuid'].'.zip';
-    		$content = curl_download($this->market_url."/console/v1/app_market/market/download?id={$id}&from=".request()->domain().'/'.DIR_ADMIN.'&token='.$token.'&time='.time(), $dir);
+    		$content = $this->curl_download($this->market_url."/console/v1/app_market/market/download?id={$id}&from=".request()->domain().'/'.DIR_ADMIN.'&token='.$token.'&time='.time(), $dir);
     		if($content){
 
     			$file = WEB_ROOT."plugins/".$result['data']['app']['type'];
@@ -204,4 +204,25 @@ class AppMarketController extends AdminBaseController
             return ['status' => 400 , 'msg' => $res];
         }
     }
+
+    /*
+	 * curl下载解压包到指定路径
+	 */
+	private function curl_download($url, $file_name)
+	{
+	    $ch = curl_init($url);
+	    //设置抓取的url
+	    $dir = $file_name;
+	    $fp = fopen($dir, "wb");
+	    curl_setopt($ch, CURLOPT_FILE, $fp);
+	    curl_setopt($ch, CURLOPT_HEADER, 0);
+
+	    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+	    $res=curl_exec($ch);
+	    curl_close($ch);
+	    fclose($fp);
+
+	    return $res;
+	}
 }

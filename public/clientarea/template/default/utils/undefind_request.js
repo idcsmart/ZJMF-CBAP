@@ -42,7 +42,7 @@ Axios.interceptors.response.use(
         case 401: // 未授权:2个小时未操作自动退出登录
           if (location.href.indexOf("login.html") === -1) {
             localStorage.removeItem("jwt");
-            location.href = `login.html`;
+            location.href = `/login.html`;
           }
           break;
         case 403:

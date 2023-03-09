@@ -1,6 +1,7 @@
 <?php
 namespace app\common\model;
 
+use app\common\logic\ResModuleLogic;
 use think\Model;
 use think\Db;
 use app\common\logic\ModuleLogic;
@@ -42,6 +43,8 @@ class HostModel extends Model
         'termination_time'      => 'int',
         'create_time'           => 'int',
         'update_time'           => 'int',
+        'downstream_info'       => 'string',
+        'downstream_host_id'    => 'int',
     ];
 
     /**
@@ -303,6 +306,7 @@ class HostModel extends Model
         }
 
         $product = ProductModel::find($host['product_id']);
+        $upstreamHost = UpstreamHostModel::where('host_id', $host['id'])->find();
 
         // 产品的用户ID和前台用户不一致时返回空对象
         if($app=='home'){
@@ -319,6 +323,7 @@ class HostModel extends Model
         $host['first_payment_amount'] = amount_format($host['first_payment_amount']); 
         $host['renew_amount'] = amount_format($host['renew_amount']);
         $host['product_name'] = $product['name'] ?? '';
+        $host['agent'] = !empty($upstreamHost) ? 1 : 0;
         unset($host['client_id']);
         
         return $host;
@@ -474,13 +479,15 @@ class HostModel extends Model
                 'update_time' => time()
             ], ['id' => $param['id']]);
 
+            upstream_sync_host($param['id'], 'update_host');
+
             if(!empty($description)) active_log(lang('admin_modify_host', ['{admin}'=>request()->admin_name, '{host}'=>'host#'.$host->id.'#'.$param['name'].'#', '{description}'=>$description]), 'host', $host->id);
 
             $this->commit();
         } catch (\Exception $e) {
             // 回滚事务
             $this->rollback();
-            return ['status' => 400, 'msg' => lang('update_fail')];
+            return ['status' => 400, 'msg' => lang('update_fail').$e->getMessage()];
         }
 
         hook('after_host_edit',['id'=>$param['id'],'customfield'=>$param['customfield']??[]]);
@@ -531,6 +538,9 @@ class HostModel extends Model
                     OrderModel::update(['amount'=>$amount],['id'=>$host['order_id']]);
                 }
             }
+            UpstreamHostModel::where('host_id', $id)->delete();
+
+            upstream_sync_host($id, 'delete_host');
 
             $this->destroy($id);
             $this->commit();
@@ -576,6 +586,10 @@ class HostModel extends Model
         $this->startTrans();
         try {
             foreach ($host as $key => $value) {
+                upstream_sync_host($value['id'], 'delete_host');
+
+                UpstreamHostModel::where('host_id', $value['id'])->delete();
+
                 $this->destroy($value['id']);
 
                 hook('after_host_delete',['id'=>$value['id']]);
@@ -586,6 +600,7 @@ class HostModel extends Model
                 }else{
                     $clientName = 'client#'.$client['id'].'#'.$client['username'].'#';
                 }
+
                 # 记录日志
                 active_log(lang('admin_batch_delete_user_host', ['{admin}'=>request()->admin_name, '{client}'=>$clientName, '{host}'=>$value['name']]), 'host', $value['id']);
             }
@@ -667,25 +682,45 @@ class HostModel extends Model
             return ['status'=>400, 'msg'=>lang('host_is_suspended')];
         }
 
+
         hook('before_host_create',['id'=>$id]);
 
-        $ModuleLogic = new ModuleLogic();
-        $res = $ModuleLogic->createAccount($host);
+        if($host['billing_cycle']=='onetime'){
+            $due_time = 0;
+        }else if($host['billing_cycle']=='free' && $host['billing_cycle_time']==0){
+            $due_time = 0;
+        }else{
+            $due_time = time() + $host['billing_cycle_time'];
+        }
+        $this->update([
+            'active_time' => time(),
+            'due_time' => $due_time,
+            'update_time' => time(),
+        ], ['id'=>$id]);
+
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $res = $ResModuleLogic->createAccount($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $res = $ModuleLogic->createAccount($host);
+        }
         if($res['status'] == 200){
 
             hook('after_host_create_success',['id'=>$id]);
 
-            if($host['billing_cycle']=='onetime'){
+            /*if($host['billing_cycle']=='onetime'){
                 $due_time = 0;
             }else if($host['billing_cycle']=='free' && $host['billing_cycle_time']==0){
                 $due_time = 0;
             }else{
                 $due_time = time() + $host['billing_cycle_time'];
-            }
+            }*/
             $this->update([
                 'status'      => 'Active',
-                'active_time' => time(),
-                'due_time' => $due_time,
+                /*'active_time' => time(),
+                'due_time' => $due_time,*/
                 'update_time' => time(),
             ], ['id'=>$id]);
 
@@ -727,6 +762,8 @@ class HostModel extends Model
                 '{reason}'=>$res['msg'] ?? '',
             ]);
         }
+
+        upstream_sync_host($id, 'module_create');
         active_log($description, 'host', $host->id);
         return $res;
     }
@@ -738,7 +775,7 @@ class HostModel extends Model
      * @author hh
      * @version v1
      * @param int id - 产品ID require
-     * @param string param.suspend_type overdue 暂停类型(overdue=到期暂停,overtraffic=超流暂停,certification_not_complete=实名未完成,other=其他)
+     * @param string param.suspend_type overdue 暂停类型(overdue=到期暂停,overtraffic=超流暂停,certification_not_complete=实名未完成,other=其他,downstream下游暂停)
      * @param string param.suspend_reason - 暂停原因
      * @return int status - 状态码,200=成功,400=失败
      * @return string msg - 提示信息
@@ -759,11 +796,18 @@ class HostModel extends Model
         if($host['status'] != 'Active'){
             return ['status'=>400, 'msg'=>lang('host_is_not_active_cannot_suspend')];
         }
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
 
         hook('before_host_suspend',['id'=>$id]);
 
-        $ModuleLogic = new ModuleLogic();
-        $res = $ModuleLogic->suspendAccount($host, $param);
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $res = $ResModuleLogic->suspendAccount($host, $param);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $res = $ModuleLogic->suspendAccount($host, $param);
+        }
+
         if($res['status'] == 200){
 
             hook('after_host_suspend_success',['id'=>$id]);
@@ -798,6 +842,8 @@ class HostModel extends Model
                 'certification_not_complete'=>'实名未完成',
                 'other'=>'其他',
             ];
+
+            upstream_sync_host($id, 'module_suspend');
 
             $description = lang('log_module_suspend_account_success', [
                 '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
@@ -840,11 +886,21 @@ class HostModel extends Model
         if($host['status'] != 'Active' && $host['status'] != 'Suspended'){
             return ['status'=>400, 'msg'=>lang('host_status_not_need_unsuspend')];
         }
+        if($host['suspend_type'] == 'upstream'){
+            return ['status'=>400, 'msg'=>lang('不可解除上游发起的暂停')];
+        }
+
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
 
         hook('before_host_unsuspend',['id'=>$id]);
 
-        $ModuleLogic = new ModuleLogic();
-        $res = $ModuleLogic->unsuspendAccount($host);
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $res = $ResModuleLogic->unsuspendAccount($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $res = $ModuleLogic->unsuspendAccount($host);
+        }
         if($res['status'] == 200){
 
             hook('after_host_unsuspend_success',['id'=>$id]);
@@ -873,6 +929,7 @@ class HostModel extends Model
 					],		
 				]);
 			}
+            upstream_sync_host($id, 'module_unsuspend');
 
             $description = lang('log_module_unsuspend_account_success', [
                 '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
@@ -905,12 +962,18 @@ class HostModel extends Model
         if(empty($host)){
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
 
         hook('before_host_terminate',['id'=>$id]);
 
         // 暂不判断状态,所有状态应该都能删除
-        $ModuleLogic = new ModuleLogic();
-        $res = $ModuleLogic->terminateAccount($host);
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $res = $ResModuleLogic->terminateAccount($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $res = $ModuleLogic->terminateAccount($host);
+        }
         if($res['status'] == 200){
 
             hook('after_host_terminate_success',['id'=>$id]);
@@ -936,6 +999,8 @@ class HostModel extends Model
 					'host_id'=>$id,//主机ID
 				],		
 			]);
+
+            upstream_sync_host($id, 'module_terminate');
 
             $description = lang('log_module_terminate_account_success', [
                 '{host}'=>'host#'.$host->id.'#'.$host['name'].'#',
@@ -969,9 +1034,15 @@ class HostModel extends Model
         if(empty($host)){
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
 
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->adminArea($host);
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $content = $ResModuleLogic->adminArea($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->adminArea($host);
+        }
         
         $result = [
             'status' => 200,
@@ -1002,8 +1073,15 @@ class HostModel extends Model
         }
         $param['product_id'] = json_decode($menu['product_id'], true);
 
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->hostList($menu['module'], $param);
+        /*$upstreamProduct = UpstreamProductModel::where('product_id', $param['product_id'][0] ?? 0)->find();*/
+
+        if($menu['menu_type']=='res_module'){
+            $ResModuleLogic = new ResModuleLogic();
+            $content = $ResModuleLogic->hostList($menu['module'], $param);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->hostList($menu['module'], $param);
+        }
         
         $result = [
             'status' => 200,
@@ -1042,9 +1120,15 @@ class HostModel extends Model
         if(isset($hostId) && !in_array($id, $hostId)){
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
         
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->clientArea($host);
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $content = $ResModuleLogic->clientArea($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->clientArea($host);
+        }
         
         $result = [
             'status' => 200,
@@ -1073,9 +1157,15 @@ class HostModel extends Model
         if(empty($host)){
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
-        
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->adminChangeConfigOption($host);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $content = $ResModuleLogic->adminChangeConfigOption($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->adminChangeConfigOption($host);
+        }
         
         $result = [
             'status' => 200,
@@ -1105,8 +1195,15 @@ class HostModel extends Model
             return ['status'=>400, 'msg'=>lang('host_is_not_exist')];
         }
         
-        $ModuleLogic = new ModuleLogic();
-        $content = $ModuleLogic->clientChangeConfigOption($host);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $content = $ResModuleLogic->clientChangeConfigOption($host);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $content = $ModuleLogic->clientChangeConfigOption($host);
+        }
         
         $result = [
             'status' => 200,
@@ -1170,10 +1267,12 @@ class HostModel extends Model
             return false;
         }
 
+        $host = $this->find($upgrade['host_id']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $host['product_id'])->find();
         # 升降级
         if($upgrade['type']=='product'){
             // 获取接口
-            $product = ProductModel::find($upgrade['rel_id']);
+            /*$product = ProductModel::find($upgrade['rel_id']);
             if($product['type']=='server_group'){
                 $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
                 $serverId = $server['id'] ?? 0;
@@ -1218,19 +1317,27 @@ class HostModel extends Model
                 'billing_cycle_name' => $upgrade['billing_cycle_name'],
                 'billing_cycle_time' => $upgrade['billing_cycle_time'],
                 'due_time' => $hostDueTime,
-            ],['id' => $upgrade['host_id']]);
-            $ModuleLogic = new ModuleLogic();
-            $host = $this->find($upgrade['host_id']);
-            $ModuleLogic->changeProduct($host, json_decode($upgrade['data'], true));
+            ],['id' => $upgrade['host_id']]);*/
+
+            if($upstreamProduct){
+
+            }else{
+                $ModuleLogic = new ModuleLogic();
+                $ModuleLogic->changeProduct($host, json_decode($upgrade['data'], true));
+            }
         }else if($upgrade['type']=='config_option'){
-            $host = $this->find($upgrade['host_id']);
+            /*$host = $this->find($upgrade['host_id']);
             $this->update([
                 'first_payment_amount' => $upgrade['price'],
                 'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['renew_price'] : 0,
-            ],['id' => $upgrade['host_id']]);
-            $ModuleLogic = new ModuleLogic();
-            $host = $this->find($upgrade['host_id']);
-            $ModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
+            ],['id' => $upgrade['host_id']]);*/
+            if($upstreamProduct){
+                $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                $ResModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
+            }else{
+                $ModuleLogic = new ModuleLogic();
+                $ModuleLogic->changePackage($host, json_decode($upgrade['data'], true));
+            }
         }
 
         $ProductModel = new ProductModel();
@@ -1426,6 +1533,41 @@ class HostModel extends Model
         return $result;
     }
 
+    public function upstreamSyncHost($id, $action = '')
+    {
+        $host = $this->find($id);
+        if(empty($host)){
+            return false;
+        }
+        if(empty($host['downstream_host_id'])){
+            return false;
+        }
+        $downstreamInfo = json_decode($host['downstream_info'], true) ?? [];
+        if(empty($downstreamInfo)){
+            return false;
+        }
+        $api = ApiModel::find($downstreamInfo['api'] ?? 0);
+        if(empty($api)){
+            return false;
+        }
+        $api['public_key'] = aes_password_decode($api['public_key']);
 
+        $data = json_encode(['action' => $action, 'host' => $host]);
+
+        $crypto = '';
+ 
+        foreach (str_split($data, 117) as $chunk) {
+ 
+            openssl_public_encrypt($chunk, $encryptData, $api['public_key']);
+ 
+            $crypto .= $encryptData;
+        }
+ 
+        $data = base64_encode($crypto);
+
+        $res = curl(rtrim($downstreamInfo['url'],'/').'/console/v1/upstream/sync', ['host_id' => $host['downstream_host_id'], 'data' => $data], 30, 'POST');
+
+        return true;
+    }
 
 }

@@ -20,7 +20,7 @@ class AliPayDmf extends Plugin
         'title'       => '支付宝当面付插件', // 必填 插件显示名称
         'description' => '支付宝当面付插件', // 必填 插件功能描述
         'author'      => '智简魔方', // 必填 插件作者
-        'version'     => '1.0',  // 必填 插件版本
+        'version'     => '1.0.0',  // 必填 插件版本
         'help_url'    => '', // 选填 申请链接
         'author_url'  => '', // 选填 作者链接
         'url'         => '', // 选填 图标地址(可以自定义支付图片地址)

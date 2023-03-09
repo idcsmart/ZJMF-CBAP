@@ -19,7 +19,7 @@
         <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
       </div>
     </div>
-    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" >
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips">
       <template slot="sortIcon">
         <t-icon name="caret-down-small"></t-icon>
       </template>
@@ -65,9 +65,7 @@
         </div>
         <div class="auth">
           <!-- :check-strictly="true" -->
-          <t-tree :data="authArr" checkable activable :line="true" :expand-on-click-node="false" :active-multiple="false" v-model="formData.auth" value-mode="all" :expanded="expandArr" 
-          :keys="{value: 'id', label:'title', children:'child'}" ref="tree" :expand-all="checkExpand" @click="clickNode" @change="changeCheck" :expand-on-click-node="false" :indeterminate="true" 
-          :disabled="formData.id===1" />
+          <t-tree :data="authArr" checkable activable :line="true" :expand-on-click-node="false" :active-multiple="false" v-model="formData.auth" value-mode="all" :expanded="expandArr" :keys="{value: 'id', label:'title', children:'child'}" ref="tree" :expand-all="checkExpand" @click="clickNode" @change="changeCheck" :expand-on-click-node="false" :indeterminate="true" :disabled="formData.id===1" />
         </div>
       </t-form-item>
       <div class="com-f-btn">

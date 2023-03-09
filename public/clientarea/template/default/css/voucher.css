@@ -208,3 +208,21 @@ li {
 .voucher-dialog .el-dialog__body {
   padding: 0.4rem 0.8rem;
 }
+@media screen and (max-width: 750px) {
+  .form-footer .btn-no {
+    margin-left: 0;
+    margin-top: 0.2rem;
+  }
+  .voucher-content ul .item {
+    width: 100%;
+  }
+  .voucher-content .price {
+    height: auto;
+  }
+  .voucher-dialog .el-dialog {
+    width: 7rem;
+  }
+  .voucher-dialog ul .item {
+    width: auto;
+  }
+}

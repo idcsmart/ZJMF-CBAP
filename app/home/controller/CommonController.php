@@ -11,6 +11,14 @@ use think\facade\Cache;
 use app\common\model\HostModel;
 use app\common\model\MenuModel;
 use app\home\model\ClientareaAuthModel;
+use app\common\model\FeedbackModel;
+use app\common\model\FeedbackTypeModel;
+use app\common\model\ConsultModel;
+use app\common\model\FriendlyLinkModel;
+use app\common\model\HonorModel;
+use app\common\model\PartnerModel;
+use app\home\validate\FeedbackValidate;
+use app\home\validate\ConsultValidate;
 
 /**
  * @title 公共接口(前台,无需登录)
@@ -197,7 +205,30 @@ class CommonController extends HomeBaseController
      * @return string currency_prefix ￥ 货币符号
      * @return string currency_suffix 元 货币后缀
      * @return string code_client_email_register 0 邮箱注册数字验证码开关:1开启0关闭
-     * @return string system_logo 系统LOGO
+     * @return string system_logo - 系统LOGO
+     * @return string put_on_record - 备案信息
+     * @return string enterprise_name - 企业名称
+     * @return string enterprise_telephone - 企业电话
+     * @return string enterprise_mailbox - 企业邮箱
+     * @return string enterprise_qrcode - 企业二维码
+     * @return string online_customer_service_link - 在线客服链接
+     * @return array feedback_type - 意见反馈类型
+     * @return int feedback_type[].id - 意见反馈类型ID 
+     * @return string feedback_type[].name - 名称 
+     * @return string feedback_type[].description - 描述 
+     * @return array friendly_link - 友情链接
+     * @return int friendly_link[].id - 友情链接ID 
+     * @return string friendly_link[].name - 名称 
+     * @return string friendly_link[].url - 链接地址 
+     * @return array honor - 荣誉资质
+     * @return int honor[].id - 荣誉资质ID 
+     * @return string honor[].name - 名称 
+     * @return string honor[].img - 图片地址 
+     * @return array partner - 合作伙伴
+     * @return int partner[].id - 合作伙伴ID 
+     * @return string partner[].name - 名称 
+     * @return string partner[].img - 图片地址 
+     * @return string partner[].description - 描述
      */
     public function common()
     {
@@ -228,12 +259,38 @@ class CommonController extends HomeBaseController
             'currency_suffix',
             'code_client_email_register',
             'system_logo',
+            'put_on_record',
+            'enterprise_name',
+            'enterprise_telephone',
+            'enterprise_mailbox',
+            'enterprise_qrcode',
+            'online_customer_service_link',
         ];
 
         //$data = configuration($setting);
 		$data = array_merge($lang,configuration($setting));
         $data['system_logo'] = config('idcsmart.system_logo_url') . $data['system_logo'];
         $account = $param['account']??'';
+
+        // 获取意见反馈类型
+        $FeedbackTypeModel = new FeedbackTypeModel();
+        $feedbackType = $FeedbackTypeModel->feedbackTypeList();
+        $data['feedback_type'] = $feedbackType['list'];
+
+        // 获取友情链接
+        $FriendlyLinkModel = new FriendlyLinkModel();
+        $friendlyLink = $FriendlyLinkModel->friendlyLinkList();
+        $data['friendly_link'] = $friendlyLink['list'];
+
+        // 获取荣誉资质
+        $HonorModel = new HonorModel();
+        $honor = $HonorModel->honorList();
+        $data['honor'] = $honor['list'];
+
+        // 获取意见反馈类型
+        $PartnerModel = new PartnerModel();
+        $partner = $PartnerModel->partnerList();
+        $data['partner'] = $partner['list'];
 
         # 登录3次失败
         if ($account){
@@ -393,6 +450,74 @@ class CommonController extends HomeBaseController
             'msg' => lang('success_message'),
             'data' => (new ClientareaAuthModel())->authList()
         ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-02-28
+     * @title 提交意见反馈
+     * @desc 提交意见反馈
+     * @url /console/v1/feedback
+     * @method POST
+     * @author theworld
+     * @version v1
+     * @param int type - 类型 required
+     * @param string title - 标题 required
+     * @param string description - 描述 required
+     * @param array attachment - 附件
+     * @param string contact - 联系方式
+     */
+    public function createFeedback()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        $FeedbackValidate = new FeedbackValidate();
+        // 参数验证
+        if (!$FeedbackValidate->scene('create')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $FeedbackModel = new FeedbackModel();
+        
+        // 提交意见反馈
+        $result = $FeedbackModel->createFeedback($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-02-28
+     * @title 提交方案咨询
+     * @desc 提交方案咨询
+     * @url /console/v1/consult
+     * @method POST
+     * @author theworld
+     * @version v1
+     * @param string contact - 联系人 required
+     * @param string company - 公司名称
+     * @param string phone - 手机号码 手机号码和邮箱二选一必填
+     * @param string email - 联系邮箱 手机号码和邮箱二选一必填
+     * @param string matter - 咨询产品 required
+     */
+    public function createConsult()
+    {
+        // 接收参数
+        $param = $this->request->param();
+
+        $ConsultValidate = new ConsultValidate();
+        // 参数验证
+        if (!$ConsultValidate->scene('create')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $ConsultModel = new ConsultModel();
+        
+        // 提交方案咨询
+        $result = $ConsultModel->createConsult($param);
+
         return json($result);
     }
 

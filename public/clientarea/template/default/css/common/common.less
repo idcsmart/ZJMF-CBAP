@@ -2,9 +2,12 @@
   margin: 0;
   padding: 0;
 }
-ul,li{
+
+ul,
+li {
   list-style: none;
 }
+
 /* elemenu-ui组件 部分样式统一修改 开始*/
 .el-tabs__item {
   color: #666B80;
@@ -1121,4 +1124,25 @@ th {
     font-size: .32rem;
   }
 
+  .myPage {
+    .page-total {
+      display: none !important;
+    }
+
+    .el-pagination {
+      .el-pagination__sizes {
+        display: none;
+      }
+    }
+  }
+
+  .zf-dialog {
+    .el-dialog__headerbtn {
+      top: .1rem;
+    }
+
+    .pay-select {
+      width: 4rem !important;
+    }
+  }
 }

@@ -36,6 +36,7 @@
   position: absolute;
   top: -0.3rem;
   right: 1.84rem;
+  z-index: -1;
 }
 .file_download .top-search {
   display: flex;
@@ -150,4 +151,16 @@
 }
 .file_download .mobile {
   display: none;
+}
+@media screen and (max-width: 750px) {
+  .file_download .pc {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .file_download .com-l-box {
+    width: 100%;
+  }
+  .file_download .com-r-box {
+    width: 65% !important;
+  }
 }

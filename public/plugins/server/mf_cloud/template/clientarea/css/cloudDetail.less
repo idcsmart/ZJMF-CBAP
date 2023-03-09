@@ -1,0 +1,1405 @@
+@base: rgb(0, 88, 255);
+
+.main-card {
+  .time-select {
+    margin-top: .3rem;
+  }
+
+  .echart-main {
+    margin-top: .3rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .my-echart {
+      width: 570px;
+      height: 352px;
+      margin-right: 1.2rem;
+      margin-bottom: .3rem;
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.04);
+
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  // 管理
+  .manage-content {
+    margin-top: .2rem;
+
+    .el-row {
+      .el-col:nth-child(2) {
+        .manage-item {
+          margin: auto;
+        }
+      }
+
+      .el-col:nth-child(3) {
+        .manage-item {
+          float: right;
+        }
+      }
+    }
+
+    .manage-item {
+      width: 90%;
+      min-height: 1.25rem;
+      border: 1px solid #E6E7EB;
+      opacity: 1;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      padding-top: .3rem;
+      padding-left: .24rem;
+      margin-bottom: .4rem;
+
+      .item-top {
+        display: flex;
+        flex-direction: row;
+        // align-items: center;
+
+        .item-top-btn {
+          margin-left: .2rem;
+        }
+      }
+
+      .item-top-btn {
+        width: .88rem;
+        min-width: 80px;
+        height: .32rem;
+        background: #0058FF;
+        opacity: 1;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+      }
+
+      .item-bottom {
+        color: #1E2736;
+        margin-top: .16rem;
+
+        .bottom-row {}
+      }
+    }
+  }
+
+  // 磁盘
+  .disk-top-operation {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: .3rem;
+
+    .btn1,
+    .btn2 {
+      background: 0058FF;
+    }
+  }
+
+  .buy-btn {
+    width: 1.12rem;
+    height: .46rem;
+    background: #EEF4FF;
+    border-radius: 3px;
+    font-size: .16rem;
+    color: #0058FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: .6rem auto;
+  }
+
+  .no-disk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .text {
+      font-size: .24rem;
+      color: #1E2736;
+      margin-top: 1.4rem;
+    }
+
+    .text2 {
+      font-size: .16rem;
+      color: #4E5259;
+      margin-top: .16rem;
+    }
+
+    .buy-btn {
+      width: 1.12rem;
+      height: .46rem;
+      background: #EEF4FF;
+      border-radius: 3px;
+      font-size: .16rem;
+      color: #0058FF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: .6rem;
+    }
+  }
+
+  .yes-disk {
+    .main-table {
+      margin-top: .4rem;
+      border-radius: 3px;
+      border: 1px solid #E6E7EB;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .more-operation {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: .3rem;
+        cursor: pointer;
+
+        .dot {
+          width: 3px;
+          height: 3px;
+          border: 3px solid rgba(0, 88, 255, 1);
+          border-radius: 50%;
+          margin-right: .05rem;
+        }
+      }
+
+    }
+  }
+
+  // 网络
+  // 网络
+  .net {
+    .title {
+      margin-top: .2rem;
+      margin-bottom: .2rem;
+      font-size: .18rem;
+      color: #1E2736;
+    }
+
+    .top-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .main_table {
+      border: 1px solid #E6E7EB;
+    }
+
+    .flow-content {
+      display: flex;
+      flex-direction: column;
+
+      .flow-item {
+        color: #1E2736;
+        margin-top: .1rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        .flow-label {
+          width: 100px;
+          margin-right: .3rem;
+        }
+
+        .flow-value {}
+
+
+      }
+    }
+
+    .safe-conten {
+      .safe-box {
+        display: flex;
+        align-items: center;
+
+        >span {
+          margin-right: 10px;
+        }
+      }
+    }
+
+  }
+
+  .log {
+    .main_table {
+      border: 1px solid #E6E7EB;
+      border-radius: 3px;
+      margin-top: .25rem;
+    }
+  }
+
+  // 备份与快照
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: .4rem;
+
+    &:nth-last-child(1) {
+      margin-top: .6rem;
+    }
+
+    .content-top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .1rem;
+
+      .top-title {
+        font-size: .18rem;
+        color: #1E2736;
+      }
+
+      .top-btn {
+        width: .82rem;
+        height: .32rem;
+        background: #EEF4FF;
+        border-radius: 3px;
+        font-size: .14rem;
+        color: #0058FF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+
+    .main-table {
+      border: 1px solid #E6E7EB;
+      border-radius: 3px;
+
+      .more-operation {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: .3rem;
+        cursor: pointer;
+
+        .dot {
+          width: 3px;
+          height: 3px;
+          border: 3px solid rgba(0, 88, 255, 1);
+          border-radius: 50%;
+          margin-right: .05rem;
+        }
+      }
+    }
+  }
+
+  .no-bs {
+    display: flex;
+    flex-direction: column;
+
+    .no-bs-title {
+      font-size: .18rem;
+      margin-bottom: .2rem;
+    }
+
+    .no-bs-content {
+      // width: 100%;
+      height: 3.01rem;
+      border: 1px solid #E6E7EB;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .text {
+        font-size: .24rem;
+        color: #1E2736;
+        margin-top: .91rem;
+        margin-bottom: .4rem;
+      }
+
+      .btn {
+        width: 1.12rem;
+        height: .46rem;
+        background: #EEF4FF;
+        border-radius: 3px;
+        color: #0058FF;
+        font-size: .16rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+
+  }
+
+  .no-back {
+    margin-top: .2rem;
+  }
+
+  .no-snap {
+    margin-top: .6rem;
+  }
+
+}
+
+// 重置密码弹窗
+.repass-dialog {
+  .dialog-title {
+    display: flex;
+    flex-direction: column;
+
+    .second-title {
+      font-size: .14rem;
+      color: #8692B0;
+    }
+  }
+
+  .dialog-main {
+    .label {
+      i {
+        color: #DBDBDD;
+        cursor: help;
+        margin-left: .04rem;
+      }
+    }
+
+    .pass-input {
+      .el-input__suffix {
+        right: 0;
+      }
+
+      .pass-btn {
+        width: 1.12rem;
+        height: calc(100% - 0.02rem);
+        background: #EEF4FF;
+        border-radius: 0px 3px 3px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .16rem;
+        color: #4E5259;
+        border-top: 1px solid #E6E7EB;
+        border-right: 1px solid #E6E7EB;
+        border-bottom: 1px solid #E6E7EB;
+        cursor: pointer;
+      }
+    }
+
+    .alert {
+
+      background: #FDE6E9;
+      border: 1px solid rgba(240, 20, 47, 0.2);
+      opacity: 1;
+      border-radius: 3px;
+      color: #F64E60;
+      padding: .13rem .16rem;
+      display: flex;
+      flex-direction: column;
+      margin-top: .2rem;
+      margin-bottom: .2rem;
+
+      .title {
+        margin-bottom: .25rem;
+      }
+
+
+
+      .row {
+        display: flex;
+        flex-direction: row;
+
+        .dot {
+          width: 4px;
+          height: 4px;
+          background: #F64E60;
+          border-radius: 50%;
+          opacity: 1;
+          margin-top: .1rem;
+          margin-right: .1rem;
+        }
+      }
+    }
+
+    .alert-err-text {
+      margin-top: .2rem;
+    }
+  }
+}
+
+// 救援模式 弹窗
+.rescue-dialog {
+
+  .dialog-title {
+    display: flex;
+    flex-direction: column;
+
+    .second-title {
+      font-size: .14rem;
+      color: #8692B0;
+    }
+  }
+
+  .dialog-main {
+    .os-select {
+      width: 100%;
+
+      .el-input__inner {
+        height: .52rem;
+        width: 100%;
+        padding-left: .65rem;
+      }
+
+      .os-img {
+        width: .48rem;
+        height: .48rem;
+      }
+    }
+
+    .pass-input {
+      .el-input__suffix {
+        right: 0;
+      }
+
+      .pass-btn {
+        width: 1.12rem;
+        height: calc(100% - 0.02rem);
+        background: #EEF4FF;
+        border-radius: 0px 3px 3px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .16rem;
+        color: #4E5259;
+        border-top: 1px solid #E6E7EB;
+        border-right: 1px solid #E6E7EB;
+        border-bottom: 1px solid #E6E7EB;
+        cursor: pointer;
+      }
+    }
+
+    .alert {
+      margin-top: .2rem;
+
+      .remind {
+        height: .46rem;
+        background: #FDE6E9;
+        border: 1px solid rgba(240, 20, 47, 0.2);
+        opacity: 1;
+        border-radius: 3px;
+        color: #F64E60;
+        line-height: .46rem;
+        padding-left: .16rem;
+      }
+    }
+
+  }
+
+
+}
+
+// 升降级弹窗
+.upgrade-dialog {
+  .dialog-main {
+    .el-input__inner {
+      height: auto !important;
+    }
+
+    width: 100%;
+
+    .el-form {
+
+      .el-tabs {
+        .el-tabs__item {
+          font-size: .14rem;
+
+          &::after {
+            height: 1px;
+            bottom: -1px;
+          }
+        }
+      }
+
+      .el-form-item {
+        padding-left: .28rem;
+      }
+
+      .el-tabs__nav-wrap::after {
+        height: 1px;
+      }
+
+      .el-radio-button__inner {
+        padding: 0;
+        width: 1.44rem;
+        height: .4rem;
+        line-height: .4rem;
+        background: #F7F8FA;
+        color: rgba(0, 0, 0, 0.90);
+        border-color: #E6EAED;
+      }
+
+      .el-radio-button {
+        &.is-active {
+          .el-radio-button__inner {
+            background: rgba(0, 88, 255, 0.08);
+            border-color: @base;
+            color: @base;
+            box-shadow: -1px 0 0 0 @base;
+          }
+        }
+      }
+
+      .el-slider {
+        width: 6rem;
+      }
+
+      .el-slider__runway {
+        width: 4.5rem;
+        margin-right: .3rem;
+      }
+
+      .move {
+        .el-form-item__content {
+          margin-left: 0 !important;
+          display: flex;
+
+          .unit {
+            margin-left: .1rem;
+          }
+        }
+      }
+
+      .marks {
+        display: flex;
+        width: 4.5rem;
+        position: relative;
+        height: .15rem;
+        margin-top: -.24rem;
+
+        .item {
+          line-height: 1;
+          font-size: .13rem;
+          color: rgba(0, 0, 0, 0.40);
+          position: absolute;
+          white-space: nowrap;
+
+          &:nth-child(1) {
+            left: 0;
+          }
+
+          &:nth-child(2) {
+            left: 25%;
+          }
+
+          &:nth-child(3) {
+            left: 50%;
+          }
+
+          &:nth-child(4) {
+            left: 75%;
+          }
+
+          &:nth-child(5) {
+            right: 0;
+          }
+        }
+      }
+    }
+
+
+
+
+  }
+
+  .dialog-footer {
+    display: block;
+
+
+
+
+    .money-text {
+      margin-top: .1rem;
+      margin-right: 0.59rem;
+      color: rgba(30, 39, 54, 1);
+    }
+
+    .money {
+      text-align: right;
+
+    }
+
+    .money-num {
+      font-size: .28rem;
+      font-family: Helvetica;
+      font-weight: bold;
+      color: #F0142F;
+    }
+
+    .discount-codeNumber {
+      cursor: pointer;
+    }
+
+    .total-icon {
+      font-size: 0.16rem;
+      color: #1E2736;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      font-size: 0.2rem;
+      font-weight: 500;
+      color: #999999;
+    }
+
+    .footer-top {
+      text-align: right;
+      display: flex;
+      justify-content: right;
+    }
+
+    .footer-bottom {
+      display: flex;
+      margin-top: 0.41rem;
+      justify-content: right;
+    }
+  }
+
+}
+
+.os-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .item-os-img {
+    width: .24rem;
+    height: .24rem;
+  }
+}
+
+// 订购弹窗页面开始
+.dg-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .disk-card {
+    margin-top: .4rem;
+
+    .disk-label {
+      font-size: .16rem;
+      color: #1E2736;
+    }
+
+    .disk-main-card {
+      margin-top: .1rem;
+      width: 100%;
+      border: 1px solid #E6E7EB;
+      border-radius: 3px;
+
+      .no-disk-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+        color: #0058FF;
+        cursor: pointer;
+
+        .add {
+          margin-right: 5px;
+        }
+      }
+
+      .old-disk-item {
+        margin-left: .42rem;
+        margin-bottom: .2rem;
+
+        &:first-child {
+          margin-top: .3rem;
+        }
+
+        &:last-child {
+          margin-bottom: .3rem;
+        }
+
+        .disk-item-text {
+          display: inline-block;
+          width: 2.2rem;
+          font-size: .14rem;
+          color: #1E2736;
+        }
+
+        .disk-item-size {
+          color: #0058FF;
+          font-size: .14rem;
+          margin-left: .6rem;
+          margin-right: .72rem;
+        }
+
+        .del {
+          font-size: .1543rem;
+          color: #F0142F;
+          cursor: pointer;
+        }
+      }
+
+      .new-disk-item {
+        margin-left: .42rem;
+        margin-bottom: .2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:first-child {
+          margin-top: .3rem;
+        }
+
+        &:last-child {
+          margin-bottom: .3rem;
+        }
+
+        .item-name {
+          color: #1E2736;
+          margin-right: .3rem;
+        }
+
+        .item-min-size {
+          color: #999999;
+        }
+
+        .el-slider {
+          width: 4.34rem;
+          margin-left: .12rem;
+          margin-right: .12rem;
+        }
+
+        .item-max-size {
+          color: #999999;
+          margin-right: .19rem;
+        }
+
+        .del,
+        .add {
+          font-size: .18rem;
+          cursor: pointer;
+        }
+
+        .del {
+          color: #F0142F;
+          margin-right: .15rem;
+        }
+
+        .add {
+          color: #0058FF;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: .2rem;
+    }
+
+    .btn-ok {
+      margin-right: .12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 扩容弹窗页面开始
+.kr-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .dialog-main {
+    margin-top: .4rem;
+
+    .label {
+      font-size: .16rem;
+      color: #1E2736;
+      margin-bottom: .1rem;
+    }
+
+    .disk-main-card {
+      margin-top: .1rem;
+      width: 100%;
+      border: 1px solid #E6E7EB;
+      border-radius: 3px;
+
+      .old-disk-item {
+        margin-bottom: .2rem;
+        margin-left: .4rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:first-child {
+          margin-top: .3rem;
+        }
+
+        &:last-child {
+          margin-bottom: .3rem;
+        }
+
+        .disk-item-text {
+          min-width: 1rem;
+          max-width: 2rem;
+          margin-right: .3rem;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .el-slider {
+          width: 3rem;
+          margin-left: .12rem;
+          margin-right: .12rem;
+        }
+
+      }
+
+      .no-disk-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+        color: #0058FF;
+        cursor: pointer;
+
+        .add {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: .2rem;
+    }
+
+    .btn-ok {
+      margin-right: .12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 分配主机弹窗
+.engine-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .dialog-main {
+    margin-top: .4rem;
+
+    .label {
+      font-size: .16rem;
+      color: #1E2736;
+      margin-bottom: .1rem;
+    }
+
+    .engine-main-card {
+      margin-top: .1rem;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .engine-box {
+        display: flex;
+        align-items: center;
+        margin-top: 0.2rem;
+
+        .el-select {
+          .el-input__inner {
+            height: auto !important;
+          }
+        }
+
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: .2rem;
+    }
+
+    .btn-ok {
+      margin-right: .12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+.addVpc-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .dialog-main {
+    margin-top: .4rem;
+
+
+    .vpc-main-card {
+      margin-top: .1rem;
+      width: 100%;
+
+      .vpc-item {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+
+        .el-input__inner {
+          height: auto !important;
+        }
+
+        .vpc-leabel {
+          width: 80px;
+          flex-shrink: 0;
+        }
+      }
+
+      .vpc {
+        display: flex;
+
+        .custom {
+
+          .el-select,
+          .el-input-number {
+            width: .75rem;
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: .2rem;
+    }
+
+    .btn-ok {
+      margin-right: .12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+.safe-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .dialog-main {
+    margin-top: .4rem;
+
+    .safe-main-card {
+      margin-top: .1rem;
+      width: 100%;
+
+      .safe-box {
+        display: flex;
+        align-items: center;
+
+        .el-input__inner {
+          height: auto !important;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: .2rem;
+    }
+
+    .btn-ok {
+      margin-right: .12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 新增IP弹窗
+.ip-dialog {
+  .el-dialog__body {
+    padding-left: .8rem;
+    padding-right: .8rem;
+  }
+
+  .dialog-main {
+    margin-top: .4rem;
+
+    .label {
+      font-size: .16rem;
+      color: #1E2736;
+      margin-bottom: .1rem;
+    }
+
+    .ip-main-card {
+      margin-top: .1rem;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .ip-item {
+        margin-top: 0.2rem;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.15rem;
+        color: #1E2736;
+        width: 1.6rem;
+        height: 0.62rem;
+        border: 1px solid #E6E7EB;
+        border-radius: 0.03rem;
+      }
+
+      .active {
+        border: 1px solid #0058FF;
+      }
+
+      &::after {
+        content: '';
+        width: 1.6rem;
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: .2rem;
+    }
+
+    .btn-ok {
+      margin-right: .12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 创建备份、快照弹窗
+.create-bs-dialog {
+  .dialog-main {
+    .title-second-text {
+      color: #8692B0;
+    }
+
+    .label {
+      font-size: .16rem;
+      color: #1E2736;
+      margin-top: .3rem;
+      margin-bottom: .1rem;
+    }
+
+    .el-select,
+    .el-input,
+    input {
+      height: .46rem;
+      width: 100%;
+    }
+
+    .alert {
+      margin-top: .2rem;
+    }
+
+  }
+}
+
+// 还原弹窗
+.restore-dialog {
+  .dialog-main {
+    margin-top: .4rem;
+    border: 1px solid #E6E7EB;
+    display: flex;
+    flex-direction: column;
+
+    span {
+      color: #171725;
+      margin-left: .39rem;
+
+      &:first-child {
+        margin-top: .3rem;
+      }
+
+      &:last-child {
+        margin-bottom: .3rem;
+      }
+    }
+  }
+}
+
+// 删除弹窗
+.del-dialog {
+  .dialog-title {
+    color: #F0142F;
+  }
+
+  .dialog-main {
+    margin-top: .3rem;
+    display: flex;
+    flex-direction: column;
+
+    .row-1 {
+      font-size: .16rem;
+      color: #1E2736;
+    }
+
+    .row-2 {
+      margin-top: .23rem;
+      color: #F0142F;
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: column;
+
+    .btn-ok {
+      width: 100%;
+      margin-right: 0;
+      background: #F0142F;
+    }
+
+    .btn-no {
+      width: 100%;
+      margin-top: .16rem;
+      margin-left: 0 !important;
+    }
+  }
+}
+
+// 开启弹窗
+.bs-dialog {
+  .dialog-main {
+    margin-top: .3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .num {
+      margin-left: .4rem;
+      color: #1E2736;
+    }
+
+    .price {
+      margin-left: .06rem;
+      color: #0058FF;
+    }
+  }
+}
+
+.el-popover {
+  min-width: .5rem !important;
+
+  .operation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .operation-item {
+      margin-top: .05rem;
+      margin-bottom: .05rem;
+      cursor: pointer;
+    }
+  }
+}
+
+.renew-dialog {
+  .pay-content {
+    border: 1px solid #E6E7EB;
+    border-radius: 3px;
+    padding: 0.2rem 0;
+    padding-right: 0.3rem;
+
+    .pay-price {
+      display: flex;
+      flex-direction: row;
+      text-align: right;
+
+      .text {
+        margin-top: .1rem;
+        color: #1E2736;
+        margin-right: 1.43rem;
+      }
+
+      .money {
+        width: 100%;
+        font-size: .28rem;
+        font-family: Helvetica;
+        font-weight: bold;
+        color: #F0142F;
+        text-align: right;
+      }
+
+
+
+      .total-icon {
+        font-size: 0.16rem;
+        color: #1E2736;
+      }
+
+      .original-price {
+        text-decoration: line-through;
+        font-size: 0.2rem;
+        font-weight: 500;
+        color: #999999;
+      }
+
+    }
+  }
+}
+
+.code-box {
+  margin-top: 0.08rem;
+  display: flex;
+  justify-content: flex-end;
+
+  >div:nth-of-type(2) {
+    margin-left: 0.1rem;
+  }
+}
+
+.code-number-text {
+  display: flex;
+  margin-top: 0.04rem;
+  justify-content: flex-end;
+
+  .discount-codeNumber {
+    cursor: pointer;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    background: rgba(249, 149, 0, 0.2);
+    padding: 0 0.14rem;
+    color: #F99600;
+    font-weight: bold;
+    font-size: 0.14rem;
+  }
+
+  .cash-codeNumber {
+    margin-left: 0.08rem;
+    cursor: pointer;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    background: rgba(240, 20, 46, 0.12);
+    padding: 0 0.14rem;
+    color: #F0142F;
+    font-weight: bold;
+    font-size: 0.14rem;
+  }
+}

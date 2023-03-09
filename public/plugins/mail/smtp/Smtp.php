@@ -14,7 +14,7 @@ class Smtp extends Plugin
         'description' => 'Smtp',
         'status'      => 1,
         'author'      => '智简魔方',
-        'version'     => '1.0',
+        'version'     => '1.0.0',
         'help_url'     => '',//申请接口地址
     );
 

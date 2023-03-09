@@ -35,6 +35,7 @@
   position: absolute;
   top: -0.3rem;
   right: 1.84rem;
+  z-index: -1;
 }
 .main-card .main-card-top {
   display: flex;

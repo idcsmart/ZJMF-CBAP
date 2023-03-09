@@ -258,4 +258,53 @@ class HostController extends HomeBaseController
         return json($result);
     }
 
+    /**
+     * 时间 2023-02-20
+     * @title 模块暂停
+     * @desc 模块暂停
+     * @url /console/v1/host/:id/module/suspend
+     * @method  POST
+     * @author hh
+     * @version v1
+     * @param   int id - 产品ID required
+     * @param   string suspend_type - 暂停类型(overdue=到期暂停,overtraffic=超流暂停,certification_not_complete=实名未完成,other=其他) required
+     * @param   string suspend_reason - 暂停原因
+     */
+    public function suspendAccount()
+    {
+        $param = $this->request->param();
+
+        // 参数验证
+        if (!$this->validate->scene('suspend')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        // 实例化模型类
+        $HostModel = new HostModel();
+
+        $result = $HostModel->suspendAccount($param);
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-02-20
+     * @title 模块解除暂停
+     * @desc 模块解除暂停
+     * @url /console/v1/host/:id/module/unsuspend
+     * @method  POST
+     * @author wyh
+     * @version v1
+     * @param   int id - 产品ID required
+     */
+    public function unsuspendAccount()
+    {
+        $param = $this->request->param();
+
+        // 实例化模型类
+        $HostModel = new HostModel();
+
+        $result = $HostModel->unsuspendAccount($param['id']);
+        return json($result);
+    }
+
 }

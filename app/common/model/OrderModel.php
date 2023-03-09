@@ -6,6 +6,7 @@ use think\db\Where;
 use think\Model;
 use app\admin\model\PluginModel;
 use app\common\logic\ModuleLogic;
+use app\common\logic\ResModuleLogic;
 use app\common\model\NoticeSettingModel;
 
 /**
@@ -313,9 +314,10 @@ class OrderModel extends Model
         //unset($order['client_id']);
 
         $orderItems = OrderItemModel::alias('oi')
-            ->field('oi.id,oi.type,oi.description,oi.amount,h.id host_id,p.name product_name,h.name host_name,h.billing_cycle,h.billing_cycle_name,h.status host_status')
+            ->field('oi.id,oi.type,oi.description,oi.amount,h.id host_id,p.name product_name,h.name host_name,h.billing_cycle,h.billing_cycle_name,h.status host_status,uo.id upstream_order_id,uo.profit')
             ->leftjoin('host h',"h.id=oi.host_id")
             ->leftjoin('product p',"p.id=oi.product_id")
+            ->leftjoin('upstream_order uo',"uo.host_id=oi.host_id AND uo.order_id=oi.order_id")
             ->where('oi.order_id', $id)
             ->select()
             ->toArray();
@@ -327,6 +329,8 @@ class OrderModel extends Model
             $orderItems[$key]['host_name'] = $orderItem['host_name'] ?? ''; // 处理空数据
             $orderItems[$key]['billing_cycle'] = $orderItem['billing_cycle_name']; // 处理空数据
             $orderItems[$key]['host_status'] = $orderItem['host_status'] ?? ''; // 处理空数据
+            $orderItems[$key]['profit'] = amount_format($orderItem['profit']); // 处理金额格式
+            $orderItems[$key]['agent'] = !empty($orderItem['upstream_order_id']) ? 1 : 0;
 
             if(in_array($orderItem['type'], ['addon_promo_code', 'addon_idcsmart_promo_code', 'addon_idcsmart_client_level'])){
                 $orderItems[$key]['product_name'] = $orderItem['description'];
@@ -350,8 +354,10 @@ class OrderModel extends Model
 
             if($app!='home'){
                 $orderItems[$key]['edit'] = $order['status']=='Unpaid' ? ($orderItem['type']=='manual' ? 1 : 0) : 0;
+            }else{
+                unset($orderItems[$key]['profit'], $orderItems[$key]['agent']);
             }
-            unset($orderItems[$key]['billing_cycle_name'], $orderItems[$key]['type']);
+            unset($orderItems[$key]['billing_cycle_name'], $orderItems[$key]['type'], $orderItems[$key]['upstream_order_id']);
         }
 
         $order['items'] = $orderItems;
@@ -447,8 +453,14 @@ class OrderModel extends Model
             }
             $value['config_options'] = $value['config_options'] ?? [];
             
-            $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options']);
+            $upstreamProduct = UpstreamProductModel::where('product_id', $value['product_id'])->find();
 
+            if($upstreamProduct){
+                $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                $result = $ResModuleLogic->cartCalculatePrice($product, $value['config_options']);
+            }else{
+                $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options']);
+            }
             if($result['status']!=200){
                 return $result;
             }
@@ -523,7 +535,14 @@ class OrderModel extends Model
                     // 产品和对应自定义字段
                     $param['customfield']['host_customfield'][] = ['id'=>$host->id, 'customfield' => $value['customfield'] ?? []];
 
-                    $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+                    $upstreamProduct = UpstreamProductModel::where('product_id', $value['product_id'])->find();
+
+                    if($upstreamProduct){
+                        $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                        $ResModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+                    }else{
+                        $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+                    }
                     $orderItem[] = [
                         'order_id' => $order->id,
                         'client_id' => $clientId,
@@ -543,6 +562,8 @@ class OrderModel extends Model
             $OrderItemModel->saveAll($orderItem);
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
+            update_upstream_order_profit($order->id);
 
             # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
             $amount = $this->where('id',$order->id)->value('amount');
@@ -605,9 +626,15 @@ class OrderModel extends Model
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
         
-        $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['product']['config_options']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $product['id'])->find();
 
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->cartCalculatePrice($product, $param['product']['config_options']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->cartCalculatePrice($product, $param['product']['config_options']);
+        }
         if($result['status']!=200){
             return $result;
         }
@@ -691,8 +718,15 @@ class OrderModel extends Model
             return ['status'=>400, 'msg'=>lang('product_is_not_exist')];
         }
         
-        $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['product']['config_options']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $product['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->cartCalculatePrice($product, $param['product']['config_options']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->cartCalculatePrice($product, $param['product']['config_options']);
+        }
 
         if($result['status']!=200){
             return $result;
@@ -821,6 +855,8 @@ class OrderModel extends Model
             ]);
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
+            update_upstream_order_profit($order->id);
 
             # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
             $amount = $this->where('id',$order->id)->value('amount');
@@ -975,6 +1011,8 @@ class OrderModel extends Model
             ]);
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$param['customfield']??[]]);
+
+            update_upstream_order_profit($order->id);
 
             # 金额从数据库重新获取,hook里可能会修改金额,wyh改 20220804
             $amount = $this->where('id',$order->id)->value('amount');
@@ -1199,6 +1237,8 @@ class OrderModel extends Model
 					'order_id'=>$param['id'],//订单ID
 				],		
 			]);
+
+            update_upstream_order_profit($order->id);
 			
             $this->commit();
         } catch (\Exception $e) {
@@ -1287,6 +1327,8 @@ class OrderModel extends Model
                     'order_id'=>$param['id'],//订单ID
                 ],      
             ]);
+
+            update_upstream_order_profit($order->id);
             
             $this->commit();
         } catch (\Exception $e) {
@@ -1365,6 +1407,8 @@ class OrderModel extends Model
                     'order_id'=>$id,//订单ID
                 ],      
             ]);
+
+            update_upstream_order_profit($order->id);
             
             $this->commit();
         } catch (\Exception $e) {
@@ -1521,6 +1565,10 @@ class OrderModel extends Model
             $this->destroy($id);
             // 删除订单子项
             OrderItemModel::destroy(function($query) use($id){
+                $query->where('order_id', $id);
+            });
+            // 删除上游订单
+            UpstreamOrderModel::destroy(function($query) use($id){
                 $query->where('order_id', $id);
             });
             if($delete_host==1){
@@ -2025,6 +2073,53 @@ class OrderModel extends Model
         return ['status' => 200, 'msg' => lang('update_success')];
     }
 
+    # 更新上游订单利润
+    public function updateUpstreamOrderProfit($id){
+        $OrderItemModel = new OrderItemModel();
+        $orderItems = $OrderItemModel->where('order_id', $id)->select()->toArray();
+        $upstreamOrder = UpstreamOrderModel::where('order_id', $id)->select()->toArray();
+        if(!empty($upstreamOrder)){
+            $hostAmountArr = [];
+            $hostReduceArr = [];
+            $amount = 0;
+            $reduce = 0;
+            foreach ($orderItems as $key => $value) {
+                if($value['amount']>=0){
+                    $amount += $value['amount'];
+                    if(!empty($value['host_id'])){
+                        $hostAmountArr[$value['host_id']] = ($hostAmountArr[$value['host_id']] ?? 0) + $value['amount']; 
+                    }
+                }else{
+                    if(!empty($value['host_id'])){
+                        $hostReduceArr[$value['host_id']] = ($hostReduceArr[$value['host_id']] ?? 0) + $value['amount']; 
+                    }else{
+                        $reduce += $value['amount'];
+                    }
+                }
+                
+            }
+
+            foreach ($hostAmountArr as $key => $value) {
+                if($amount>0){
+                    $value = bcadd($value + ($hostReduceArr[$key] ?? 0), ($value/$amount*$reduce), 2);
+                }else{
+                    $value = 0;
+                }
+                $hostAmountArr[$key] = $value;
+            }
+            
+            foreach ($upstreamOrder as $key => $value) {
+                $value['original_price'] = $value['amount'] - $value['profit'];
+                $amount = $hostAmountArr[$value['host_id']] ?? 0;
+                UpstreamOrderModel::update([
+                    'amount' => $amount, 
+                    'profit' => bcsub($amount, $value['original_price'], 2)
+                ], ['id' => $value['id']]);
+            }
+        }
+        return true;
+    }
+
     # 处理已支付订单
     public function processPaidOrder($id)
     {
@@ -2071,7 +2166,7 @@ class OrderModel extends Model
 				],		
 			]);			
 		}
-
+        update_upstream_order_profit($id);
         foreach($orderItems as $orderItem){
             $type = $orderItem['type'];
 			
@@ -2214,6 +2309,62 @@ class OrderModel extends Model
             'update_time' => time()
         ], ['id' => $id]);
 
+        # 升降级
+        if($upgrade['type']=='product'){
+            // 获取接口
+            $product = ProductModel::find($upgrade['rel_id']);
+            if($product['type']=='server_group'){
+                $server = ServerModel::where('server_group_id', $product['rel_id'])->where('status', 1)->find();
+                $serverId = $server['id'] ?? 0;
+            }else{
+                $serverId = $product['rel_id'];
+            }
+
+            $host = $this->find($upgrade['host_id']);
+            // wyh 20210109 改 一次性/免费可升级后
+            if($host['billing_cycle']=='onetime'){
+                if ($product['pay_type']=='onetime'){
+                    $hostDueTime = 0;
+                }elseif ($product['pay_type']=='free' && $upgrade['billing_cycle_time']==0){
+                    $hostDueTime = 0;
+                }else{
+                    $hostDueTime = time()+$upgrade['billing_cycle_time'];
+                }
+            }else if($host['billing_cycle']=='free' && $host['billing_cycle_time']==0){
+                if ($product['pay_type']=='onetime'){
+                    $hostDueTime = 0;
+                }elseif ($product['pay_type']=='free' && $upgrade['billing_cycle_time']==0){
+                    $hostDueTime = 0;
+                }else{
+                    $hostDueTime = time()+$upgrade['billing_cycle_time'];
+                }
+            }else{
+                if ($product['pay_type']=='onetime'){
+                    $hostDueTime = 0;
+                }elseif ($product['pay_type']=='free' && $upgrade['billing_cycle_time']==0){
+                    $hostDueTime = 0;
+                }else{ # 周期到周期,不变更
+                    $hostDueTime = $host['due_time'];
+                }
+            }
+
+            HostModel::update([
+                'product_id' => $upgrade['rel_id'],
+                'server_id' => $serverId,
+                'first_payment_amount' => $upgrade['price'],
+                'renew_amount' => ($product['pay_type']=='recurring_postpaid' || $product['pay_type']=='recurring_prepayment') ? $upgrade['renew_price'] : 0,
+                'billing_cycle' => $product['pay_type'],
+                'billing_cycle_name' => $upgrade['billing_cycle_name'],
+                'billing_cycle_time' => $upgrade['billing_cycle_time'],
+                'due_time' => $hostDueTime,
+            ],['id' => $upgrade['host_id']]);
+        }else if($upgrade['type']=='config_option'){
+            $host = HostModel::find($upgrade['host_id']);
+            HostModel::update([
+                'first_payment_amount' => $upgrade['price'],
+                'renew_amount' => ($host['billing_cycle']=='recurring_postpaid' || $host['billing_cycle']=='recurring_prepayment') ? $upgrade['renew_price'] : 0,
+            ],['id' => $upgrade['host_id']]);
+        }
         
 		# 添加到定时任务
 		add_task([

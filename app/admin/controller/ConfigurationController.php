@@ -530,5 +530,69 @@ class ConfigurationController extends AdminBaseController
 
         return json($result);
     }
+
+    /**
+     * 时间 2023-02-28
+     * @title 获取信息配置
+     * @desc 获取信息配置
+     * @url /admin/v1/configuration/info
+     * @method  GET
+     * @author theworld
+     * @version v1
+     * @return string put_on_record - 备案信息
+     * @return string enterprise_name - 企业名称
+     * @return string enterprise_telephone - 企业电话
+     * @return string enterprise_mailbox - 企业邮箱
+     * @return string enterprise_qrcode - 企业二维码
+     * @return string online_customer_service_link - 在线客服链接
+     */
+    public function infoList()
+    {
+        //实例化模型类
+        $ConfigurationModel = new ConfigurationModel();
+
+        //获取信息配置
+        $data = $ConfigurationModel->infoList();
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+            'data' => $data,
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-02-28
+     * @title 保存信息配置
+     * @desc 保存信息配置
+     * @url /admin/v1/configuration/info
+     * @method  PUT
+     * @author theworld
+     * @version v1
+     * @param string put_on_record - 备案信息 required
+     * @param string enterprise_name - 企业名称 required
+     * @param string enterprise_telephone - 企业电话 required
+     * @param string enterprise_mailbox - 企业邮箱 required
+     * @param string enterprise_qrcode - 企业二维码 required
+     * @param string online_customer_service_link - 在线客服链接 required
+     */
+    public function infoUpdate()
+    {
+        //接收参数
+        $param = $this->request->param();
+
+        //参数验证
+        if (!$this->validate->scene('info_update')->check($param)){
+            return json(['status' => 400 , 'msg' => lang($this->validate->getError())]);
+        }
+
+        //实例化模型类
+        $ConfigurationModel = new ConfigurationModel();
+
+        //保存信息配置
+        $result = $ConfigurationModel->infoUpdate($param);
+
+        return json($result);
+    }
 }
 

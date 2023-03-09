@@ -3,20 +3,15 @@
   font-size: 0.28rem;
   margin-bottom: 0.4rem;
 }
-
-
-
 .table-name {
   display: flex;
   align-items: center;
 }
-
 .goods-name {
   color: #171725;
   font-weight: bold;
   font-size: 0.16rem;
 }
-
 .goods-info {
   margin-bottom: 0.1rem;
   display: flex;
@@ -25,23 +20,18 @@
   flex-wrap: wrap;
   font-size: 0.14rem;
 }
-
 .goodsInfo-price {
   color: #1E2736;
 }
-
 .goodsInfo-name {
   color: #757575;
 }
-
 .radio-box {
   /* width: 80%; */
 }
-
 .table-content {
   font-size: 0.14rem;
 }
-
 .goods-table {
   margin-top: 0.16rem;
   width: 100%;
@@ -50,60 +40,47 @@
   border-radius: 0.03rem;
   border-collapse: collapse;
 }
-
 .info-box {
   width: 90%;
 }
-
 .goods-table thead {
   line-height: 0.46rem;
   background: #EEF4FF;
   height: 0.46rem;
   color: #757575;
 }
-
 .goods-table tbody tr td {
   padding-top: 0.29rem;
   padding-bottom: 0.3rem;
 }
-
 .description-box {
   width: 5.5rem;
 }
-
 .price-box,
 .num-box {
   width: 2.4rem;
 }
-
 .total-box {
   width: 1rem;
 }
-
 .delete-btn {
   cursor: pointer;
   font-size: 0.18rem;
   color: #F0142F;
 }
-
 .item-price {
   color: #171725;
 }
-
 .item-total {
   font-weight: bold;
   color: #171725;
 }
-
 .shopping-goods {
   margin-bottom: 0.4rem;
 }
-
 .goods-box {
   padding-bottom: 2.6rem;
 }
-
-
 .el-footer {
   width: calc(100vw - 160px);
   padding-left: 2.1rem;
@@ -118,7 +95,6 @@
   background-color: #fff;
   z-index: 9;
 }
-
 .footer-box {
   width: 100%;
   height: 100%;
@@ -128,65 +104,52 @@
   align-items: center;
   justify-content: space-between;
 }
-
 .goodsInfo-type {
   overflow: hidden;
   text-overflow: ellipsis;
   /* white-space: nowrap; */
   color: #1E2736;
 }
-
 .footer-left {
   color: #333333;
   font-size: 0.18rem;
   display: flex;
   justify-content: start;
 }
-
 .radio-box .el-radio .el-radio__input .el-radio__inner {
   width: 0.24rem;
   height: 0.24rem;
   background-color: #fff;
 }
-
 .radio-box .el-radio .el-radio__input .el-radio__inner::after {
   width: 0.12rem;
   height: 0.12rem;
   background: #0058FF;
 }
-
 .radio-box .el-radio {
   margin-bottom: 0.2rem;
 }
-
 .footer-left .radio-box .el-radio .el-radio__label {
   font-size: 0.16rem;
   color: #1E2736;
 }
-
 .footer-right {
   font-size: 0.14rem;
   color: #1E2736;
   display: flex;
 }
-
 .total-price {
   font-weight: bold;
   font-size: 0.28rem;
   color: #F0142F;
 }
-
 .text-red {
   color: #FCAF55;
 }
-
 .btn-box {
   position: relative;
   margin-left: 0.4rem;
 }
-
-
-
 .pay-text {
   white-space: nowrap;
   margin-right: 0.31rem;
@@ -194,7 +157,6 @@
   font-size: 0.18rem;
   font-weight: 300;
 }
-
 .buy-btn {
   width: 2.04rem;
   height: 0.46rem;
@@ -204,65 +166,52 @@
   font-weight: 500;
   color: #FFFFFF;
 }
-
 .delect-btn {
   margin: 0 0.4rem;
 }
-
 .all-check .el-checkbox__label {
   color: #333333;
   font-size: 0.18rem;
 }
-
 .qty-num {
   color: #4E5259;
   height: 0.13rem;
   margin-top: 0.1rem;
 }
-
 .qty-tips {
   margin-top: 0.2rem;
   font-size: 0.13rem;
   color: #3699FF;
 }
-
 .check-box {
   margin-top: 0.1rem;
 }
-
 .bule-text {
   cursor: pointer;
   color: #0058FF;
 }
-
 .totalprice-box {
   white-space: nowrap;
 }
-
 .red-text {
   color: #F0142F;
 }
-
 .original-price {
   text-decoration: line-through;
   color: #999999;
 }
-
 .discount-codeNumber {
   margin-top: 0.08rem;
   font-size: 0.14rem;
   font-weight: bold;
   color: #F99600;
 }
-
 .cash-box {
   margin-top: 0.08rem;
 }
-
 .remove-discountCode {
   margin-left: 0.09rem;
 }
-
 .cash-codeNumber {
   margin-top: 0.08rem;
   cursor: pointer;
@@ -274,49 +223,64 @@
   font-weight: bold;
   font-size: 0.14rem;
 }
-
 @media screen and (max-width: 750px) {
+  .footer-box {
+    display: block;
+  }
+  .table-content {
+    overflow-x: auto;
+  }
+  .description-box {
+    min-width: 5.5rem;
+  }
+  .price-box {
+    min-width: 2.4rem;
+  }
+  .num-box {
+    min-width: 2.4rem;
+  }
+  .total-box {
+    min-width: 2.4rem;
+  }
   .el-footer {
-    padding: 0 0.3rem;
+    padding: 0.3rem;
     width: 100%;
     height: auto !important;
   }
-
   .el-input .el-input__inner {
     font-size: inherit !important;
   }
-
   .bule-text {
     cursor: pointer;
     color: #0058FF;
   }
-
   .check-box {
     margin-top: 0.1rem;
   }
-
   .footer-left {
-    display: flex;
+    display: none;
     flex-direction: column;
     color: #333333;
     font-size: 0.18rem;
   }
-
+  .btn-box {
+    display: flex;
+    margin-left: 0;
+    flex-direction: column-reverse;
+    align-items: self-end;
+  }
   .delect-btn {
     margin: 0;
   }
-
   .footer-right {
     font-size: 0.14rem;
     color: #1E2736;
-    display: flex;
-    flex-direction: column;
+    display: block;
+    text-align: right;
   }
-
   .delect-goods {
     color: #F0142F;
   }
-
   .buy-btn {
     margin-left: 0;
     margin-top: 0.2rem;
@@ -328,9 +292,4 @@
     font-weight: 500;
     color: #FFFFFF;
   }
-
-  .total-box {
-    min-width: 1.5rem;
-  }
-
 }

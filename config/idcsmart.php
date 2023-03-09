@@ -59,6 +59,7 @@ return [
         'sms' => WEB_ROOT . 'plugins/sms/',
         'mail' => WEB_ROOT . 'plugins/mail/',
         'server' => WEB_ROOT . 'plugins/server/',
+        'reserver' => WEB_ROOT . 'plugins/reserver/',
     ],
     // 订单类型
     'order_type' => [

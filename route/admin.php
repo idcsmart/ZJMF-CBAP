@@ -13,7 +13,7 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('login', 'admin/public/loginInfo'); # 登录信息
     Route::post('login', 'admin/public/login'); # 登录
     Route::get('captcha', 'admin/public/captcha'); # 图形验证码
-    Route::get('test', 'admin/public/test'); #测试接口
+    //Route::get('test', 'admin/public/test'); #测试接口
 })
     ->allowCrossDomain([
         'Access-Control-Allow-Origin'        => $origin,
@@ -126,6 +126,8 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::put('configuration/cron', 'admin/Configuration/cronUpdate'); # 保存定时任务
     Route::get('configuration/theme', 'admin/Configuration/themeList'); # 获取主题设置
     Route::put('configuration/theme', 'admin/Configuration/themeUpdate'); # 保存主题设置
+    Route::get('configuration/info', 'admin/Configuration/infoList'); # 获取信息配置
+    Route::put('configuration/info', 'admin/Configuration/infoUpdate'); # 保存信息配置
 	
 	# 邮件模板管理
     Route::get('notice/email/template', 'admin/NoticeEmail/emailTemplateList'); # 获取邮件模板
@@ -183,6 +185,9 @@ Route::group(DIR_ADMIN.'/v1',function (){
     Route::get('product/:id/all_config_option', 'admin/product/moduleAllConfigOption'); # 获取商品所有配置项
     Route::get('module/:module/product', 'admin/product/moduleProductList'); # 根据模块获取商品
     Route::get('product/search', 'admin/product/productListSearch'); # 商品搜索
+    Route::put('product/agentable', 'admin/product/saveAgentableProduct'); # 保存可代理商品
+    Route::get('res_module/:module/product', 'admin/product/resModuleProductList'); # 根据上游模块获取商品
+
 
     # 公共接口
     Route::get('gateway', 'admin/common/gateway'); # 支付接口
@@ -228,6 +233,59 @@ Route::group(DIR_ADMIN.'/v1',function (){
     # 应用商店
     Route::post('app_market/set_token', 'admin/appMarket/setToken'); # 设置token
     Route::get('app_market/app/version', 'admin/appMarket/getNewVersion'); # 安装应用
+
+    # 供应商
+    Route::get('supplier', 'admin/supplier/list');
+    Route::get('supplier/:id', 'admin/supplier/index');
+    Route::post('supplier', 'admin/supplier/create');
+    Route::put('supplier/:id', 'admin/supplier/update');
+    Route::delete('supplier/:id', 'admin/supplier/delete');
+    Route::get('supplier/:id/status', 'admin/supplier/status');
+    Route::get('supplier/:id/product', 'admin/supplier/product');
+
+    # 上游产品
+    Route::get('upstream/host', 'admin/upstreamHost/list');
+    Route::get('upstream/host/:id', 'admin/upstreamHost/index');
+
+    # 上游订单
+    Route::get('upstream/order', 'admin/upstreamOrder/list');
+    Route::get('upstream/sell_info', 'admin/upstreamOrder/sellInfo');
+
+    # 上游商品
+    Route::get('upstream/product', 'admin/upstreamProduct/list');
+    Route::get('upstream/product/:id', 'admin/upstreamProduct/index');
+    Route::post('upstream/product', 'admin/upstreamProduct/create');
+    Route::put('upstream/product/:id', 'admin/upstreamProduct/update');
+    Route::get('upstream/recommend/product', 'admin/upstreamProduct/recommendProductList');
+    Route::post('upstream/recommend/product', 'admin/upstreamProduct/agentRecommendProduct');
+
+    # 意见反馈
+    Route::get('feedback', 'admin/feedback/feedbackList');
+    Route::get('feedback/type', 'admin/feedback/feedbackTypeList');
+    Route::post('feedback/type', 'admin/feedback/createFeedbackType');
+    Route::put('feedback/type/:id', 'admin/feedback/updateFeedbackType');
+    Route::delete('feedback/type/:id', 'admin/feedback/deleteFeedbackType');
+
+    # 方案咨询
+    Route::get('consult', 'admin/consult/list');
+
+    # 友情链接
+    Route::get('friendly_link', 'admin/friendlyLink/list');
+    Route::post('friendly_link', 'admin/friendlyLink/create');
+    Route::put('friendly_link/:id', 'admin/friendlyLink/update');
+    Route::delete('friendly_link/:id', 'admin/friendlyLink/delete');
+
+    # 荣誉资质
+    Route::get('honor', 'admin/honor/list');
+    Route::post('honor', 'admin/honor/create');
+    Route::put('honor/:id', 'admin/honor/update');
+    Route::delete('honor/:id', 'admin/honor/delete');
+
+    # 合作伙伴
+    Route::get('partner', 'admin/partner/list');
+    Route::post('partner', 'admin/partner/create');
+    Route::put('partner/:id', 'admin/partner/update');
+    Route::delete('partner/:id', 'admin/partner/delete');
 })  
     ->allowCrossDomain([
             'Access-Control-Allow-Origin'        => $origin,

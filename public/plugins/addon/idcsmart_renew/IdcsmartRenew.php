@@ -25,7 +25,7 @@ class IdcsmartRenew extends Plugin
         'title'       => '续费',
         'description' => '续费',
         'author'      => '智简魔方',  //开发者
-        'version'     => '1.0',      // 版本号
+        'version'     => '1.0.0',      // 版本号
     );
 
     # 定义此变量,表示不需要默认导航

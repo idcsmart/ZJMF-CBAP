@@ -8,7 +8,7 @@
     const fir = location.pathname.split('/')[1]
     const str = `${host}/${fir}/`
     new Vue({
-      data () {
+      data() {
         return {
           baseUrl: str,
           id: '',
@@ -20,6 +20,7 @@
           delVisible: false,
           hover: true,
           diaTitle: '',
+          isAgent: false,
           serverParams: {
             page: 1,
             limit: 20
@@ -46,8 +47,9 @@
             billing_cycle: '',
             active_time: '',
             due_time: '',
-            status: ''
+            status: '',
           },
+          upData: {},
           status: [],
           rules: {
             name: [
@@ -91,6 +93,12 @@
             { value: 'recurring_prepayment', label: lang.recurring_prepayment },
             { value: 'recurring_postpaid', label: lang.recurring_postpaid },
           ],
+          cycleObj: {
+            free: lang.free,
+            onetime: lang.onetime,
+            recurring_prepayment: lang.recurring_prepayment,
+            recurring_postpaid: lang.recurring_postpaid
+          },
           done: false,
           popupProps: {
             overlayStyle: (trigger) => ({ width: `${trigger.offsetWidth}px` }),
@@ -177,20 +185,20 @@
       watch: {
         'formData.type': {
           immediate: true,
-          handler (val) {
+          handler(val) {
             this.curList = val === 'server' ? this.serverList : this.serverGroupList
           }
         },
-        serverList () {
+        serverList() {
           this.done = this.serverList.length === this.total
         },
         curId: {
-          handler (val) {
+          handler(val) {
             this.curRenew = this.renewList[val - 1]
           }
         }
       },
-      created () {
+      created() {
         const query = location.href.split('?')[1].split('&')
         this.client_id = this.getQuery(query[0]) * 1
         this.formData.id = this.id = this.getQuery(query[1])
@@ -198,6 +206,7 @@
         this.getClintList()
         this.getProDetail()
         this.getproModule()
+        this.getUpHostDetail()
         this.getPlugin()
 
         const navList = JSON.parse(localStorage.getItem('backMenus'))
@@ -211,24 +220,32 @@
         this.getUserDetail()
       },
       computed: {
-        disabled () {
+        disabled() {
           return this.formData.due_time === '' && this.formData.billing_cycle === 'onetime'
         },
-        calcShow () {
+        calcShow() {
           return (data) => {
             return `#${data.id}-` + (data.username ? data.username : (data.phone ? data.phone : data.email)) + (data.company ? `(${data.company})` : '')
           }
         },
-        isExist () {
+        isExist() {
           return !this.clientList.find(item => item.id === this.clientDetail.id)
         }
       },
       methods: {
-        changeUser (id) {
+        changeUser(id) {
           this.id = id
           location.href = `client_host.html?client_id=${this.client_id}`
         },
-        async getClintList () {
+        async getUpHostDetail() {
+          try {
+            const res = await upHostDetail(this.id)
+            this.upData = res.data.data.host.host
+          } catch (error) {
+            console.log(error.data.msg)
+          }
+        },
+        async getClintList() {
           try {
             this.searchLoading = true
             const res = await getClientList(this.clinetParams)
@@ -240,22 +257,22 @@
             console.log(error.data.msg)
           }
         }, // 远程搜素
-        remoteMethod (key) {
+        remoteMethod(key) {
           this.clinetParams.keywords = key
           this.getClintList()
         },
-        filterMethod (search, option) {
+        filterMethod(search, option) {
           return option
         },
         // 获取用户详情
-        async getUserDetail () {
+        async getUserDetail() {
           try {
             const res = await getClientDetail(this.client_id);
             this.clientDetail = res.data.data.client;
           } catch (error) { }
         },
         /* 1-31 */
-        async getBtns () {
+        async getBtns() {
           try {
             const res = await getMoudleBtns({
               id: this.id
@@ -266,7 +283,7 @@
           }
         },
         /* 1-7 start */
-        handlerMoudle (type) {
+        handlerMoudle(type) {
           this.optType = type
           switch (type) {
             case 'create':
@@ -290,7 +307,7 @@
           }
 
         },
-        confirmModule () {
+        confirmModule() {
           switch (this.optType) {
             case 'create':
               return this.createHandler();
@@ -301,7 +318,7 @@
           }
         },
         // 开通
-        async createHandler () {
+        async createHandler() {
           try {
             this.moduleLoading = true
             const res = await createModule({
@@ -309,6 +326,7 @@
             })
             this.$message.success(res.data.msg)
             this.getProDetail()
+            this.getUpHostDetail()
             this.getBtns()
             this.moduleLoading = false
             this.moduleVisible = false
@@ -319,7 +337,7 @@
           }
         },
         // 取消停用
-        async unsuspendHandler () {
+        async unsuspendHandler() {
           try {
             this.moduleLoading = true
             const res = await unsuspendModule({
@@ -327,6 +345,7 @@
             })
             this.$message.success(res.data.msg)
             this.getProDetail()
+            this.getUpHostDetail()
             this.getBtns()
             this.moduleLoading = false
             this.moduleVisible = false
@@ -337,7 +356,7 @@
           }
         },
         // 删除
-        async deleteHandler () {
+        async deleteHandler() {
           try {
             this.moduleLoading = true
             const res = await delModule({
@@ -346,6 +365,8 @@
             this.$message.success(res.data.msg)
             this.getProDetail()
             this.getBtns()
+            this.getUpHostDetail()
+
             this.moduleLoading = false
             this.moduleVisible = false
           } catch (error) {
@@ -355,13 +376,13 @@
           }
         },
         // 暂停
-        handlerSuspend () {
+        handlerSuspend() {
           this.suspendForm.suspend_type = 'overdue'
           this.suspendForm.suspend_reason = ''
           this.suspendVisible = true
         },
         // 提交停用
-        async onSubmit () {
+        async onSubmit() {
           try {
             this.moduleLoading = true
             const res = await suspendModule({
@@ -372,6 +393,8 @@
             this.$message.success(res.data.msg)
             this.getProDetail()
             this.getBtns()
+            this.getUpHostDetail()
+
             this.moduleLoading = false
             this.suspendVisible = false
           } catch (error) {
@@ -380,7 +403,7 @@
           }
         },
         /* 1-7 end */
-        async getPlugin () {
+        async getPlugin() {
           try {
             const res = await getAddon();
             const temp = res.data.data.list
@@ -394,7 +417,7 @@
           } catch (error) { }
         },
         // 获取优惠码使用记录
-        async getPromoList () {
+        async getPromoList() {
           try {
             const res = await proPromoRecord({ id: this.id })
             this.promoList = res.data.list
@@ -402,29 +425,32 @@
             console.log(error)
           }
         },
-        jumpOrder (row) {
+        jumpOrder(row) {
           location.href = str + `order.html?order_id=${row.order_id}`
         },
         /* 续费 */
-        renewDialog () {
-          this.renewVisible = true
+        renewDialog() {
           this.getRenewPage()
         },
         // 获取续费页面
-        async getRenewPage () {
+        async getRenewPage() {
           try {
             const res = await getSingleRenew(this.formData.id)
             this.renewList = res.data.data.host.map((item, index) => {
               item.id = index + 1
               return item
             })
+            if (this.renewList.length === 0) {
+              return this.$message.warning(lang.renew_tip)
+            }
+            this.renewVisible = true
             this.curRenew = this.renewList[0]
           } catch (error) {
             this.$message.error(error.data.msg)
           }
         },
         // 向左移动
-        subIndex () {
+        subIndex() {
           let num = this.curId
           if (num > 1) {
             num -= 1
@@ -439,7 +465,7 @@
           }
         },
         // 向右移动
-        addIndex () {
+        addIndex() {
           let num = this.curId
           if (num < this.renewList.length) {
             num += 1
@@ -453,10 +479,10 @@
             this.showId = newIds
           }
         },
-        checkCur (item) {
+        checkCur(item) {
           this.curId = item.id
         },
-        async submitRenew () {
+        async submitRenew() {
           try {
             this.submitLoading = true
             const temp = JSON.parse(JSON.stringify(this.curRenew))
@@ -471,19 +497,21 @@
             this.submitLoading = false
             this.renewVisible = false
             this.getProDetail()
+            this.getUpHostDetail()
+
           } catch (error) {
             this.submitLoading = false
             this.$message.error(error.data.msg)
           }
         },
-        back () {
+        back() {
           this.delVisible = true
         },
         // 删除
-        deltePro (row) {
+        deltePro(row) {
           this.delVisible = true
         },
-        async onConfirm () {
+        async onConfirm() {
           try {
             const res = await deletePro(this.id)
             this.$message.success(res.data.msg)
@@ -496,27 +524,27 @@
             this.$message.error(error.data.msg)
           }
         },
-        getQuery (val) {
+        getQuery(val) {
           return val.split('=')[1]
         },
-        checkTime (val) {
+        checkTime(val) {
           if (moment(val).unix() > moment(this.formData.due_time).unix()) {
             return { result: false, message: lang.verify6, type: 'error' }
           }
           return { result: true }
         },
-        checkTime1 (val) {
+        checkTime1(val) {
           if (moment(val).unix() < moment(this.formData.active_time).unix()) {
             return { result: false, message: lang.verify6, type: 'error' }
           }
           return { result: true }
         },
-        changeActive () {
+        changeActive() {
           this.$refs.userInfo.validate({
             fields: ['active_time', 'due_time']
           });
         },
-        async getproModule () {
+        async getproModule() {
           try {
             const res = await getproModule(this.id)
             this.isShowModule = res.data.data.content ? true : false
@@ -526,7 +554,7 @@
           } catch (error) {
           }
         },
-        async getProList () {
+        async getProList() {
           try {
             const res = await getProList()
             const temp = res.data.data.list
@@ -542,12 +570,12 @@
           } catch (error) {
           }
         },
-        changeType (type) {
+        changeType(type) {
           this.formData.type = type
           this.formData.rel_id = ''
         },
         // 修改
-        updateUserInfo () {
+        updateUserInfo() {
           this.$refs.userInfo.validate().then(async res => {
             if (res !== true) {
               this.$message.error(res.name[0].message)
@@ -567,6 +595,7 @@
               const res = await updateProduct(this.id, params)
               this.$message.success(res.data.msg)
               this.getProDetail()
+              this.getUpHostDetail()
             } catch (error) {
               this.$message.error(error.data.msg)
             }
@@ -575,7 +604,7 @@
           })
         },
         // 获取用户详情
-        async getProDetail () {
+        async getProDetail() {
           try {
             let inter = await getInterface(this.serverParams)
             this.serverList = inter.data.data.list
@@ -588,6 +617,7 @@
 
             const res = await getProductDetail(this.id)
             const temp = res.data.data.host
+            this.isAgent = res.data.data?.host.agent === 1
             Object.assign(this.formData, temp)
             this.formData.active_time = temp.active_time ? moment(temp.active_time * 1000).format('YYYY-MM-DD HH:mm:ss') : ''
             this.formData.due_time = temp.due_time ? moment(temp.due_time * 1000).format('YYYY-MM-DD HH:mm:ss') : ''
@@ -604,7 +634,7 @@
           }
         },
         // 续费
-        async renew () {
+        async renew() {
           try {
             const res = await getSingleRenew(this.id)
             console.log(res)

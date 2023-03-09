@@ -12,13 +12,13 @@
       created() {
         this.getCommonData();
       },
-      mounted() {},
+      mounted() { },
       updated() {
         // // 关闭loading
         // document.getElementById('mainLoading').style.display = 'none';
         // document.getElementsByClassName('template')[0].style.display = 'block'
       },
-      destroyed() {},
+      destroyed() { },
       data() {
         return {
           isShowAPI: false,
@@ -205,15 +205,15 @@
           }
         },
         // token 复制
-        copyToken(token) {
+        copyToken(apiData) {
           if (navigator.clipboard && window.isSecureContext) {
             // navigator clipboard 向剪贴板写文本
             this.$message.success("复制成功");
-            return navigator.clipboard.writeText(token);
+            return navigator.clipboard.writeText(`token:${apiData.token}, 私钥:${apiData.private_key},请务必妥善保管，请勿泄漏给他人。`);
           } else {
             // 创建text area
             const textArea = document.createElement("textarea");
-            textArea.value = token;
+            textArea.value = `token:${apiData.token}, 私钥:${apiData.private_key},请务必妥善保管，请勿泄漏给他人。`;
             // 使text area不在viewport，同时设置不可见
             document.body.appendChild(textArea);
             textArea.focus();

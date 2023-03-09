@@ -74,7 +74,9 @@ abstract class Dispatch
 		}else if(strpos($this->rule->getRoute(),"home")!==false){
 			//$this->app->setNamespace('app\\home');
 			$this->setApp('home');
-		}
+		}else if(strpos($this->rule->getRoute(),"api")!==false){ // wyh 20230215新增
+            $this->setApp('api');
+        }
 		//end 
         // 执行路由后置操作
         $this->doRouteAfter();

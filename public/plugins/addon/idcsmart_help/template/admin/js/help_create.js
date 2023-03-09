@@ -30,6 +30,7 @@
             title: '',
             addon_idcsmart_help_type_id: '',
             content: '',
+            keywords:''
           },
           attachment: [],
           files: [],

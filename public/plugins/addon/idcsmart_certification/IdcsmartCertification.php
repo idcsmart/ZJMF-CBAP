@@ -24,7 +24,7 @@ class IdcsmartCertification extends Plugin
         'title'       => '实名认证',
         'description' => '实名认证',
         'author'      => '智简魔方',  //开发者
-        'version'     => '1.0',      // 版本号
+        'version'     => '1.0.0',      // 版本号
     );
 
     # 插件安装

@@ -246,3 +246,9 @@
   word-wrap: break-word;
   overflow: hidden;
 }
+@media screen and (max-width: 750px) {
+  .searchbar .el-input {
+    width: auto !important;
+    margin-left: 0;
+  }
+}

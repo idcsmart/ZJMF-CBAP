@@ -2464,7 +2464,7 @@ new Vue({
                     let y = []
                     list.forEach(item => {
                         x.push(formateDate(item.time * 1000))
-                        y.push((item.value * 100).toFixed(2))
+                        y.push((item.value ).toFixed(2))
                     });
 
                     const cpuOption = {
@@ -2602,8 +2602,8 @@ new Vue({
                     list.forEach(item => {
                         xAxis.push(formateDate(item.time * 1000))
                         yAxis.push((item.read_bytes / 1024 / 1024).toFixed(2));
-                        yAxis2.push((item.read_iops / 1024 / 1024).toFixed(2));
-                        yAxis3.push(item.write_bytes.toFixed(2));
+                        yAxis2.push(item.read_iops.toFixed(2));
+                        yAxis3.push((item.write_bytes / 1024 / 1024).toFixed(2));
                         yAxis4.push(item.write_iops.toFixed(2));
                     });
 
@@ -2638,13 +2638,13 @@ new Vue({
                                 areaStyle: {},
                             },
                             {
-                                name: "写入速度(MB/s)",
+                                name: "读取IOPS",
                                 data: yAxis2,
                                 type: "line",
                                 areaStyle: {},
                             },
                             {
-                                name: "读取IOPS",
+                                name: "写入速度(MB/s)",
                                 data: yAxis3,
                                 type: "line",
                                 areaStyle: {},
@@ -2686,11 +2686,9 @@ new Vue({
 
                     list.forEach(item => {
                         xAxis.push(formateDate(item.time * 1000))
-                        yAxis.push((item.total / 1024 / 1024).toFixed(2));
-                        yAxis2.push((item.used / 1024 / 1024).toFixed(2));
+                        yAxis.push((item.total / 1024 / 1024 / 1024).toFixed(2));
+                        yAxis2.push((item.used / 1024 / 1024 / 1024).toFixed(2));
                     });
-
-
                     const options = {
                         title: {
                             text: '内存用量',
@@ -2715,13 +2713,13 @@ new Vue({
                         },
                         series: [
                             {
-                                name: "总内存(MB)",
+                                name: "总内存(GB)",
                                 data: yAxis,
                                 type: "line",
                                 areaStyle: {},
                             },
                             {
-                                name: "内存使用量(MB)",
+                                name: "内存使用量(GB)",
                                 data: yAxis2,
                                 type: "line",
                                 areaStyle: {},

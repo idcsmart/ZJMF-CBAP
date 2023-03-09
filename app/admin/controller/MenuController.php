@@ -122,6 +122,9 @@ class MenuController extends AdminBaseController
      * @return array module - 模块
      * @return string module[].name - 模块名称
      * @return string module[].display_name - 模块显示名称
+     * @return array res_module - 上游模块
+     * @return string res_module[].name - 上游模块名称
+     * @return string res_module[].display_name - 上游模块显示名称
      */
     public function getHomeMenu()
     {
@@ -189,23 +192,23 @@ class MenuController extends AdminBaseController
      * @url /admin/v1/menu/home
      * @method  PUT
      * @param array menu - 菜单 required
-     * @param string menu[].type - 菜单类型system系统plugin插件custom自定义module模块 required
+     * @param string menu[].type - 菜单类型system系统plugin插件custom自定义module模块res_module上游模块 required
      * @param string menu[].name - 名称 required
      * @param object menu[].language - 语言 required
      * @param string menu[].url - 网址 菜单类型为自定义时需要传递
      * @param string menu[].icon - 图标
      * @param int menu[].nav_id - 导航ID 菜单类型为系统或插件时需要传递
-     * @param string menu[].module - 模块类型 菜单类型为模块时需要传递
-     * @param array menu[].product_id - 商品ID 菜单类型为模块时需要传递
+     * @param string menu[].module - 模块类型 菜单类型为模块或上游模块时需要传递
+     * @param array menu[].product_id - 商品ID 菜单类型为模块或上游模块时需要传递
      * @param array menu[].child - 子菜单 required
-     * @param string menu[].child[].type - 菜单类型system系统plugin插件custom自定义module模块 required
+     * @param string menu[].child[].type - 菜单类型system系统plugin插件custom自定义module模块res_module上游模块 required
      * @param string menu[].child[].name - 名称 required
      * @param object menu[].child[].language - 语言 required
      * @param string menu[].child[].url - 网址 菜单类型为自定义时需要传递
      * @param string menu[].child[].icon - 图标
      * @param int menu[].child[].nav_id - 导航ID 菜单类型为系统或插件时需要传递
-     * @param string menu[].child[].module - 模块类型 菜单类型为模块时需要传递
-     * @param array menu[].child[].product_id - 商品ID 菜单类型为模块时需要传递
+     * @param string menu[].child[].module - 模块类型 菜单类型为模块或上游模块时需要传递
+     * @param array menu[].child[].product_id - 商品ID 菜单类型为模块或上游模块时需要传递
      */
     public function saveHomeMenu()
     {

@@ -356,6 +356,16 @@ function lang_plugins($name = '', $param = [], $reload = false)
                 $lang = array_merge($lang,$pluginLang);
             }
         }
+
+        # 加载模块多语言
+        $reserverDir = WEB_ROOT . 'plugins/reserver/';
+        $servers = array_map('basename', glob($reserverDir . '*', GLOB_ONLYDIR));
+        foreach ($servers as $server){
+            if (is_file($reserverDir . $server . "/lang/{$defaultLang}.php")){
+                $pluginLang = include $reserverDir . $server . "/lang/{$defaultLang}.php";
+                $lang = array_merge($lang,$pluginLang);
+            }
+        }
         Cache::set($cacheName, json_encode($lang), 24*3600);
     }
 
@@ -419,8 +429,14 @@ function curl($url, $data = [], $timeout = 30, $request = 'POST', $header = [])
             }
             $s = http_build_query($data);
         }
-        if($s){
-            $s = '?'.$s;
+        if(strpos($url, '?') !== false){
+            if($s){
+                $s = '&'.$s;
+            }
+        }else{
+            if($s){
+                $s = '?'.$s;
+            }
         }
         curl_setopt($curl, CURLOPT_URL, $url.$s);
     }else{
@@ -904,6 +920,8 @@ function active_log($description, $type = '', $relId = 0, $clientId = 0)
     // 实例化模型类
     $SystemLogModel = new SystemLogModel();
 
+    $description = htmlspecialchars($description);
+    
     $param = [
         'description' => $description,
         'type' => $type,
@@ -1432,3 +1450,146 @@ function get_idcsamrt_auth()
         return false;
     }
 }
+
+/**
+ * @title 魔方缓存
+ * @desc 魔方缓存
+ * @author wyh
+ * @version v1
+ * @param string key - 键
+ * @param string value - 值:为null表示删除，’‘表示获取，其他设置
+ * @param int timeout - 过期时间
+ */
+function idcsmart_cache($key,$value='',$timeout=null)
+{
+    return \app\common\lib\IdcsmartCache::cache($key,$value,$timeout);
+}
+
+/**
+ * @title API鉴权登录
+ * @desc API鉴权登录
+ * @author wyh
+ * @version v1
+ * @param int api_id - 供应商ID
+ * @param boolean force - 是否强制登录
+ * @return array
+ */
+function idcsmart_api_login($api_id,$force=false)
+{
+    $SupplierModel = new \app\common\model\SupplierModel();
+
+    return $SupplierModel->apiAuth($api_id,$force);
+}
+
+/**
+ * @title 代理商请求供应商接口通用方法
+ * @desc  代理商请求供应商接口通用方法
+ * @author wyh
+ * @version v1
+ * @param   int    api_id  财务APIid
+ * @param   string path    接口路径
+ * @param   array  data    请求数据
+ * @param   int    timeout 超时时间
+ * @param   string request 请求方式(GET,POST,PUT,DELETE)
+ */
+function idcsmart_api_curl($api_id,$path,$data=[],$timeout=30,$request='POST')
+{
+    //idcsmart_cache('api_auth_login_' . AUTHCODE . '_' . $api_id,null);
+    $login = idcsmart_api_login($api_id);
+    if ($login['status']!=200){
+        return $login;
+    }
+
+    $header = [
+        'Authorization: Bearer '.$login['data']['jwt']
+    ];
+
+    $apiUrl = $login['data']['url'] . '/' .$path;
+
+    $result = curl($apiUrl,$data,$timeout,$request,$header);
+    if($result['http_code'] != 200){
+        return ['status'=>400, 'msg'=>'网络开小差', 'content'=>$result['content']];
+    }
+    $result = json_decode($result['content'], true);
+    if(empty($result)){
+        $result = ['status'=>400, 'msg'=>'网络开小差', 'content'=>$result['content']];
+    }
+    if ($result['status']==401){
+        $login = idcsmart_api_login($api_id, true);
+        if ($login['status']!=200){
+            return $login;
+        }
+
+        $header = [
+            'Authorization: Bearer '.$login['data']['jwt']
+        ];
+        $result = curl($apiUrl,$data,$timeout,$request,$header);
+        if($result['http_code'] != 200){
+            return ['status'=>400, 'msg'=>'网络开小差', 'content'=>$result['content']];
+        }
+        $result = json_decode($result['content'], true);
+
+        if ($result['status']==401){
+            $result['status']=400;
+            $result['msg'] = 'API账号或密码错误';
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * @title 魔方生成RSA公私钥
+ * @desc 魔方生成RSA公私钥
+ * @author theworld
+ * @version v1
+ * @return string public_key - 公钥
+ * @return string private_key - 私钥
+ */
+function idcsmart_openssl_rsa_key_create()
+{
+    $config = array(
+        "digest_alg" => "sha512",
+        "private_key_bits" => 4096,
+        "private_key_type" => OPENSSL_KEYTYPE_RSA,
+    );
+
+    $res = openssl_pkey_new($config);
+
+    openssl_pkey_export($res, $privateKey);
+
+    $publicKey = openssl_pkey_get_details($res);
+    $publicKey = $publicKey["key"];
+
+    return ['public_key' => $publicKey, 'private_key' => $privateKey];
+}
+
+/**
+ * @title 上游同步产品信息到下游
+ * @desc  上游同步产品信息到下游
+ * @author theworld
+ * @version v1
+ * @param   int    host_id 财务产品ID
+ * @param   string action  动作
+ */
+function upstream_sync_host($host_id, $action = '')
+{
+    $HostModel = new \app\common\model\HostModel();
+
+    return $HostModel->upstreamSyncHost($host_id, $action);
+}
+
+/**
+ * @title 更新上游订单利润
+ * @desc  更新上游订单利润
+ * @author theworld
+ * @version v1
+ * @param   int    order_id 财务订单ID
+ */
+function update_upstream_order_profit($order_id)
+{
+    $OrderModel = new \app\common\model\OrderModel();
+
+    return $OrderModel->updateUpstreamOrderProfit($order_id);
+}
+

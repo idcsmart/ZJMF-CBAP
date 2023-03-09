@@ -45,9 +45,11 @@ li {
     justify-content: space-between;
     flex-wrap: wrap;
     width: 100%;
+
     .item {
       width: 31%;
     }
+
     &:after {
       content: '';
       width: 31%;
@@ -229,19 +231,23 @@ li {
   .el-dialog {
     width: 10.26rem;
   }
-  .el-dialog__body{
+
+  .el-dialog__body {
     max-height: 5rem;
     overflow-y: auto;
   }
-  ul{
-    .item{
+
+  ul {
+    .item {
       width: 47%;
     }
-    &::after{
+
+    &::after {
       width: 0;
       display: none;
     }
   }
+
   .r-item .time {
     margin-bottom: .25rem;
   }
@@ -250,4 +256,29 @@ li {
     padding: .4rem .8rem;
   }
 
+}
+
+
+@media screen and (max-width: 750px) {
+
+  .form-footer .btn-no {
+    margin-left: 0;
+    margin-top: 0.2rem;
+  }
+
+  .voucher-content ul .item {
+    width: 100%;
+  }
+
+  .voucher-content .price {
+    height: auto;
+  }
+
+  .voucher-dialog .el-dialog {
+    width: 7rem;
+  }
+
+  .voucher-dialog ul .item {
+    width: auto;
+  }
 }

@@ -47,6 +47,7 @@ class RuleName
     {
         $name = strtolower($name);
         $item = $this->getRuleItemInfo($ruleItem);
+
         if ($first && isset($this->item[$name])) {
             array_unshift($this->item[$name], $item);
         } else {

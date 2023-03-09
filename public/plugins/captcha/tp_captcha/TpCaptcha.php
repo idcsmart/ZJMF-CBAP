@@ -19,7 +19,7 @@ class TpCaptcha extends Plugin
         'title'       => 'thinkphp图形验证', // 必填 插件显示名称
         'description' => 'thinkphp图形验证', // 必填 插件功能描述
         'author'      => '智简魔方', // 必填 插件作者
-        'version'     => '1.0',  // 必填 插件版本
+        'version'     => '1.0.0',  // 必填 插件版本
     );
 
     // 插件安装

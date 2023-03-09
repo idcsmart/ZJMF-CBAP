@@ -10,7 +10,11 @@ use app\common\model\OrderModel;
 use app\common\model\OrderItemModel;
 use app\common\model\HostModel;
 use app\common\logic\ModuleLogic;
+use app\common\logic\ResModuleLogic;
 use app\common\model\ServerModel;
+use app\common\model\UpstreamProductModel;
+use app\common\model\UpstreamHostModel;
+use app\common\model\UpstreamOrderModel;
 
 /**
  * @title 购物车模型
@@ -153,8 +157,15 @@ class CartModel extends Model
 
         $param['config_options'] = $param['config_options'] ?? [];
         
-        $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $product['id'])->find();
+
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options'],$param['qty']);
+        }
 
         if($result['status']!=200){
             return $result;
@@ -202,9 +213,15 @@ class CartModel extends Model
         
         $param['config_options'] = $param['config_options'] ?? [];
         
-        $ModuleLogic = new ModuleLogic();
-        $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options']);
+        $upstreamProduct = UpstreamProductModel::where('product_id', $product['id'])->find();
 
+        if($upstreamProduct){
+            $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+            $result = $ResModuleLogic->cartCalculatePrice($product, $param['config_options']);
+        }else{
+            $ModuleLogic = new ModuleLogic();
+            $result = $ModuleLogic->cartCalculatePrice($product, $param['config_options']);
+        }
         if($result['status']!=200){
             return $result;
         }
@@ -312,10 +329,28 @@ class CartModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function clearCart()
+    public function clearCart($param)
     {
         self::$cartData = [];
         self::saveCart();
+
+        # 20230216 wyh
+        if (request()->is_api){
+            $HostModel = new HostModel();
+            $host = $HostModel->whereLike('downstream_info', '%'.$param['downstream_token'].'%')->where('downstream_host_id',$param['downstream_host_id']??0)->find();
+            if (!empty($host)){
+                $OrderModel = new OrderModel();
+                $order = $OrderModel->find($host['order_id']);
+                if (!empty($order)){
+                    if ($order['status']!='Paid'){
+                        return ['status'=>200, 'msg'=>lang('clear_cart_success'),'data'=>['order_id'=>$order['id']]];
+                    }else{
+                        return ['status'=>400,'msg'=>'订单已开通,请勿重新开通'];
+                    }
+                }
+            }
+        }
+
         return ['status'=>200, 'msg'=>lang('clear_cart_success')];
     }
 
@@ -330,13 +365,17 @@ class CartModel extends Model
      * @return int status - 状态码,200成功,400失败
      * @return string msg - 提示信息
      */
-    public function settle($position,$customfield=[])
+    public function settle($position,$customfield=[],$param=[])
     {
         $amount = 0;
         $cartData = [];
         if(empty(self::$cartData)){
             return ['status'=>400, 'msg'=>lang('there_are_no_items_in_the_cart')];
         }
+
+        $clientId = get_client_id();
+
+        $certification = check_certification($clientId);
         $ModuleLogic = new ModuleLogic();
         foreach (self::$cartData as $key => $value) {
             if(in_array($key, $position)){
@@ -349,8 +388,17 @@ class CartModel extends Model
                 }
                 $value['config_options'] = $value['config_options'] ?? [];
                 
-                $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options'],$value['qty']);
+                $upstreamProduct = UpstreamProductModel::where('product_id', $product['id'])->find();
 
+                if($upstreamProduct){
+                    if($upstreamProduct['certification']==1 && !$certification){
+                        return ['status'=>400, 'msg'=>lang('certification_uncertified_cannot_buy_product')];
+                    }
+                    $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                    $result = $ResModuleLogic->cartCalculatePrice($product, $value['config_options'],$value['qty']);
+                }else{
+                    $result = $ModuleLogic->cartCalculatePrice($product, $value['config_options'],$value['qty']);
+                }
                 if($result['status']!=200){
                     return $result;
                 }
@@ -365,13 +413,16 @@ class CartModel extends Model
                 $cartData[$key]['billing_cycle'] = $result['data']['billing_cycle'];
                 $cartData[$key]['duration'] = $result['data']['duration'];
                 $cartData[$key]['description'] = $result['data']['description'];
+                if($upstreamProduct){
+                    $cartData[$key]['profit'] = $result['data']['profit'];
+                }
                 unset(self::$cartData[$key]);
             }
         }
         if(empty($cartData)){
             return ['status'=>400, 'msg'=>lang('please_select_products_in_the_cart')];
         }
-        $clientId = get_client_id();
+        
 
         $result = hook('before_order_create', ['client_id'=>$clientId, 'cart' => $cartData]);
 
@@ -404,6 +455,7 @@ class CartModel extends Model
             // 创建产品
             $orderItem = [];
             $productLog = [];
+            $hostIds = [];
             foreach ($cartData as $key => $value) {
                 $product = ProductModel::find($value['product_id']);
                 if($product['stock_control']==1){
@@ -427,7 +479,15 @@ class CartModel extends Model
                 }else{
                     $serverId = $product['rel_id'];
                 }
+                $upstreamProduct = UpstreamProductModel::where('product_id', $value['product_id'])->find();
                 for ($i=1; $i<=$value['qty']; $i++) {
+                    if (request()->is_api){
+                        $downstreamHostId = intval($param['downstream_host_id'] ?? 0);
+                        if(!empty($downstreamHostId)){
+                            $downstreamInfo = json_encode(['url' => $param['downstream_url']??'', 'token'=>$param['downstream_token']??'', 'api'=>request()->api_id]);
+                        }
+                    }
+
                     $host = HostModel::create([
                         'client_id' => $clientId,
                         'order_id' => $order->id,
@@ -442,9 +502,35 @@ class CartModel extends Model
                         'billing_cycle_time' => $value['duration'],
                         'active_time' => $time,
                         'due_time' => $product['pay_type']!='onetime' ? $time : 0,
-                        'create_time' => $time
+                        'create_time' => $time,
+                        'downstream_info' => $downstreamInfo ?? '',
+                        'downstream_host_id' => $downstreamHostId ?? 0,
                     ]);
-                    $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+
+                    hook('after_host_create',['id'=>$host->id, 'param'=>$param]);
+
+                    $hostIds[] = $host->id;
+
+                    if($upstreamProduct){
+                        UpstreamHostModel::create([
+                            'supplier_id' => $upstreamProduct['supplier_id'],
+                            'host_id' => $host->id,
+                            'upstream_configoption' => json_encode($value['config_options']),
+                            'create_time' => $time
+                        ]);
+                        UpstreamOrderModel::create([
+                            'supplier_id' => $upstreamProduct['supplier_id'],
+                            'order_id' => $order->id,
+                            'host_id' => $host->id,
+                            'amount' => $value['price'],
+                            'profit' => $value['profit'],
+                            'create_time' => $time
+                        ]);
+                        $ResModuleLogic = new ResModuleLogic($upstreamProduct);
+                        $result = $ResModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+                    }else{
+                        $ModuleLogic->afterSettle($product, $host->id, $value['config_options']);
+                    }
 
                     // 产品和对应自定义字段
                     $customfield['host_customfield'][] = ['id'=>$host->id, 'customfield' => $value['customfield'] ?? []];
@@ -472,6 +558,8 @@ class CartModel extends Model
 
             hook('after_order_create',['id'=>$order->id,'customfield'=>$customfield]);
 
+            update_upstream_order_profit($order->id);
+
             self::saveCart();
 
             $OrderModel = new OrderModel();
@@ -488,7 +576,7 @@ class CartModel extends Model
             return ['status' => 400, 'msg' => $e->getMessage()];
         }
 
-        return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['order_id' => $order->id, 'amount' => $amount]];
+        return ['status' => 200, 'msg' => lang('success_message'), 'data' => ['order_id' => $order->id, 'amount' => $amount,'host_ids'=>$hostIds]];
     }
 
     # 保存购物车

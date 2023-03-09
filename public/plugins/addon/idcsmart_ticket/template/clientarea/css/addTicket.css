@@ -48,3 +48,8 @@
 .el-main {
   overflow: unset;
 }
+@media screen and (max-width: 750px) {
+  .add-ticket .main-card .main-form .title-host {
+    flex-wrap: wrap;
+  }
+}

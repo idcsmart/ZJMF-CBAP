@@ -168,6 +168,7 @@
     flex-wrap: wrap;
     border: 1px solid #E6E7EB;
     border-left: 0;
+
     .item {
       width: 50%;
       line-height: .5rem;
@@ -177,13 +178,16 @@
       color: #1E2736;
       margin: 0;
       border-top: 1px solid #E6E7EB;
+
       .r-info {
         width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      &:nth-child(1),&:nth-child(2){
+
+      &:nth-child(1),
+      &:nth-child(2) {
         border-top: 0;
       }
     }
@@ -656,5 +660,15 @@
     color: #F0142F;
     font-weight: bold;
     font-size: 0.14rem;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .finance-info {
+    .item {
+      flex: auto;
+      width: 100%;
+      margin-top: 0.2rem;
+    }
   }
 }

@@ -202,7 +202,7 @@
                 <div class="value">{{commonData.currency_prefix + hostData.renew_amount + commonData.currency_suffix}}</div>
                 {foreach $addons as $addon}
                 {if ($addon.name=='IdcsmartRenew')}
-                <span v-show="hostData.status == 'Active'" v-loading="renewBtnLoading" class="renew-btn" @click="showRenew" v-if="!refundData || (refundData && refundData.status=='Cancelled') || (refundData && refundData.status=='Reject')">{{lang.cloud_re_btn}}</span>
+                <span v-show="hostData.status == 'Active'" v-loading="renewBtnLoading" class="renew-btn" @click="showRenew" v-if="!refundData || refundData || (refundData && refundData.status=='Cancelled') || (refundData && refundData.status=='Reject')">{{lang.cloud_re_btn}}</span>
                 <span v-show="hostData.status == 'Active'" class="renew-btn-disable" v-else>{{lang.cloud_re_btn}}</span>
                 {/if}
                 {/foreach}

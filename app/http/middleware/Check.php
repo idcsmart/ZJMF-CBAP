@@ -23,6 +23,12 @@ class Check
             $request->client_id = $jwtToken['id'];
             $request->client_name = $jwtToken['name'];
             $request->client_remember_password = $jwtToken['remember_password'];
+
+            if (isset($jwtToken['is_api']) && $jwtToken['is_api']){ // 兼容不需要登录的接口
+                $request->is_api = $jwtToken['is_api'];
+                $request->api_id = $jwtToken['api_id']??0;
+                $request->api_name = $jwtToken['api_name']??'';
+            }
         }
 
         return $next($request);
@@ -80,52 +86,6 @@ class Check
         return ['status'=>200,'data'=>['jwt_token'=>$jwtToken]];
     }
 
-    # 校验API
-    public function checkApi(Request $request)
-    {
-        $param = $request->param();
-
-        if (!isset($param['login_token'])){
-            return ['status' => 401,'msg' => lang('login_unauthorized')]; # 未授权
-        }
-
-        $loginToken = explode(',', $param['login_token']);
-
-        if(empty($loginToken) || !is_array($loginToken)){
-            return ['status' => 401,'msg' => lang('login_unauthorized')];
-        }
-
-        if(count($loginToken)!=2){
-            return ['status' => 401,'msg' => lang('login_unauthorized')];
-        }
-
-        if(empty($loginToken[0]) || empty($loginToken[1])){
-            return ['status' => 401,'msg' => lang('login_unauthorized')];
-        }
-
-        $api = ApiModel::where('id', $loginToken[0])->find();
-
-        if(empty($api)){
-            return ['status' => 401,'msg' => lang('login_unauthorized')];
-        }
-
-        if($loginToken[1]!=aes_password_decode($api['token'])){
-            return ['status' => 401,'msg' => lang('login_unauthorized')];
-        }
-
-        if($api['status']==1){
-            $ip = explode("\n", $api['ip']);
-            $clientIp = get_client_ip();
-            if(!in_array($clientIp, $ip)){
-                return ['status' => 401,'msg' => lang('login_unauthorized')];
-            }
-        }
-
-        return ['status'=>200, 'data' => ['api' => $api]];
-
-
-    }
-
     # 参考JWT文档：https://packagist.org/packages/firebase/php-jwt
     protected function verifyJwt($jwt,$id,$is_admin=false)
     {
@@ -158,6 +118,9 @@ class Check
                 'nbf'                  =>  $jwtAuth['nbf'],
                 'ip'                   =>  $jwtAuth['ip'],
                 'is_admin'             =>  isset($info['is_admin'])?$info['is_admin']:false, # 是否后台验证
+                'is_api'               =>  isset($info['is_api'])?$info['is_api']:false, #
+                'api_id'               =>  isset($info['api_id'])?$info['api_id']:0, #
+                'api_name'             =>  isset($info['api_name'])?$info['api_name']:'', #
             ];
 
             return ['status'=>200,'data'=>$data];

@@ -1,0 +1,256 @@
+/* 2023-03-02 新增解决方案 */
+.server-banner2 {
+  color: #fff;
+  background-size: cover;
+
+  a {
+    color: #fff;
+  }
+}
+
+.e-commerce {
+  background: url(../assets/img/solution/e-commerce.png) no-repeat center center;
+}
+
+
+
+.finance {
+  background: url(../assets/img/solution/finance.png) no-repeat center center;
+}
+
+.game {
+  background: url(../assets/img/solution/game.png) no-repeat center center;
+}
+
+.auto {
+  background: url(../assets/img/solution/auto.png) no-repeat center center;
+}
+
+.travel {
+  background: url(../assets/img/solution/travel.png) no-repeat center center;
+}
+
+.education {
+  background: url(../assets/img/solution/education.png) no-repeat center center;
+}
+
+.medical {
+  background: url(../assets/img/solution/medical.png) no-repeat center center;
+}
+
+.agriculture {
+  background: url(../assets/img/solution/agriculture.png) no-repeat center center;
+}
+
+.solution-trend {
+  background: #fff;
+
+  .trend-box {
+    border: 1px solid #E6EAED;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F7F8FA 100%);
+    padding: 0;
+
+    .con {
+      padding: 30px;
+    }
+
+    img {
+      height: 190px;
+    }
+  }
+}
+
+.solution-scene {
+  .scene-box {
+    padding-top: 38px;
+    padding-left: 34px;
+    padding-right: 34px;
+    gap: 93px;
+
+    img {
+      width: 680px;
+      height: 488px;
+    }
+  }
+}
+
+.arrange-way {
+  background: #F7F8FA;
+
+  .img {
+    margin-top: 50px;
+  }
+
+  img {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+.mt-18 {
+  margin-top: 18px;
+}
+
+.gallery-top {
+  .scene-cont {
+    p {
+      position: relative;
+      padding-left: 10px;
+
+      &::after {
+        content: '';
+        width: 4px;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        opacity: 1;
+        position: absolute;
+        top: 8px;
+        left: 0;
+      }
+    }
+
+    .des {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.60);
+      padding-left: 0;
+      margin-top: 16px;
+
+      &::after {
+        width: 0;
+      }
+    }
+  }
+}
+
+.section {
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+.solution-advantage {
+
+  .advantage {
+    height: 824px;
+    background: #F7F8FA url(../assets/img/solution/line.png) no-repeat center center;
+    background-size: 100% 100%;
+  }
+
+  .section-title {
+    padding-top: 80px;
+  }
+
+  .advantage-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .box {
+    width: 22px;
+    height: 22px;
+    position: absolute;
+
+    .dot {
+      width: 22px;
+      height: 22px;
+      background: url(../assets/img/solution/dot.png) no-repeat;
+      background-size: cover;
+      display: block;
+      z-index: 2;
+    }
+
+    &:nth-child(1) {
+      left: 21.25%;
+      bottom: 7.52427184466019%;
+    }
+
+    &:nth-child(2) {
+      left: 40%;
+      bottom: 23.05825242718447%;
+    }
+
+    &:nth-child(3) {
+      left: 58.75%;
+      bottom: 8.00970873786408%;
+    }
+
+    &:nth-child(4) {
+      left: 77.5%;
+      bottom: 23.30097087378641%;
+    }
+  }
+
+  .advantage-box {
+    width: 320px;
+    height: 336px;
+    position: absolute;
+    left: -149px !important;
+    bottom: 90px !important;
+
+    img {
+      background: none;
+    }
+
+    position: relative;
+  }
+
+  .line {
+    width: 100%;
+    height: 170px;
+    background: url(../assets/img/solution/line.png) no-repeat center center;
+    background-size: 100% 100%;
+    position: absolute;
+    bottom: 54px;
+    left: 0;
+  }
+
+}
+
+.solution-future {
+  background: url(../assets/img/solution/e_commerce_11.png) no-repeat;
+  background-size: cover;
+}
+
+.btn-dark {
+  background: #FF6739;
+  outline: none;
+  color: #fff;
+
+  &:focus {
+    outline: none !important;
+    color: #fff;
+    box-shadow: none !important;
+  }
+}
+
+.solution-future .solution-contact .form-group input,
+.solution-future .solution-contact .form-group textarea {
+  background: #F7F8F9;
+  border: 1px solid #E6EAED;
+  resize: none;
+
+  &:focus {
+    border-color: #FF6739;
+  }
+}
+
+@media screen and (max-width: 1800px) {
+  .solution-advantage .advantage-box {
+    padding: 20px;
+    width: 260px;
+    height: 300px;
+    left: -124px !important;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .solution-advantage .advantage-box {
+    padding: 10px;
+    width: 220px;
+    height: 300px;
+    left: -105px !important;
+  }
+}

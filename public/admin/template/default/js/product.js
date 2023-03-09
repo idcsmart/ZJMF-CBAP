@@ -4,7 +4,7 @@
     const template = document.getElementsByClassName('product')[0]
     Vue.prototype.lang = window.lang
     new Vue({
-      data () {
+      data() {
         return {
           data: [],
           tableLayout: false,
@@ -13,7 +13,13 @@
           productModel: false,
           bordered: true,
           hover: true,
+          expandArr: [],
+          checkExpand: false,
+          checkAll: false,
+          agentVisble: false,
           loading: false,
+          authList: [],
+          arr: [],
           columns: [
             {
               // 列拖拽排序必要参数
@@ -67,6 +73,7 @@
           firstGroup: [], // 一级分组
           secondGroup: [], // 二级分组
           groupList: [],
+          hasBaidu: false,
           tempSecondGroup: [],
           rules: {
             name: [
@@ -98,6 +105,7 @@
             name: ''
           },
           delHasPro: false,
+          authArr: [],
           concat_shop: '',
           tempObj: '',
           updateNameTip: '',
@@ -153,7 +161,7 @@
       //   }
       // },
       watch: {
-        concat_shop (val) {
+        concat_shop(val) {
           if (val) {
             let temp = JSON.parse(JSON.stringify(this.data)).map(item => {
               item.children = item.children.filter(el => el.id !== this.moveProductForm.id)
@@ -165,20 +173,27 @@
         }
       },
       methods: {
-        rowName ({ row }) {
+        rowName({ row }) {
           if (row.key.indexOf('t') !== -1) {
             return 'row-bg'
           }
         },
-        closeMove () {
+        closeMove() {
           this.delHasPro = false
           this.concat_shop = ''
           this.tempGroup = []
         },
+        closeAgentDia() {
+          this.agentVisble = false
+        },
         // 编辑
-        editHandler (row) {
+        editHandler(row) {
           if (row.key.indexOf('t') !== -1) {
-            location.href = `product_detail.html?id=${row.id}`
+            if (row.agent === 1) {
+              location.href = `upstream_goods.html?id=${row.id}`
+            } else {
+              location.href = `product_detail.html?id=${row.id}`
+            }
           } else if (row.key.indexOf('f') !== -1) {
             this.updateNameTip = lang.update + lang.first_group + lang.nickname
             this.changeFisrt(row)
@@ -187,13 +202,47 @@
             this.changeFisrt(row)
           }
         },
+        // 展开/折叠
+        expandAll() {
+          this.expandArr = []
+          const { tree } = this.$refs
+          tree.getItems().forEach(item => {
+            this.checkExpand ? this.expandArr.push(item.value) : []
+          })
+        },
+        // 全选/全不选
+        chooseAll() {
+          if (this.checkAll) {
+            this.authList = this.arr
+          } else {
+            this.authList = []
+          }
+        },
+        // 节点点击的时候
+        clickNode(e) {
+          if (!e.node.expanded) {
+            this.expandArr.push(e.node.value)
+          } else {
+            this.expandArr.splice(this.expandArr.indexOf(e.node.value), 1)
+          }
+        },
+        async getPlugin() {
+          try {
+            const res = await getAddon();
+            const temp = res.data.data.list.reduce((all, cur) => {
+              all.push(cur.name);
+              return all;
+            }, [])
+            this.hasBaidu = temp.includes("BaiduCloud");
+          } catch (error) { }
+        },
         // 修改分组名
-        changeFisrt (row) {
+        changeFisrt(row) {
           this.updateNameVisble = true
           this.updataData.id = row.id
           this.updataData.name = row.name
         },
-        async submitUpdateName ({ validateResult, firstError }) {
+        async submitUpdateName({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const res = await updateGroup(this.updataData)
@@ -208,10 +257,10 @@
             this.$message.warning(firstError);
           }
         },
-        chgangeFlag (row) {
+        chgangeFlag(row) {
           row.flag = false
         },
-        getPro (row) {
+        getPro(row) {
           if (row.children && row.children.length > 0) {
             row.children.forEach(item => {
               this.getPro(item)
@@ -223,7 +272,7 @@
           }
         },
         // 删除
-        deleteHandler (row) {
+        deleteHandler(row) {
           this.concat_shop = ''
           this.moveProductForm.target_product_group_id = ''
           if (row.key.indexOf('f') !== -1) { // 一级分组
@@ -260,7 +309,7 @@
           }
         },
         // 弹窗移动分组
-        async moveProduct ({ validateResult, firstError }) {
+        async moveProduct({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const res = await moveProductGroup(this.moveProductForm)
@@ -276,7 +325,7 @@
           }
         },
         // 拖动二级分组
-        async movePorductGroup () {
+        async movePorductGroup() {
           try {
             const res = await draySecondGroup(this.secondGroupForm)
             this.$message.success(res.data.msg)
@@ -287,7 +336,7 @@
           }
         },
         // 拖动商品至其他二级分组
-        async movePorductHandel () {
+        async movePorductHandel() {
           try {
             const res = await dragProductGroup(this.dragForm)
             this.$message.success(res.data.msg)
@@ -298,11 +347,11 @@
           }
         },
         // 删除商品
-        delteProduct (id) {
+        delteProduct(id) {
           this.delVisible = true
           this.curId = id
         },
-        async sureDel () {
+        async sureDel() {
           // 分删除分组和删除商品
           try {
             let res
@@ -320,19 +369,37 @@
           }
         },
         // 拖拽执行之前，可阻止跨级拖拽
-        beforeDragSort ({ current, target }) {
+        beforeDragSort({ current, target }) {
           // if (current.key.indexOf('t') == -1) { // 移动的不是商品则阻止
           //   return false
           // }
           return true
         },
-        onAbnormalDragSort (params) {
+        onAbnormalDragSort(params) {
           // if (params.code === 1001) {
           //   this.$message.warning('不同层级的元素，不允许调整顺序');
           // }
         },
+        // 保存可代理商品
+        handelAgentable() {
+          const arr = []
+          this.authList.forEach((item) => {
+            if (item.includes('t')) {
+              const id = item.split('-')[1]
+              arr.push(id)
+            }
+          })
+          agentable({ id: arr }).then((res) => {
+            this.$message.success(res.data.msg)
+            this.agentVisble = false
+            this.authList = []
+            this.getProductList()
+          }).catch((err) => {
+            this.$message.error(err.data.msg)
+          })
+        },
         // 拖动商品移动分组
-        async changeSort ({ currentIndex, current, targetIndex, target }) {
+        async changeSort({ currentIndex, current, targetIndex, target }) {
           try {
             const tempForward = targetIndex - currentIndex > 0 ? 1 : 0  // 1向下拖动，0向上拖动
             this.firstMove.backward = tempForward
@@ -389,7 +456,7 @@
             this.$message.error(error.data.msg)
           }
         },
-        async onChange (row) {
+        async onChange(row) {
           try {
             if (row.qty !== undefined) {
               await toggleShow(row.id, row.hidden)
@@ -402,7 +469,7 @@
           }
         },
         // 拖动一级商品分组
-        async moveFirst () {
+        async moveFirst() {
           try {
             const res = await moveFirstGroup(this.firstMove)
             this.$message.success(res.data.msg)
@@ -412,11 +479,11 @@
           }
         },
         // 新建分组
-        addGroup () {
+        addGroup() {
           this.groupModel = true
           this.formData.id = ''
         },
-        async onSubmit ({ validateResult, firstError }) {
+        async onSubmit({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const params = { ...this.formData }
@@ -436,19 +503,22 @@
             this.$message.warning(firstError);
           }
         },
-        closeGroup () {
+        closeGroup() {
           this.groupModel = false
           this.$refs.groupForm.reset()
         },
         // 新建商品
-        addProduct () {
+        addProduct() {
           this.productModel = true
         },
-        changeFirId (val) {
+        addBaiduProduct() {
+          location.href = 'plugin/baidu_cloud/baiduProduct.html'
+        },
+        changeFirId(val) {
           this.secondGroup = this.tempSecondGroup.filter(item => item.parent_id === val)
           this.productData.product_group_id = ''
         },
-        async submitProduct ({ validateResult, firstError }) {
+        async submitProduct({ validateResult, firstError }) {
           if (validateResult === true) {
             try {
               const params = { ...this.productData }
@@ -466,11 +536,11 @@
             this.$message.warning(firstError);
           }
         },
-        closeProduct () {
+        closeProduct() {
           this.productModel = false
           this.$refs.productForm.reset()
         },
-        treeExpandAndFoldIconRender (h, { type }) {
+        treeExpandAndFoldIconRender(h, { type }) {
 
           //  return type === 'expand' ? $('.t-table__tree-op-icon').html(` <svg class="t-icon t-icon-chevron-up"><use href="#t-icon-chevron-up"></use></svg>`)
           //     : $('.t-table__tree-op-icon').html(` <svg class="t-icon t-icon-chevron-down"><use href="#t-icon-chevron-down"></use></svg>`)
@@ -479,23 +549,23 @@
 
         },
         // 搜索
-        clearKey () {
+        clearKey() {
           this.params.keywords = ''
           this.isFilter = false
           this.getProductList()
         },
-        seacrh () {
+        seacrh() {
           this.isFilter = true
           this.getProductList()
         },
         // 切换分页
-        changePage (e) {
+        changePage(e) {
           this.params.page = e.current
           this.params.limit = e.pageSize
           this.getProductList()
         },
         // 排序
-        sortChange (val) {
+        sortChange(val) {
           if (!val) {
             return
           }
@@ -505,15 +575,26 @@
         },
 
         // 获取一级分组
-        async getFirPro () {
+        async getFirPro() {
           try {
             const res = await getFirstGroup()
             this.firstGroup = res.data.data.list
           } catch (error) {
           }
         },
+        handelAngenBtn() {
+          this.authList = []
+          this.shopList.forEach(e => {
+            if (e.agentable === 1) {
+              this.authList.push(e.key)
+            }
+          })
+          this.checkExpand = false
+          this.checkAll = false
+          this.agentVisble = true
+        },
         // 获取二级分组
-        async getSecPro () {
+        async getSecPro() {
           try {
             const res = await getSecondGroup()
             this.secondGroup = res.data.data.list
@@ -521,18 +602,26 @@
           }
         },
         // 获取商品列表
-        async getProList () {
+        async getProList() {
           try {
             const res = await getProduct(this.params)
             this.shopList = res.data.data.list
           } catch (error) {
           }
         },
-
+        getIdFun(list) {
+          list.map(item => {
+            if (item.children) {
+              this.getIdFun(item.children);
+            }
+            this.arr.push(item.key)
+          })
+        },
         // 初始化
-        getProductList () {
+        getProductList() {
           try {
             this.loading = true
+            this.authList = []
             // 获取商品，一级，二级分组
             Promise.all([this.getProList(), this.getFirPro(), this.getSecPro()]).then(res => {
               // 如果是搜索的时候需要过滤掉该商品之外的一二级分组
@@ -571,6 +660,7 @@
                 item.children = secondArr
               })
               this.data = this.firstGroup
+
               this.loading = false
               //  this.total = firstGroup.data.data.count
               // 展开全部
@@ -586,11 +676,16 @@
                         e.key = 't-' + e.id
                         temp.push(e)
                       }
+                      if (e.agentable === 1) {
+                        this.authList.push(e.key)
+                      }
                     })
                     ele.children = temp
                   })
                 })
                 this.data = this.firstGroup
+                this.authArr = JSON.parse(JSON.stringify(this.firstGroup))
+                this.getIdFun(this.firstGroup)
                 this.$forceUpdate()
                 this.$nextTick(() => {
                   this.$refs.table.expandAll()
@@ -604,8 +699,9 @@
           }
         }
       },
-      created () {
+      created() {
         this.getProductList()
+        this.getPlugin()
       }
     }).$mount(template)
     typeof old_onload == 'function' && old_onload()

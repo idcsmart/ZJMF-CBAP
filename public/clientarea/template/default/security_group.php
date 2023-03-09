@@ -29,6 +29,8 @@
               {/if}
               {/foreach}
               <el-tab-pane :label="lang.security_tab2" name="3" v-if="isShowAPILog"></el-tab-pane>
+              {foreach $addons as $addon}
+              {if ($addon.name=='IdcsmartCloud')}
               <el-tab-pane :label="lang.security_group" name="4">
                 <div class="content-table">
                   <div class="content_searchbar">
@@ -76,6 +78,8 @@
                   </div>
                 </div>
               </el-tab-pane>
+              {/if}
+              {/foreach}
             </el-tabs>
             <!-- 创建/编辑安全组弹窗 -->
             <div class="create-api-dialog">

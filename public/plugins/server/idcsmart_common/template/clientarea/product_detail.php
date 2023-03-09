@@ -68,7 +68,8 @@
           <template v-if="host?.status==='Active'">
             {foreach $addons as $addon}
             {if ($addon.name=='IdcsmartRenew')}
-            <span class="renew btn" @click="showRenew" v-if="(!refundInfo || (refundInfo && refundInfo.status=='Cancelled') || (refundInfo && refundInfo.status=='Reject')) && (host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free')">{{lang.cloud_re_btn}}</span>
+            <span class="renew btn" @click="showRenew" v-if="(!refundInfo || refundInfo || (refundInfo && refundInfo.status=='Cancelled') || (refundInfo && refundInfo.status=='Reject')) && (host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free')">{{lang.cloud_re_btn}}</span>
+           <!--  <span class="renew btn" @click="showRenew" v-if="(!refundInfo || (refundInfo && refundInfo.status=='Cancelled') || (refundInfo && refundInfo.status=='Reject')) && (host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free')">{{lang.cloud_re_btn}}</span> -->
             <span class="disabeld btn" v-else>{{lang.cloud_re_btn}}</span>
             {/if}
             {/foreach}
@@ -94,7 +95,7 @@
         </div>
         {foreach $addons as $addon}
         {if ($addon.name=='IdcsmartRenew')}
-        <div class="item" v-if="host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free'">
+        <div class="item" v-if="host.billing_cycle !== 'onetime' && host.billing_cycle !== 'free' && host?.status === 'Active'">
           <span>自动续费：</span>
           <el-switch :value="isShowPayMsg" active-color="#0052D9" :active-value="1" :inactive-value="0" @change="changeAutoStatus">
           </el-switch>

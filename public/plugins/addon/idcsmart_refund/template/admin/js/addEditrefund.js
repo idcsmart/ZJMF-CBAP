@@ -4,9 +4,17 @@
     const template = document.getElementsByClassName('template')[0];
     Vue.prototype.lang = window.lang;
     new Vue({
-      data() {
+      data () {
         return {
-          fromData: {},
+          fromData: {
+            product_id: '',
+            type: '',
+            rule: '',
+            range: 0,
+            range_control: '',
+            ratio_value: 0,
+            require: ''
+          },
           typeOptions: [
             {
               id: 'Artificial',
@@ -25,7 +33,7 @@
       },
       methods: {
         //获取路由参数
-        getUrlOption() {
+        getUrlOption () {
           let str = location.search.substr(1).split('&');
           let obj = {};
           str.forEach(e => {
@@ -35,29 +43,32 @@
           return obj;
         },
         //获取单个退款商品详情
-        getRefundDetail(id) {
+        getRefundDetail (id) {
           getARefund(id).then(res => {
             this.fromData = res.data.data.refund_product;
             this.fromData.range = Number(this.fromData.range);
             this.fromData.ratio_value = Number(this.fromData.ratio_value);
-            this.pay_type = this.productOptions.filter(item => item.id === this.fromData.product_id)[0].pay_type; //所选商品的付款方式
+            this.pay_type = this.productOptions.filter(item => item.id === this.fromData.product_id)[0]?.pay_type; //所选商品的付款方式
           }).catch();
         },
         //获取商品下拉框数据
-        getProductOptions() {
+        getProductOptions () {
           getProductList({ page: 1, limit: 10000 }).then(res => {
             this.productOptions = res.data.data.list;
+            if (this.getUrlOption().id) {
+              this.getRefundDetail(this.getUrlOption().id);
+            }
           }).catch();
         },
         //获取商品配置列表
-        getConfigList(id) {
+        getConfigList (id) {
           getARefundConfig(id).then(res => {
             this.fromData.config_option = res.data.data.content;
             this.$forceUpdate();
           }).catch();
         },
         //所选商品改变
-        productChange(val) {
+        productChange (val) {
           this.fromData.rule = '';
           this.fromData.config_option = '';
           const product = this.productOptions.filter(item => item.id === val)[0];
@@ -69,15 +80,15 @@
           this.getConfigList(val);
         },
         //所选规则改变
-        ruleChange() {
+        ruleChange () {
           this.$forceUpdate();
         },
         //选择退款规则购买天数
-        checkRange() {
+        checkRange () {
           this.fromData.require = 'range';
           this.$forceUpdate();
         },
-        checkChange(e, context) {
+        checkChange (e, context) {
           if (e) {
             this.fromData.require = context.e.target._value
           } else {
@@ -87,13 +98,13 @@
         },
 
         //比例输入
-        changere_fundRate() {
+        changere_fundRate () {
           this.fromData.ratio_value = this.fromData.ratio_value + ""
           this.fromData.ratio_value = Number(this.fromData.ratio_value.replace(/-/g, ''))
         },
 
         //提交 判断是否编辑新增退款商品
-        addEdit() {
+        addEdit () {
           if (!this.fromData.product_id) {
             this.$message.warning({ content: lang.product_id_empty_tip, placement: 'top-right' });
             return;
@@ -134,7 +145,7 @@
             });
           }
         },
-        goback(showTip) {
+        goback (showTip) {
           if (showTip) {
             this.$dialog({
               theme: 'warning',
@@ -153,12 +164,10 @@
           }
         }
       },
-      created() {
+      created () {
         this.getProductOptions();
-        if (this.getUrlOption().id) {
-          this.getRefundDetail(this.getUrlOption().id);
-        }
-      },
+      
+      }
     }).$mount(template);
     typeof old_onload == 'function' && old_onload();
   };

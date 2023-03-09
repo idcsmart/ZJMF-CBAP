@@ -1,68 +1,74 @@
 .add-ticket {
-    .main-card {
-        .top {
-            padding: 0;
-            font-size: 0.3rem;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: .2rem;
+  .main-card {
+    .top {
+      padding: 0;
+      font-size: 0.3rem;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .2rem;
 
-            .top-l {
-                img {
-                    cursor: pointer;
-                    margin-right: .25rem;
-                }
-            }
+      .top-l {
+        img {
+          cursor: pointer;
+          margin-right: .25rem;
         }
-
-        .top-line {
-            width: 100%;
-            height: 1px;
-            background: #E6E7EB;
-            opacity: 1;
-        }
-
-        .main-form {
-            margin-top: .47rem;
-
-            .el-input__inner {
-                height: .46rem;
-            }
-
-            .title-host {
-                display: flex;
-            }
-
-            .select-type {
-                width: 5.2rem;
-                margin-right: .1rem;
-            }
-
-            .select-title {
-                width: 5.2rem;
-            }
-
-            .select-host {
-                width: 5.2rem;
-            }
-
-            .sub-btn {
-                width: 88px;
-                height: 32px;
-                background: #0058FF;
-                border-radius: 3px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: rgba(255, 255, 255, 0.9);
-                cursor: pointer;
-                // float: right;
-                
-            }
-        }
+      }
     }
+
+    .top-line {
+      width: 100%;
+      height: 1px;
+      background: #E6E7EB;
+      opacity: 1;
+    }
+
+    .main-form {
+      margin-top: .47rem;
+
+      .el-input__inner {
+        height: .46rem;
+      }
+
+      .title-host {
+        display: flex;
+      }
+
+      .select-type {
+        width: 5.2rem;
+        margin-right: .1rem;
+      }
+
+      .select-title {
+        width: 5.2rem;
+      }
+
+      .select-host {
+        width: 5.2rem;
+      }
+
+      .sub-btn {
+        width: 88px;
+        height: 32px;
+        background: #0058FF;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+        // float: right;
+
+      }
+    }
+  }
 }
 
 .el-main {
-    overflow: unset;
+  overflow: unset;
+}
+
+@media screen and (max-width: 750px) {
+  .add-ticket .main-card .main-form .title-host {
+    flex-wrap: wrap;
+  }
 }

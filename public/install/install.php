@@ -295,6 +295,19 @@ location / {
         $module['worst'] = '开启';
         $modules[] = $module;
 
+        #监测-zip
+        if (!extension_loaded('zip')) {
+            $module['current'] = '未开启';
+            $module['status'] = 0;
+        }else{
+            $module['current'] = '开启';
+            $module['status'] = 1;
+        }
+        $module['name'] = 'zip';
+        $module['suggest'] = '开启';
+        $module['worst'] = '开启';
+        $modules[] = $module;
+
         #监测-ionCube
         if (!extension_loaded('ionCube Loader')) {
             $module['current'] = '未开启';
@@ -307,6 +320,8 @@ location / {
         $module['suggest'] = '开启';
         $module['worst'] = '开启';
         $modules[] = $module;
+
+        
 
         #检测-文件
         $folders = [

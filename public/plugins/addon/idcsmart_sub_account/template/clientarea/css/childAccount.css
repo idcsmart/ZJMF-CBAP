@@ -1,0 +1,233 @@
+.clid-box header h2 {
+  padding: 0;
+  margin: 0;
+  font-size: 0.28rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.25rem;
+  color: #171725;
+  margin-bottom: 0.4rem;
+}
+.clid-box header .el-button {
+  margin-bottom: 0.4rem;
+}
+.clid-box .myPage {
+  margin: 0.26rem 0;
+}
+.el-table {
+  border: 0.01rem solid #e6e7eb;
+  opacity: 1;
+  border-radius: 0.03rem;
+}
+.el-table .el-table__header-wrapper .cell {
+  font-size: 0.14rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.22rem;
+  color: #757575;
+}
+.el-table .el-table__body-wrapper .cell {
+  font-size: 0.14rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.22rem;
+  color: #171725;
+}
+.el-popover {
+  min-width: 0.5rem !important;
+}
+.el-popover .operation-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.el-popover .operation-box .operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+}
+.el-popover .operation-box .operation-item:hover {
+  background: #e6f3ff;
+  color: #3699ff;
+}
+.addAccount-content .addAccount-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 0.01rem solid #e6e7eb;
+}
+.addAccount-content .addAccount-header img {
+  display: block;
+  width: 0.24rem;
+  height: 0.26rem;
+  margin-right: 0.25rem;
+  cursor: pointer;
+}
+.addAccount-content .addAccount-header h1 {
+  margin: 0;
+  padding: 0;
+  font-size: 0.28rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.25rem;
+  color: #171725;
+}
+.addAccount-content .addAccount-box .title {
+  font-size: 0.18rem;
+  font-family: PingFang SC;
+  font-weight: bold;
+  line-height: 25px;
+  color: #1e2736;
+  padding-left: 0.1rem;
+  display: flex;
+  align-items: center;
+  border-left: 0.03rem solid #0058ff;
+  margin-bottom: 0.2rem;
+}
+.addAccount-content .addAccount-box .demo-form-inline .top {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.addAccount-content .addAccount-box .demo-form-inline .bom {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.addAccount-content .addAccount-box .demo-form-inline .edit {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.addAccount-content .addAccount-box .demo-form-inline .bom {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+.addAccount-content .addAccount-box .notice-box {
+  display: flex;
+  align-items: center;
+}
+.addAccount-content .addAccount-box .notice-box .notice-title {
+  font-size: 0.16rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.22rem;
+  color: #1e2736;
+  margin-right: 0.2rem;
+}
+.addAccount-content .addAccount-box .tree-box {
+  display: flex;
+}
+.addAccount-content .addAccount-box .tree-box .tree-title {
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.22rem;
+  color: #1e2736;
+  margin-right: 0.2rem;
+}
+.addAccount-content .addAccount-box .tree-box .tree {
+  flex: 1;
+  width: 50%;
+  border: 0.01rem solid #e6e7eb;
+  opacity: 1;
+  border-radius: 0.03rem;
+  display: flex;
+}
+.addAccount-content .addAccount-box .tree-box .tree .tree-left {
+  box-sizing: border-box;
+  padding: 0 0.2rem;
+  width: 100%;
+}
+.addAccount-content .addAccount-box .tree-box .tree .tree-right {
+  box-sizing: border-box;
+  padding: 0 0.2rem;
+  width: 100%;
+}
+.addAccount-content .addAccount-footer {
+  margin-top: 0.3rem;
+  display: flex;
+}
+.addAccount-content .addAccount-footer button {
+  border: none;
+  cursor: pointer;
+}
+.addAccount-content .addAccount-footer button:hover {
+  opacity: 0.8;
+}
+.addAccount-content .addAccount-footer .footer-btn1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #0058ff;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.24rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-right: 0.12rem;
+}
+.addAccount-content .addAccount-footer .footer-btn2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #e7e7e7;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.24rem;
+  color: #1e2736;
+}
+.el-form--inline .el-form-item {
+  display: flex;
+  margin-right: 0.2rem;
+}
+.el-form--inline .el-form-item__content {
+  flex: 1;
+}
+.addAccount-content .el-form-item__label {
+  font-size: 0.16rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  color: #1e2736;
+  padding: 0;
+  margin-right: 0.2rem;
+}
+.addAccount-content .el-form-item__label .question-icon {
+  margin-left: 0.05rem;
+  width: 0.16rem;
+  height: 0.16rem;
+  line-height: 0.15rem;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  font-size: 0.14rem;
+  border-radius: 50%;
+  color: #78a6ff;
+  border: 0.01rem solid #78a6ff;
+}
+.phone-box .el-form-item__content {
+  display: flex;
+}
+@media screen and (max-width: 750px) {
+  .addAccount-content .addAccount-box .demo-form-inline .top {
+    grid-template-columns: none;
+  }
+  .addAccount-content .addAccount-box .tree-box {
+    display: block;
+  }
+  .el-form--inline .el-form-item__content {
+    overflow: auto;
+  }
+  .addAccount-content .addAccount-box .tree-box .tree {
+    width: 98%;
+  }
+}

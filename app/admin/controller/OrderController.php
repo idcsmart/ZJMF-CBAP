@@ -18,6 +18,21 @@ class OrderController extends AdminBaseController
         $this->validate = new OrderValidate();
     }
 
+    public function test()
+    {
+        // 实例化模型类
+        $OrderModel = new OrderModel();
+
+        // 获取订单列表
+        $data = $OrderModel->test();
+
+        $result = [
+            'status' => 200,
+            'msg' => lang('success_message'),
+        ];
+        return json($result);
+    }
+
     /**
      * 时间 2022-05-17
      * @title 订单列表
@@ -50,7 +65,6 @@ class OrderController extends AdminBaseController
      * @return string list[].phone - 手机号 
      * @return string list[].company - 公司
      * @return string list[].host_name - 产品标识
-     * @return string list[].billing_cycle - 计费周期
      * @return array list[].product_names - 订单下所有产品的商品名称
      * @return int list[].host_id 产品ID
      * @return int list[].order_item_count - 订单子项数量
@@ -108,6 +122,8 @@ class OrderController extends AdminBaseController
      * @return string order.items[].billing_cycle - 计费周期 
      * @return string order.items[].host_status - 产品状态Unpaid未付款Pending开通中Active使用中Suspended暂停Deleted删除Failed开通失败
      * @return int order.items[].edit - 是否可编辑1是0否
+     * @return string order.items[].profit - 利润
+     * @return int order.items[].agent - 代理订单1是0否
      */
 	public function index()
     {

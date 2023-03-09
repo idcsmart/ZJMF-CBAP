@@ -528,3 +528,10 @@
   font-weight: bold;
   font-size: 0.14rem;
 }
+@media screen and (max-width: 750px) {
+  .finance-info .item {
+    flex: auto;
+    width: 100%;
+    margin-top: 0.2rem;
+  }
+}

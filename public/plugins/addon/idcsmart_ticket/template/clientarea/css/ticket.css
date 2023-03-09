@@ -129,3 +129,28 @@
   margin-bottom: 0.05rem;
   cursor: pointer;
 }
+@media screen and (max-width: 750px) {
+  .select-input .el-input--suffix {
+    width: auto;
+  }
+  .main-card .content_searchbar {
+    display: block;
+  }
+  .main-card .content_searchbar .searchbar {
+    flex-wrap: wrap;
+  }
+  .main-card .content_searchbar .searchbar .el-input__inner {
+    height: auto;
+  }
+  .main-card .content_searchbar .searchbar .select-input {
+    width: auto;
+  }
+  .main-card .content_searchbar .searchbar .el-button {
+    height: 20px;
+    font-size: 16px;
+  }
+  .main-card .content_searchbar .new-ticket-btn {
+    width: 2.12rem;
+    margin-bottom: 10px;
+  }
+}

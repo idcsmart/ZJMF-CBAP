@@ -44,6 +44,8 @@
     position: absolute;
     top: -.3rem;
     right: 1.84rem;
+    z-index: -1;
+
   }
 
   .main-card-top {
@@ -196,5 +198,15 @@
       }
     }
 
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .main-card .main-card-content {
+    overflow: auto;
+  }
+
+  .main-card .main-card-content .content-left {
+    width: auto;
   }
 }

@@ -11,33 +11,7 @@
         payDialog,
         withdrawDialog,
       },
-      mounted() {
-        window.addEventListener("scroll", this.computeScroll);
-        // 关闭loading
-        // document.getElementById('mainLoading').style.display = 'none';
-        const addons_js_arr = JSON.parse(
-          document.querySelector("#addons_js").getAttribute("addons_js")
-        ); // 插件列表
-        const arr = addons_js_arr.map((item) => {
-          return item.name;
-        });
-        if (arr.includes("IdcsmartVoucher")) {
-          // 开启了代金券
-          this.isShowCash = true;
-        }
-        if (arr.includes("IdcsmartOrderCombine")) {
-          // 开启了代金券
-          this.isShowCombine = true;
-        }
-      },
-      updated() {
-        // 关闭loading
-        // document.getElementById('mainLoading').style.display = 'none';
-        // document.getElementsByClassName('template')[0].style.display = 'block'
-      },
-      destroyed() {
-        window.removeEventListener("scroll", this.computeScroll);
-      },
+
       data() {
         return {
           isShowOrderController: false, // 是否展示订单记录
@@ -255,6 +229,33 @@
         };
       },
       mixins: [mixin],
+      mounted() {
+        window.addEventListener("scroll", this.computeScroll);
+        // 关闭loading
+        // document.getElementById('mainLoading').style.display = 'none';
+        const addons_js_arr = JSON.parse(
+          document.querySelector("#addons_js").getAttribute("addons_js")
+        ); // 插件列表
+        const arr = addons_js_arr.map((item) => {
+          return item.name;
+        });
+        if (arr.includes("IdcsmartVoucher")) {
+          // 开启了代金券
+          this.isShowCash = true;
+        }
+        if (arr.includes("IdcsmartOrderCombine")) {
+          // 开启了代金券
+          this.isShowCombine = true;
+        }
+      },
+      updated() {
+        // 关闭loading
+        // document.getElementById('mainLoading').style.display = 'none';
+        // document.getElementsByClassName('template')[0].style.display = 'block'
+      },
+      destroyed() {
+        window.removeEventListener("scroll", this.computeScroll);
+      },
       created() {
         // 订单记录列表
         // this.getorderList();
@@ -1022,6 +1023,7 @@
         },
         // 监测滚动
         computeScroll() {
+          return
           let sizeWidth = document.documentElement.clientWidth; // 初始宽宽度
           if (sizeWidth > 750) {
             return false;

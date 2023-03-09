@@ -21,7 +21,7 @@ class IdcsmartRefund extends Plugin
         'title'       => '退款',
         'description' => '退款',
         'author'      => '智简魔方',  //开发者
-        'version'     => '1.0',      // 版本号
+        'version'     => '1.0.0',      // 版本号
     );
     # 插件安装
     public function install()

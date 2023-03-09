@@ -42,6 +42,8 @@ class ProductController extends AdminBaseController
      * @return int list[].product_group_id_second - 二级分组ID
      * @return int list[].product_group_name_first - 一级分组名称
      * @return int list[].product_group_id_first - 一级分组ID
+     * @return int list[].agentable - 是否可代理商品0否1是
+     * @return int list[].agent - 代理商品0否1是
      * @return int count - 商品总数
      */
     public function productList()
@@ -451,6 +453,57 @@ class ProductController extends AdminBaseController
             'status'=>200,
             'msg'=>lang('success_message'),
             'data' =>(new ProductModel())->productListSearch($param)
+        ];
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-02-20
+     * @title 保存可代理商品
+     * @desc 保存可代理商品
+     * @url /admin/v1/product/agentable
+     * @method  PUT
+     * @author theworld
+     * @version v1
+     * @param array param.id - 商品ID require
+     */ 
+    public function saveAgentableProduct()
+    {
+        $param = $this->request->param();
+
+        $ProductModel = new ProductModel();
+        $result = $ProductModel->saveAgentableProduct($param);
+
+        return json($result);
+    }
+
+    /**
+     * 时间 2023-03-01
+     * @title 根据上游模块获取商品列表
+     * @desc 根据上游模块获取商品列表
+     * @url /admin/v1/res_module/:module/product
+     * @method  GET
+     * @author theworld
+     * @version v1
+     * @param string module - 模块名称
+     * @return array list - 一级分组列表
+     * @return int list[].id - 一级分组ID
+     * @return string list[].name - 一级分组名称
+     * @return array list[].child - 二级分组
+     * @return int list[].child[].id - 二级分组ID
+     * @return string list[].child[].name - 二级分组名称
+     * @return array list[].child[].child - 商品
+     * @return int list[].child[].child[].id - 商品ID
+     * @return string list[].child[].child[].name - 商品名称
+     */
+    public function resModuleProductList()
+    {
+        $param = $this->request->param();
+
+        $result = [
+            'status'=>200,
+            'msg'=>lang('success_message'),
+            'data' =>(new ProductModel())->resModuleProductList($param)
         ];
         return json($result);
     }

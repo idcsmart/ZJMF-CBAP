@@ -257,7 +257,7 @@
                         }
                         sessionStorage.setItem('product_information', JSON.stringify(obj))
                     }
-                    location.href = `goods.html?id=${item.product_id}&change`
+                    location.href = `goods.html?id=${item.product_id}&change=true&name=${item.name}`
                 },
                 // 监听购物车选择数量变化
                 handleCheckedCitiesChange(value) {
