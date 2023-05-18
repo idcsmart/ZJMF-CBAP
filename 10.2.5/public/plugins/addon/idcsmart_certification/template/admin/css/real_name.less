@@ -1,0 +1,137 @@
+.real_name_setting {
+
+  // .t-form__label{
+  //   width: auto !important;
+  // }
+  // .t-form__controls{
+  //   margin-left:  auto !important;
+  // }
+  .t-switch {
+    margin-right: 20px;
+  }
+
+  .f-btn {
+    margin-left: 113px;
+  }
+}
+.real_name_interface{
+  .status-icon{
+    display: flex;
+    justify-items: center;
+    img{
+      width: 16px;
+      position: relative;
+      top: 3px;
+    }
+  }
+}
+.viewer-container{
+    z-index: 3000 !important;
+}
+.viewer-navbar{
+    display: none !important;
+}
+/* re
+/* real_name_approval */
+.real_name_approval {
+
+  /* detailDialog */
+  .detailDialog {
+    .card-img{
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 32px;
+      justify-content: space-between;
+      .item{
+        margin-bottom: 15px;
+        .tit{
+          margin: 0;
+          margin-bottom: 15px;
+          color: var(--td-text-color-primary);
+        }
+        .img{
+          width: 230px;
+          height: 143px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+          cursor: pointer;
+          img{
+            max-width: 100%;
+            max-height: 100%;
+          }
+          &:hover{
+            .preview{
+              opacity: 1;
+            }
+          }
+        }
+        .preview{
+          position: absolute;
+          z-index: 1;
+          width: 100%;
+          height: 100%;
+          line-height: 143px;
+          text-align: center;
+          color: #fff;
+          background: rgba(0,0,0,.4);
+          opacity: 0;
+          transition: all .3s;
+        }
+      }
+    }
+    .f-btn{
+      text-align: right;
+      margin-top: 10px;
+    }
+    .disabled {
+      position: relative;
+      background: #eee;
+      border: 1px solid #DCDCDC;
+      border-radius: 2px;
+      min-height: 32px;
+      flex: 1;
+      margin: 0;
+      line-height: 32px;
+      padding: 0 8px;
+      color: var(--td-text-color-disabled);
+      cursor: not-allowed;
+    }
+
+    .copy {
+      position: absolute;
+      right: 1px;
+      background: #ECF2FE;
+      color: #0052D9;
+      padding: 0 10px;
+      border-left: 1px solid #DCDCDC;
+      cursor: pointer;
+    }
+
+    .s-tip {
+      margin: 0;
+      color: #FF0000;
+      margin: 24px 0;
+      line-height: 1;
+    }
+
+    #account,
+    #name {
+      opacity: 0;
+      position: absolute;
+      z-index: -1;
+    }
+  }
+  .common-header {
+    .r-box{
+      display: flex;
+      .t-select__wrap{
+        width: 250px;
+      }
+      .com-search{
+        margin-left: 10px;
+      } 
+    }
+  }
+}
