@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Language" content="zh-cn">
+
+
+  <script src="/web/default/vender/jQuery/jquery-3.5.1.min.js"></script>
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="/web/default/vender/bootstrap/css/bootstrap.min.css">
+  <script src="/web/default/vender/bootstrap/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" href="/web/default/assets/font/iconfont.css">
+  <link rel="stylesheet" href="/web/default/common/reset.css">
+  <link rel="stylesheet" href="/web/default/common/style.css">
+  <link rel="stylesheet" href="/web/default/common/theme.css">
+  <link rel="stylesheet" href="/web/default/common/common.css">
+  <link rel="stylesheet" href="/web/default/vender/animate/animate.css">
+  <script src="/web/default/common/common.js"></script>
+  <script src="/web/default/js/buy_domain.js"></script>
+
+  <link rel="stylesheet" href="/web/default/css/product.css">
+
+  <link rel="alternate" hreflang="zh-Hans" href="变量-当前页面URL地址">
+  <link rel="canonical" href="变量-当前页面URL地址">
+  <script type="application/ld+json">
+    {
+      "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+      "@id": "变量-当前页面URL",
+      "appid": "否",
+      "title": "变量-当前页面标题",
+      "images": ["变量-当前页面的正文中的图片"],
+      "description": "变量-当前页面描述",
+      "pubDate": "变量-页面内容时间 格式：2017-06-16T01:02:03",
+      "upDate": "变量-内容更新时间 格式：2017-06-16T01:02:03"
+    }
+  </script>
+
+  <title>智简魔方</title>
+</head>
+
+<body>
+  <header id="header"></header>
+
+  <section class="section domain-buy">
+    <div class="section-content">
+      <div>
+        <ol class="breadcrumb">
+          <li><a href="./news.html">域名注册</a></li>
+          <li>订购</li>
+        </ol>
+      </div>
+      <div class="buy-tip">
+        <div class="tip-icon"><img src="/web/default/assets/img/active/horn.svg" alt=""></div>
+        <div class="tip-text">
+          <p>域名交易成功后，域名所有者信息将使用以下模板信息直接替换，请您仔细核对域名模板信息。</p>
+          <p>域名交易成功后，根据 ICANN 规定，默认开启 60 天锁定期，锁定期内禁止转出XX云，以保护域名的安全。</p>
+        </div>
+      </div>
+      <div class="select-tem">
+        <div class="select-title">选择域名模板</div>
+        <div class="select-content">
+          <div class="select-type">
+            <span class="net-type">网络类型</span>
+            <!-- 单选框 个人/企业 -->
+            <input type="radio" id="personal" name="netType" value="personal">
+            <label for="personal">个人</label>
+            <input type="radio" id="company" name="netType" value="company">
+            <label for="company">企业</label>
+          </div>
+          <div class="tem-box">
+            <div class="tem-title">
+              <span class="title-text">以下为您曾经使用过的域名信息模板，您可以直接使用：</span>
+              <span class="creat-text creat-btn">创建新的域名信息模板</span>
+            </div>
+            <div class="tem-list">
+              <div class="no-tem">没有查询到可用的信息模板，请先前往<span class="creat-text creat-btn">创建域名信息模版</span></div>
+            </div>
+          </div>
+          <div class="checkbox agree-box">
+            <input id="agree" class="styled" type="checkbox">
+            <label for="agree">
+              我已阅读并同意<a href="">《XX云服务协议》</a>、<a href="">《XX云隐私保护声明》</a>、<a href="">《XX云域名注册协议》</a>和<a href="">《XX云域名信息服务协议》</a>
+            </label>
+          </div>
+          <div class="btn-box">
+            <div class="ok-btn">下一步</div>
+            <div class="back-btn">返回</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="creat-template-box">
+      <div class="creat-form">
+        <div class="form-top">
+          <span>创建模板信息</span>
+          <img src="/web/default/assets/img/comment/close.svg" alt="">
+        </div>
+        <div class="form-content">
+          <div class="form-left">
+            <div class="form-title">中文模板信息</div>
+            <form id="buyForm" class="form-info">
+              <div class="form-item">
+                <div class="form-label"></div>
+                <div class="form-value">
+                  <div class="checkbox">
+                    <input id="useAccon" class="styled" type="checkbox">
+                    <label for="useAccon" class="use-label">
+                      使用账号信息填写<span class="use-tips">（请确认域名所有者和账号信息是否相符合）</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-item">
+                <div class="form-label">用户类型</div>
+                <div class="form-value">
+                  <div class="user-type">
+                    <div class="user-item active">个人</div>
+                    <div class="user-item">企业</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-item">
+                <div class="form-label">域名所有者（中文）</div>
+                <div class="form-value">
+                  <input type="text" class="form-control" name="owner" placeholder="请完整输入与所有者证件一致的中文企业名称">
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="form-right"></div>
+        </div>
+        <div class="form-bottom">
+          <div class="creat-ok">创建</div>
+          <div class="creat-cancel">取消</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="footer" class="section footer"></footer>
+</body>
+
+</html>

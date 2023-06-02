@@ -1,0 +1,822 @@
+.main-card .time-select {
+  margin-top: 0.3rem;
+}
+.main-card .echart-main {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.main-card .echart-main .my-echart {
+  width: 570px;
+  height: 352px;
+  margin-right: 1.2rem;
+  margin-bottom: 0.3rem;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.04);
+}
+.main-card .echart-main .my-echart:nth-child(2n) {
+  margin-right: 0;
+}
+.main-card .manage-content {
+  margin-top: 0.2rem;
+}
+.main-card .manage-content .el-row .el-col:nth-child(2) .manage-item {
+  margin: auto;
+}
+.main-card .manage-content .el-row .el-col:nth-child(3) .manage-item {
+  float: right;
+}
+.main-card .manage-content .manage-item {
+  width: 90%;
+  min-height: 1.25rem;
+  border: 1px solid #E6E7EB;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  padding-top: 0.3rem;
+  padding-left: 0.24rem;
+  margin-bottom: 0.4rem;
+}
+.main-card .manage-content .manage-item .item-top {
+  display: flex;
+  flex-direction: row;
+}
+.main-card .manage-content .manage-item .item-top .item-top-btn {
+  margin-left: 0.2rem;
+}
+.main-card .manage-content .manage-item .item-top-btn {
+  width: 0.88rem;
+  min-width: 80px;
+  height: 0.32rem;
+  background: #0058FF;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+.main-card .manage-content .manage-item .item-bottom {
+  color: #1E2736;
+  margin-top: 0.16rem;
+}
+.main-card .disk-top-operation {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 0.3rem;
+}
+.main-card .disk-top-operation .btn1,
+.main-card .disk-top-operation .btn2 {
+  background: 0058FF;
+}
+.main-card .buy-btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #EEF4FF;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  color: #0058FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0.6rem auto;
+}
+.main-card .no-disk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.main-card .no-disk .text {
+  font-size: 0.24rem;
+  color: #1E2736;
+  margin-top: 1.4rem;
+}
+.main-card .no-disk .text2 {
+  font-size: 0.16rem;
+  color: #4E5259;
+  margin-top: 0.16rem;
+}
+.main-card .no-disk .buy-btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #EEF4FF;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  color: #0058FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 0.6rem;
+}
+.main-card .yes-disk .main-table {
+  margin-top: 0.4rem;
+  border-radius: 3px;
+  border: 1px solid #E6E7EB;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.main-card .yes-disk .main-table .more-operation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 0.3rem;
+  cursor: pointer;
+}
+.main-card .yes-disk .main-table .more-operation .dot {
+  width: 3px;
+  height: 3px;
+  border: 3px solid #0058ff;
+  border-radius: 50%;
+  margin-right: 0.05rem;
+}
+.main-card .net .title {
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.18rem;
+  color: #1E2736;
+}
+.main-card .net .main_table {
+  border: 1px solid #E6E7EB;
+}
+.main-card .net .flow-content {
+  display: flex;
+  flex-direction: column;
+}
+.main-card .net .flow-content .flow-item {
+  color: #1E2736;
+  margin-top: 0.1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main-card .net .flow-content .flow-item:first-child {
+  margin-top: 0;
+}
+.main-card .net .flow-content .flow-item .flow-label {
+  width: 100px;
+  margin-right: 0.3rem;
+}
+.main-card .log .main_table {
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+  margin-top: 0.25rem;
+}
+.main-card .main-content {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.4rem;
+}
+.main-card .main-content:nth-last-child(1) {
+  margin-top: 0.6rem;
+}
+.main-card .main-content .content-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.1rem;
+}
+.main-card .main-content .content-top .top-title {
+  font-size: 0.18rem;
+  color: #1E2736;
+}
+.main-card .main-content .content-top .top-btn {
+  width: 0.82rem;
+  height: 0.32rem;
+  background: #EEF4FF;
+  border-radius: 3px;
+  font-size: 0.14rem;
+  color: #0058FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-card .main-content .main-table {
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+}
+.main-card .main-content .main-table .more-operation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 0.3rem;
+  cursor: pointer;
+}
+.main-card .main-content .main-table .more-operation .dot {
+  width: 3px;
+  height: 3px;
+  border: 3px solid #0058ff;
+  border-radius: 50%;
+  margin-right: 0.05rem;
+}
+.main-card .no-bs {
+  display: flex;
+  flex-direction: column;
+}
+.main-card .no-bs .no-bs-title {
+  font-size: 0.18rem;
+  margin-bottom: 0.2rem;
+}
+.main-card .no-bs .no-bs-content {
+  height: 3.01rem;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.main-card .no-bs .no-bs-content .text {
+  font-size: 0.24rem;
+  color: #1E2736;
+  margin-top: 0.91rem;
+  margin-bottom: 0.4rem;
+}
+.main-card .no-bs .no-bs-content .btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #EEF4FF;
+  border-radius: 3px;
+  color: #0058FF;
+  font-size: 0.16rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-card .no-back {
+  margin-top: 0.2rem;
+}
+.main-card .no-snap {
+  margin-top: 0.6rem;
+}
+.repass-dialog .dialog-title {
+  display: flex;
+  flex-direction: column;
+}
+.repass-dialog .dialog-title .second-title {
+  font-size: 0.14rem;
+  color: #8692B0;
+}
+.repass-dialog .dialog-main .label i {
+  color: #DBDBDD;
+  cursor: help;
+  margin-left: 0.04rem;
+}
+.repass-dialog .dialog-main .pass-input .el-input__suffix {
+  right: 0;
+}
+.repass-dialog .dialog-main .pass-input .pass-btn {
+  width: 1.12rem;
+  height: calc(100% - 0.02rem);
+  background: #EEF4FF;
+  border-radius: 0px 3px 3px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.16rem;
+  color: #4E5259;
+  border-top: 1px solid #E6E7EB;
+  border-right: 1px solid #E6E7EB;
+  border-bottom: 1px solid #E6E7EB;
+  cursor: pointer;
+}
+.repass-dialog .dialog-main .alert {
+  background: #FDE6E9;
+  border: 1px solid rgba(240, 20, 47, 0.2);
+  opacity: 1;
+  border-radius: 3px;
+  color: #F64E60;
+  padding: 0.13rem 0.16rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
+}
+.repass-dialog .dialog-main .alert .title {
+  margin-bottom: 0.25rem;
+}
+.repass-dialog .dialog-main .alert .row {
+  display: flex;
+  flex-direction: row;
+}
+.repass-dialog .dialog-main .alert .row .dot {
+  width: 4px;
+  height: 4px;
+  background: #F64E60;
+  border-radius: 50%;
+  opacity: 1;
+  margin-top: 0.1rem;
+  margin-right: 0.1rem;
+}
+.repass-dialog .dialog-main .alert-err-text {
+  margin-top: 0.2rem;
+}
+.rescue-dialog .dialog-title {
+  display: flex;
+  flex-direction: column;
+}
+.rescue-dialog .dialog-title .second-title {
+  font-size: 0.14rem;
+  color: #8692B0;
+}
+.rescue-dialog .dialog-main .os-select {
+  width: 100%;
+}
+.rescue-dialog .dialog-main .os-select .el-input__inner {
+  height: 0.52rem;
+  width: 100%;
+  padding-left: 0.65rem;
+}
+.rescue-dialog .dialog-main .os-select .os-img {
+  width: 0.48rem;
+  height: 0.48rem;
+}
+.rescue-dialog .dialog-main .pass-input .el-input__suffix {
+  right: 0;
+}
+.rescue-dialog .dialog-main .pass-input .pass-btn {
+  width: 1.12rem;
+  height: calc(100% - 0.02rem);
+  background: #EEF4FF;
+  border-radius: 0px 3px 3px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.16rem;
+  color: #4E5259;
+  border-top: 1px solid #E6E7EB;
+  border-right: 1px solid #E6E7EB;
+  border-bottom: 1px solid #E6E7EB;
+  cursor: pointer;
+}
+.rescue-dialog .dialog-main .alert {
+  margin-top: 0.2rem;
+}
+.rescue-dialog .dialog-main .alert .remind {
+  height: 0.46rem;
+  background: #FDE6E9;
+  border: 1px solid rgba(240, 20, 47, 0.2);
+  opacity: 1;
+  border-radius: 3px;
+  color: #F64E60;
+  line-height: 0.46rem;
+  padding-left: 0.16rem;
+}
+.upgrade-dialog .dialog-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.upgrade-dialog .dialog-main .package:first-child {
+  margin-right: 0.35rem;
+}
+.upgrade-dialog .dialog-main .package .label {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.upgrade-dialog .dialog-main .package .package-main {
+  width: 2.6rem;
+  min-height: 3.09rem;
+  border: 1px solid #E6E7EB;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.upgrade-dialog .dialog-main .package .package-main .day-row {
+  color: #8692B0;
+  margin-top: 0.34rem;
+}
+.upgrade-dialog .dialog-main .package .package-main .day-row .day {
+  color: #0058ff;
+}
+.upgrade-dialog .dialog-main .package .package-main .money {
+  font-size: 0.22rem;
+  color: #0058FF;
+  font-weight: 800;
+  margin-top: 0.3rem;
+}
+.upgrade-dialog .dialog-main .package .package-main .package-line {
+  width: 0.42rem;
+  height: 0px;
+  border: 2px solid #0058FF;
+  background: #0058FF;
+  margin-top: 0.21rem;
+  margin-bottom: 0.2rem;
+}
+.upgrade-dialog .dialog-main .package .package-upgrade {
+  min-height: 2.55rem;
+}
+.upgrade-dialog .dialog-main .package .package-upgrade .package-upgrade-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.upgrade-dialog .dialog-main .package .package-select {
+  width: 100%;
+  margin-bottom: 0.08rem;
+}
+.upgrade-dialog .dialog-main .package .package-select .el-input__inner {
+  height: 0.46rem;
+  width: 100%;
+}
+.upgrade-dialog .alert {
+  margin-top: 0.2rem;
+}
+.upgrade-dialog .dialog-footer {
+  display: block;
+}
+.upgrade-dialog .dialog-footer .money-text {
+  margin-top: 0.1rem;
+  margin-right: 0.59rem;
+  color: #1e2736;
+}
+.upgrade-dialog .dialog-footer .money {
+  text-align: right;
+}
+.upgrade-dialog .dialog-footer .money-num {
+  font-size: 0.28rem;
+  font-family: Helvetica;
+  font-weight: bold;
+  color: #F0142F;
+}
+.upgrade-dialog .dialog-footer .discount-codeNumber {
+  cursor: pointer;
+}
+.upgrade-dialog .dialog-footer .total-icon {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.upgrade-dialog .dialog-footer .original-price {
+  text-decoration: line-through;
+  font-size: 0.2rem;
+  font-weight: 500;
+  color: #999999;
+}
+.upgrade-dialog .dialog-footer .footer-top {
+  text-align: right;
+  display: flex;
+  justify-content: right;
+}
+.upgrade-dialog .dialog-footer .footer-bottom {
+  display: flex;
+  margin-top: 0.41rem;
+  justify-content: right;
+}
+.os-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.os-item .item-os-img {
+  width: 0.24rem;
+  height: 0.24rem;
+}
+.dg-dialog .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.dg-dialog .disk-card {
+  margin-top: 0.4rem;
+}
+.dg-dialog .disk-card .disk-label {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.dg-dialog .disk-card .disk-main-card {
+  margin-top: 0.1rem;
+  width: 100%;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+}
+.dg-dialog .disk-card .disk-main-card .old-disk-item {
+  margin-left: 0.42rem;
+  margin-bottom: 0.2rem;
+}
+.dg-dialog .disk-card .disk-main-card .old-disk-item:first-child {
+  margin-top: 0.3rem;
+}
+.dg-dialog .disk-card .disk-main-card .old-disk-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.dg-dialog .disk-card .disk-main-card .old-disk-item .disk-item-text {
+  display: inline-block;
+  width: 2.2rem;
+  font-size: 0.14rem;
+  color: #1E2736;
+}
+.dg-dialog .disk-card .disk-main-card .old-disk-item .disk-item-size {
+  color: #0058FF;
+  font-size: 0.14rem;
+  margin-left: 0.6rem;
+  margin-right: 0.72rem;
+}
+.dg-dialog .disk-card .disk-main-card .old-disk-item .del {
+  font-size: 0.1543rem;
+  color: #F0142F;
+  cursor: pointer;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item {
+  margin-left: 0.42rem;
+  margin-bottom: 0.2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item:first-child {
+  margin-top: 0.3rem;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .item-name {
+  color: #1E2736;
+  margin-right: 0.3rem;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .item-min-size {
+  color: #999999;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .el-slider {
+  width: 4.34rem;
+  margin-left: 0.12rem;
+  margin-right: 0.12rem;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .item-max-size {
+  color: #999999;
+  margin-right: 0.19rem;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .del,
+.dg-dialog .disk-card .disk-main-card .new-disk-item .add {
+  font-size: 0.18rem;
+  cursor: pointer;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .del {
+  color: #F0142F;
+  margin-right: 0.15rem;
+}
+.dg-dialog .disk-card .disk-main-card .new-disk-item .add {
+  color: #0058FF;
+}
+.dg-dialog .dialog-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.dg-dialog .dialog-footer .text {
+  color: #1e2736;
+  align-self: flex-end;
+}
+.dg-dialog .dialog-footer .num {
+  color: #f99600;
+  align-self: flex-end;
+  margin-right: 0.2rem;
+}
+.dg-dialog .dialog-footer .btn-ok {
+  margin-right: 0.12rem;
+  cursor: pointer;
+}
+.dg-dialog .dialog-footer .btn-no {
+  cursor: pointer;
+}
+.kr-dialog .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.kr-dialog .dialog-main {
+  margin-top: 0.4rem;
+}
+.kr-dialog .dialog-main .label {
+  font-size: 0.16rem;
+  color: #1E2736;
+  margin-bottom: 0.1rem;
+}
+.kr-dialog .dialog-main .disk-main-card {
+  margin-top: 0.1rem;
+  width: 100%;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+}
+.kr-dialog .dialog-main .disk-main-card .old-disk-item {
+  margin-bottom: 0.2rem;
+  margin-left: 0.4rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.kr-dialog .dialog-main .disk-main-card .old-disk-item:first-child {
+  margin-top: 0.3rem;
+}
+.kr-dialog .dialog-main .disk-main-card .old-disk-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.kr-dialog .dialog-main .disk-main-card .old-disk-item .disk-item-text {
+  width: 1rem;
+  margin-right: 0.3rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.kr-dialog .dialog-main .disk-main-card .old-disk-item .el-slider {
+  width: 4rem;
+  margin-left: 0.12rem;
+  margin-right: 0.12rem;
+}
+.kr-dialog .dialog-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.kr-dialog .dialog-footer .text {
+  color: #1e2736;
+  align-self: flex-end;
+}
+.kr-dialog .dialog-footer .num {
+  color: #f99600;
+  align-self: flex-end;
+  margin-right: 0.2rem;
+}
+.kr-dialog .dialog-footer .btn-ok {
+  margin-right: 0.12rem;
+  cursor: pointer;
+}
+.kr-dialog .dialog-footer .btn-no {
+  cursor: pointer;
+}
+.create-bs-dialog .dialog-main .title-second-text {
+  color: #8692B0;
+}
+.create-bs-dialog .dialog-main .label {
+  font-size: 0.16rem;
+  color: #1E2736;
+  margin-top: 0.3rem;
+  margin-bottom: 0.1rem;
+}
+.create-bs-dialog .dialog-main .el-select,
+.create-bs-dialog .dialog-main .el-input,
+.create-bs-dialog .dialog-main input {
+  height: 0.46rem;
+  width: 100%;
+}
+.create-bs-dialog .dialog-main .alert {
+  margin-top: 0.2rem;
+}
+.restore-dialog .dialog-main {
+  margin-top: 0.4rem;
+  border: 1px solid #E6E7EB;
+  display: flex;
+  flex-direction: column;
+}
+.restore-dialog .dialog-main span {
+  color: #171725;
+  margin-left: 0.39rem;
+}
+.restore-dialog .dialog-main span:first-child {
+  margin-top: 0.3rem;
+}
+.restore-dialog .dialog-main span:last-child {
+  margin-bottom: 0.3rem;
+}
+.del-dialog .dialog-title {
+  color: #F0142F;
+}
+.del-dialog .dialog-main {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-direction: column;
+}
+.del-dialog .dialog-main .row-1 {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.del-dialog .dialog-main .row-2 {
+  margin-top: 0.23rem;
+  color: #F0142F;
+}
+.del-dialog .dialog-footer {
+  display: flex;
+  flex-direction: column;
+}
+.del-dialog .dialog-footer .btn-ok {
+  width: 100%;
+  margin-right: 0;
+  background: #F0142F;
+}
+.del-dialog .dialog-footer .btn-no {
+  width: 100%;
+  margin-top: 0.16rem;
+  margin-left: 0 !important;
+}
+.bs-dialog .dialog-main {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.bs-dialog .dialog-main .num {
+  margin-left: 0.4rem;
+  color: #1E2736;
+}
+.bs-dialog .dialog-main .price {
+  margin-left: 0.06rem;
+  color: #0058FF;
+}
+.el-popover {
+  min-width: 0.5rem !important;
+}
+.el-popover .operation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.el-popover .operation .operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  cursor: pointer;
+}
+.renew-dialog .pay-content {
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+  padding: 0.2rem 0;
+  padding-right: 0.3rem;
+}
+.renew-dialog .pay-content .pay-price {
+  display: flex;
+  flex-direction: row;
+  text-align: right;
+}
+.renew-dialog .pay-content .pay-price .text {
+  margin-top: 0.1rem;
+  color: #1E2736;
+  margin-right: 1.43rem;
+}
+.renew-dialog .pay-content .pay-price .money {
+  width: 100%;
+  font-size: 0.28rem;
+  font-family: Helvetica;
+  font-weight: bold;
+  color: #F0142F;
+  text-align: right;
+}
+.renew-dialog .pay-content .pay-price .total-icon {
+  font-size: 0.16rem;
+  color: #1E2736;
+}
+.renew-dialog .pay-content .pay-price .original-price {
+  text-decoration: line-through;
+  font-size: 0.2rem;
+  font-weight: 500;
+  color: #999999;
+}
+.code-box {
+  margin-top: 0.08rem;
+  display: flex;
+  justify-content: flex-end;
+}
+.code-box > div:nth-of-type(2) {
+  margin-left: 0.1rem;
+}
+.code-number-text {
+  display: flex;
+  margin-top: 0.04rem;
+  justify-content: flex-end;
+}
+.code-number-text .discount-codeNumber {
+  cursor: pointer;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: rgba(249, 149, 0, 0.2);
+  padding: 0 0.14rem;
+  color: #F99600;
+  font-weight: bold;
+  font-size: 0.14rem;
+}
+.code-number-text .cash-codeNumber {
+  margin-left: 0.08rem;
+  cursor: pointer;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: rgba(240, 20, 46, 0.12);
+  padding: 0 0.14rem;
+  color: #F0142F;
+  font-weight: bold;
+  font-size: 0.14rem;
+}
+.Unpaid {
+  cursor: pointer;
+}
+.template .main-card .card-top .top-msg .msg-r .r-b .row .row-l .label,
+.template .main-card .card-top .top-msg .msg-r .r-b .row .row-r .label {
+  color: #888;
+}
