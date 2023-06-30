@@ -1,0 +1,347 @@
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    div {
+      outline: none;
+    }
+    @media screen and (max-width: 600px) {
+
+      .create,
+      .create_firstPhoto {
+        word-break: keep-all;
+      }
+    }
+
+
+    /* 火柴棍标题 */
+    .page-title {
+      display: inline-block;
+      width: 300px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 22px;
+      border-left: 4px solid #007bfc;
+      margin: 29px 0 30px 0;
+      text-indent: 29px;
+    }
+
+    .tips {
+      border-radius: 4px;
+      box-sizing: border-box;
+      padding: 20px 30px;
+      background-color: #e6f2ff;
+      border: 1px solid #cce5fe;
+      font-size: 14px;
+      color: #606266;
+    }
+
+    .table-main {
+      display: inline-table;
+      border-spacing: 0;
+      border-collapse: separate;
+      border: 1px solid #ebeef5;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    table,
+    td,
+    th {
+      box-sizing: border-box;
+      padding: 12px 5px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    th {
+      text-align: left;
+      border-bottom: 1px solid #ebeef5;
+      color: #7c7c7c;
+      overflow: hidden;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    td {
+      color: #333;
+    }
+
+    tr:hover td {
+      background-color: #f5f7fa;
+    }
+
+    .mount,
+    .uninstall {
+      float: left;
+      padding: 5px 10px;
+      background-color: #ace;
+      margin-right: 10px;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+
+    .mount:hover {
+      background-color: #46a0ff;
+    }
+
+    .mount {
+      background-color: #007bfc;
+    }
+
+    .uninstall:hover {
+      background-color: #ff8484;
+    }
+
+    .uninstall {
+      background-color: #F55151;
+    }
+
+    .create {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #dcdfe4;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      width: 100px;
+      height: 40px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .create:hover {
+      border: 1px solid #007bfc;
+    }
+
+    .top {
+      display: flex;
+      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .swal2-popup {
+      position: absolute !important;
+      top: 0;
+      border: 1px solid #ccc !important;
+      box-shadow: 0 4px 24px #ccc !important;
+    }
+
+    .swal2-backdrop-show {
+      background: rgba(0, 0, 0, 0) !important;
+    }
+
+    .page-title {
+      visibility: hidden;
+      margin: 0;
+    }
+
+    .create {
+      font-size: 14px;
+    }
+
+    .table-main {
+      margin-top: 20px;
+    }
+  </style>
+  <div class="top">
+    <div class="page-title">备份</div>
+    <div class="create backups">创建备份</div>
+  </div>
+  <table class="table-main">
+    <tr>
+      <th>名称</th>
+      <th>创建日期</th>
+      <th>操作</th>
+    </tr>
+    {foreach $list as $key=>$vo } 
+    <tr>
+      <td>{$vo.name}</td>
+      <td>{$vo.created_at}</td>
+      <td>
+        <div class="mount mountbackups" data-id="{$vo.id}">恢复</div>
+        <div class="uninstall uninstallbackups" data-id="{$vo.id}">删除</div>
+      </td>
+    </tr>
+    {/foreach}
+  </table>
+  <!--<script src="{$Request.domain}{$Request.rootUrl}/vendor/nokvm/js/sweetalert2.all.min.js"></script>-->
+  <script>
+  	$(".backups").on("click", function () {
+  		sweetCreatebackups();
+    })
+    function sweetCreatebackups() {
+      Swal.fire({
+        icon: 'warning',
+        type: 'warning', // 弹框类型
+        title: '', //标题
+        text: "确定对选中的云主机进行创建备份吗？", //显示内容
+        confirmButtonColor: '#3085d6', // 确定按钮的 颜色
+        confirmButtonText: '确定', // 确定按钮的 文字
+        showCancelButton: true, // 是否显示取消按钮
+        cancelButtonColor: '#d33', // 取消按钮的 颜色
+        cancelButtonText: "取消", // 取消按钮的 文字
+
+        focusCancel: true, // 是否聚焦 取消按钮
+        reverseButtons: true // 是否 反转 两个按钮的位置 默认是 左边 确定 右边 取消
+      }).then((isConfirm) => {
+        try {
+          //判断 是否 点击的 确定按钮
+          if (isConfirm.value) {
+            ajax({
+			    type:"post",
+			    url:"{$MODULE_CUSTOM_API}",
+			    data:{"func":"CreateBackup"},
+			    success:function(data){
+			    	if(data.status==200){
+			    		Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+			    	}else{
+			    		Swal.fire("失败", data.msg, "error");
+			    	}
+			        
+			    }
+			})
+          } else {
+          }
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+    $(".mountbackups").on("click", function () {
+    	var id = $(this).data("id")
+  		sweetRecbackups(id);
+    })
+    function sweetRecbackups(id) {
+      Swal.fire({
+        icon: 'warning',
+        type: 'warning', // 弹框类型
+        title: '', //标题
+        text: "确定恢复选中的备份吗？", //显示内容
+        confirmButtonColor: '#3085d6', // 确定按钮的 颜色
+        confirmButtonText: '确定', // 确定按钮的 文字
+        showCancelButton: true, // 是否显示取消按钮
+        cancelButtonColor: '#d33', // 取消按钮的 颜色
+        cancelButtonText: "取消", // 取消按钮的 文字
+
+        focusCancel: true, // 是否聚焦 取消按钮
+        reverseButtons: true // 是否 反转 两个按钮的位置 默认是 左边 确定 右边 取消
+      }).then((isConfirm) => {
+        try {
+          //判断 是否 点击的 确定按钮
+          if (isConfirm.value) {
+            ajax({
+			    type:"post",
+			    url:"{$MODULE_CUSTOM_API}",
+			    data:{"func":"RestoreBackup","id":id},
+			    success:function(data){
+			    	if(data.status==200){
+			    		Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+			    	}else{
+			    		Swal.fire("失败", data.msg, "error");
+			    	}
+			        
+			    }
+			})
+          } else {
+          }
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+    $(".uninstallbackups").on("click", function () {
+    	var id = $(this).data("id")
+  		sweetDelbackups(id);
+    })
+    function sweetDelbackups(id) {
+      Swal.fire({
+        icon: 'warning',
+        type: 'warning', // 弹框类型
+        title: '', //标题
+        text: "确定删除选中的备份吗？", //显示内容
+        confirmButtonColor: '#3085d6', // 确定按钮的 颜色
+        confirmButtonText: '确定', // 确定按钮的 文字
+        showCancelButton: true, // 是否显示取消按钮
+        cancelButtonColor: '#d33', // 取消按钮的 颜色
+        cancelButtonText: "取消", // 取消按钮的 文字
+
+        focusCancel: true, // 是否聚焦 取消按钮
+        reverseButtons: true // 是否 反转 两个按钮的位置 默认是 左边 确定 右边 取消
+      }).then((isConfirm) => {
+        try {
+          //判断 是否 点击的 确定按钮
+          if (isConfirm.value) {
+            ajax({
+			    type:"post",
+			    url:"{$MODULE_CUSTOM_API}",
+			    data:{"func":"DeleteBackup","id":id},
+			    success:function(data){
+			    	if(data.status==200){
+			    		Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+			    	}else{
+			    		Swal.fire("失败", data.msg, "error");
+			    	}
+			        
+			    }
+			})
+          } else {
+          }
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+    function ajax(options){
+	    //创建一个ajax对象
+	    var xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft,XMLHTTP");
+	    //数据的处理 {a:1,b:2} a=1&b=2;
+	    if(typeof(options.data)!='string'){
+            var str = "";
+            for(var key in options.data){
+                str+="&"+key+"="+options.data[key];
+            }
+            str = str.slice(1)
+        }else{
+            var str = options.data;
+        }
+	    options.dataType=options.dataType||'json';
+	    if(options.type == "get"){
+	        var url = options.url+"?"+str;
+	        xhr.open("get",url);
+	        xhr.setRequestHeader("Authorization","JWT {$Think.get.jwt}");
+	        xhr.send();
+	    }else if(options.type == "post"){
+	        xhr.open("post",options.url);
+	        xhr.setRequestHeader("content-type","application/x-www-form-urlencoded");
+	        xhr.setRequestHeader("Authorization","JWT {$Think.get.jwt}");
+	        xhr.send(str)
+	    }
+	    //监听
+	    xhr.onreadystatechange = function(){
+	        //当请求成功的时候
+	        if(xhr.readyState == 4 && xhr.status == 200){
+	            var d = xhr.responseText;
+	            d = JSON.parse(d);
+	            //将请求的数据传递给成功回调函数
+	            options.success&&options.success(d,xhr.responseXML)
+	        }else if(xhr.status != 200){
+	            //当失败的时候将服务器的状态传递给失败的回调函数
+	            options.error&&options.error(xhr.status);
+	        }
+	    }
+	}
+	
+  </script>

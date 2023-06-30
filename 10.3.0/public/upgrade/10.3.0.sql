@@ -1,0 +1,1 @@
+UPDATE `idcsmart_plugin` SET `help_url`="https://my.idcsmart.com/goods.htm?id=337" WHERE `name`="Idcsmart" OR `name`="Idcsmartmail";

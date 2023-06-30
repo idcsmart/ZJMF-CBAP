@@ -1,0 +1,312 @@
+<div class="NAT_btn">
+  <button type="button" class="create" data-toggle="modal" data-target="#addModalnatacl">创建</button>
+</div>
+<div class="container">
+  <!-- 创建NAT转发模态框 -->
+  <div class="modal fade" id="addModalnatacl">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">创建NAT转发</span>
+          <button type="button" class="close" data-dismiss="modal" onclick="closeAddModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal_limit">
+            <div class="modal_main">
+              <form>
+                <div class="form-group">
+                  <label for="name">
+                    <span style="color:#f00">*</span>
+                    服务名称</label>
+                  <input required name="name" type="input" class="form-control" id="namenatacl" maxlength="255">
+                  <div class="invalid-feedback" id="name-feedbacknatacl"></div>
+                </div>
+                <div class="form-group">
+                  <label for="externalPort">
+                    <span style="color:#f00">*</span>
+                    外网端口</label>
+                  <input name="external_port" type="text" class="form-control" value="系统自动分配" id="externalPortnatacl"
+                    disabled>
+                  <div class="invalid-feedback" id="externalPort-feedbacknatacl"></div>
+                </div>
+                <div class="form-group">
+                  <label for="internalPort">
+                    <span style="color:#f00">*</span>
+                    内网端口</label>
+                  <input required name="interior_port" type="number" class="form-control" min="1" max="65535"
+                    id="internalPortnatacl" placeholder="请输入内部端口(1-65535)">
+                  <div class="invalid-feedback" id="internalPort-feedbacknatacl"></div>
+                </div>
+                <div class="form-group">
+                  <label for="nokvmprotocolnatacl">
+                    <span style="color:#f00">*</span>
+                    映射类型</label>
+
+                  <div class="selectItem">
+                    <div class="protocol nokvmprotocolnatacl">
+                      <div class="filter-text">
+                        <input class="filter-title" type="text" readonly placeholder="请选择" />
+                        <i class="icon icon-filter-arrow"></i>
+                      </div>
+                      <select name="type">
+                        <option value="tcp">TCP</option>
+                        <option value="udp">UDP</option>
+                        <option value="all">ALL（TCP&UDP）</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary waves-effect waves-light confirm-btnnatacl"
+                style="margin-left:10px" onclick="checkFormnatacl()">确定</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table mb-0 mt-3">
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>外网端口</th>
+      <th>内网端口</th>
+      <th>协议</th>
+      <th style="width:90px">管理</th>
+    </tr>
+  </thead>
+  <tbody>
+    {foreach $list as $key=>$vo }
+    <tr>
+      <td>{$vo.name}</td>
+      <td>{$vo.exterior_port}</td>
+      <td>{$vo.interior_port}</td>
+      <td>{$vo.type}</td>
+      <td style="text-align: center;">
+        <button type="button" class="btn btn-link deleteNATnatacl" data-id="{$vo.id}">删除</button>
+      </td>
+    </tr>
+    {/foreach}
+  </tbody>
+</table>
+<div style="display: none" id="loading-circlenatacl">
+  <div class="loading_limit">
+    <div class="loading_inner">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="{$Request.domain}{$Request.rootUrl}/vendor/nokvm/css/loading.css">
+<script src="{$Request.domain}{$Request.rootUrl}/vendor/nokvm/js/selectFilter.js"></script>
+<script>
+  // 初始化下拉选择
+  $('.nokvmprotocolnatacl').selectFilter({
+    callBack: function (val) {
+      console.log(val + '是返回的值')
+    }
+  });
+
+  // 创建转发表单验证
+  function checkFormnatacl() {
+    // const name = document.getElementById("namenatacl"); // 输入框的值
+    // const internalPort = document.getElementById("internalPortnatacl"); // 输入框的值
+
+    // const nameFeedback = document.getElementById("name-feedbacknatacl"); // 输入框的验证提示
+    // const internalPortFeedback = document.getElementById("internalPort-feedbacknatacl"); // 输入框的验证提示
+
+    // //不能为空
+    // if (name.value === "") {
+    //   nameFeedback.innerHTML = "请填写名称";
+    //   name.classList.remove("is-valid"); //清除合法状态
+    //   name.classList.add("is-invalid"); //添加非法状态
+    //   return
+    // } else {
+    //   name.classList.remove("is-invalid");
+    //   name.classList.add("is-valid");
+    //   nameFeedback.innerHTML = "";
+    // }
+
+    // if (internalPort.value === "") {
+    //   internalPortFeedback.innerHTML = "请填写内网端口";
+    //   internalPort.classList.remove("is-valid"); //清除合法状态
+    //   internalPort.classList.add("is-invalid"); //添加非法状态
+    //   return
+    // } else {
+    //   //清除错误提示，改成成功提示
+    //   internalPort.classList.remove("is-invalid");
+    //   // internalPort.classList.add("is-valid");
+    //   internalPortFeedback.innerHTML = "";
+    // }
+  }
+
+  // 关闭模态框
+  function closeAddModal() {
+    const name = document.getElementById("namenatacl");
+    const internalPort = document.getElementById("internalPortnatacl");
+
+    internalPort.classList.remove("is-valid");
+    internalPort.classList.remove("is-invalid");
+
+    name.classList.remove("is-valid");
+    name.classList.remove("is-invalid");
+
+    internalPort.value = ''
+    name.value = ''
+  }
+
+  // NAT转发表格行内 删除按钮
+  $('.deleteNATnatacl').on('click', function () {
+    if ($(this).data('disabled') == 'true') {
+      return;
+    }
+    delete_nat_btn = $(this)
+    var id = $(this).data("id")
+    Swal.fire({
+      position: 'top',
+      title: '确定删除此转发吗？',
+      type: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#6e9aff',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消'
+    }).then((result) => {
+      if (result.value) {
+        delete_nat_btn.html($('#loading-circlenatacl').html());
+        delete_nat_btn.data('disabled', 'true');
+        ajax({
+          type: "post",
+          url: "{$MODULE_CUSTOM_API}",
+          data: { "func": "delNatAcl", "id": id },
+          success: function (data) {
+            if (data.status == 200) {
+              Swal.fire({
+                position: 'top',
+                title: '删除成功',
+                type: 'success',
+                confirmButtonColor: '#6e9aff',
+              }).then((isConfirm) => window.location.reload());
+            } else {
+              delete_nat_btn.html('删除')
+              delete_nat_btn.data('disabled', 'false')
+              Swal.fire("删除失败", data.msg, "error");
+            }
+
+          }
+        })
+      }
+    })
+  });
+  $('.confirm-btnnatacl').on('click', function () {
+    const name = document.getElementById("namenatacl"); // 输入框的值
+    const internalPort = document.getElementById("internalPortnatacl"); // 输入框的值
+
+    const nameFeedback = document.getElementById("name-feedbacknatacl"); // 输入框的验证提示
+    const internalPortFeedback = document.getElementById("internalPort-feedbacknatacl"); // 输入框的验证提示
+
+    //不能为空
+    if (name.value === "") {
+      nameFeedback.innerHTML = "请填写名称";
+      name.classList.remove("is-valid"); //清除合法状态
+      name.classList.add("is-invalid"); //添加非法状态
+      return
+    } else {
+      name.classList.remove("is-invalid");
+      // name.classList.add("is-valid");
+      nameFeedback.innerHTML = "";
+    }
+
+    if (internalPort.value === "") {
+      internalPortFeedback.innerHTML = "请填写内网端口";
+      internalPort.classList.remove("is-valid"); //清除合法状态
+      internalPort.classList.add("is-invalid"); //添加非法状态
+      return
+    } else {
+      //清除错误提示，改成成功提示
+      internalPort.classList.remove("is-invalid");
+      // internalPort.classList.add("is-valid");
+      internalPortFeedback.innerHTML = "";
+    }
+
+    if (!$(this).data('submit')) {
+      $(this).html($('#loading-circlenatacl').html());
+      $(this).data('submit', 'submit')
+      ajax({
+        type: "post",
+        url: "{$MODULE_CUSTOM_API}",
+        data: $("#addModalnatacl").find("form").serialize() + "&func=addNatAcl",
+        success: function (data) {
+          $(".confirm-btnnatacl").html('确认')
+          $(".confirm-btnnatacl").data('submit', '')
+          if (data.status == 200) {
+            $("#addModalnatacl").modal('hide')
+            Swal.fire({
+              position: 'top',
+              title: '创建成功',
+              type: 'success',
+              confirmButtonColor: '#6e9aff',
+            }).then((isConfirm) => window.location.reload());
+          } else {
+            Swal.fire("创建失败", data.msg, "error");
+          }
+        },
+        error: function () {
+          $(".confirm-btnnatacl").html('确认')
+          $(".confirm-btnnatacl").data('submit', '')
+        }
+      })
+    }
+  });
+  function ajax(options) {
+    //创建一个ajax对象
+    var xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft,XMLHTTP");
+    //数据的处理 {a:1,b:2} a=1&b=2;
+    if (typeof (options.data) != 'string') {
+      var str = "";
+      for (var key in options.data) {
+        str += "&" + key + "=" + options.data[key];
+      }
+      str = str.slice(1)
+    } else {
+      var str = options.data;
+    }
+    options.dataType = options.dataType || 'json';
+    if (options.type == "get") {
+      var url = options.url + "?" + str;
+      xhr.open("get", url);
+      xhr.setRequestHeader("Authorization", "JWT {$Think.get.jwt}");
+      xhr.send();
+    } else if (options.type == "post") {
+      xhr.open("post", options.url);
+      xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+      xhr.setRequestHeader("Authorization", "JWT {$Think.get.jwt}");
+      xhr.send(str)
+    }
+    //监听
+    xhr.onreadystatechange = function () {
+      //当请求成功的时候
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        var d = xhr.responseText;
+        d = JSON.parse(d);
+        //将请求的数据传递给成功回调函数
+        options.success && options.success(d, xhr.responseXML)
+      } else if (xhr.status != 200) {
+        //当失败的时候将服务器的状态传递给失败的回调函数
+        options.error && options.error(xhr.status);
+      }
+    }
+  }
+</script>

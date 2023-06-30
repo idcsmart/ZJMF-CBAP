@@ -1,0 +1,805 @@
+ 
+  <link rel="stylesheet" href="{$Request.domain}{$Request.rootUrl}/vendor/nokvm/css/htools.select.skin.css">
+  <script src="{$Request.domain}{$Request.rootUrl}/vendor/nokvm/js/jquery.htools.select.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    div,
+    input {
+      outline: none;
+    }
+    @media screen and (max-width: 600px) {
+      .create {
+        word-break: keep-all;
+      }
+
+      #model3 {
+        width: 95%;
+      }
+
+      .model_main3 {
+        grid-template-columns: 1fr;
+        grid-gap: 14px 30px;
+      }
+    }
+
+    .top {
+      display: flex;
+      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* 火柴棍标题 */
+    .page-title {
+      display: inline-block;
+      width: 300px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 22px;
+      border-left: 4px solid #007bfc;
+      margin: 29px 0 30px 0;
+      text-indent: 29px;
+    }
+
+    .create {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 4px;
+      border: 1px solid #dcdfe4;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      width: 100px;
+      height: 40px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .create:hover {
+      border: 1px solid #007bfc;
+    }
+
+    .table-main {
+      display: inline-table;
+      border-spacing: 0;
+      border-collapse: separate;
+      border: 1px solid #ebeef5;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    table,
+    td,
+    th {
+      box-sizing: border-box;
+      padding: 12px 5px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    th {
+      text-align: left;
+      border-bottom: 1px solid #ebeef5;
+      color: #7c7c7c;
+      overflow: hidden;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    td {
+      color: #333;
+    }
+
+    tr:hover td {
+      background-color: #f5f7fa;
+    }
+
+    .apply,
+    .del,
+    .del2,
+    .view,
+    .add {
+      float: left;
+      padding: 5px 10px;
+      background-color: #ace;
+      margin-right: 10px;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+
+    .apply:hover {
+      background-color: #46a0ff;
+    }
+
+    .apply {
+      background-color: #007bfc;
+    }
+
+    .del:hover {
+      background-color: #ff8484;
+    }
+
+    .del {
+      background-color: #F55151;
+    }
+
+    .del2:hover {
+      background-color: #ff8484;
+    }
+
+    .del2 {
+      background-color: #F55151;
+    }
+
+    .view {
+      background-color: #e6a23c;
+    }
+
+    .view:hover {
+      background-color: #ecc282;
+    }
+
+    .add {
+      background-color: #67c23a;
+    }
+
+    .add:hover {
+      background-color: #9ad37d;
+    }
+
+    .show {
+      display: table-row;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* 模态框 */
+    .top {
+      display: flex;
+      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .model_btn {
+      padding: 9px 15px;
+      display: flex;
+      justify-content: flex-end;
+      font-size: 14px;
+    }
+
+    .cancel_btn {
+      padding: 9px 15px;
+      border-radius: 4px;
+      border: 1px solid #dcdfe4;
+      cursor: pointer;
+      user-select: none;
+      margin-right: 15px;
+      transition: all 0.3s;
+    }
+
+    .confirm_btn {
+      color: #fff;
+      padding: 9px 15px;
+      border-radius: 4px;
+      border: 1px solid #dcdfe4;
+      background-color: #007bfc;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.3s;
+    }
+
+    .confirm_btn:hover {
+      background-color: #46a0ff;
+    }
+
+    .cancel_btn:hover {
+      border: 1px solid #46a0ff;
+    }
+
+    #model {
+      min-width: 500px;
+      max-width: 1000px;
+      background-color: #fff;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2020;
+      box-sizing: border-box;
+      margin-top: 15vh;
+      border-radius: 3px;
+    }
+
+    .model_title {
+      width: 100%;
+      padding: 20px 20px 10px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #e6e7eb;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .model_title_icon {
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 20px;
+    }
+
+    .model_title_icon:hover {
+      color: #007bfc
+    }
+
+    .model_main {
+      padding: 20px 30px;
+      height: auto;
+      text-align: left;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 10px 30px;
+    }
+
+    /* 模态框 */
+    #model3 {
+      width: 500px;
+      background-color: #fff;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2020;
+      box-sizing: border-box;
+      margin-top: 15vh;
+      border-radius: 3px;
+      top: 10vh;
+    }
+
+    .model_title3 {
+      width: 100%;
+      padding: 20px 20px 10px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #e6e7eb;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .model_title_icon3 {
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 20px;
+    }
+
+    .model_title_icon3:hover {
+      color: #007bfc
+    }
+
+    .model_main3 {
+      padding: 20px 30px;
+      height: auto;
+      text-align: left;
+    }
+
+    #outer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      text-align: center;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-color: #000;
+      background-color: rgba(0, 0, 0, 0.5);
+      filter: alpha(opacity=50);
+      display: none;
+    }
+
+    #outer3 {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      text-align: center;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-color: #000;
+      background-color: rgba(0, 0, 0, 0.5);
+      filter: alpha(opacity=50);
+      display: none;
+    }
+
+    .imput_item {
+      border: 1px solid #dee0e3;
+      width: 100%;
+      height: 30px;
+      padding-left: 5px;
+    }
+
+    .port_input,
+    .ip_input {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 0 30px;
+    }
+
+    textarea {
+      resize: none;
+      width: 100%;
+      border: 1px solid #dee0e3;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .remarks {
+      grid-area: 8 / 1 / 9 / 3;
+    }
+
+    .label {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .swal2-popup {
+      position: absolute !important;
+      top: 0;
+      border: 1px solid #ccc !important;
+      box-shadow: 0 4px 24px #ccc !important;
+    }
+
+    .swal2-backdrop-show {
+      background: rgba(0, 0, 0, 0) !important;
+    }
+
+    .page-title {
+      visibility: hidden;
+      margin: 0;
+    }
+
+    .table-main {
+      margin-top: 20px;
+    }
+
+    .form-control {
+        height: 30px;
+        border: 1px solid #dee0e3;
+        padding-left: 10px;
+        box-sizing: border-box;
+    }
+    .model_main3 {
+        padding: 20px 30px;
+        height: auto;
+        text-align: left;
+        display: grid;
+        grid-template-columns: repeat(2,1fr);
+        grid-gap: 0 30px;
+    }
+    #outer {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    #model {
+      margin-top: 0;
+      border: 1px solid #ccc !important;
+      box-shadow: 0 4px 24px #ccc !important;
+    }
+
+    #outer3 {
+      background-color: rgba(0, 0, 0, 0);
+    }
+
+    #model3 {
+      margin-top: 0;
+      border: 1px solid #ccc !important;
+      box-shadow: 0 4px 24px #ccc !important;
+    }
+    @media screen and (max-width:600px) {
+      #model3 {
+        width: 95% !important;
+      }
+      .model_main3 {
+        grid-template-columns: repeat(1, 1fr) !important;
+        grid-gap: 10px 0px !important;
+      }
+      #model {
+        width: 98% !important;
+        min-width: 300px !important;
+      }
+      .model_main {
+        display: block !important;
+        padding: 20px 16px !important;
+      }
+      .port_input,
+      .ip_input,
+      .remarks,
+      ._htools-select {
+        width: 300px !important;
+      }
+    }
+  </style>
+  <!-- 模态框 -->
+  <div id="outer">
+    <div tabindex="-1" id="model">
+      <div class="model_title">
+        <div class="model_title_text">创建安全组策略</div>
+        <div class="model_title_icon" id="model_title_icon">×</div>
+      </div>
+      <form>
+      <input type="hidden" name="id">
+      <div class="model_main">
+        <div class="label">规则方向</div>
+        <div class="label">授权策略</div>
+        <div class="rule">
+          <select id="rule" name="orientation">
+            <option value="0">出</option>
+            <option value="1">入</option>
+          </select>
+        </div>
+        <div class="authorize">
+          <select id="authorize" name="tactics">
+            <option value="0">允许</option>
+            <option value="1">拒绝</option>
+          </select>
+        </div>
+        <div class="label">授权类型</div>
+        <div class="label">优先级</div>
+        <div class="type">
+          <select id="type" name="type">
+            <option value="tcp">TCP</option>
+            <option value="udp">UDP</option>
+            <option value="icmp">ICMP</option>
+            <option value="all">所有</option>
+          </select>
+        </div>
+        <div class="priority">
+          <input type="text" class="imput_item" name="level" placeholder="优先级 1-1000 （值越小越优先）">
+        </div>
+        <div class="label">端口范围(-1 不限制)</div>
+        <div class="label">IP范围(0.0.0.0 不限制)</div>
+        <div class="port_input">
+          <input type="text" class="imput_item" name="port_start" placeholder="起始端口">
+          <input type="text" class="imput_item" name="port_end" placeholder="结束端口">
+        </div>
+        <div class="ip_input">
+          <input type="text" class="imput_item" name="ip_start" placeholder="起始IP">
+          <input type="text" class="imput_item" name="ip_end" placeholder="结束IP">
+        </div>
+        <div class="label">备注</div>
+        <div class="label"></div>
+        <div class="remarks">
+          <textarea name="desc" id="" cols="30" rows="10"></textarea>
+        </div>
+      </div>
+      </form>
+      <div class="model_btn">
+        <div class="cancel_btn" id="cancel_btn">取消</div>
+        <div class="confirm_btn" id="confirm_btn">确认</div>
+      </div>
+    </div>
+  </div>
+  <div id="outer3">
+    <div tabindex="-1" id="model3">
+      <div class="model_title3">
+        <div class="model_title_text">创建安全组</div>
+        <div class="model_title_icon3" id="model_title_icon3">×</div>
+      </div>
+      <form>
+      <div class="model_main3">
+        <input type="text" name="name" class="form-control" placeholder="请输入安全组的名称">
+        <input type="text" name="desc" class="form-control" placeholder="安全组备注（限制20字）">
+      </div>
+      </form>
+      <div class="model_btn">
+        <div class="cancel_btn" id="cancel_btn3">取消</div>
+        <div class="confirm_btn" id="confirm_btn3">确认</div>
+      </div>
+    </div>
+  </div>
+  <div class="top">
+    <div class="page-title">策略</div>
+    <div class="create security_group">新建安全组</div>
+  </div>
+  <table class="table-main">
+    <tr>
+      <th>名称</th>
+      <th>类型</th>
+      <th>描述</th>
+      <th>操作</th>
+    </tr>
+    {foreach $list as $key=>$vo } 
+    <tr>
+      <td>{$vo.id==$used ? '(当前) ' : ''}{$vo.name}</td>
+      <td>{$vo.erasable ? '系统默认' : '用户自定义'}</td>
+      <td>{$vo.desc}</td>
+      <td style="width:300px">
+        <div class="apply applysecurity_group" data-id="{$vo.id}">应用</div>
+        <div class="view viewsecurity_group" data-id="{$vo.id}">查看</div>
+        {if ( $vo.erasable!=1 ) }
+        <div class="add addsecurity_group" data-id="{$vo.id}">新增策略</div>
+        <div class="del delsecurity_group" data-id="{$vo.id}">删除</div>
+        {/if}
+      </td>
+    </tr>
+    {/foreach}
+  </table>
+  <script>
+    $(".applysecurity_group").on("click", function () {
+        var id = $(this).data("id")
+        sweetRecsecurity_group(id);
+    })
+    function sweetRecsecurity_group(id) {
+      Swal.fire({
+        icon: 'warning',
+        type: 'warning', // 弹框类型
+        title: '', //标题
+        text: "确定应用安全组吗？", //显示内容
+        confirmButtonColor: '#3085d6', // 确定按钮的 颜色
+        confirmButtonText: '确定', // 确定按钮的 文字
+        showCancelButton: true, // 是否显示取消按钮
+        cancelButtonColor: '#d33', // 取消按钮的 颜色
+        cancelButtonText: "取消", // 取消按钮的 文字
+
+        focusCancel: true, // 是否聚焦 取消按钮
+        reverseButtons: true // 是否 反转 两个按钮的位置 默认是 左边 确定 右边 取消
+      }).then((isConfirm) => {
+        try {
+          //判断 是否 点击的 确定按钮
+          if (isConfirm.value) {
+            ajax({
+                type:"post",
+                url:"{$MODULE_CUSTOM_API}",
+                data:{"func":"ApplySecurityGroup","id":id},
+                success:function(data){
+                    if(data.status==200){
+                        Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+                    }else{
+                        Swal.fire("失败", data.msg, "error");
+                    }
+                    
+                }
+            })
+          } else {
+          }
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+    $(".delsecurity_group").on("click", function () {
+        var id = $(this).data("id")
+        sweetDelsecurity_group(id);
+    })
+    function sweetDelsecurity_group(id) {
+      Swal.fire({
+        icon: 'warning',
+        type: 'warning', // 弹框类型
+        title: '', //标题
+        text: "确定删除安全组吗？", //显示内容
+        confirmButtonColor: '#3085d6', // 确定按钮的 颜色
+        confirmButtonText: '确定', // 确定按钮的 文字
+        showCancelButton: true, // 是否显示取消按钮
+        cancelButtonColor: '#d33', // 取消按钮的 颜色
+        cancelButtonText: "取消", // 取消按钮的 文字
+
+        focusCancel: true, // 是否聚焦 取消按钮
+        reverseButtons: true // 是否 反转 两个按钮的位置 默认是 左边 确定 右边 取消
+      }).then((isConfirm) => {
+        try {
+          //判断 是否 点击的 确定按钮
+          if (isConfirm.value) {
+            ajax({
+                type:"post",
+                url:"{$MODULE_CUSTOM_API}",
+                data:{"func":"DeleteSecurityGroup","id":id},
+                success:function(data){
+                    if(data.status==200){
+                        Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+                    }else{
+                        Swal.fire("失败", data.msg, "error");
+                    }
+                    
+                }
+            })
+          } else {
+          }
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+    $(document).on("click", ".del2security_group", function () {
+        var id = $(this).data("id")
+        sweetDel2security_group(id);
+    })
+    function sweetDel2security_group(id) {
+      Swal.fire({
+        icon: 'warning',
+        type: 'warning', // 弹框类型
+        title: '', //标题
+        text: "确定删除安全组策略吗？", //显示内容
+        confirmButtonColor: '#3085d6', // 确定按钮的 颜色
+        confirmButtonText: '确定', // 确定按钮的 文字
+        showCancelButton: true, // 是否显示取消按钮
+        cancelButtonColor: '#d33', // 取消按钮的 颜色
+        cancelButtonText: "取消", // 取消按钮的 文字
+
+        focusCancel: true, // 是否聚焦 取消按钮
+        reverseButtons: true // 是否 反转 两个按钮的位置 默认是 左边 确定 右边 取消
+      }).then((isConfirm) => {
+        try {
+          //判断 是否 点击的 确定按钮
+          if (isConfirm.value) {
+            ajax({
+                type:"post",
+                url:"{$MODULE_CUSTOM_API}",
+                data:{"func":"DeleteSecurityGroupAcl","id":id},
+                success:function(data){
+                    if(data.status==200){
+                        Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+                    }else{
+                        Swal.fire("失败", data.msg, "error");
+                    }
+                    
+                }
+            })
+          } else {
+          }
+        } catch (e) {
+          alert(e);
+        }
+      });
+    }
+    // 点击应用，新增，删除，弹出模态框
+    $(".security_group").on('click', function () {
+        $("#outer3").show()
+    })
+    $(document).on("click",".addsecurity_group",function(){
+        $("#outer").find("input[name='id']").val($(this).data("id"))
+        $("#outer").show()
+    })
+    // 点击查看控制显隐
+    $(document).on('click','.viewsecurity_group', function () {
+        var id = $(this).data("id");
+        if($("#view_"+id).length>0){
+            $("#view_"+id).remove()
+        }else{
+            var _this = $(this)
+            ajax({
+                type:"post",
+                url:"{$MODULE_CUSTOM_API}",
+                data:{"func":"ShowSecurityGroupAcl","id":id},
+                success:function(data){
+                    var _html = '<tr id="view_'+id+'"><td colspan="4"><table style="width:100%;border-radius: 3px;box-shadow: 0 2px 12px rgba(0,0,0,.1);"><thead><tr style="text-indent: 18px;"><th>规则方向</th><th>授权策略</th><th>协议类型</th><th>起始端口</th><th>结束端口</th><th>起始地址</th><th>结束地址</th><th>优先级</th><th>备注</th><th>操作</th></tr>'
+                    $.each(data.list,function(i,v){
+                        _html += '<tr style="text-indent: 18px;"><td>'+v.orientation+'</td><td>'+v.tactics+'</td><td>'+v.type+'</td><td>'+v.port_start+'</td><td>'+v.port_end+'</td><td>'+v.ip_start+'</td><td>'+v.ip_end+'</td><td>'+v.level+'</td><td>'+v.desc+'</td><td><div class="del2security_group" data-group_id="'+v.virtual_security_groups_id+'" data-id="'+v.id+'" style="text-indent: 0;">删除</div></td></tr>'
+                    })
+                    _html += '</thead></table></td></tr>'
+                    _this.parents("tr").after(_html)
+                }
+            })
+        }
+    })
+    // 点x关闭
+    document.getElementById("model_title_icon").onclick = function () {
+      document.getElementById("outer").style.display = "none"
+    }
+    // 点取消关闭
+    document.getElementById("cancel_btn").onclick = function () {
+      document.getElementById("outer").style.display = "none"
+    }
+    // 点x关闭
+    document.getElementById("model_title_icon3").onclick = function () {
+      document.getElementById("outer3").style.display = "none"
+    }
+    // 点取消关闭
+    document.getElementById("cancel_btn3").onclick = function () {
+      document.getElementById("outer3").style.display = "none"
+    }
+    $("#confirm_btn").click(function(){
+        ajax({
+            type:"post",
+            url:"{$MODULE_CUSTOM_API}",
+            data:$("#outer").find("form").serialize() + "&func=CreateSecurityGroupAcl",
+            success:function(data){
+                if(data.status==200){
+                    $("#outer").hide()
+                    Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+                }else{
+                    Swal.fire("失败", data.msg, "error");
+                }
+            }
+        })
+    })
+    $("#confirm_btn3").click(function(){
+        ajax({
+            type:"post",
+            url:"{$MODULE_CUSTOM_API}",
+            data:$("#outer3").find("form").serialize() + "&func=CreateSecurityGroup",
+            success:function(data){
+                if(data.status==200){
+                    $("#outer3").hide()
+                    Swal.fire("成功", data.msg, "success").then((isConfirm) => window.location.reload());
+                }else{
+                    Swal.fire("失败", data.msg, "error");
+                }
+            }
+        })
+    })
+    function ajax(options){
+        //创建一个ajax对象
+        var xhr = new XMLHttpRequest() || new ActiveXObject("Microsoft,XMLHTTP");
+        //数据的处理 {a:1,b:2} a=1&b=2;
+        if(typeof(options.data)!='string'){
+            var str = "";
+            for(var key in options.data){
+                str+="&"+key+"="+options.data[key];
+            }
+            str = str.slice(1)
+        }else{
+            var str = options.data;
+        }
+        
+        options.dataType=options.dataType||'json';
+        if(options.type == "get"){
+            var url = options.url+"?"+str;
+            xhr.open("get",url);
+            xhr.setRequestHeader("Authorization","JWT {$Think.get.jwt}");
+            xhr.send();
+        }else if(options.type == "post"){
+            xhr.open("post",options.url);
+            xhr.setRequestHeader("content-type","application/x-www-form-urlencoded");
+            xhr.setRequestHeader("Authorization","JWT {$Think.get.jwt}");
+            xhr.send(str)
+        }
+        //监听
+        xhr.onreadystatechange = function(){
+            //当请求成功的时候
+            if(xhr.readyState == 4 && xhr.status == 200){
+                var d = xhr.responseText;
+                d = JSON.parse(d);
+                //将请求的数据传递给成功回调函数
+                options.success&&options.success(d,xhr.responseXML)
+            }else if(xhr.status != 200){
+                //当失败的时候将服务器的状态传递给失败的回调函数
+                options.error&&options.error(xhr.status);
+            }
+        }
+    }
+  </script>
+  <script>
+    var $authorize = $("#authorize");
+    var $rule = $("#rule");
+    var $type = $("#type");
+    /**
+     * 初始化插件
+     */
+    $authorize.goSelectInput({
+      height: 30,
+      width: 300
+    });
+    $rule.goSelectInput({
+      height: 30,
+      width: 300
+    });
+    $type.goSelectInput({
+      height: 30,
+      width: 300
+    });
+  </script>

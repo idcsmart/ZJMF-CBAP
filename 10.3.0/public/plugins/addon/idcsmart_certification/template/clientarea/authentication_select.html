@@ -1,0 +1,73 @@
+  <!-- 页面独有样式 -->
+  <link rel="stylesheet" href="/plugins/addon/idcsmart_certification/template/clientarea/css/authentication.css">
+  </head>
+
+  <body>
+    <!-- mounted之前显示 -->
+    <div id="mainLoading">
+      <div class="ddr ddr1"></div>
+      <div class="ddr ddr2"></div>
+      <div class="ddr ddr3"></div>
+      <div class="ddr ddr4"></div>
+      <div class="ddr ddr5"></div>
+    </div>
+    <div class="template">
+      <el-container>
+        <aside-menu></aside-menu>
+        <el-container>
+          <top-menu></top-menu>
+          <el-main>
+            <!-- 自己的东西 -->
+            <div class="main-card">
+              <div class="main-top">
+                <div class="main-card-title">
+                  <img src="/plugins/addon/idcsmart_certification/template/clientarea/img/finance/back.png" class="top-back-img" @click="backTicket">
+                  {{lang.realname_text23}}
+                </div>
+                <div class="top-line"></div>
+              </div>
+              <!-- 选择认证方式页面 -->
+              <div class="main-content">
+                <div class="content-title">{{lang.realname_text24}}</div>
+                <div class="check-type">
+                  <div @click="clickType('1')" class="person-box" :class="authenticationType === '1' ? 'select-type' : ''">
+                    <div class="type-img">
+                      <img src="/plugins/addon/idcsmart_certification/template/clientarea/img/account/personal_icon.png" alt="">
+                    </div>
+                    <p class="type-title font-18">{{lang.realname_text25}}</p>
+                    <div class="type-tips">{{lang.realname_text26}}</div>
+                    <div class="presonl-status person-success" v-if="certificationInfoObj.person.status === 1"><i class="el-icon-success"></i> {{lang.realname_text27}}</div>
+                    <div class="presonl-status person-loading" v-else-if="certificationInfoObj.person.status === 3 || certificationInfoObj.person.status === 4">{{lang.realname_text28}}</div>
+                    <span class="checked-icon" v-show="authenticationType ==='1'"></span>
+                  </div>
+                  <div @click="clickType('2')" :class="authenticationType === '2' ? 'select-type' : ''">
+                    <div class="type-img">
+                      <img src="/plugins/addon/idcsmart_certification/template/clientarea/img/account/compony_icon.png" alt="">
+                    </div>
+                    <p class="type-title font-18">{{lang.realname_text29}}</p>
+                    <div class="type-tips">{{lang.realname_text30}}</div>
+                    <span class="checked-icon" v-show="authenticationType ==='2'"></span>
+                  </div>
+                </div>
+                <div class="check-mode">
+                  <div class="content-title">{{lang.realname_text31}}</div>
+                  <div class="check-select">
+                    <el-select v-model="checkedVlue" :placeholder="lang.realname_text32" @change="selectChange">
+                      <el-option v-for="item in custom_fieldsList" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </div>
+                </div>
+                <div class="next-box">
+                  <el-button @click="goUploadPage()">{{lang.realname_text33}}</el-button>
+                </div>
+              </div>
+            </div>
+          </el-main>
+        </el-container>
+      </el-container>
+    </div>
+    <!-- =======页面独有======= -->
+    <script src="/plugins/addon/idcsmart_certification/template/clientarea/api/certification.js"></script>
+    <script src="/plugins/addon/idcsmart_certification/template/clientarea/js/authenticationSelect.js"></script>
+    <script src="/plugins/addon/idcsmart_certification/template/clientarea/utils/util.js"></script>
