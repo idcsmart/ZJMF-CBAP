@@ -1,0 +1,38 @@
+.main-card {
+  font-size: 0.14rem;
+}
+.main-card .whios-title {
+  font-size: 0.18rem;
+  color: rgba(0, 0, 0, 0.9);
+}
+.main-card .whios-title .el-divider {
+  margin-right: 0.08rem 0;
+  margin-left: 0;
+  width: 0.02rem;
+  background-color: #0058FF;
+}
+.main-card .bizserver-box {
+  margin-top: 0.2rem;
+  width: 5.66rem;
+  font-size: 0.14rem;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 0.21rem;
+}
+.main-card .whios-info {
+  margin-top: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+.main-card .whios-info .whios-item {
+  margin-bottom: 0.3rem;
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+}
+.main-card .whios-info .whios-item:nth-last-of-type(1) {
+  margin-bottom: 0;
+}
+.main-card .whios-info .whios-item .whios-left {
+  color: #8692B0;
+}
+.main-card .whios-info .whios-item .whios-right {
+  color: rgba(0, 0, 0, 0.9);
+}
