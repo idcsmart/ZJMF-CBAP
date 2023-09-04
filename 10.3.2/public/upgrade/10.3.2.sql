@@ -1,0 +1,1 @@
+UPDATE `idcsmart_client` SET `language`='' WHERE `language`!='' AND `language` NOT IN ('zh-cn','en-us','zh-hk');
