@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="/plugins/addon/promo_code/template/admin/css/promo_code.css" />
+<!-- =======内容区域======= -->
+
+<div id="content" class="promo-code" v-cloak>
+  <t-card class="list-card-container">
+    <div class="common-header">
+      <t-button @click="addPromo" class="add">
+        {{lang.order_new}}
+      </t-button>
+      <div class="client-search">
+        <t-input v-model="params.keywords" @keyup.enter.native="seacrh" :placeholder="`${lang.coupon_code}`" :on-clear="clearKey" clearable>
+        </t-input>
+        <t-select v-model="params.type" :placeholder="lang.coupon_code_type" clearable>
+          <t-option v-for="item in typeList" :value="item.value" :label="item.label" :key="item.value">
+          </t-option>
+        </t-select>
+        <t-select v-model="params.status" :placeholder="lang.order_current_status" clearable>
+          <t-option v-for="item in statusList" :value="item.value" :label="item.label" :key="item.value">
+          </t-option>
+        </t-select>
+        <t-button @click="seacrh">{{lang.query}}</t-button>
+      </div>
+    </div>
+    <t-table row-key="id" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading"
+    :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" display-type="fixed-width"
+    :hide-sort-tips="true" @row-click="goDetail">
+      <template slot="sortIcon">
+        <t-icon name="caret-down-small"></t-icon>
+      </template>
+      <template #code="{row,rowIndex}">
+        <span @click="updatePromo(row)" class="aHover">{{row.code}}</span>
+        <input type="text" :value="row.code" :id="'text' + rowIndex" class="code">
+        <a class="copy common-look" @click="copyCode('text' + rowIndex)">
+          <img :src="`${baseURL}img/icon/copy.png`" alt="" class="stop">
+        </a>
+      </template>
+      <template #type="{row}">
+        <span>{{lang[row.type]}}</span>
+      </template>
+      <template #value="{row}">
+        <template v-if="row.type==='percent'">{{row.value + '%'}}</template>
+        <template v-else-if="row.type==='free'">--</template>
+        <template v-else>{{currency_prefix}}{{row.value}}</template>
+      </template>
+      <template #start_time="{row}">
+        {{row.start_time ? moment(row.start_time * 1000).format('YYYY/MM/DD HH:mm') : '--'}}
+      </template>
+      <template #end_time="{row}">
+        {{row.end_time ? moment(row.end_time * 1000).format('YYYY/MM/DD HH:mm') : '--'}}
+      </template>
+      <template #use="{row}">
+        <span @click="getRecord(row)" class="stop">{{row.used}}/{{row.max_times === 0 ? '∞' : row.max_times}}</span>
+      </template>
+      <template #status="{row}">
+        <t-tag theme="success" class="com-status" v-if="row.status === 'Active'" variant="light">
+          {{lang.promo_active}}
+        </t-tag>
+        <t-tag theme="default" class="com-status" v-if="row.status === 'Suspended'" variant="light">
+          {{lang.promo_suspended}}
+        </t-tag>
+        <t-tag theme="default" class="com-status" v-if="row.status === 'Expiration'" variant="light">
+          {{lang.promo_expiration}}
+        </t-tag>
+        <t-tag theme="danger" class="com-status" v-if="row.status === 'Pending'" variant="light">
+          {{lang.promo_pending}}
+        </t-tag>
+      </template>
+      <template #op="{row}">
+        <t-tooltip :content="lang.enable" :show-arrow="false" theme="light" v-if="row.status === 'Suspended'">
+          <t-icon name="play-circle-stroke" class="common-look stop" @click="changeStatus(row)">
+          </t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.deactivate" :show-arrow="false" theme="light" v-if="row.status === 'Active'">
+          <t-icon name="stop-circle" class="common-look stop" @click="changeStatus(row)" style="color: #FF0000">
+          </t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light" v-if="row.type !== 'Expiration'">
+          <t-icon name="edit" class="common-look" @click="updatePromo(row)"></t-icon>
+        </t-tooltip>
+      </template>
+    </t-table>
+    <t-pagination show-jumper :total="total" v-if="total" :page-size="params.limit" :current="params.page" :page-size-options="pageSizeOptions" @change="changePage" />
+  </t-card>
+  <!-- 启用/停用 -->
+  <t-dialog theme="warning" :header="statusTip" :visible.sync="statusVisble">
+    <template slot="footer">
+      <t-button theme="primary" @click="sureChange">{{lang.sure}}</t-button>
+      <t-button theme="default" @click="statusVisble = false">{{lang.cancel}}</t-button>
+    </template>
+  </t-dialog>
+  <!-- 使用记录 -->
+  <t-dialog :header="recordTit" :visible.sync="recordDialog" :footer="false" width="800px">
+    <t-table row-key="id" :data="recordList" size="medium" :columns="recordColumns" :hover="hover" :loading="recordLoading" :table-layout="tableLayout ? 'auto' : 'fixed'">
+      <template #username="{row}">
+        <a class="jump" @click="jumpUser(row)">{{row.username}}</a>
+      </template>
+      <template #order_id="{row}">
+        <a class="jump" @click="jumpOrder(row)">{{row.order_id}}</a>
+      </template>
+      <template #amount="{row}">
+        {{currency_prefix}}{{row.amount}}
+      </template>
+      <template #discount="{row}">
+        {{currency_prefix}}{{row.discount}}
+      </template>
+      <template #create_time="{row}">
+        {{row.create_time ? moment(row.create_time * 1000).format('YYYY/MM/DD HH:mm') : '--'}}
+      </template>
+    </t-table>
+    <t-pagination show-jumper :total="recordTotal" v-if="recordTotal" :page-size="recordParams.limit" :current="recordParams.page" :page-size-options="recordPage" @change="changeRecord" />
+  </t-dialog>
+</div>
+<script src="/plugins/addon/promo_code/template/admin/js/common/moment.min.js"></script>
+<script src="/plugins/addon/promo_code/template/admin/api/promo_code.js"></script>
+<script src="/plugins/addon/promo_code/template/admin/js/promo_code.js"></script>

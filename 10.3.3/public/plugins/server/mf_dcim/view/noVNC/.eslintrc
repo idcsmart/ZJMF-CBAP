@@ -1,0 +1,22 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": true }],
+        "no-constant-condition": ["error", { "checkLoops": false }],
+        "no-var": "error",
+        "no-useless-constructor": "error",
+        "object-shorthand": ["error", "methods", { "avoidQuotes": true }],
+        "prefer-arrow-callback": "error",
+        "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": false } ],
+        "arrow-parens": ["error", "as-needed", { "requireForBlockBody": true }],
+        "arrow-spacing": ["error"],
+        "no-confusing-arrow": ["error", { "allowParens": true }],
+    }
+}

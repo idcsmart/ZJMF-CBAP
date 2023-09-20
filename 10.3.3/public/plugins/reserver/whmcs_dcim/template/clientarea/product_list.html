@@ -1,0 +1,87 @@
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/plugins/reserver/whmcs_dcim/template/clientarea/css/dcimList.css">
+
+
+<div id="cloudList">
+  <!-- 自己的东西 -->
+  <div class="main-card">
+    <div class="main-card-title">
+      <span class="title-text">{{lang.cloud_title}}</span>
+    </div>
+    <!-- 表格 -->
+    <div class="main-card-table">
+      <!-- 筛选 -->
+      <div class="main-card-search">
+        <!-- 数据中心 -->
+        <!-- <el-select v-model="params.data_center_id" @change="centerSelectChange" style="width:3.2rem;margin-right: .2rem;" :filterable="true" :clearable="true" :placeholder="lang.cloud_tip_1">
+          <el-option v-for="item in center" :key="item.id" :value="item.id" :label="item.label">
+            <div class="center-option-label">
+              <img :src="'/upload/common/country/' + item.iso + '.png'" class="area-img">
+              <span class="option-text">{{item.label}}</span>
+            </div>
+          </el-option>
+        </el-select> -->
+        <!-- 产品状态 -->
+        <el-select v-model="params.status" @change="statusSelectChange" style="width:3.2rem;margin-right: .2rem;" clearable>
+          <el-option v-for="item in statusSelect" :key="item.id" :value="item.status" :label="item.label"></el-option>
+        </el-select>
+        <!-- <el-input suffix-icon="el-input__icon el-icon-search" @input="inputChange" v-model="params.keywords" style="width: 3.2rem;margin-left: .2rem;" :placeholder="lang.cloud_tip_2"></el-input> -->
+        <el-input v-model="params.keywords" style="width: 3.2rem;margin-right: .2rem;" :placeholder="lang.cloud_tip_2" clearable @clear="getCloudList">
+        </el-input>
+        <div class="search-btn" @Click="inputChange">{{lang.referral_btn5}}</div>
+      </div>
+      <div class="table">
+        <el-table v-loading="loading" :data="cloudData" style="width: 100%;margin-bottom: .2rem;" @row-click="(row)=>toDetail(row)" :key="itemKey">
+          <el-table-column prop="id" label="ID" width="100" align="left">
+            <template slot-scope="scope">
+              <span class="column-id" @click="toDetail(scope.row)">{{scope.row.id}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" :label="lang.referral_label2" min-width="180" :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <div class="cloud-name" @click="toDetail(scope.row)">
+                <span class="packge-name">{{ scope.row.product_name }}</span>
+                <span class="name">{{ scope.row.name }}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ip" label="IP" width="250" :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <template v-if="scope.row.loading">
+                <i class="el-icon-loading"></i>
+              </template>
+              <div v-else>
+                {{scope.row.ip && scope.row.status!== 'Deleted'?scope.row.ip:'--'}}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="active_time" :label="lang.active_time" width="180">
+            <template slot-scope="scope">
+              {{scope.row.active_time | formateTime}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="due_time" :label="lang.cloud_table_head_4" width="200">
+            <template slot-scope="scope">
+              {{scope.row.due_time | formateTime}}
+            </template>
+          </el-table-column>
+          <el-table-column prop="id" :label="lang.cloud_table_head_3" width="150" align="left">
+            <template slot-scope="scope">
+              <div class="status" :style="'color:'+status[scope.row.status].color + ';background:' + status[scope.row.status].bgColor">
+                {{status[scope.row.status].text }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="client_notes" :label="lang.invoice_text139" min-width="100" :show-overflow-tooltip="true"></el-table-column>
+        </el-table>
+      </div>
+      <div class="page">
+        <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange" v-if="params.total" />
+      </div>
+    </div>
+  </div>
+</div>
+<!-- =======页面独有======= -->
+<script src="/plugins/reserver/whmcs_dcim/template/clientarea/api/dcim.js"></script>
+<script src="/plugins/reserver/whmcs_dcim/template/clientarea/js/dcimList.js"></script>
+<script src="/plugins/reserver/whmcs_dcim/template/clientarea/utils/util.js"></script>
