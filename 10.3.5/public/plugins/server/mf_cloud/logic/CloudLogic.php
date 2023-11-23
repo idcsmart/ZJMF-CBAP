@@ -713,12 +713,13 @@ class CloudLogic
 
 		if($res['status'] == 200 && !empty($res['data'])){
 			$total = $res['data']['meta']['traffic_quota'] > 0 ? $res['data']['meta']['traffic_quota'] + $res['data']['meta']['tmp_traffic'] : 0;
+			$countType = isset($res['data']['info']['30_day']) ? '30_day' : 'to_month';
 			if($res['data']['meta']['traffic_type'] == 1){
-				$used = round($res['data']['info']['to_month']['accept']/1024/1024/1024, 2);
+				$used = round($res['data']['info'][$countType]['accept']/1024/1024/1024, 2);
 			}else if($res['data']['meta']['traffic_type'] == 2){
-				$used = round($res['data']['info']['to_month']['send']/1024/1024/1024, 2);
+				$used = round($res['data']['info'][$countType]['send']/1024/1024/1024, 2);
 			}else{
-				$used = round($res['data']['info']['to_month']['total']/1024/1024/1024, 2);
+				$used = round($res['data']['info'][$countType]['total']/1024/1024/1024, 2);
 			}
 			$leave = round($total - $used, 2);
 
