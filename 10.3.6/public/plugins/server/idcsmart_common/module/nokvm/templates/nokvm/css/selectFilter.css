@@ -1,0 +1,146 @@
+/**
+ * selectFilter  --v1.0
+ * 
+ **/
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+li {
+	list-style: none;
+}
+
+.filter-disabled {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+.filter-iso,
+.filter-qdx {
+	position: relative;
+}
+
+.filter-iso select,
+.filter-qdx select {
+	display: none;
+}
+
+.filter-text {
+	height: 100%;
+	overflow: hidden;
+	position: relative;
+	cursor: pointer;
+	padding: 0 30px 0 10px;
+	background: #fff;
+	border: 1px solid #e6e6e6;
+	border-radius: 4px;
+}
+
+.filter-text input {
+	font-size: 14px;
+}
+
+.filter-text .filter-title {
+	width: 100%;
+	height: 36px;
+	line-height: 36px;
+	border: 0;
+	background-color: transparent;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 0;
+	cursor: pointer;
+}
+
+.filter-list {
+	display: none;
+	width: 100%;
+	max-height: 300px;
+	background-color: #fff;
+	font-size: 14px;
+	position: absolute;
+	top: 42px;
+	left: 0;
+	z-index: 99;
+	border: 1px solid #e6e6e6;
+	overflow: auto;
+}
+
+.filter-list li.filter-null a {
+	color: #d2d2d2;
+}
+
+.filter-list li a {
+	display: block;
+	padding: 0 10px;
+	line-height: 36px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+
+.filter-list li:hover {
+	background-color: #f2f2f2;
+}
+
+.filter-list li.filter-selected {
+	background-color: #f5f7fa;
+}
+
+.filter-list li.filter-selected a {
+	display: block;
+	color: #007bfc;
+	font-weight: bold;
+}
+
+.filter-list li.filter-disabled {
+	background-color: #fff;
+}
+
+.filter-list li.filter-disabled a {
+	display: block;
+	color: #d2d2d2;
+}
+
+.filter-list li.filter-disabled:hover a {
+	cursor: not-allowed !important;
+	background-color: #fff;
+}
+
+.icon {
+	position: absolute;
+}
+
+.icon-filter-arrow {
+	width: 8px;
+	height: 6px;
+	background-repeat: no-repeat;
+	background-image: url(../images/icon_arrow_down_x2.png);
+	background-size: 100%;
+	right: 10px;
+	top: 13px;
+	transition: all .2s;
+}
+
+.icon-filter-arrow.filter-show {
+	-webkit-transform: rotate(-180deg);
+	transform: rotate(-180deg);
+}
+
+.filter-list::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+}
+
+.filter-list::-webkit-scrollbar-track {
+	background: #fff
+}
+
+.filter-list::-webkit-scrollbar-thumb {
+	background: #CBCBCB;
+}

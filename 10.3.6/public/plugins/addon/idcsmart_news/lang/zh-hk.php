@@ -1,0 +1,41 @@
+<?php
+
+return [
+    'id_error' => 'ID錯誤',
+    'param_error' => '參數錯誤',
+    'success_message' => '請求成功',
+    'fail_message' => '請求失敗',
+    'create_success' => '建立成功',
+    'create_fail' => '建立失敗',
+    'delete_success' => '刪除成功',
+    'delete_fail' => '刪除失敗',
+    'update_success' => '修改成功',
+    'update_fail' => '修改失敗',
+    'news_is_not_exist' => '新聞不存在',
+    'news_type_is_not_exist' => '新聞分類不存在',
+    'news_type_is_used' => '新聞分類下有新聞，不可刪除',
+    'title_require' => '標題不能為空',
+    'title_max' => '標題不能超過150個字元',
+    'addon_idcsmart_news_type_id_error' => '新聞分類ID錯誤',
+    'keywords_max' => '關鍵字不能超過150個字元',
+    'content_require' => '內容不能為空',
+    'name_require' => '分類名稱不能為空',
+    'name_max' => '分類名稱不能超過100個字元',
+    'cannot_repeat_opreate' => '不可重複操作',
+    'addon_idcsmart_news_cron_release_time_require' => '請選擇定時發佈時間',
+    'addon_idcsmart_news_cron_release_time_format_error' => '定時發佈時間格式錯誤',
+
+    'log_admin_add_news' => '{admin}新增新聞，新聞標題：{title}',
+    'log_admin_edit_news' => '{admin}修改新聞，新聞標題：{title}',
+    'log_admin_delete_news' => '{admin}刪除新聞，新聞標題：{title}',
+    'log_admin_show_news' => '{admin}顯示新聞：{title}',
+    'log_admin_hide_news' => '{admin}隱藏新聞：{title}',
+    'log_admin_add_news_type' => '{admin}新增新聞中心分類：{name}',
+    'log_admin_edit_news_type' => '{admin}編輯新聞中心分類：{name}',
+    'log_admin_delete_news_type' => '{admin}刪除新聞中心分類：{name}',
+
+    # 導航
+    'nav_plugin_addon_idcsmart_news' => '新聞中心',
+    'nav_plugin_addon_idcsmart_news_list' => '新聞列表',
+    'nav_plugin_addon_idcsmart_news_source' => '資源中心',
+];
