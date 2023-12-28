@@ -1,0 +1,640 @@
+.common-config ul,
+.common-config li {
+  list-style: none;
+}
+.common-config .zf-dialog .el-input__inner {
+  width: 100%;
+}
+.common-config .l-config {
+  margin-right: 3.5rem;
+}
+.common-config .l-config .config-item .config-way {
+  display: flex;
+  align-items: center;
+}
+.common-config .l-config .config-item .required {
+  color: red;
+}
+.common-config .pro-tit {
+  line-height: 1;
+  color: #171725;
+  font-size: 28px;
+}
+.common-config .cycle {
+  display: flex;
+  flex-wrap: wrap;
+}
+.common-config .cycle .item {
+  min-width: 1.4rem;
+  margin-right: 0.2rem;
+  border: 1px solid #E6E7EB;
+  border-radius: 0.03rem;
+  text-align: center;
+  padding: 0.11rem 0;
+  font-size: 0.15rem;
+  margin-bottom: 0.2rem;
+  cursor: pointer;
+  position: relative;
+}
+.common-config .cycle .item .name {
+  color: #1E2736;
+}
+.common-config .cycle .item .price {
+  margin-top: 0.1rem;
+  color: #0058FF;
+}
+.common-config .el-icon-check {
+  display: none;
+}
+.common-config .com-active .el-icon-check {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  color: #fff;
+  z-index: 10;
+}
+.common-config .com-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  width: 0;
+  height: 0;
+  border-bottom: 0.24rem solid #0058FF;
+  border-left: 0.24rem solid transparent;
+}
+.common-config .el-slider__bar {
+  background: #0058FF;
+}
+.common-config .el-slider__button {
+  width: 12px;
+  height: 24px;
+  border: 0;
+  border-radius: 0;
+  background: #0058FF;
+  position: relative;
+}
+.common-config .el-slider__button:hover,
+.common-config .el-slider__button.hover,
+.common-config .el-slider__button.dragging {
+  transform: scale(1) !important;
+  transition: all 0s !important;
+}
+.common-config .el-slider__button::after {
+  content: '';
+  width: 1px;
+  height: 10px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+}
+.common-config .config-tit {
+  position: relative;
+  padding-left: 0.15rem;
+  font-size: 0.18rem;
+  color: #1E2736;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+.common-config .config-tit::before {
+  content: '';
+  width: 3px;
+  height: 18px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  margin-top: -9px;
+  background: #0058FF;
+}
+.common-config .description {
+  padding: 0.2rem;
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+  margin-top: 0.4rem;
+  line-height: 1.5;
+  color: #8692B0;
+  min-height: 2.4rem;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+}
+.common-config .config-item {
+  margin-top: 0.6rem;
+}
+.common-config .config-item.host .el-input {
+  width: 3.2rem;
+}
+.common-config .config-item .des {
+  font-size: 0.14rem;
+  color: #8692B0;
+  margin-top: 0.1rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.common-config .config-item .unit {
+  font-size: 0.15rem;
+  color: #1E2736;
+  margin-left: 0.05rem;
+}
+.common-config .config-item .slider {
+  display: flex;
+  align-items: center;
+}
+.common-config .config-item .slider .el-slider {
+  width: 4.34rem;
+  margin: 0 0.3rem;
+}
+.common-config .config-item .slider .el-input-number {
+  width: auto;
+}
+.common-config .config-item .slider .el-input-number .el-input__inner {
+  padding: 0 !important;
+}
+.common-config .config-item .slider .el-input-number .el-input-number__decrease,
+.common-config .config-item .slider .el-input-number .el-input-number__increase {
+  display: none;
+}
+.common-config .config-item .slider .el-input {
+  width: 0.7rem;
+  margin-left: 0.2rem;
+}
+.common-config .el-select input {
+  line-height: 0.46rem;
+  height: 0.46rem;
+  width: 3.2rem;
+}
+.common-config .area-box .tit {
+  font-size: 0.16rem;
+  color: #1E2736;
+  margin-bottom: 0.1rem;
+}
+.common-config .area-box .country,
+.common-config .area-box .city {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 0.2rem;
+}
+.common-config .area-box .country .item,
+.common-config .area-box .city .item {
+  width: 2.05rem;
+  height: 0.52rem;
+  line-height: 0.52rem;
+  padding: 0 0.16rem;
+  margin-bottom: 0.2rem;
+  border: 1px solid #E6E7EB;
+  border-radius: 0.03rem;
+  margin-right: 0.2rem;
+  position: relative;
+  cursor: pointer;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.common-config .area-box .country .item img,
+.common-config .area-box .city .item img {
+  width: 0.3rem;
+  height: 0.2rem;
+  margin-right: 0.2rem;
+}
+.common-config .area-box .country .item img,
+.common-config .area-box .city .item img,
+.common-config .area-box .country .item span,
+.common-config .area-box .city .item span {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 0.15rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.common-config .area-box .country .item span,
+.common-config .area-box .city .item span {
+  max-width: 70%;
+}
+.common-config .click-select {
+  margin-top: -20px;
+  width: 100%;
+  overflow: hidden;
+}
+.common-config .click-select .item {
+  width: 2.55rem;
+  line-height: 0.46rem;
+  height: 0.46rem;
+  border: 1px solid #E6E7EB;
+  border-radius: 0.03rem;
+  margin-top: 0.2rem;
+  text-align: center;
+  margin-right: 0.2rem;
+  cursor: pointer;
+  position: relative;
+  float: left;
+}
+.common-config .click-select.area .item {
+  text-align: left;
+  padding: 0 0.16rem;
+}
+.common-config .click-select.area .item img {
+  width: 0.3rem;
+  height: 0.2rem;
+  margin-right: 0.2rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+.common-config .order-right {
+  width: 3.6rem;
+  height: 100%;
+  box-shadow: 0px 3px 12px rgba(52, 52, 90, 0.1);
+  border-radius: 3px;
+  padding: 0.7rem 0.3rem 0.3rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  background: #FFF;
+  right: 0.2rem;
+  top: 0;
+  overflow: hidden;
+}
+.common-config .order-right .config-top {
+  display: block;
+}
+.common-config .order-right .config-mobile {
+  display: none;
+}
+.common-config .order-right .subtotal {
+  display: flex;
+  justify-content: space-between;
+  line-height: 0.2rem;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #E6E7EB;
+}
+.common-config .order-right .right-title {
+  width: 100%;
+  font-size: 0.16rem;
+  font-weight: bold;
+  color: #1E2736;
+  border-bottom: 1px solid #DCDCDC;
+  padding-bottom: 0.05rem;
+}
+.common-config .order-right .right-country-os {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #DCDCDC;
+}
+.common-config .order-right .right-country-os .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 0.14rem;
+  color: #757575;
+}
+.common-config .order-right .right-country-os .row:not(:first-child) {
+  margin-top: 0.12rem;
+}
+.common-config .order-right .order-right-item {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid #DCDCDC;
+}
+.common-config .order-right .order-right-item .row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-size: 0.14rem;
+  color: #757575;
+}
+.common-config .order-right .order-right-item .row:not(:first-child) {
+  margin-top: 0.12rem;
+}
+.common-config .order-right .order-right-item .row .del-add {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.common-config .order-right .order-right-item .row .del-add .del,
+.common-config .order-right .order-right-item .row .del-add .add {
+  width: 0.3rem;
+  height: 0.3rem;
+  border: 1px solid #E6E7EB;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.16rem;
+  cursor: pointer;
+}
+.common-config .order-right .order-right-item .row .del-add .del.disabled,
+.common-config .order-right .order-right-item .row .del-add .add.disabled {
+  cursor: not-allowed;
+}
+.common-config .order-right .order-right-item .row .del-add .el-input__inner {
+  padding: 0;
+}
+.common-config .order-right .order-right-item .row .del-add .del {
+  margin-right: 0.04rem;
+}
+.common-config .order-right .order-right-item .row .del-add .num {
+  width: 0.48rem;
+  height: 0.32rem;
+}
+.common-config .order-right .order-right-item .row .del-add .num .el-input {
+  height: 0.32rem;
+  width: 0.48rem;
+  display: flex;
+}
+.common-config .order-right .order-right-item .row .del-add .num .el-input__inner {
+  height: 0.32rem;
+  width: 0.48rem;
+}
+.common-config .order-right .order-right-item .row .del-add .add {
+  margin-left: 0.04rem;
+}
+.common-config .order-right .order-right-footer {
+  padding-bottom: 0.16rem;
+}
+.common-config .order-right .order-right-footer .footer-total {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 0.2rem;
+}
+.common-config .order-right .order-right-footer .footer-total .left {
+  color: #1E2736;
+}
+.common-config .order-right .order-right-footer .footer-total .right {
+  font-size: 0.28rem;
+  font-family: Helvetica;
+  font-weight: bold;
+  color: #F0142F;
+  text-align: right;
+}
+.common-config .order-right .order-right-footer .footer-total .total-icon {
+  font-size: 20px !important;
+  color: #999 !important;
+  cursor: pointer;
+}
+.common-config .order-right .order-right-footer .footer-total .discount-box {
+  margin-top: 0.08rem;
+  font-size: 0.14rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 0.08rem;
+  row-gap: 0.1rem;
+}
+.common-config .order-right .order-right-footer .footer-total .discount-codeNumber {
+  cursor: pointer;
+  height: 0.32rem;
+  line-height: 0.32rem;
+  background: rgba(249, 149, 0, 0.2);
+  padding: 0 0.14rem;
+  color: #F99600;
+  font-weight: bold;
+  font-size: 0.14rem;
+}
+.common-config .order-right .order-right-footer .footer-code {
+  display: flex;
+  flex-direction: column;
+}
+.common-config .order-right .order-right-footer .footer-code .code-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.08rem;
+}
+.common-config .order-right .order-right-footer .footer-code .code-main .left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #F99600;
+  cursor: pointer;
+}
+.common-config .order-right .order-right-footer .footer-code .code-main .left .btn-add {
+  width: 0.12rem;
+  height: 0.12rem;
+  border: 1px solid #F99600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.06rem;
+  border-radius: 50%;
+}
+.common-config .order-right .order-right-footer .footer-code .code-main .right {
+  color: #F99600;
+}
+.common-config .order-right .order-right-footer .footer-code .code-detail {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.08rem;
+}
+.common-config .order-right .order-right-footer .footer-code .code-detail .code-detail-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  color: #4E5259;
+}
+.common-config .order-right .order-right-footer .footer-code .code-detail .code-detail-item .code {
+  font-weight: bold;
+  margin-right: 0.09rem;
+}
+.common-config .order-right .order-right-footer .footer-code .code-detail .code-detail-item .num {
+  margin-right: 0.05rem;
+}
+.common-config .order-right .order-right-footer .footer-code .code-detail .code-detail-item .btn {
+  font-size: 0.12rem;
+  cursor: pointer;
+}
+.common-config .order-right .order-right-footer .read {
+  margin-top: 0.1rem;
+}
+.common-config .order-right .order-right-footer .read a {
+  text-decoration: none;
+  color: #0058FF;
+}
+.common-config .order-right .order-right-footer .buy-btn {
+  width: 100%;
+  margin-top: 0.16rem;
+}
+.common-config .order-right .info {
+  padding: 0.3rem 0 0.2rem;
+  border-bottom: 1px solid #E6E7EB;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+.common-config .order-right .info::-webkit-scrollbar {
+  width: 6px;
+}
+.common-config .order-right .info::-webkit-scrollbar-thumb {
+  background-color: rgba(225, 213, 213, 0.8);
+  border-radius: 0.5rem;
+}
+.common-config .order-right .info::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+.common-config .order-right .info .des {
+  display: flex;
+  justify-content: space-between;
+  line-height: 1;
+  font-size: 0.14rem;
+  color: #1E2736;
+  margin-bottom: 0.15rem;
+}
+.common-config .order-right .info .des span {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.common-config .order-right .info .name {
+  width: 30%;
+}
+.common-config .order-right .info .value {
+  width: 30%;
+  text-align: left;
+}
+.common-config .order-right .info .price {
+  width: 35%;
+  text-align: right;
+}
+.common-config .f-btn {
+  display: flex;
+  justify-content: space-between;
+}
+.common-config .f-btn .el-button {
+  line-height: 1;
+  padding: 0;
+  height: 0.44rem;
+  border-radius: 0.04rem;
+  width: 45%;
+}
+.common-config .f-btn .cart {
+  color: #0058FF;
+  border: 1px solid #0058FF;
+  background: transparent;
+}
+.common-config .f-btn .buy-btn {
+  background: #0058FF;
+  border: 1px solid #0058FF;
+}
+.common-config .op-sysyem .el-input {
+  display: flex;
+  align-items: center;
+}
+.common-config .op-sysyem .system {
+  width: 2rem;
+}
+.common-config .op-sysyem .system .el-input__inner {
+  padding-left: 0.4rem;
+  width: 100%;
+}
+.common-config .op-sysyem .el-input__prefix {
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  margin-left: 0.1rem;
+}
+.common-config .op-sysyem .el-input__prefix img {
+  width: 0.2rem;
+  height: 0.2rem;
+  display: inline-block;
+}
+.common-config .el-icon-refresh {
+  cursor: pointer;
+  font-size: 0.16rem;
+  color: #666;
+}
+.system-icon {
+  width: 0.2rem;
+  height: 0.2rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+/* 购物车弹窗 */
+.cartDialog {
+  width: 4.9rem;
+  background: #fff;
+}
+.cartDialog .tit {
+  font-size: 0.28rem;
+  color: #171725;
+}
+.cartDialog .el-dialog__body {
+  text-align: center;
+  line-height: 1;
+}
+.cartDialog .dialog-footer {
+  padding-bottom: 0.6rem;
+  justify-content: center;
+}
+.cartDialog .dialog-footer .el-button {
+  width: 1.44rem;
+  height: 0.46rem;
+  border-radius: 0.04rem;
+  text-align: center;
+  margin: 0 5px;
+}
+.cartDialog .dialog-footer .el-button span {
+  padding: 0;
+  font-size: 0.16rem;
+}
+.cartDialog .dialog-footer .el-button:first-child {
+  background: #0058FF;
+  border: 1px solid #0058FF;
+  color: #fff;
+}
+.cartDialog .dialog-footer .el-button:last-child {
+  border: 1px solid #0058FF;
+  color: #0058FF;
+}
+.discount-pop {
+  white-space: nowrap;
+}
+.original-price {
+  text-decoration: line-through;
+  font-size: 0.2rem;
+  font-weight: 500;
+  color: #999999;
+}
+@media screen and (max-width: 750px) {
+  .common-config .common-box {
+    display: block;
+  }
+  .common-config .common-box {
+    margin: 0;
+  }
+  .common-config .l-config {
+    padding-bottom: 5rem;
+  }
+  .common-config .order-right {
+    width: 100%;
+    height: auto;
+    top: auto;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+    padding-top: 0.2rem;
+    z-index: 99;
+  }
+  .common-config .order-right .config-top {
+    display: none;
+  }
+  .common-config .order-right .config-mobile {
+    display: block;
+  }
+  .common-config .order-right .info {
+    border: none;
+    border-top: 1px solid #E6E7EB;
+  }
+}
+/* custom-filed-box */
+.custom-filed-box .el-input,
+.custom-filed-box .el-textarea {
+  width: 3.2rem;
+}

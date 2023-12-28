@@ -1,0 +1,405 @@
+.common_config {
+  padding: 24px;
+  /* cycle-form */
+  /* configModel */
+}
+
+.common_config .com-h-tit {
+  margin: 0;
+}
+.common_config .cycle-form .t-input-number {
+  width: 100%;
+}
+.empty-item {
+  margin-top: -20px;
+  margin-bottom: 10px;
+}
+.empty-item span {
+  color: #666;
+}
+.ratio-tip {
+  margin: 20px 0;
+}
+.ratio-tip p {
+  margin: 0;
+}
+.common_config .t-textarea__inner {
+  background-color: transparent;
+}
+
+.common_config .basic .t-form-item__order_page_description .t-form__label {
+  font-size: 14px;
+  color: #333;
+  height: 40px;
+}
+
+.common_config .basic .t-form__controls {
+  line-height: 1;
+  min-height: auto;
+}
+
+.common_config .basic .t-form__item {
+  margin-bottom: 15px;
+}
+
+.common_config .t-card {
+  border: 1px solid var(--td-component-border);
+}
+
+.common_config .t-tabs__nav-item:hover,
+.common_config .t-tabs__nav-item-wrapper:hover {
+  background: #fff !important;
+}
+
+.common_config .t-tabs__nav-item.t-is-active {
+  text-shadow: none;
+  font-weight: bold;
+}
+
+.common_config .t-tabs__nav-item.t-is-active .t-tabs__nav-item-text-wrapper {
+  color: var(--td-brand-color-8);
+}
+
+.common_config .t-tabs__bar.t-is-top {
+  bottom: 1px;
+}
+
+.common_config .t-tabs__nav-item:not(.t-is-disabled):not(.t-is-active):hover .t-tabs__nav-item-wrapper {
+  background: #fff;
+}
+
+.common_config .t-tabs__nav-item-text-wrapper {
+  color: var(--td-text-color-primary);
+}
+
+.common_config .t-tabs__nav-container.t-is-bottom:after,
+.common_config .t-tabs__nav-container.t-is-top:after {
+  background-color: var(--td-component-border);
+}
+
+.common_config .box {
+  padding: 30px 40px;
+  font-size: 14px;
+  color: #333;
+}
+
+.common_config .top-text {
+  width: 690px;
+  height: 120px;
+}
+
+.common_config .top-text textarea {
+  height: 100% !important;
+}
+
+.common_config td,
+.common_config th {
+  padding: 12px 24px;
+}
+
+.common_config .t-input__prefix {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.common_config .cycle-box {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.common_config .cycle-box {
+  max-width: 900px;
+}
+.common_config .cycle-box .item {
+  /* width: 48%; */
+}
+
+.common_config .onetime {
+  width: 143px;
+}
+
+.common_config .com-opt .t-icon {
+  color: #0052D9;
+  margin-right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.common_config .com-opt .t-icon:last-child {
+  margin-right: 0;
+}
+
+.common_config .com-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.common_config .com-top .right{
+  display: flex;
+  align-items: center;
+}
+.common_config .com-top .add-btn {
+  cursor: pointer;
+  line-height: 32px;
+  height: 32px;
+  background: rgba(0, 82, 217, 0.2);
+  font-size: 16px;
+  color: #0052D9;
+  padding: 0 14px;
+  border-radius: 4px;
+  margin-left: 20px;
+}
+
+.common_config .com-des {
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+.common_config .config-option .com-top {
+  align-items: flex-end;
+}
+
+.common_config .config-option .t-table,
+.common_config .custom-fields .t-table {
+  margin: 10px 0 40px;
+}
+
+.common_config .t-switch {
+  margin: 0 20px 0 10px;
+}
+
+.common_config .f-btn {
+  margin-top: 30px;
+}
+
+.common_config .f-btn .t-button {
+  margin-right: 20px;
+}
+
+.common_config .deleteDialog .t-dialog__body__icon {
+  padding: 10px 0 10px 4px;
+  color: #333;
+}
+
+.common_config .cycle_time {
+  margin-right: 10px;
+  width: 100%;
+}
+
+.common_config .interval {
+  margin: 0 10px;
+  color: #333;
+}
+
+.common_config .option_param .t-form__controls-content {
+  flex-wrap: wrap;
+}
+
+.common_config .option_param .t-form__controls-content .tip {
+  line-height: 1.2;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.common_config .required>.t-form__label label::before {
+  color: var(--td-error-color);
+  content: "*";
+  display: inline-block;
+  line-height: 22px;
+  margin-right: 4px;
+}
+
+.common_config .cycle_time .t-form__label {
+  width: 0 !important;
+  padding-right: 0 !important;
+}
+
+.common_config .configModel .t-dialog {
+  width: 1495px;
+  max-width: 90%;
+}
+
+.common_config .configModel .config-form {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.common_config .configModel .config-form .t-col {
+  display: flex;
+  justify-content: space-between;
+}
+
+.common_config .configModel .config-form .t-col .t-form__item {
+  width: 48%;
+}
+
+.common_config .configModel .config-form .t-col .t-form__item:last-child {
+  margin-right: 0;
+}
+
+.common_config .configModel .config-form .t-col .t-form__item:last-child .t-form__controls-content {
+  flex-wrap: wrap;
+}
+
+.common_config .configModel .config-form .t-col .t-form__item:last-child .t-form__controls-content .tip {
+  line-height: 1.2;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.common_config .half {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #333;
+}
+
+.common_config .half .t-form__item {
+  margin-bottom: 0;
+}
+
+.common_config .half .t-form__item {
+  width: auto !important;
+}
+
+.common_config .half .t-form__item:last-child {
+  width: 165px;
+  margin-left: 20px;
+}
+
+.common_config .t-form-item__description {
+  width: 100% !important;
+}
+
+.common_config .frre-switch .t-form__label {
+  width: auto !important;
+  padding-right: 0;
+}
+
+.common_config .frre-switch .t-form__controls {
+  margin-left: 0 !important;
+}
+
+.common_config .frre-switch .t-switch {
+  margin-right: 10px;
+}
+
+.common_config svg {
+  color: #0052D9;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.common_config .save-config {
+  margin-top: 32px;
+}
+
+/* configSubModel */
+.configSubModel .t-dialog {
+  padding: 0;
+}
+
+.configSubModel .t-dialog__header {
+  padding: 28px 32px 0 !important;
+}
+
+.configSubModel .t-form {
+  padding: 0 32px 32px;
+}
+
+.configSubModel .free-tip {
+  background: #E7E7E7;
+  line-height: 30px;
+  margin: 20px -32px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.3);
+}
+
+/* config-sub */
+.config-sub .t-table__th-area {
+  padding: 0 !important;
+  width: auto;
+  white-space: nowrap;
+}
+
+.config-sub .t-table__th-cell-inner {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
+.config-sub .config-tit,
+.config-sub .config-body {
+  padding: 12px 24px;
+  flex: 1;
+  min-width: 40px;
+  word-break: break-all;
+  position: relative;
+  border-right: 1px solid #ccc;
+}
+
+.config-sub .config-tit:last-child,
+.config-sub .config-body:last-child {
+  border-right: 0;
+}
+
+.config-sub .t-table__body td:nth-child(2) {
+  padding: 0 !important;
+}
+
+.config-sub .t-table__body .config-box {
+  display: flex;
+}
+
+.configModel {
+  z-index: 1000 !important;
+}
+
+.deleteDialog {
+  z-index: 9999;
+}
+
+.server_id.t-select__wrap {
+  width: 200px;
+}
+
+.con-box {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  row-gap: 20px;
+}
+
+
+.con-box .con-item {
+  width: 33%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+}
+
+@media screen and (max-width: 1660px) {
+  .other-box .buy-disk {
+    margin-top: -20px;
+  }
+
+  .other-box .buy-disk .configs {
+    margin-top: 20px !important;
+  }
+}
+
+@media screen and (max-width: 1500px) {
+  .cloud-config .model-group .com-inp {
+    width: 260px;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .cloud-config .model-group .com-inp {
+    width: 160px;
+  }
+}
