@@ -1,0 +1,171 @@
+.main-card .no-enter {
+  display: flex;
+  align-items: center;
+  cursor: auto;
+  width: 100%;
+  height: 0.6rem;
+}
+.main-card .main-card-title {
+  font-size: 0.28rem;
+  line-height: 0.28rem;
+}
+.main-card .main-card-top {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.main-card .main-card-top .top-item {
+  width: 3.32rem;
+  height: 1.63rem;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.main-card .main-card-top .top-item .top-item-text {
+  font-size: 0.16rem;
+  line-height: 0.16rem;
+  color: #8692B0;
+  margin-top: 0.2rem;
+  margin-left: 0.2rem;
+}
+.main-card .main-card-top .top-item .top-item-num {
+  font-size: 0.28rem;
+  font-family: PingFang SC;
+  font-weight: bold;
+  line-height: 0.28rem;
+  color: #1E2736;
+  margin-top: 0.2rem;
+  margin-left: 0.2rem;
+}
+.main-card .order-des {
+  margin-top: 0.3rem;
+  min-height: 1rem;
+  padding: 0.1rem;
+  border-radius: 0.03rem;
+  border: 1px solid #e6e7eb;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+  max-height: 1.3rem;
+  overflow-y: auto;
+}
+.main-card .content_searchbar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.3rem;
+}
+.main-card .content_searchbar .new-ticket-btn {
+  width: 1.12rem;
+  height: 0.46rem;
+  background: #0058FF;
+  border-radius: 3px;
+  font-size: 0.16rem;
+  font-weight: 400;
+  line-height: 0.46rem;
+  color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-card .content_searchbar .searchbar {
+  display: flex;
+  flex-direction: row;
+}
+.main-card .content_searchbar .searchbar .el-input__inner {
+  height: 0.46rem;
+}
+.main-card .content_searchbar .searchbar .el-input__suffix {
+  display: flex;
+  align-items: center;
+}
+.main-card .content_searchbar .searchbar .select-input {
+  width: 3.2rem;
+  margin-right: 0.1rem;
+}
+.main-card .content_searchbar .searchbar .el-button {
+  background: #0058FF;
+  color: #FFF;
+}
+.main-card .tabledata {
+  margin-top: 0.2rem;
+  padding-bottom: 0.23rem;
+  border: 1px solid #e6e7eb;
+}
+.main-card .tabledata tbody tr:hover {
+  cursor: pointer;
+}
+.main-card .tabledata .status-text {
+  display: inline-block;
+  text-align: center;
+  border-radius: 3px;
+  height: 26px;
+  line-height: 26px;
+  padding: 0 8px;
+  font-size: 0.13rem;
+}
+.main-card .tabledata .more-operation {
+  width: 0.26rem;
+  height: 0.3rem;
+  color: #0058FF;
+  font-size: 0.3rem;
+  cursor: pointer;
+}
+.main-card .create-ticket .el-dialog {
+  margin-top: 5vh !important;
+}
+.main-card .create-ticket .el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.main-card .create-ticket .el-dialog__body .el-form-item__label {
+  font-size: 0.16rem;
+}
+.main-card .create-ticket .el-dialog__body .dialog-title {
+  margin-bottom: 0.3rem;
+}
+.main-card .create-ticket .el-dialog__body .upload-btn .el-icon-upload2 {
+  font-size: 0.12rem;
+  margin-right: 0.02rem;
+}
+.el-popover {
+  min-width: 0.5rem !important;
+}
+.el-popover .operation {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.el-popover .operation .operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  cursor: pointer;
+}
+@media screen and (max-width: 750px) {
+  .select-input .el-input--suffix {
+    width: auto;
+  }
+  .main-card .tabledata .more-operation {
+    font-size: 0.6rem;
+    height: auto;
+  }
+  .main-card .content_searchbar {
+    display: block;
+  }
+  .main-card .content_searchbar .searchbar {
+    flex-wrap: wrap;
+  }
+  .main-card .content_searchbar .searchbar .el-input__inner {
+    height: auto;
+  }
+  .main-card .content_searchbar .searchbar .select-input {
+    width: auto;
+  }
+  .main-card .content_searchbar .searchbar .el-button {
+    height: 20px;
+    font-size: 16px;
+  }
+  .main-card .content_searchbar .new-ticket-btn {
+    width: 2.12rem;
+    margin-bottom: 10px;
+  }
+}

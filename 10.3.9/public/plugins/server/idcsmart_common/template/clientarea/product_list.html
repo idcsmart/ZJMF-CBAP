@@ -1,0 +1,91 @@
+<!-- 页面独有样式 -->
+<!-- 通用产品 -->
+<link rel="stylesheet" href="/plugins/server/idcsmart_common/template/clientarea/css/common_product_list.css">
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<div class="template common_product_lists">
+  <div class="main-card">
+    <div class="main-card-title">
+      <div class="main-card-title">
+        <span class="title-text">{{lang.cloud_title}}</span>
+      </div>
+    </div>
+    <div class="main-card-table">
+      <!-- 筛选 -->
+      <div class="main-card-search">
+        <!-- 产品状态 -->
+        <el-select v-model="params.status" style="width:3.2rem;margin-right: .2rem;" clearable @change="getList"
+          :placeholder="lang.com_config.select_pro_status">
+          <el-option v-for="item in statusSelect" :key="item.id" :value="item.status" :label="item.label">
+          </el-option>
+        </el-select>
+        <el-input v-model="params.keywords" style="width: 3.2rem;margin-right: .2rem;" :placeholder="lang.cloud_tip_2"
+          clearable @clear="getList">
+        </el-input>
+        <el-button :loading="submitLoading" class="search-btn"
+          @Click="inputChange">{{lang.com_config.query}}</el-button>
+      </div>
+      <div class="table">
+        <el-table v-loading="loading" :data="commonList" style="width: 100%;margin-bottom: .2rem;"
+          @row-click="(row)=>toDetail(row)">
+          <el-table-column prop="id" label="ID" width="100" align="left">
+            <template slot-scope="scope">
+              <span class="column-id">{{scope.row.id}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="product_name" :label="lang.com_config.product_name" min-width="180"
+            :show-overflow-tooltip="true">
+            <template slot-scope="scope">
+              <div class="cloud-name">
+                <span class="packge-name">{{ scope.row.product_name }}</span>
+                <span class="name">{{ scope.row.name }}</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column :label="item.field_name" min-width="150" :show-overflow-tooltip="true"
+            v-for="item in self_defined_field" :key="item.id + 'fff'">
+            <template slot-scope="{row}">
+              <span :class="item.field_type === 'textarea' ? 'word-pre' : ''">{{row.self_defined_field[item.id]
+                ||'--'}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ip" :label="`${lang.cloud_re_btn}${lang.com_config.money_cycle}`"
+            :show-overflow-tooltip="true" min-width="180">
+            <template slot-scope="{row}">
+              <template v-if="row.billing_cycle">
+                {{commonData.currency_prefix}}{{row.renew_amount}}<span>/</span>{{row.billing_cycle}}
+              </template>
+              <template v-else>
+                {{commonData.currency_prefix}}{{row.first_payment_amount}}/{{lang.common_cloud_text6}}
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="due_time" :label="lang.cloud_table_head_4" width="180">
+            <template slot-scope="scope">
+              {{scope.row.due_time | formateTime}}
+            </template>
+          </el-table-column>
+          <el-table-column :label="lang.cloud_table_head_3" width="120" align="left">
+            <template slot-scope="scope">
+              <div class="status"
+                :style="'color:'+status[scope.row.status].color + ';background:' + status[scope.row.status].bgColor">
+                {{status[scope.row.status].text }}
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="client_notes" :label="lang.invoice_text139" min-width="100"
+            :show-overflow-tooltip="true">
+            <template slot-scope="{row}">
+              <span>{{row.client_notes || '--'}}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange" v-if="params.total">
+      </pagination>
+    </div>
+  </div>
+</div>
+<!-- =======页面独有======= -->
+<script src="/plugins/server/idcsmart_common/template/clientarea/api/common_product.js"></script>
+<script src="/plugins/server/idcsmart_common/template/clientarea/utils/util.js"></script>
+<script src="/plugins/server/idcsmart_common/template/clientarea/js/common_product_list.js"></script>
