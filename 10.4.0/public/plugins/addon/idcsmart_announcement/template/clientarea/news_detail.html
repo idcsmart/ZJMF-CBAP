@@ -1,0 +1,69 @@
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/plugins/addon/idcsmart_announcement/template/clientarea/css/news.css">
+</head>
+
+<body>
+  <!-- mounted之前显示 -->
+  <div id="mainLoading">
+    <div class="ddr ddr1"></div>
+    <div class="ddr ddr2"></div>
+    <div class="ddr ddr3"></div>
+    <div class="ddr ddr4"></div>
+    <div class="ddr ddr5"></div>
+  </div>
+  <div class="news news_detail" v-cloak>
+    <el-container>
+      <aside-menu></aside-menu>
+      <el-container>
+        <top-menu></top-menu>
+        <el-main>
+          <!-- 自己的东西 -->
+          <div class="main-card">
+            <div class="main-card-title">
+              <img :src="`${baseUrl}img/finance/back.png`" alt="" @click="back" class="back">
+              {{lang.news_text1}}
+            </div>
+            <!-- pc端 -->
+            <div class="new-box" v-if="newDetail">
+              <p class="tit">{{newDetail.title}}</p>
+              <p class="time">
+                {{lang.news_text6}}：{{newDetail.create_time | formateTime}} &nbsp;&nbsp;
+                {{lang.news_text3}}：{{newDetail.keywords}}
+              </p>
+              <div class="content" v-html="calStr(newDetail.content)"></div>
+              <div class="news_annex" v-if="newDetail.attachment.length > 0">
+                <p>{{lang.news_text8}}： </p>
+                <p v-for="(item,index) in newDetail.attachment">
+                  <a :href="item" :key="index">
+                    {{item.split('^')[1]}}
+                  </a>
+                </p>
+              </div>
+              <div class="page">
+                <div class="link">
+                  <a :href="`news_detail.htm?id=${newDetail.prev?.id}`" class="prev"
+                    v-if="JSON.stringify(newDetail.prev) !== '{}' ">
+                    <i class="el-icon-arrow-left" class="icon"></i>
+                    <span><span class="txt">{{lang.news_text9}}：</span>{{newDetail.prev.title}}</span>
+                  </a>
+                </div>
+                <div class="link">
+                  <a :href="`news_detail.htm?id=${newDetail.next?.id}`" class="prev"
+                    v-if="JSON.stringify(newDetail.next) !== '{}'">
+                    <span v-if="newDetail.next"><span
+                        class="txt">{{lang.news_text10}}：</span>{{newDetail.next.title}}</span>
+                    <i class="el-icon-arrow-right" class="icon"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+
+  <!-- =======页面独有======= -->
+  <script src="/plugins/addon/idcsmart_announcement/template/clientarea/api/news.js"></script>
+  <script src="/plugins/addon/idcsmart_announcement/template/clientarea/lang/index.js"></script>
+  <script src="/plugins/addon/idcsmart_announcement/template/clientarea/js/news_detail.js"></script>

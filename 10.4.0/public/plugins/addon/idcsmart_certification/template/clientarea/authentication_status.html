@@ -1,0 +1,130 @@
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/plugins/addon/idcsmart_certification/template/clientarea/css/authentication.css">
+</head>
+
+<body>
+  <!-- mounted之前显示 -->
+  <div id="mainLoading">
+    <div class="ddr ddr1"></div>
+    <div class="ddr ddr2"></div>
+    <div class="ddr ddr3"></div>
+    <div class="ddr ddr4"></div>
+    <div class="ddr ddr5"></div>
+  </div>
+  <div class="template">
+    <el-container>
+      <aside-menu></aside-menu>
+      <el-container>
+        <top-menu></top-menu>
+        <el-main>
+          <!-- 自己的东西 -->
+          <div class="main-card">
+            <div class="main-top">
+              <div class="main-card-title"><img
+                  src="/plugins/addon/idcsmart_certification/template/clientarea/img/finance/back.png"
+                  class="top-back-img" @click="goAccount">{{lang.realname_text41}}</div>
+              <div class="top-line"></div>
+            </div>
+            <!-- 认证状态页面 -->
+            <div class="status-box">
+              <!-- 个人实名认证审核中 -->
+              <div class="personl-ing" v-if="userStatus === 15">
+                <h3 class="title-blue">{{lang.realname_text34}}</h3>
+                <div class="updata-btn">
+                  <el-button @click="backTicket">{{lang.realname_text35}}</el-button>
+                </div>
+                <table class="table-box" rules="all" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td>{{lang.realname_text36}}: {{certificationInfoObj.person.username}}</td>
+                    <td>{{lang.realname_text37}}: {{certificationInfoObj.person.card_number}}</td>
+                  </tr>
+                  <tr>
+                    <td>{{lang.realname_text38}}: {{certificationInfoObj.person.card_name}}</td>
+                    <td>{{lang.realname_text39}}: {{certificationInfoObj.person.create_time | formateTime}}</td>
+                  </tr>
+                </table>
+                <div class="again-btn">
+                  <el-button @click="backTicket">{{lang.realname_text40}}</el-button>
+                </div>
+              </div>
+              <!-- 个人认证已完成 -->
+              <div class="personl-ing" v-else-if="userStatus === 10">
+                <div class="status-img-box">
+                  <img src="/plugins/addon/idcsmart_certification/template/clientarea/img/account/success.png" alt="">
+                </div>
+                <h3 class="title-green">{{lang.realname_text42}}</h3>
+                <table class="table-box mar-top-42" rules="all">
+                  <tr>
+                    <td>{{lang.realname_text43}}: {{certificationInfoObj.person.username}}</td>
+                    <td>{{lang.realname_text44}}: {{certificationInfoObj.person.card_number}}</td>
+                  </tr>
+                  <tr>
+                    <td>{{lang.realname_text45}}: {{certificationInfoObj.person.card_name}}</td>
+                    <td>{{lang.realname_text46}}: {{certificationInfoObj.person.create_time | formateTime}}</td>
+                  </tr>
+                </table>
+                <div class="updata-btn mar-top-114">
+                  <el-button @click="backTicket">{{lang.realname_text47}}</el-button>
+                </div>
+              </div>
+              <!-- 企业认证审核中 -->
+              <div class="personl-ing" v-if="userStatus === 25">
+                <h3 class="title-blue">{{lang.realname_text48}}</h3>
+                <table class="table-box mar-top-42" rules="all">
+                  <tr>
+                    <td>{{lang.realname_text49}}: {{certificationInfoObj.company.username}}</td>
+                    <td>{{lang.realname_text50}}: {{certificationInfoObj.company.company}}</td>
+                  </tr>
+                  <tr>
+                    <td>{{lang.realname_text51}}: {{ certificationInfoObj.company.company_organ_code}}</td>
+                    <td>{{lang.realname_text52}}: {{certificationInfoObj.company.create_time | formateTime}}</td>
+                  </tr>
+                  <tr>
+                    <!-- <td>认证企业：{{certificationInfoObj.company.company}}</td> -->
+                  </tr>
+                </table>
+                <div class="again-btn">
+                  <el-button @click="backTicket">{{lang.realname_text53}}</el-button>
+                </div>
+              </div>
+              <!-- 企业认证已完成 -->
+              <div class="personl-ing" v-else-if="userStatus === 20">
+                <div class="status-img-box">
+                  <img src="/plugins/addon/idcsmart_certification/template/clientarea/img/account/success.png" alt="">
+                </div>
+                <h3 class="title-green">{{lang.realname_text54}}</h3>
+                <table class="table-box mar-top-42" rules="all">
+                  <tr>
+                    <td>{{lang.realname_text49}}: {{certificationInfoObj.company.username}}</td>
+                    <td>{{lang.realname_text52}}: {{certificationInfoObj.company.create_time | formateTime}}</td>
+
+                  </tr>
+                  <tr>
+                    <td>{{lang.realname_text50}}: {{certificationInfoObj.company.certification_company}}</td>
+                    <td>{{lang.realname_text51}}: {{ certificationInfoObj.company.company_organ_code}}</td>
+                  </tr>
+                </table>
+              </div>
+              <!-- 认证失败 -->
+              <div class="personl-ing" v-else-if="userStatus === 50">
+                <div class="status-img-box">
+                  <img src="/plugins/addon/idcsmart_certification/template/clientarea/img/account/error.png" alt="">
+                </div>
+                <h3 class="status-title black-color">{{lang.realname_text60}}</h3>
+                <p class="status-tips">{{lang.realname_text61}}</p>
+                <div class="btn-box">
+                  <el-button @click="submitAgan">{{lang.realname_text62}}</el-button>
+                  <el-link class="canleBtn" @click="goAccount">{{lang.realname_text63}}</el-link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+  <!-- =======页面独有======= -->
+  <script src="/plugins/addon/idcsmart_certification/template/clientarea/api/certification.js"></script>
+  <script src="/plugins/addon/idcsmart_certification/template/clientarea/lang/index.js"></script>
+
+  <script src="/plugins/addon/idcsmart_certification/template/clientarea/js/authenticationStatus.js"></script>

@@ -1,0 +1,96 @@
+(function () {
+  const plugin_lang = {
+    "zh-cn": {
+      // 文件下载
+      file_download: "文件下载",
+      file_folder: "文件夹",
+      file_system: "系统文件",
+      file_name: "文件名",
+      file_time: "上传日期",
+      file_des: "文件描述",
+      file_type: "文件类型",
+      file_size: "大小",
+      file_opt: "操作",
+      file_all: "全部",
+      file_downloading: "文件下载中",
+      cloud_tip_2: "请输入你需要搜索的内容",
+      // 资源中心
+      source_title: "资源中心",
+      source_title1: "首页",
+      source_title2: "问题汇总",
+      source_title3: "文档目录",
+      source_tab1: "帮助中心",
+      source_tab2: "新闻中心",
+      source_tab3: "文件下载",
+      source_text1: "更新时间",
+      source_text2: "关键字",
+      source_text3: "附件",
+      source_text4: "上一篇：",
+      source_text5: "下一篇：",
+      source_btn1: "查看更多",
+    },
+
+    "en-us": {
+      // Download Document
+      file_download: "File download",
+      file_folder: "folder",
+      file_system: "System file",
+      file_name: "file name",
+      file_time: "Upload date",
+      file_des: "File description",
+      file_type: "File type",
+      file_size: "size",
+      file_opt: "Operation",
+      file_all: "all",
+      file_downloading: "File downloading",
+      cloud_tip_2: "Please enter the content you need to search for",
+      // Resource Center
+      source_title: "Resource Center",
+      source_title1: "Homepage",
+      source_title2: "Problem Summary",
+      source_title3: "Document Directory",
+      source_tab1: "Help Center",
+      source_tab2: "News Center",
+      source_tab3: "File Download",
+      source_text1: "Update time",
+      source_text2: "Keyword",
+      source_text3: "Attachment",
+      source_text4: "Previous article:",
+      source_text5: "Next article:",
+      source_btn1: "View more",
+    },
+
+    "zh-hk": {
+      // 檔案下載
+      file_download: "檔案下載",
+      file_folder: "資料夾",
+      file_system: "系統檔案",
+      file_name: "檔案名稱",
+      file_time: "上傳日期",
+      file_des: "檔案描述",
+      file_type: "檔案類型",
+      file_size: "大小",
+      file_opt: "操作",
+      file_all: "全部",
+      file_downloading: "檔案下載中",
+      cloud_tip_2: "請輸入你需要搜尋的內容",
+      // 資源中心
+      source_title: "資源中心",
+      source_title1: "首頁",
+      source_title2: "問題總結",
+      source_title3: "文檔目錄",
+      source_tab1: "幫助中心",
+      source_tab2: "新聞中心",
+      source_tab3: "檔案下載",
+      source_text1: "更新時間",
+      source_text2: "關鍵字",
+      source_text3: "附件",
+      source_text4: "上一篇：",
+      source_text5: "下一篇：",
+      source_btn1: "看更多",
+    },
+  };
+  const DEFAULT_LANG = localStorage.getItem("lang") || "zh-cn";
+  checkLangFun(plugin_lang);
+  window.plugin_lang = plugin_lang[DEFAULT_LANG];
+})();

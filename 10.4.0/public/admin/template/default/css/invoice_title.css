@@ -1,0 +1,8 @@
+.invoice-title .operation-icon {
+  font-size: 18px;
+  color: var(--td-brand-color);
+  cursor: pointer;
+}
+.t-dialog__body__icon {
+  padding-bottom: 0;
+}
