@@ -15,7 +15,7 @@ ZJMF-CBAP v10是开源的业务管理系统，基于PHP+MYSQL开发的一套小�
 内置短信扩展接口，邮件扩展接口，主题扩展能力，开发者可快速开发短信邮件与主题，主题使用前后端分离模式，您只需要调用API即可，无论您使用jq或VUE，哪怕是react也不在话下。
 ### SaaS服务提供
 系统内置了常用接口，如短信，邮件，并且智简魔方提供了SaaS服务，您无需额外购买或者配置短信邮件，实名接口，即可使用。让您的业务上线更加便捷高效。
-### HOOK能力
+### HookK能力
 系统具有丰富的hook模块，类似whmcs的hook，您可在系统任何动作时增加您的操作，方便您进行二次开发
 
 
@@ -43,31 +43,40 @@ nginx用户，请将public/nginx.conf设置到您的nginx配置中<br>
 ### 安装后API文档访问路径
 http://ip/doc
 
-
-
+### Demo地址
+https://v10demo.idcsmart.com/ytorfbze/login.htm
+admin123
+admin123
 
 ***
 
 ## 如何开发
-### 验证码开发接口
-整理中
-### 实名认证接口
-整理中
+### v10业务管理系统开发规范
+https://www.idcsmart.com/wiki_list/1256.html
+### 接口文档
+https://www.idcsmart.com/wiki_list/930.html
+### 图形验证码开发文档
+https://www.idcsmart.com/wiki_list/1265.html
+### 实名认证接口开发文档
+https://www.idcsmart.com/wiki_list/1264.html
 ### 支付接口开发文档
-https://www.idcsmart.com/wiki_list/882.html
+https://www.idcsmart.com/wiki_list/1267.html
 ### 插件开发文档
-https://www.idcsmart.com/wiki_list/883.html
-### 主题开发文档
-https://www.idcsmart.com/wiki_list/884.html
+https://www.idcsmart.com/wiki_list/1257.html
+### 官网/主题开发文档
+https://www.idcsmart.com/wiki_list/1261.html
 ### 短信接口开发文档
-https://www.idcsmart.com/wiki_list/885.html
+https://www.idcsmart.com/wiki_list/1259.html
 ### 邮件接口开发文档
-https://www.idcsmart.com/wiki_list/886.html
-### HOOK
-整理中，820前上线
-### 产品模块开发文档
-整理中
-### 验证码开发接口整理中
+https://www.idcsmart.com/wiki_list/1266.html
+### Hook文档
+https://www.idcsmart.com/wiki_list/925.html
+### 模块开发文档
+https://www.idcsmart.com/wiki_list/1262.html
+### 挂件开发文档
+https://www.idcsmart.com/wiki_list/1260.html
+### 三方登录开发文档
+https://www.idcsmart.com/wiki_list/1263.html
 ***
 
 ## License
