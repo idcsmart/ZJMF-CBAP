@@ -1,0 +1,25 @@
+main {
+  box-sizing: border-box;
+  padding: 20px 20px 0 40px;
+}
+.code-box {
+  display: flex;
+  flex-direction: column;
+}
+.code-box .t-form__label--right {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+.t-form__controls {
+  margin-left: 20px !important;
+}
+.t-textarea__inner {
+  height: 570px;
+}
+.footer .t-form__controls-content {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `idcsmart_product_group` ADD COLUMN `type` varchar(25) NOT NULL DEFAULT '' COMMENT '类型';

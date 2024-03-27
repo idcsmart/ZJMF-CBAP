@@ -1,0 +1,238 @@
+.invoice-system {
+    .list-card-container {
+        .top-search {
+            display: flex;
+            flex-direction: row;
+            justify-content: end;
+            margin-top: 8px;
+            margin-bottom: 30px;
+
+            .key-input,
+            .type-select,
+            .status-select {
+                width: 240px;
+                margin-right: 8px;
+            }
+
+        }
+
+        .status {
+            width: 55px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            font-size: 12px;
+        }
+
+        .pending {
+            background: #58A1F5;
+        }
+
+        .unpaid {
+            background: #999999;
+        }
+
+        .wait_send {
+            background: #FF6000;
+        }
+
+        .sent {
+            background: #03B193;
+        }
+
+        .reject {
+            background: #FF0000;
+        }
+
+        .cancel {
+            background: #E7E7E7;
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .operation-icon {
+            font-size: 18px;
+            color: var(--td-brand-color);
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .username-company {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            .type {
+                width: 51px;
+                height: 24px;
+                background: #E7E7E7;
+                border: 1px solid #DCDCDC;
+                border-radius: 3px;
+                font-size: 13px;
+                color: rgba(0, 0, 0, 0.6);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 10px;
+            }
+        }
+
+
+    }
+}
+
+
+// 发票详情 弹窗
+.detail-main {
+    .detail-top {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 19px;
+        margin-bottom: 11px;
+
+        .top-item {
+            display: flex;
+            flex-direction: row;
+
+            .label {
+                font-size: 14px;
+                color: #8692B0;
+                margin-right: 12px;
+            }
+
+            .value {
+                font-size: 15px;
+                color: #1E2736;
+            }
+        }
+    }
+
+    .detail-content {
+        border: 1px solid #E6E7EB;
+        border-radius: 3px;
+        display: flex;
+        flex-direction: column;
+
+        .detail-row {
+            display: flex;
+            flex-direction: row;
+            border-bottom: 1px solid #E6E7EB;
+            min-height: 109px;
+
+
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            .row-title {
+                writing-mode: vertical-lr;
+                width: 45px;
+                border-right: 1px solid #E6E7EB;
+                border-left: 1px solid #E6E7EB;
+                color: #8692B0;
+                font-size: 13px;
+                letter-spacing: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding-top: 10px;
+
+                &:first-child {
+                    border-left: none;
+                }
+            }
+
+            .row-content {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                padding-left: 20px;
+                padding-right: 10px;
+                color: rgba(0, 0, 0, 0.9);
+
+                .item {
+                    display: flex;
+                    flex-direction: row;
+
+
+                    .label {
+                        font-size: 14px;
+                        color: rgba(0, 0, 0, 0.4);
+                        margin-right: 30px;
+                        width: 70px;
+                        height: 20px;
+                        display: inline-block;
+                        text-align: justify;
+
+                        &::after {
+                            content: "";
+                            display: inline-block;
+                            width: 100%;
+                        }
+                    }
+
+                    .value {
+                        color: rgba(0, 0, 0, 0.9);
+                    }
+                }
+            }
+
+            .first-content {
+                width: 485px;
+            }
+        }
+    }
+
+    .detail-footer {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+// 发出发票 弹窗
+.send-main {
+    margin-top: 14px;
+
+    .send-top {
+        display: flex;
+        flex-direction: column;
+
+        .item {
+            display: flex;
+            flex-direction: row;
+            font-size: 14px;
+            margin-bottom: 12px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .label {
+                color: rgba(0, 0, 0, 0.4);
+                width: 84px;
+                margin-right: 12px;
+            }
+
+            .value {
+                color: rgba(0, 0, 0, 0.9);
+            }
+        }
+    }
+
+    .line {
+        width: 100%;
+        border-bottom: 1px dashed #DCDCDC;
+        margin-top: 37px;
+        margin-bottom: 30px;
+    }
+
+    .com-f-btn {
+        margin-top: 30px;
+    }
+}

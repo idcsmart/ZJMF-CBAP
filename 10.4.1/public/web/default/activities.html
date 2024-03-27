@@ -1,0 +1,545 @@
+{include file="header"}
+
+<link rel="stylesheet" href="/web/default/css/product.css">
+<link rel="stylesheet" href="/web/default/css/activities.css">
+<script src="/web/default/js/activities.js"></script>
+
+</head>
+
+<body class="activities-page">
+  <header id="header"></header>
+  <section class="section server-banner2 activities-banner"></section>
+  <!-- 空状态 -->
+  <!-- <div class="common-empty section">
+    <img src="/web/default/assets/img/empty/empty_07.png" alt="">
+    <p class="des">暂无活动</p>
+  </div> -->
+
+  <section class="section">
+    <div class="section-content active-box">
+      <div class="active-list">
+        <div class="active-item">
+          <div class="active-name">9.9元秒杀 <span class="iconfont icon-arrow-right"></span></div>
+          <div class="active-des">新用户专享，抢完即止</div>
+        </div>
+        <div class="active-item">
+          <div class="active-name">免费试用 <span class="iconfont icon-arrow-right"></span></div>
+          <div class="active-des">多款云产品等你来体验</div>
+        </div>
+        <div class="active-item">
+          <div class="active-name">8888元优惠大礼包 <span class="iconfont icon-arrow-right"></span></div>
+          <div class="active-des">领8888元券包，上云更划算</div>
+        </div>
+        <div class="active-item">
+          <div class="active-name">爆款特惠 <span class="iconfont icon-arrow-right"></span></div>
+          <div class="active-des">云服务器低至0.5折，新老同享</div>
+        </div>
+      </div>
+      <div class="active-type">
+        <p class="active-type-title">限量秒杀</p>
+        <div class="active-content">
+          <div class="active-notice">
+            <img src="/web/default/assets/img/active/horn.svg" alt="">
+            <span>每天上午09:00限量开抢，仅限新用户抢购1单，抢完即止！</span>
+          </div>
+          <div class="count-down-box">
+            <span class="count-text">距本场活动还剩</span>
+            <span class="count-time" id="day1">0</span>
+            <span class="count-time" id="day2">0</span>
+            <span class="count-text">天</span>
+            <span class="count-time" id="hour1">0</span>
+            <span class="count-time" id="hour2">0</span>
+            <span class="count-text">时</span>
+            <span class="count-time" id="min1">0</span>
+            <span class="count-time" id="min2">0</span>
+            <span class="count-text mar-r0">分</span>
+          </div>
+        </div>
+        <div class="seckill-goods">
+          <div class="seckill-item">
+            <div class="seckill-logo">新客专享</div>
+            <div class="seckill-top">
+              <div class="seckill-name">云服务器 1核1G </div>
+              <div class="seckill-des">适用于小型网站和小型Web应用程序</div>
+              <div class="seckill-country">香港</div>
+            </div>
+            <div class="seckill-bottom">
+              <div class="seckill-info">
+                <p class="seckill-config">
+                  <span class="seckill-label">系统盘</span>
+                  <span class="seckill-value">50GB SSD</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">带宽</span>
+                  <span class="seckill-value">2M</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">时长</span>
+                  <span class="seckill-value">1个月</span>
+                </p>
+              </div>
+              <div class="seckill-ad">
+                <span class="seckill-aditem">低至0.5折</span>
+                <span class="seckill-aditem">超高性价比</span>
+                <span class="seckill-aditem">个人建站必备</span>
+              </div>
+              <div class="seckill-price">
+                <span class="price-text">￥<span class="font-24">200</span>/年</span>
+                <span class="origin-price">原价:￥1000/月</span>
+                <p class="price-moon">约￥16/月</p>
+              </div>
+              <div class="seckill-btn">
+                <div class="btn btn-normal buy-btn">立即抢购</div>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                  style="width: 60%;">
+                  <span class="sr-only">60% Complete</span>
+                </div>
+              </div>
+              <div class="progress-text">已抢60%</div>
+            </div>
+          </div>
+          <div class="seckill-item">
+            <div class="seckill-logo">新客专享</div>
+            <div class="seckill-top">
+              <div class="seckill-name">云服务器 1核1G </div>
+              <div class="seckill-des">适用于小型网站和小型Web应用程序</div>
+              <div class="seckill-country">香港</div>
+            </div>
+            <div class="seckill-bottom">
+              <div class="seckill-info">
+                <p class="seckill-config">
+                  <span class="seckill-label">系统盘</span>
+                  <span class="seckill-value">50GB SSD</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">带宽</span>
+                  <span class="seckill-value">2M</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">时长</span>
+                  <span class="seckill-value">1个月</span>
+                </p>
+              </div>
+              <div class="seckill-ad">
+                <span class="seckill-aditem">低至0.5折</span>
+                <span class="seckill-aditem">超高性价比</span>
+                <span class="seckill-aditem">个人建站必备</span>
+              </div>
+              <div class="seckill-price">
+                <span class="price-text">￥<span class="font-24">200</span>/年</span>
+                <span class="origin-price">原价:￥1000/月</span>
+                <p class="price-moon">约￥16/月</p>
+              </div>
+              <div class="seckill-btn">
+                <div class="btn btn-normal buy-btn">立即抢购</div>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                  style="width: 60%;">
+                  <span class="sr-only">60% Complete</span>
+                </div>
+              </div>
+              <div class="progress-text">已抢60%</div>
+            </div>
+          </div>
+          <div class="seckill-item">
+            <div class="seckill-logo">新客专享</div>
+            <div class="seckill-top">
+              <div class="seckill-name">云服务器 1核1G </div>
+              <div class="seckill-des">适用于小型网站和小型Web应用程序</div>
+              <div class="seckill-country">香港</div>
+            </div>
+            <div class="seckill-bottom">
+              <div class="seckill-info">
+                <p class="seckill-config">
+                  <span class="seckill-label">系统盘</span>
+                  <span class="seckill-value">50GB SSD</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">带宽</span>
+                  <span class="seckill-value">2M</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">时长</span>
+                  <span class="seckill-value">1个月</span>
+                </p>
+              </div>
+              <div class="seckill-ad">
+                <span class="seckill-aditem">低至0.5折</span>
+                <span class="seckill-aditem">超高性价比</span>
+                <span class="seckill-aditem">个人建站必备</span>
+              </div>
+              <div class="seckill-price">
+                <span class="price-text">￥<span class="font-24">200</span>/年</span>
+                <span class="origin-price">原价:￥1000/月</span>
+                <p class="price-moon">约￥16/月</p>
+              </div>
+              <div class="seckill-btn">
+                <div class="btn btn-normal buy-btn">立即抢购</div>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                  style="width: 30%;">
+                  <span class="sr-only">60% Complete</span>
+                </div>
+              </div>
+              <div class="progress-text">已抢30%</div>
+            </div>
+          </div>
+          <div class="seckill-item">
+            <div class="seckill-logo">新客专享</div>
+            <div class="seckill-top">
+              <div class="seckill-name">云服务器 1核1G </div>
+              <div class="seckill-des">适用于小型网站和小型Web应用程序</div>
+              <div class="seckill-country">香港</div>
+            </div>
+            <div class="seckill-bottom">
+              <div class="seckill-info">
+                <p class="seckill-config">
+                  <span class="seckill-label">系统盘</span>
+                  <span class="seckill-value">50GB SSD</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">带宽</span>
+                  <span class="seckill-value">2M</span>
+                </p>
+                <p class="seckill-config">
+                  <span class="seckill-label">时长</span>
+                  <span class="seckill-value">1个月</span>
+                </p>
+              </div>
+              <div class="seckill-ad">
+                <span class="seckill-aditem">低至0.5折</span>
+                <span class="seckill-aditem">超高性价比</span>
+                <span class="seckill-aditem">个人建站必备</span>
+              </div>
+              <div class="seckill-price">
+                <span class="price-text">￥<span class="font-24">200</span>/年</span>
+                <span class="origin-price">原价:￥1000/月</span>
+                <p class="price-moon">约￥16/月</p>
+              </div>
+              <div class="seckill-btn">
+                <div class="btn btn-normal lootall-btn">已抢光</div>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                  style="width: 100%;">
+                  <span class="sr-only">60% Complete</span>
+                </div>
+              </div>
+              <div class="progress-text">已抢100%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="active-type">
+        <p class="active-type-title">云服务器</p>
+        <div class="cloud-des">限首次购买云服务器的个人或企业用户，同一认证信息账号限购1台。<a href="" class="link-rule">活动规则<span
+              class="iconfont icon-arrow-right"></span></a></div>
+        <div class="cloud-tab">
+          <div class="tab-left">
+            <div class="tab-item active-tab">地区一</div>
+            <div class="tab-item">地区二</div>
+            <div class="tab-item">地区三</div>
+            <div class="tab-item">地区四</div>
+          </div>
+          <div class="tab-right">
+            <div class="right-btn">前往新老同享<span class="iconfont icon-arrow-right"></span></div>
+          </div>
+        </div>
+        <div class="cloud-goods">
+          <div class="cloud-item">
+            <div class="cloud-label">新用户专享</div>
+            <div class="cloud-left">
+              <div class="cloud-name">香港云 入门型</div>
+              <div class="cloud-text">适用于小型网站和小型Web应用程序</div>
+            </div>
+            <div class="cloud-mid">
+              <div class="cloud-config-item">
+                <p class="config-lable">1核</p>
+                <p class="config-value">vCPU</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2GB</p>
+                <p class="config-value">内存</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">50GB SSD</p>
+                <p class="config-value">系统盘</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2M</p>
+                <p class="config-value">带宽</p>
+              </div>
+            </div>
+            <div class="cloud-right">
+              <div class="cloud-price-box active">
+                <p>￥<span class="font-24">2200</span>/月</p>
+                <p class="cloud-origin">原价￥4400</p>
+              </div>
+              <div class="cloud-price-box">
+                <p>￥<span class="font-24">2200</span>/3个月</p>
+              </div>
+            </div>
+            <div class="btn btn-normal cloud-buy-btn">立即抢购</div>
+          </div>
+          <div class="cloud-item">
+            <div class="cloud-label">新用户专享</div>
+            <div class="cloud-left">
+              <div class="cloud-name">香港云 入门型</div>
+              <div class="cloud-text">适用于小型网站和小型Web应用程序</div>
+            </div>
+            <div class="cloud-mid">
+              <div class="cloud-config-item">
+                <p class="config-lable">1核</p>
+                <p class="config-value">vCPU</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2GB</p>
+                <p class="config-value">内存</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">50GB SSD</p>
+                <p class="config-value">系统盘</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2M</p>
+                <p class="config-value">带宽</p>
+              </div>
+            </div>
+            <div class="cloud-right">
+              <div class="cloud-price-box">
+                <p>￥<span class="font-24">2200</span>/月</p>
+              </div>
+              <div class="cloud-price-box active">
+                <p>￥<span class="font-24">2200</span>/月</p>
+                <p class="cloud-origin">原价￥4400</p>
+              </div>
+            </div>
+            <div class="btn btn-normal cloud-buy-btn">立即抢购</div>
+          </div>
+        </div>
+      </div>
+      <div class="active-type">
+        <p class="active-type-title">物理裸机</p>
+        <div class="cloud-des dedicated-box">
+          <div>限首次购买物理裸机的企业用户，同一认证信息账号限购1台。<a href="" class="link-rule">活动规则<span
+                class="iconfont icon-arrow-right"></span></a></div>
+          <div class="tab-right">
+            <div class="right-btn">前往新老同享<span class="iconfont icon-arrow-right"></span></div>
+          </div>
+        </div>
+        <div class="cloud-goods">
+          <div class="cloud-item">
+            <div class="cloud-label">新用户专享</div>
+            <div class="cloud-left">
+              <div class="cloud-name">香港云 入门型</div>
+              <div class="cloud-text">适用于小型网站和小型Web应用程序</div>
+            </div>
+            <div class="cloud-mid">
+              <div class="cloud-config-item">
+                <p class="config-lable">1核</p>
+                <p class="config-value">vCPU</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2GB</p>
+                <p class="config-value">内存</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">50GB SSD</p>
+                <p class="config-value">系统盘</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2M</p>
+                <p class="config-value">带宽</p>
+              </div>
+            </div>
+            <div class="cloud-right">
+              <div class="cloud-price-box active">
+                <p>￥<span class="font-24">2200</span>/月</p>
+                <p class="cloud-origin">原价￥4400</p>
+              </div>
+              <div class="cloud-price-box">
+                <p>￥<span class="font-24">2200</span>/3个月</p>
+              </div>
+            </div>
+            <div class="btn btn-normal cloud-buy-btn">立即抢购</div>
+          </div>
+          <div class="cloud-item">
+            <div class="cloud-label">新用户专享</div>
+            <div class="cloud-left">
+              <div class="cloud-name">香港云 入门型</div>
+              <div class="cloud-text">适用于小型网站和小型Web应用程序</div>
+            </div>
+            <div class="cloud-mid">
+              <div class="cloud-config-item">
+                <p class="config-lable">1核</p>
+                <p class="config-value">vCPU</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2GB</p>
+                <p class="config-value">内存</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">50GB SSD</p>
+                <p class="config-value">系统盘</p>
+              </div>
+              <div class="cloud-config-item">
+                <p class="config-lable">2M</p>
+                <p class="config-value">带宽</p>
+              </div>
+            </div>
+            <div class="cloud-right">
+              <div class="cloud-price-box">
+                <p>￥<span class="font-24">2200</span>/月</p>
+              </div>
+              <div class="cloud-price-box active">
+                <p>￥<span class="font-24">2200</span>/月</p>
+                <p class="cloud-origin">原价￥4400</p>
+              </div>
+            </div>
+            <div class="btn btn-normal cloud-buy-btn">立即抢购</div>
+          </div>
+        </div>
+      </div>
+      <div class="more-acticve">
+        <p class="active-type-title">更多优惠活动</p>
+        <div class="more-box">
+          <div class="more-item">
+            <div class="more-label">企业新客特惠</div>
+            <p class="more-name">域名注册专区</p>
+            <p class="more-des">多款热门域名限量特卖，先到先得</p>
+            <a href="./domain.html" class="more-bnt">立即前往</a>
+          </div>
+          <div class="more-item">
+            <div class="more-label">单价低至0.02元/条</div>
+            <p class="more-name">短信服务专区</p>
+            <p class="more-des">短信新用户低至9.9元起</p>
+            <a href="./sms.html" class="more-bnt">立即前往</a>
+          </div>
+          <div class="more-item">
+            <div class="more-label">新客专享福利</div>
+            <p class="more-name">SSL证书1年期8折优惠</p>
+            <p class="more-des">SSL证书1年期8折优惠</p>
+            <a href="./ssl.html" class="more-bnt">立即前往</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- 未认证弹窗 -->
+  <div id="authentication-modal" class="dialog-box">
+    <div class="modal-content authentication-content" id="modal-content">
+      <div class="dia-title">
+        <span>温馨提示</span>
+        <span class="dia-close" id="dia-close-btn">&times;</span>
+      </div>
+      <div class="dia-body">
+        <span class="no-rz-tips">
+          <img src="/web/default/assets/img/active/tip_icon.svg" alt="">
+          <span style="margin-left: 5px;">抱歉，您未完成实名认证，无法购买此商品！</span>
+        </span>
+      </div>
+      <div class="dia-fotter">
+        <div class="btn btn-normal">立即认证</div>
+      </div>
+    </div>
+  </div>
+  <!-- 购买云服务器弹窗 -->
+  <div id="buyCloud-modal" class="dialog-box">
+    <div class="modal-content buyCloud-content" id="modal-content">
+      <div class="dia-title">
+        <span style="color: rgba(0, 0, 0, 0.90); font-size: 18px;">云服务器<span
+            style="color: rgba(0, 0, 0, 0.60); font-size: 14px;">-配置详情</span></span>
+        <span class="dia-close" id="dia-close-btn">&times;</span>
+      </div>
+      <div class="dia-body">
+        <div class="buyCloud-body">
+          <form id="buyCloudForm" class="buy-form">
+            <div class="buyed-box">
+              <div class="buy-type">已选</div>
+              <div class="form-item">
+                <label for="location">地域</label>
+                <select id="location" name="location">
+                  <option value="north">华北3</option>
+                  <option value="south">西南2</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">规格</label>
+                <select id="location" name="location">
+                  <option value="north">2核4G</option>
+                  <option value="south">3核5G</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">系统盘</label>
+                <span class="un-select">50GB SSD</span>
+              </div>
+              <div class="form-item">
+                <label for="location">数据盘</label>
+                <select id="location" name="location">
+                  <option value="north">2核4G</option>
+                  <option value="south">3核5G</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">带宽</label>
+                <span class="un-select">2M</span>
+              </div>
+            </div>
+            <div class="no-buy-box">
+              <div class="form-item">
+                <label for="location">镜像</label>
+                <select id="location" name="location">
+                  <option value="north">Windows 2008R2-Enterprise-cn</option>
+                  <option value="south">XXXXXXXX</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">VPC网络</label>
+                <select id="location" name="location">
+                  <option value="north">创建新网络</option>
+                  <option value="south">XXXXXXXX</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">安全组</label>
+                <select id="location" name="location">
+                  <option value="north">创建新的安全组</option>
+                  <option value="south">XXXXXXXX</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">时长</label>
+                <select id="location" name="location">
+                  <option value="north">1个月</option>
+                  <option value="south">2个月</option>
+                  <option value="south">3个月</option>
+                </select>
+              </div>
+              <div class="form-item">
+                <label for="location">数量</label>
+                <div class="quantity">
+                  <input type="number" id="quantity" name="quantity" value="1" min="1">
+                  <button class="plus-btn" type="button">+</button>
+                  <button class="minus-btn" type="button">-</button>
+                </div>
+              </div>
+            </div>
+            <div class="buy-fotter">
+              <div class="fotter-text">费用</div>
+              <div class="fotter-price">
+                <p class="now-pirce">￥<span class="font-24">800.00</span></p>
+                <p class="origin-price">￥1600.00</p>
+              </div>
+              <div class="btn btn-normal buy-cloud">立即购买</div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  {include file="footer"}

@@ -1,0 +1,22 @@
+.draggable {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  z-index: 50;
+  cursor: pointer;
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  background: #417FEF;
+  box-shadow: 0px 8px 12px 1px rgba(0, 0, 0, 0.08);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0.65;
+  transition: opacity 0.3s;
+}
+.draggable:hover {
+  opacity: 1;
+}

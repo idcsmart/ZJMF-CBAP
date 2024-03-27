@@ -1,0 +1,97 @@
+.refund-icon {
+  color: var(--td-brand-color);
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.t-dialog__body__icon {
+  padding: 10px !important;
+}
+
+.t-table .t-table__header--fixed:not(.t-table__header--multiple)>tr>th {
+  background-color: #ffffff;
+}
+#customTable .t-table__th-cell-inner p{
+  margin: 0;
+}
+
+.reason-check {
+  display: flex;
+  align-items: center;
+}
+
+.reason-check span {
+  margin-right: 10px;
+}
+
+.add-btn {
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin: 0px auto 10px;
+  border-top: 0;
+  border-radius: 0
+}
+
+.add-refund-divider .t-divider__inner-text {
+  font-size: 16px;
+  font-family: PingFang SC;
+  font-weight: bold;
+  color: #333333;
+  padding-left: 0;
+}
+
+.add-refund-divider.t-divider--with-text-left:before {
+  width: 0;
+}
+
+.add-refund-divider.t-divider--with-text-left:after {
+  margin-top: 10px;
+}
+
+.my-card-container {
+  padding: 40px 24px;
+}
+
+.my-card-container .poduct-form-label {
+  font-size: 14px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  color: #333333;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.add-refund-require {
+  display: flex
+}
+
+.add-refund-require-content {
+  margin-left: 20px
+}
+
+.add-refund-require-content .t-radio-group {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+}
+
+.require-content-range {
+  display: flex;
+  align-items: baseline;
+}
+
+.table-card {
+  width: 40% !important;
+  min-width: 620px;
+}
+
+.table-card .t-card__body {
+  padding: 20px 12px
+}
+
+.add-refund-btn {
+  position: absolute;
+  bottom: 3%;
+  right: 2%;
+}

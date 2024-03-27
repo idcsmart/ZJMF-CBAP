@@ -1,0 +1,14 @@
+
+<svg style="position:absolute; width:0; height:0; visibility:hidden" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink">
+
+ <symbol id="cus-copy" width="16" height="16" viewBox="0 0 18 18">
+   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
+   <g class="a">
+   <rect class="b" width="18" height="18" fill="none"/>
+   <rect class="c" width="18" height="18" fill="none"/>
+   <path class="d" fill="currentColor" d="M11.423,13.5H.952A1.05,1.05,0,0,1,0,12.375V1.125A1.05,1.05,0,0,1,.952,0H11.423a1.05,1.05,0,0,1,.952,1.125v11.25A1.05,1.05,0,0,1,11.423,13.5ZM.952,1.125v11.25H11.423V1.125ZM8.091,6.75H2.38V5.625H8.091V6.749ZM10,3.938H2.38V2.813H10V3.936Z" transform="translate(1.688 3.375)"/>
+   <path class="d" fill="currentColor" d="M14.893,13.646h-1V2.348H6.525v-1h7.867a.5.5,0,0,1,.5.5Z" transform="translate(1.605)"/></g></svg>
+  </symbol>
+
+</svg>

@@ -1,0 +1,200 @@
+.order-detail {
+  font-size: 0.14rem;
+}
+.page-top {
+  padding-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #E6E7EB;
+  margin-bottom: 0.4rem;
+}
+.page-top .back-btn {
+  cursor: pointer;
+  width: 0.24rem;
+  height: 0.26rem;
+}
+.page-top .back-btn img {
+  width: 100%;
+  height: 100%;
+}
+.page-top .top-title {
+  margin-left: 0.25rem;
+  font-size: 0.28rem;
+  color: #171725;
+}
+.order-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 0.85rem;
+}
+.order-info .info-left .order-user {
+  font-size: 0.18rem;
+  color: #1E2736;
+}
+.order-info .info-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.order-info .info-right .order-status {
+  display: flex;
+  align-items: center;
+  font-size: 0.18rem;
+}
+.order-info .info-right .go-pay {
+  text-align: center;
+}
+.order-info .info-right .go-pay .pay-text {
+  margin-top: 0.15rem;
+  cursor: pointer;
+  font-size: 0.14rem;
+  color: #0058FF;
+}
+.order-info .info-right .go-pay .pay-text:hover {
+  text-decoration: underline;
+}
+.order-info .info-right .go-pay .pay-info {
+  margin-top: 0.1rem;
+  font-weight: bold;
+  font-size: 0.14rem;
+  color: #1E2736;
+}
+.order-info .pay-status {
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  padding: 0.05rem 0.14rem;
+  font-size: 0.16rem;
+  color: #FFFFFF;
+}
+.order-info .Unpaid-text {
+  background: #2F4484;
+}
+.order-info .Paid-text {
+  background: #067945;
+}
+.order-info .Refunded-text {
+  background: #B52619;
+}
+.order-info .order-num {
+  margin-top: 0.13rem;
+  color: #1e2736;
+  font-size: 0.14rem;
+}
+.order-info .order-num .num-text {
+  color: #666B80;
+}
+.order-info .order-data {
+  margin-top: 0.04rem;
+}
+.self-field {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.04rem;
+}
+.self-field .self-num {
+  display: flex;
+  color: #1e2736;
+  font-size: 0.14rem;
+}
+.self-field .self-num .field-name {
+  flex-shrink: 0;
+}
+.self-field .self-num .self-text {
+  white-space: pre;
+  color: #666B80;
+}
+.order-table {
+  margin-top: 0.33rem;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  border: 0.01rem solid #E6E7EB;
+}
+.order-table .table-title {
+  font-size: 0.14rem;
+  background: #FAFBFF;
+  height: 0.46rem;
+  line-height: 0.46rem;
+  padding-left: 0.2rem;
+  border-bottom: 0.01rem solid #E6E7EB;
+}
+.order-table .table-item {
+  margin: 0 0.2rem;
+  min-height: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.14rem;
+}
+.order-table .table-item .des {
+  color: #1E2736;
+}
+.order-table .table-item .money {
+  color: #1E2736;
+}
+.order-table .table-item .des-text {
+  margin-right: 0.5rem;
+  color: #666B80;
+}
+.order-table .table-item .money-text {
+  color: #666B80;
+}
+.order-table .order-item {
+  border-bottom: 0.01rem dashed #E6E7EB;
+}
+.order-table .title-item {
+  border-bottom: 0.01rem solid #E6E7EB;
+}
+.order-table .total-money {
+  color: #1E2736;
+  margin-right: 0.3rem;
+}
+.order-transaction {
+  margin-top: 0.4rem;
+}
+.order-transaction .table-top,
+.order-transaction .table-bottom {
+  font-size: 0.14rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 0.01rem solid #E6E7EB;
+}
+.order-transaction .table-top {
+  color: #1E2736;
+  padding: 0.13rem 0.2rem;
+  padding-bottom: 0.14rem;
+}
+.order-transaction .table-bottom {
+  padding: 0.13rem 0.2rem;
+  color: #666B80;
+}
+.order-transaction .w-200 {
+  width: 2rem;
+}
+.order-transaction .flex-1 {
+  flex: 1;
+  text-align: center;
+}
+.order-transaction .text-r {
+  text-align: right;
+}
+.order-transaction .no-list {
+  height: 60px;
+  line-height: 60px;
+  border-bottom: 0.01rem solid #E6E7EB;
+  text-align: center;
+  color: #909399;
+  font-size: 14px;
+}
+.down-pag {
+  margin-top: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.down-pag .el-button {
+  height: 0.32rem;
+  border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+  border: 0.01rem solid #0058FF;
+  font-size: 0.14rem;
+  color: #0058FF;
+}

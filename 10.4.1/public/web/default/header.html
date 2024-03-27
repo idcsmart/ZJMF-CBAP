@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" theme-color="default" theme-mode id="addons_js" addons_js='{:json_encode($addons)}'>
+
+<head>
+  <meta charset="UTF-8">
+  <title>{$title}</title>
+  <meta name="keywords" content="{$keywords}" />
+  <meta name="description" content="{$description}" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Language" content="zh-cn">
+
+  <!-- 公共区域 -->
+  <link rel="icon" type="image/x-icon" href="/web/default/favicon.ico">
+  <link rel="stylesheet" href="/web/default/assets/font/iconfont.css">
+  <link rel="stylesheet" href="/web/default/common/reset.css">
+  <link rel="stylesheet" href="/web/default/common/style.css">
+  <link rel="stylesheet" href="/web/default/common/theme.css">
+  <link rel="stylesheet" href="/web/default/common/common.css">
+  <link rel="stylesheet" href="/web/default/vender/animate/animate.css">
+  <script src="/web/default/vender/jQuery/jquery-3.5.1.min.js"></script>
+
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="/web/default/vender/bootstrap/css/bootstrap.min.css">
+  <script src="/web/default/vender/bootstrap/js/bootstrap.min.js"></script>
+  <!-- swiper -->
+  <link rel="stylesheet" href="/web/default/vender/swiper/swiper-bundle.min.css">
+  <script src="/web/default/vender/swiper/swiper-bundle.min.js"></script>
+
+  <script src="/web/default/common/common.js"></script>
+
+  <link rel="alternate" hreflang="zh-Hans" href="{$url}">
+  <link rel="canonical" href="{$url}">
+  <script type="application/ld+json">
+  {
+    "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+    "@id": "{$url}",
+    "title": "{$title}",
+    "description": "{$description}",
+    "pubDate": "{$pub_date}",
+    "upDate": "{$up_date}"
+  }
+</script>

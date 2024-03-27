@@ -1,0 +1,254 @@
+.main-card .main-card-title {
+  font-size: 0.28rem;
+  margin-bottom: 0.4rem;
+}
+.main-card .content-table {
+  margin-top: 0.3rem;
+}
+.main-card .content-table .top-text {
+  margin-bottom: 0.38rem;
+}
+.main-card .content-table .top-text .top-link {
+  margin-left: 0.1rem;
+  color: #0058ff;
+  cursor: pointer;
+}
+.main-card .content-table .content_searchbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.main-card .content-table .content_searchbar .left-btn {
+  width: 112px;
+  height: 46px;
+  line-height: 46px;
+  background: #0058ff;
+  color: #fff;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.main-card .content-table .tabledata {
+  margin-top: 0.14rem;
+  border: 1px solid #e6e7eb;
+}
+.main-card .content-table .tabledata .open-show {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.main-card .content-table .tabledata .open-show .un-open {
+  width: 0.59rem;
+  height: 0.26rem;
+  background: #eeeeee;
+  border-radius: 3px;
+  font-size: 0.13rem;
+  color: #757575;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.main-card .content-table .tabledata .open-show .open {
+  width: 0.59rem;
+  height: 0.26rem;
+  background: #e1f0ff;
+  border-radius: 3px;
+  font-size: 0.13rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3699ff;
+}
+.main-card .content-table .tabledata .open-show .setting {
+  font-size: 0.14rem;
+  color: #0058ff;
+  margin-left: 0.08rem;
+  cursor: pointer;
+}
+.main-card .create-api-dialog .dialog-main .content-msg {
+  border: 1px solid #e6e7eb;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.2rem;
+}
+.main-card .create-api-dialog .dialog-main .content-msg .msg-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 0.3rem;
+  margin-top: 0.2rem;
+  color: #757575;
+}
+.main-card .create-api-dialog .dialog-main .content-msg .msg-item:last-child {
+  margin-bottom: 0.3rem;
+}
+.main-card .create-api-dialog .dialog-main .content-msg .msg-item .item-label {
+  width: 80px;
+  margin-right: 0.4rem;
+}
+.main-card .create-api-dialog .dialog-main .content-msg .msg-item .item-vlaue .copy {
+  color: #0058ff;
+  cursor: pointer;
+}
+.main-card .create-api-dialog .dialog-main .yellow {
+  color: #f99600;
+}
+.main-card .create-api-dialog .alert-text {
+  margin-top: 0.2rem;
+}
+.main-card .delete-dialog .del-dialog-title {
+  font-size: 0.24rem;
+  font-weight: bold;
+  color: #f0142f;
+}
+.main-card .delete-dialog .del-dialog-title .del-icon {
+  margin-right: 0.13rem;
+}
+.main-card .delete-dialog .del-dialog-main {
+  font-size: 0.16rem;
+  font-weight: 800;
+  color: #1e2736;
+  margin-top: 0.3rem;
+  margin-bottom: 0.4rem;
+}
+.main-card .delete-dialog .del-dialog-footer {
+  display: flex;
+  flex-direction: column;
+}
+.main-card .delete-dialog .del-dialog-footer .btn-ok,
+.main-card .delete-dialog .del-dialog-footer .btn-no {
+  height: 0.46rem;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.16rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+.main-card .delete-dialog .del-dialog-footer .btn-ok {
+  background: #f0142f;
+  color: #fff;
+}
+.main-card .delete-dialog .del-dialog-footer .btn-no {
+  background: #e7e7e7;
+  color: #1e2736;
+  margin-top: 0.16rem;
+}
+.main-card .white-ip-dialog .dialog-main .info-alert {
+  background: #e1f0ff;
+  color: #3699ff;
+  font-size: 0.15rem;
+}
+.main-card .white-ip-dialog .dialog-main .info-alert .el-alert__closebtn {
+  color: #3699ff;
+}
+.main-card .white-ip-dialog .dialog-main .ip-status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0.3rem;
+}
+.main-card .white-ip-dialog .dialog-main .ip-status .ip-status-text {
+  width: 0.84rem;
+  margin-right: 0.2rem;
+}
+.main-card .white-ip-dialog .dialog-main .status-remind {
+  margin-left: 1.04rem;
+  margin-top: 0.2rem;
+  margin-bottom: 0.3rem;
+  color: #8692b0;
+}
+.main-card .white-ip-dialog .dialog-main .alert-text {
+  margin-top: 0.2rem;
+}
+.main-card .white-ip-dialog .el-switch__label {
+  position: absolute;
+  display: none;
+  color: #fff;
+}
+.main-card .white-ip-dialog .el-switch__label * {
+  font-size: 12px !important;
+}
+.main-card .white-ip-dialog .el-switch__core {
+  background-color: #a6a6a6;
+}
+.main-card .white-ip-dialog .el-switch__label--left {
+  z-index: 9;
+  left: 20px;
+}
+.main-card .white-ip-dialog .el-switch__label--right {
+  z-index: 9;
+  left: -3px;
+}
+.main-card .white-ip-dialog .el-switch__label.is-active {
+  display: block;
+}
+.more-operation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 0.3rem;
+  padding: 5px;
+  cursor: pointer;
+}
+.more-operation .dot {
+  width: 0px;
+  height: 0px;
+  border: 2px solid #0058ff;
+  border-radius: 50%;
+  margin-right: 0.05rem;
+}
+.el-popover {
+  min-width: 0.5rem !important;
+}
+.el-popover .operation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.el-popover .operation .operation-item {
+  margin-top: 0.05rem;
+  margin-bottom: 0.05rem;
+  cursor: pointer;
+}
+.el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+.dialog-main {
+  margin-top: 0.4rem;
+}
+.dialog-main .el-input__inner {
+  height: 0.52rem;
+}
+.dialog-main .label {
+  font-size: 0.16rem;
+  color: #1e2736;
+  margin-bottom: 0.1rem;
+}
+.dialog-main .label:not(:first-child) {
+  margin-top: 0.2rem;
+}
+.dialog-main .alert-text {
+  margin-top: 0.2rem;
+}
+.dialog-footer .btn-no {
+  margin-left: 0.12rem;
+  cursor: pointer;
+}
+.dialog-footer .btn-ok {
+  cursor: pointer;
+}
+.el-checkbox__label {
+  display: inline-grid;
+  white-space: initial;
+  word-wrap: break-word;
+  overflow: hidden;
+}

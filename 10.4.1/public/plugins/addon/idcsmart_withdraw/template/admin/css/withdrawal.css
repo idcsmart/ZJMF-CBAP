@@ -1,0 +1,247 @@
+.base {
+  fill: var(--td-brand-color);
+}
+.withdrawal .r-box {
+  display: flex;
+}
+.withdrawal .common-header .t-select__wrap {
+  width: 360px;
+  margin-right: 30px;
+}
+.withdrawal .f-btn {
+  text-align: right;
+}
+.withdrawal .f-btn .t-button {
+  margin: 0 5px;
+}
+.withdrawal .com-search {
+  width: 360px;
+  margin-bottom: 10px;
+}
+.withdrawal .audit-footer {
+  display: flex;
+  justify-content: space-between;
+}
+.s-tip {
+  color: #333;
+  margin-left: 10px;
+  white-space: nowrap;
+}
+/* withdrawal_create */
+.withdrawal_create .t-input-number {
+  width: 100%;
+}
+.withdrawal_create .t-row {
+  margin-bottom: 16px;
+}
+.withdrawal_create .select-way .t-input {
+  padding-right: 20px !important;
+}
+.withdrawal_create .no-label .s-tit {
+  height: 14px;
+  margin-bottom: 10px;
+  line-height: 1;
+  font-size: 14px;
+  color: #333;
+}
+.withdrawal_create .no-label .t-form__label {
+  width: auto !important;
+  padding-right: 0 !important;
+}
+.withdrawal_create .no-label .t-form__controls {
+  margin-left: auto !important;
+}
+.withdrawal_create .no-label .line-text .t-form__label {
+  margin-right: 10px;
+}
+.withdrawal_create .end-tip {
+  font-size: 14px;
+  width: auto;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.4);
+}
+.withdrawal_create .no-limit {
+  position: absolute;
+  left: 100%;
+  width: auto;
+  white-space: nowrap;
+  color: rgba(0, 0, 0, 0.4);
+  margin-top: 15px;
+}
+.withdrawal_create .no-limit.special {
+  left: auto;
+  position: relative;
+}
+.withdrawal_create .f-btn .t-button {
+  margin-right: 20px;
+}
+.withdrawal_create .data-tip {
+  font-size: 16px;
+  margin-left: 5px;
+}
+.t-popup__content {
+  white-space: pre-wrap;
+}
+/* sourceModal */
+.sourceModal .t-dialog {
+  width: 1032px;
+  border-radius: 0;
+  padding: 0;
+}
+.sourceModal .t-dialog .t-dialog__header {
+  display: none;
+}
+.sourceModal .t-dialog .t-dialog__body {
+  width: 100%;
+  height: 100%;
+  min-height: 700px;
+  padding: 0;
+}
+.sourceModal .t-dialog .box {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
+.sourceModal .t-dialog .arrow {
+  width: 24px;
+  height: 24px;
+  background: #eeeeee;
+  border: 1px solid #dcdcdc;
+  border-radius: 3px;
+  text-align: center;
+  margin: 0 auto;
+  cursor: pointer;
+}
+.sourceModal .t-dialog .item {
+  width: 492px;
+  height: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+.sourceModal .t-dialog .item:first-child {
+  border-right: 1px solid #dcdcdc;
+}
+.sourceModal .t-dialog .item:last-child {
+  border-left: 1px solid #dcdcdc;
+}
+.sourceModal .t-dialog .item:last-child .tit {
+  border-bottom: 1px solid #e7e7e7;
+  padding-bottom: 15px;
+  margin-bottom: 45px;
+}
+.sourceModal .t-dialog .item .tit {
+  font-size: 18px;
+  font-family: "PingFang SC";
+  color: #333;
+  font-weight: bold;
+}
+.sourceModal .del-icon {
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+.sourceModal .delItem {
+  border: none;
+}
+.sourceModal .com-f-btn {
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+}
+/* payDialog */
+.payDialog .disabled {
+  position: relative;
+  background: #eee;
+  border: 1px solid #dcdcdc;
+  border-radius: 2px;
+  flex: 1;
+  margin: 0;
+  line-height: 32px;
+  height: 32px;
+  padding: 0 8px;
+  color: var(--td-text-color-disabled);
+  cursor: not-allowed;
+}
+.payDialog .copy {
+  position: absolute;
+  right: 1px;
+  background: #ecf2fe;
+  color: var(--td-brand-color);
+  padding: 0 10px;
+  border-left: 1px solid #dcdcdc;
+  cursor: pointer;
+}
+.payDialog .s-tip {
+  margin: 0;
+  color: #ff0000;
+  margin: 24px 0;
+  line-height: 1;
+}
+.payDialog #account,
+.payDialog #name {
+  opacity: 0;
+  position: absolute;
+  z-index: -1;
+}
+/* withdrawal-setting */
+.withdrawal-setting .t-table__th-cell-inner {
+  white-space: nowrap;
+}
+.withdrawal-setting .t-table td,
+.withdrawal-setting .t-table th {
+  padding: 12px 24px;
+}
+.withdrawal-setting .item {
+  margin-bottom: 40px;
+}
+.withdrawal-setting .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
+.withdrawal-setting .top span {
+  line-height: 1;
+}
+.withdrawal-setting .top .add {
+  line-height: 32px;
+  padding: 0 14px;
+  border-radius: 4px;
+  background: var(--td-brand-color-1);
+  color: var(--td-brand-color-8);
+  display: block;
+  cursor: pointer;
+}
+.withdrawal-setting .f-btn {
+  text-align: right;
+}
+.withdrawal-setting .f-btn .t-button {
+  margin-left: 10px;
+}
+@media screen and (max-width: 992px) {
+  .withdrawal_create .no-limit {
+    position: relative;
+    left: auto;
+  }
+}
+.isEn .withdrawal .t-form .t-form__label {
+  width: 150px !important;
+}
+.isEn .withdrawal .rejectForm .t-form__label {
+  width: 180px !important;
+}
+.isEn .withdrawal .statusForm .t-form__label {
+  width: auto !important;
+}
+@media (max-width: 1400px) {
+  .t-col-xl-3 {
+    display: block;
+    flex: 0 0 40%;
+    max-width: 30%;
+  }
+}

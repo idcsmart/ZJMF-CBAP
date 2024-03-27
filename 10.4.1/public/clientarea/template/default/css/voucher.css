@@ -1,0 +1,228 @@
+.voucher-box {
+  margin-top: 0.4rem;
+}
+.voucher-box .get-voucher {
+  line-height: 0.46rem;
+  cursor: pointer;
+  height: 0.46rem;
+  padding: 0 0.24rem;
+  background: #0058FF;
+  border-radius: 0.03rem;
+  display: inline-block;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.16rem;
+  margin-bottom: 0.2rem;
+  position: relative;
+  z-index: 10;
+}
+ul,
+li {
+  list-style: none;
+}
+.voucher-page .el-pagination {
+  margin-top: 0.2rem;
+}
+.voucher-content {
+  width: 100%;
+  max-width: 13.2rem;
+  margin-top: -0.56rem;
+  display: flex;
+}
+.voucher-content .basic {
+  display: flex;
+}
+.voucher-content ul {
+  clear: both;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.voucher-content ul .item {
+  width: 31%;
+}
+.voucher-content ul:after {
+  content: '';
+  width: 31%;
+}
+.voucher-content .item {
+  background-color: #F7F8FC;
+  margin-top: 0.56rem;
+  border-radius: 0px 3px 3px 0px;
+  box-shadow: 0 0 0.1rem 0.02rem rgba(0, 0, 0, 0.08);
+  position: relative;
+}
+.voucher-content .price {
+  width: 2.03rem;
+  height: 1.3rem;
+  background: url(../img/voucher/voucher_01.png) no-repeat;
+  background-size: cover;
+  color: #fff;
+  font-size: 0.12rem;
+  padding: 0.35rem 0.1rem;
+  box-sizing: border-box;
+  line-height: 1;
+  text-align: center;
+}
+.voucher-content .price.used {
+  background: url(../img/voucher/voucher_02.png) no-repeat;
+  background-size: cover;
+}
+.voucher-content .price.overdue {
+  background: url(../img/voucher/voucher_03.png) no-repeat;
+  background-size: cover;
+}
+.voucher-content .price .num {
+  font-family: 'PingFang SC';
+  font-size: 0.32rem;
+  font-weight: 500;
+  margin-left: -0.05rem;
+}
+.voucher-content .price span {
+  font-size: 0.16rem;
+}
+.voucher-content .price .des {
+  margin-top: 0.15rem;
+  line-height: 1.2;
+}
+.voucher-content .r-item {
+  padding-left: 0.3rem;
+  line-height: 1;
+  font-size: 0.12rem;
+  color: #8692B0;
+  padding-right: 0.2rem;
+  flex: 1;
+}
+.voucher-content .r-item .tit {
+  font-size: 0.2rem;
+  color: #1E2736;
+  margin: 0.3rem 0 0.1rem;
+}
+.voucher-content .r-item .time {
+  margin-bottom: 0.3rem;
+}
+.voucher-content .r-item .bot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.voucher-content .r-item .receive {
+  line-height: 0.24rem;
+  padding: 0 0.08rem;
+  background: #0058FF;
+  border-radius: 0.03rem;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.12rem;
+}
+.voucher-content .r-item .receive.is_get {
+  background: #8692B0;
+  color: #fff;
+  cursor: not-allowed;
+}
+.voucher-content .more {
+  cursor: pointer;
+  display: flex;
+}
+.voucher-content .more img {
+  width: 0.12rem;
+  height: 0.12rem;
+}
+.voucher-content .more.active img {
+  transform: rotate(180deg);
+}
+.voucher-content img {
+  transition: all 0.3s;
+  margin-left: 0.04rem;
+}
+.voucher-content .bg {
+  width: 0.72rem;
+  height: 0.54rem;
+  position: absolute;
+  top: 0.08rem;
+  right: 0.11rem;
+  z-index: 1;
+}
+.voucher-content .bg.used {
+  background: url(../img/voucher/voucher_05.png) no-repeat;
+  background-size: 100%;
+}
+.voucher-content .bg.overdue {
+  background: url(../img/voucher/voucher_04.png) no-repeat;
+  background-size: 100%;
+}
+.voucher-content .detail {
+  width: 100%;
+  position: absolute;
+  top: 1.3rem;
+  left: 0;
+  padding: 0.32rem 0.13rem 0.13rem 0.13rem;
+  overflow: hidden;
+  font-size: 0.12rem;
+  color: #8692B0;
+  transition: all 0.3s;
+  box-sizing: border-box;
+  opacity: 0;
+  z-index: -1;
+  max-height: 2rem;
+  overflow-y: auto;
+  text-align: justify;
+}
+.voucher-content .detail.active {
+  padding-top: 0.32rem;
+  height: auto;
+  opacity: 1;
+  z-index: 10;
+  background: #F5F7FC;
+}
+.voucher-content .detail::after {
+  content: '';
+  width: 100%;
+  position: absolute;
+  top: 0.16rem;
+  left: 0;
+  letter-spacing: 2em;
+  z-index: 10;
+  border: 1px dashed #E6E7EB;
+}
+.voucher-content .empty {
+  margin: 0 auto;
+}
+.voucher-dialog .el-dialog {
+  width: 10.26rem;
+}
+.voucher-dialog .el-dialog__body {
+  max-height: 5rem;
+  overflow-y: auto;
+}
+.voucher-dialog ul .item {
+  width: 47%;
+}
+.voucher-dialog ul::after {
+  width: 0;
+  display: none;
+}
+.voucher-dialog .r-item .time {
+  margin-bottom: 0.25rem;
+}
+.voucher-dialog .el-dialog__body {
+  padding: 0.4rem 0.8rem;
+}
+@media screen and (max-width: 750px) {
+  .form-footer .btn-no {
+    margin-left: 0;
+    margin-top: 0.2rem;
+  }
+  .voucher-content ul .item {
+    width: 100%;
+  }
+  .voucher-content .price {
+    height: auto;
+  }
+  .voucher-dialog .el-dialog {
+    width: 7rem;
+  }
+  .voucher-dialog ul .item {
+    width: auto;
+  }
+}

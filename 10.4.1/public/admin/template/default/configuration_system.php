@@ -1,0 +1,180 @@
+{include file="header"}
+<!-- =======内容区域======= -->
+<link rel="stylesheet" href="/{$template_catalog}/template/{$themes}/css/setting.css">
+<div id="content" class="configuration-system" v-cloak>
+  <com-config>
+  <t-card class="list-card-container">
+    <ul class="common-tab">
+      <li class="active" v-permission="'auth_system_configuration_system_configuration_system_configuration_view'">
+        <a href="javascript:;">{{lang.system_setting}}</a>
+      </li>
+      <li v-permission="'auth_system_configuration_system_configuration_debug'">
+        <a href="configuration_debug.htm">{{lang.debug_setting}}</a>
+      </li>
+      <li v-permission="'auth_system_configuration_system_configuration_access_configuration_view'">
+        <a href="configuration_login.htm">{{lang.login_setting}}</a>
+      </li>
+      <li v-permission="'auth_system_configuration_system_configuration_theme_configuration_view'">
+        <a href="configuration_theme.htm">{{lang.theme_setting}}</a>
+      </li>
+      <li v-permission="'auth_system_configuration_system_configuration_web_configuration'">
+        <a href="info_config.htm">{{lang.info_config}}</a>
+      </li>
+      <li v-permission="'auth_system_configuration_system_configuration_system_info_view'">
+        <a style="display: flex; align-items: center;" href="configuration_upgrade.htm">{{lang.system_upgrade}}
+          <img v-if="isCanUpdata" style="width: 20px; height: 20px; margin-left: 5px;" src="/{$template_catalog}/template/{$themes}/img/upgrade.svg">
+        </a>
+      </li>
+    </ul>
+    <div class="box">
+      <div class="box-title">
+        <span class="box-title-text">{{lang.basic_setting}}</span>
+        <div class="box-title-line"></div>
+      </div>
+      <t-form :data="formData" :rules="rules" :label-width="80" ref="formValidatorStatus" label-align="top" @submit="onSubmit">
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="lang_admin" :label="lang.font_language">
+              <t-select v-model="formData.lang_home">
+                <t-option v-for="item in homeArr" :value="item.display_lang" :label="item.display_name" :key="item.display_lang"></t-option>
+              </t-select>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="website_name" :label="lang.site_name">
+              <t-input v-model="formData.website_name" :placeholder="lang.site_name"></t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="website_url" :label="lang.domain">
+              <t-input v-model="formData.website_url" :placeholder="lang.domain"></t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="clientarea_url" :label="lang.clientarea_url">
+              <div slot="label" class="custom-label">
+                <span class="label">{{lang.clientarea_url}}</span>
+                <t-tooltip placement="top-right" :content="lang.clientarea_url_tip" :show-arrow="false" theme="light">
+                  <t-icon name="help-circle" size="18px" />
+                </t-tooltip>
+              </div>
+              <t-input v-model="formData.clientarea_url" :placeholder="lang.clientarea_url_tip1"></t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="lang_admin" :label="lang.back_language">
+              <t-select v-model="formData.lang_admin">
+                <t-option v-for="item in adminArr" :value="item.display_lang" :label="item.display_name" :key="item.display_lang"></t-option>
+              </t-select>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="terms_service_url" :label="lang.service_address">
+              <t-input v-model="formData.terms_service_url" :placeholder="lang.service_address"></t-input>
+            </t-form-item>
+          </t-col>
+          <!-- 新增 -->
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="terms_privacy_url" :label="lang.privacy_clause_address">
+              <t-input v-model="formData.terms_privacy_url" :placeholder="lang.privacy_clause_address"></t-input>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6"></t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="system_logo" :label="lang.member_center + 'LOGO'">
+              <t-upload ref="uploadRef3" :size-limit="{ size: 2, unit: 'MB' }" :action="uploadUrl" v-model="formData.system_logo" :auto-upload="true" @fail="handleFail" theme="custom" :headers="uploadHeaders" accept="image/*" :format-response="formatImgResponse">
+                <div class="upload">
+                  <t-icon name="upload"></t-icon>
+                  <span class="txt">{{lang.attachment + 'logo'}}</span>
+                </div>
+                <div class="up-tip">
+                  <p>{{lang.size + '：' + lang.width + '130px；' + lang.height + '28px'}}</p>
+                  <p>{{lang.logo_size + '：≤2M'}}</p>
+                </div>
+              </t-upload>
+              <div class="logo" v-if="formData.system_logo[0]?.url">
+                <div class="box">
+                  <img :src="formData.system_logo[0]?.url" alt="">
+                  <div class="hover" @click="deleteLogo" v-if="formData.system_logo[0]?.url">
+                    <t-icon name="delete"></t-icon>
+                  </div>
+                </div>
+                <span class="name">{{formData.system_logo[0]?.url.split('^')[1]}}</span>
+              </div>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="tab_logo" :label="lang.label_page + 'LOGO'">
+              <t-upload ref="uploadRef3" :size-limit="{ size: 2, unit: 'MB' }" :action="uploadUrl"
+              v-model="formData.tab_logo" :auto-upload="true" @fail="handleFail" theme="custom"
+              :headers="uploadHeaders" accept="image/*" :format-response="formatImgResponse">
+                <div class="upload">
+                  <t-icon name="upload"></t-icon>
+                  <span class="txt">{{lang.attachment + 'logo'}}</span>
+                </div>
+                <div class="up-tip">
+                  <p>{{lang.size + '：' + lang.width + '32px；' + lang.height + '32px'}}</p>
+                  <p>{{lang.logo_size + '：≤2M'}}</p>
+                </div>
+              </t-upload>
+              <div class="logo tab" v-if="formData.tab_logo[0]?.url">
+                <div class="box">
+                  <img :src="formData.tab_logo[0]?.url" alt="">
+                  <div class="hover" @click="deleteTabLogo" v-if="formData.tab_logo[0]?.url">
+                    <t-icon name="delete"></t-icon>
+                  </div>
+                </div>
+                <span class="name">{{formData.tab_logo[0]?.url.split('^')[1]}}</span>
+              </div>
+            </t-form-item>
+          </t-col>
+        </t-row>
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+          <t-col :xs="12" :xl="3" :md="6" class="special">
+            <t-form-item name="client_start_id_value" :label="lang.client_start_id">
+              <t-input-number v-model="formData.client_start_id_value" :placeholder="lang.client_start_id" theme="normal" :max="99999999" :min="1" :decimal-places="0"></t-input-number>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6" class="special">
+            <t-form-item name="order_start_id_value" :label="lang.order_start_id">
+              <t-input-number v-model="formData.order_start_id_value" :placeholder="lang.order_start_id" theme="normal" :max="99999999" :min="1" :decimal-places="0"></t-input-number>
+            </t-form-item>
+          </t-col>
+        </t-row>
+        <t-row :gutter="{ xs: 8, sm: 16, md: 24, lg: 32, xl: 32, xxl: 60 }">
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item name="lang_admin" :label="lang.isAllowChooseLan">
+              <t-radio-group name="creating_notice_sms" v-model="formData.lang_home_open">
+                <t-radio value="1">{{lang.allow}}</t-radio>
+                <t-radio value="0">{{lang.prohibit}}</t-radio>
+              </t-radio-group>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6" class="service">
+            <t-form-item name="lang_admin" :label="lang.maintenance_mode">
+              <t-radio-group name="maintenance_mode" v-model="formData.maintenance_mode">
+                <t-radio value="1">{{lang.open}}</t-radio>
+                <t-radio value="0">{{lang.close}}</t-radio>
+              </t-radio-group>
+            </t-form-item>
+          </t-col>
+          <t-col :xs="12" :xl="3" :md="6">
+            <t-form-item v-if="formData.maintenance_mode == '1'" :label="lang.maintenance_mode_info" name="maintenance_mode_message">
+              <t-textarea :placeholder="lang.maintenance_mode_info" v-model="formData.maintenance_mode_message" />
+            </t-form-item>
+          </t-col>
+        </t-row>
+        <t-form-item>
+          <t-button theme="primary" type="submit" :loading="submitLoading" v-permission="'auth_system_configuration_system_configuration_system_configuration_save_configuration'">{{lang.hold}}</t-button>
+        </t-form-item>
+      </t-form>
+
+    </div>
+  </t-card>
+  </com-config>
+</div>
+<!-- =======页面独有======= -->
+
+<script src="/{$template_catalog}/template/{$themes}/api/setting.js"></script>
+<script src="/{$template_catalog}/template/{$themes}/js/configuration_system.js"></script>
+{include file="footer"}

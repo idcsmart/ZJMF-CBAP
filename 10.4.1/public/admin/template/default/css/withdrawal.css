@@ -1,0 +1,17 @@
+.top-search {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.select-search {
+    width: 360px;
+    margin-right: 30px;
+}
+
+.input-search {
+    width: 360px;
+}
+
+.com-search-btn {
+    cursor: pointer;
+}

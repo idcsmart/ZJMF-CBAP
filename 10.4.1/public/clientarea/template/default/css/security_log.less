@@ -1,0 +1,331 @@
+.main-card {
+  .main-card-title {
+    font-size: .28rem;
+    margin-bottom: .4rem;
+  }
+
+  .content-table {
+    margin-top: .3rem;
+
+    .top-text {
+      margin-bottom: .38rem;
+    }
+
+    .content_searchbar {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .left-btn {
+        width: 112px;
+        height: 46px;
+        line-height: 46px;
+        background: #0058FF;
+        color: #FFF;
+        opacity: 1;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+
+    .tabledata {
+      margin-top: .14rem;
+      border: 1px solid #E6E7EB;
+
+      .open-show {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .un-open {
+          width: .59rem;
+          height: .26rem;
+          background: #EEEEEE;
+          border-radius: 3px;
+          font-size: .13rem;
+          color: #757575;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .open {
+          width: .59rem;
+          height: .26rem;
+          background: #E1F0FF;
+          border-radius: 3px;
+          font-size: .13rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #3699FF;
+        }
+
+        .setting {
+          font-size: .14rem;
+          color: #0058FF;
+          margin-left: .08rem;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .create-api-dialog {
+    .dialog-main {
+      .content-msg {
+        border: 1px solid #E6E7EB;
+        border-radius: 3px;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: .2rem;
+
+        .msg-item {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-left: .3rem;
+          margin-top: .2rem;
+          color: #757575;
+
+          &:last-child {
+            margin-bottom: .3rem;
+          }
+
+          .item-label {
+            width: 80px;
+            margin-right: .4rem;
+          }
+
+          .item-vlaue {
+            .copy {
+              color: #0058FF;
+              cursor: pointer;
+            }
+          }
+        }
+
+      }
+
+      .yellow {
+        color: rgba(249, 150, 0, 1);
+      }
+    }
+
+    .alert-text {
+      margin-top: .2rem;
+    }
+  }
+
+
+  .delete-dialog {
+    .del-dialog-title {
+      font-size: .24rem;
+      font-weight: bold;
+      color: #F0142F;
+
+      .del-icon {
+        margin-right: .13rem;
+      }
+    }
+
+    .del-dialog-main {
+      font-size: .16rem;
+      font-weight: 800;
+      color: #1E2736;
+      margin-top: .3rem;
+      margin-bottom: .4rem;
+    }
+
+    .del-dialog-footer {
+      display: flex;
+      flex-direction: column;
+
+      .btn-ok,
+      .btn-no {
+        height: 0.46rem;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .16rem;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .btn-ok {
+        background: #F0142F;
+        color: #FFF;
+      }
+
+      .btn-no {
+        background: #E7E7E7;
+        color: #1E2736;
+        margin-top: .16rem;
+      }
+    }
+  }
+
+  .white-ip-dialog {
+
+    .dialog-main {
+      .info-alert {
+        background: #E1F0FF;
+        color: #3699FF;
+        font-size: .15rem;
+
+        .el-alert__closebtn {
+          color: #3699FF;
+        }
+      }
+
+      .ip-status {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-top: .3rem;
+
+        .ip-status-text {
+          width: .84rem;
+          margin-right: .2rem;
+        }
+      }
+
+      .status-remind {
+        margin-left: 1.04rem;
+        margin-top: .2rem;
+        margin-bottom: .3rem;
+        color: #8692B0;
+      }
+
+      .alert-text {
+        margin-top: .2rem;
+      }
+    }
+
+
+    .el-switch__label {
+      position: absolute;
+      display: none;
+      color: #fff;
+
+      & * {
+        font-size: 12px !important;
+      }
+    }
+
+    .el-switch__core {
+      background-color: rgba(166, 166, 166, 1);
+    }
+
+    .el-switch__label--left {
+      z-index: 9;
+      left: 20px;
+    }
+
+    .el-switch__label--right {
+      z-index: 9;
+      left: -3px;
+    }
+
+    .el-switch__label.is-active {
+      display: block;
+    }
+
+
+  }
+
+}
+
+.more-operation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: .3rem;
+  cursor: pointer;
+
+  .dot {
+    width: 3px;
+    height: 3px;
+    border: 3px solid rgba(0, 88, 255, 1);
+    border-radius: 50%;
+    margin-right: .05rem;
+  }
+}
+
+.el-popover {
+  min-width: .5rem !important;
+
+  .operation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .operation-item {
+      margin-top: .05rem;
+      margin-bottom: .05rem;
+      cursor: pointer;
+    }
+  }
+}
+
+// 弹窗 通用
+.el-dialog__body {
+  padding-left: .8rem;
+  padding-right: .8rem;
+}
+
+.dialog-main {
+  margin-top: .4rem;
+
+  .el-input__inner {
+    height: .52rem;
+  }
+
+  .label {
+    font-size: .16rem;
+    color: #1E2736;
+    margin-bottom: .1rem;
+
+    &:not(:first-child) {
+      margin-top: .2rem;
+    }
+  }
+
+  .alert-text {
+    margin-top: .2rem;
+  }
+}
+
+.dialog-footer {
+  .btn-no {
+    margin-left: .12rem;
+    cursor: pointer;
+  }
+
+  .btn-ok {
+    cursor: pointer;
+  }
+}
+
+// 勾选框 文字换行
+.el-checkbox__label {
+  display: inline-grid;
+  white-space: initial;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 750px) {
+  .searchbar {
+    .el-input {
+      width: auto !important;
+      margin-left: 0;
+    }
+  }
+}

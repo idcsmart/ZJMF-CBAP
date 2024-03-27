@@ -1,0 +1,38 @@
+.content-box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.img-box {
+  position: relative;
+  width: 2.82rem;
+  height: 4.55rem;
+  background: url('../img/common/network_erro.png') center no-repeat;
+  background-size: 100% 100%;
+}
+
+
+.tips-box {
+  position: absolute;
+  left: 0.96rem;
+  bottom: 0.9rem;
+  text-align: center;
+}
+
+
+.tips-text {
+  margin-top: 0.12rem;
+  color: #666B80;
+  font-size: 0.16rem;
+}
+
+.tran-again {
+  margin-top: 0.06rem;
+  cursor: pointer;
+  color: #0058FF;
+  font-size: 0.16rem;
+}

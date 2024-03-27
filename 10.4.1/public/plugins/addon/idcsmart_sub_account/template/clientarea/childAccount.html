@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="/plugins/addon/idcsmart_sub_account/template/clientarea/css/childAccount.css">
+</head>
+
+<body>
+  <!-- mounted之前显示 -->
+  <div id="mainLoading">
+    <div class="ddr ddr1"></div>
+    <div class="ddr ddr2"></div>
+    <div class="ddr ddr3"></div>
+    <div class="ddr ddr4"></div>
+    <div class="ddr ddr5"></div>
+  </div>
+  <div class="template">
+    <el-container>
+      <aside-menu></aside-menu>
+      <el-container>
+        <top-menu></top-menu>
+        <el-main>
+          <!-- 自己的东西 -->
+          <div class="clid-box">
+            <header>
+              <h2>{{lang.subaccount_text33}}</h2>
+              <el-button type="primary" @click="addChildAccountBtn"
+                v-show="is_sub_account == 0">{{lang.subaccount_text34}}</el-button>
+            </header>
+            <el-table :data="cildAccountList" style="width: 100%">
+              <el-table-column prop="id" width="100" label="ID"></el-table-column>
+              <el-table-column prop="username" :label="lang.subaccount_text35 " min-width="150"></el-table-column>
+              <el-table-column prop="date" :label="lang.subaccount_text36" min-width="160">
+                <template slot-scope="{row}">
+                  {{row.last_action_time | formateTime }}
+                </template>
+              </el-table-column>
+              <el-table-column width="120px" :label="lang.subaccount_text37" v-if="is_sub_account == 0 ">
+                <template slot-scope="{row}">
+                  <div class="caozuo">
+                    <el-popover placement="top-start" trigger="hover">
+                      <div class="operation-box">
+                        <div v-if="row.status" slot="reference" class="operation-item" @click="changeState(row)">
+                          {{lang.subaccount_text38}}
+                        </div>
+                        <div v-else slot="reference" class="operation-item" @click="changeState(row)">
+                          {{lang.subaccount_text39}}
+                        </div>
+                        <div class="operation-item" @click="handleEdit(row)">{{lang.subaccount_text40}}</div>
+                        <div class="operation-item" @click="handleDel(row)">{{lang.subaccount_text41}}</div>
+                      </div>
+                      <i slot="reference" style="color: #0058FF" class="el-icon-more"></i>
+
+                    </el-popover>
+                  </div>
+                </template>
+              </el-table-column>
+            </el-table>
+            <pagination :page-data="params" @sizechange="sizeChange" @currentchange="currentChange">
+            </pagination>
+          </div>
+        </el-main>
+      </el-container>
+    </el-container>
+  </div>
+  <!-- =======页面独有======= -->
+  <script src="/plugins/addon/idcsmart_sub_account/template/clientarea/lang/index.js"></script>
+  <script src="/plugins/addon/idcsmart_sub_account/template/clientarea/api/childAccount.js"></script>
+  <script src="/{$template_catalog}/template/{$themes}/components/pagination/pagination.js"></script>
+  <script src="/plugins/addon/idcsmart_sub_account/template/clientarea/js/childAccount.js"></script>

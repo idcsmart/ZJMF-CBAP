@@ -1,0 +1,3 @@
+ALTER TABLE `idcsmart_upstream_product` ADD COLUMN `profit_type` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '利润方式，0百分比，1固定金额';
+INSERT  INTO `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('debug_model_auth','',0,0,'debug模式授权码');
+INSERT  INTO `idcsmart_configuration`(`setting`,`value`,`create_time`,`update_time`,`description`) VALUES ('debug_model_expire_time','',0,0,'到期时间');

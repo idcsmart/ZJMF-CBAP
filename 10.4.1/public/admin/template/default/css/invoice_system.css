@@ -1,0 +1,188 @@
+.invoice-system .list-card-container .top-search {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  margin-top: 8px;
+  margin-bottom: 30px;
+}
+.invoice-system .list-card-container .top-search .key-input,
+.invoice-system .list-card-container .top-search .type-select,
+.invoice-system .list-card-container .top-search .status-select {
+  width: 240px;
+  margin-right: 8px;
+}
+.invoice-system .list-card-container .status {
+  width: 55px;
+  height: 24px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-size: 12px;
+}
+.invoice-system .list-card-container .pending {
+  background: #58A1F5;
+}
+.invoice-system .list-card-container .unpaid {
+  background: #999999;
+}
+.invoice-system .list-card-container .wait_send {
+  background: #FF6000;
+}
+.invoice-system .list-card-container .sent {
+  background: #03B193;
+}
+.invoice-system .list-card-container .reject {
+  background: #FF0000;
+}
+.invoice-system .list-card-container .cancel {
+  background: #E7E7E7;
+  color: rgba(0, 0, 0, 0.4);
+}
+.invoice-system .list-card-container .operation-icon {
+  font-size: 18px;
+  color: var(--td-brand-color);
+  cursor: pointer;
+  margin-right: 15px;
+}
+.invoice-system .list-card-container .username-company {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.invoice-system .list-card-container .username-company .type {
+  width: 51px;
+  height: 24px;
+  background: #E7E7E7;
+  border: 1px solid #DCDCDC;
+  border-radius: 3px;
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+}
+.detail-main .detail-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 19px;
+  margin-bottom: 11px;
+}
+.detail-main .detail-top .top-item {
+  display: flex;
+  flex-direction: row;
+}
+.detail-main .detail-top .top-item .label {
+  font-size: 14px;
+  color: #8692B0;
+  margin-right: 12px;
+}
+.detail-main .detail-top .top-item .value {
+  font-size: 15px;
+  color: #1E2736;
+}
+.detail-main .detail-content {
+  border: 1px solid #E6E7EB;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+}
+.detail-main .detail-content .detail-row {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #E6E7EB;
+  min-height: 109px;
+}
+.detail-main .detail-content .detail-row:last-child {
+  border-bottom: none;
+}
+.detail-main .detail-content .detail-row .row-title {
+  writing-mode: vertical-lr;
+  width: 45px;
+  border-right: 1px solid #E6E7EB;
+  border-left: 1px solid #E6E7EB;
+  color: #8692B0;
+  font-size: 13px;
+  letter-spacing: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 10px;
+}
+.detail-main .detail-content .detail-row .row-title:first-child {
+  border-left: none;
+}
+.detail-main .detail-content .detail-row .row-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 20px;
+  padding-right: 10px;
+  color: rgba(0, 0, 0, 0.9);
+}
+.detail-main .detail-content .detail-row .row-content .item {
+  display: flex;
+  flex-direction: row;
+}
+.detail-main .detail-content .detail-row .row-content .item .label {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.4);
+  margin-right: 30px;
+  width: 70px;
+  height: 20px;
+  display: inline-block;
+  text-align: justify;
+}
+.detail-main .detail-content .detail-row .row-content .item .label::after {
+  content: "";
+  display: inline-block;
+  width: 100%;
+}
+.detail-main .detail-content .detail-row .row-content .item .value {
+  color: rgba(0, 0, 0, 0.9);
+}
+.detail-main .detail-content .detail-row .first-content {
+  width: 485px;
+}
+.detail-main .detail-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.send-main {
+  margin-top: 14px;
+}
+.send-main .send-top {
+  display: flex;
+  flex-direction: column;
+}
+.send-main .send-top .item {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.send-main .send-top .item:last-child {
+  margin-bottom: 0;
+}
+.send-main .send-top .item .label {
+  color: rgba(0, 0, 0, 0.4);
+  width: 84px;
+  margin-right: 12px;
+}
+.send-main .send-top .item .value {
+  color: rgba(0, 0, 0, 0.9);
+}
+.send-main .line {
+  width: 100%;
+  border-bottom: 1px dashed #DCDCDC;
+  margin-top: 37px;
+  margin-bottom: 30px;
+}
+.send-main .com-f-btn {
+  margin-top: 30px;
+}

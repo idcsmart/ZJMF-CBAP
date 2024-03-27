@@ -1,1 +1,0 @@
-ALTER TABLE `idcsmart_plugin` ADD COLUMN `hook_order` int(11) NOT NULL DEFAULT '0' COMMENT 'hook排序';

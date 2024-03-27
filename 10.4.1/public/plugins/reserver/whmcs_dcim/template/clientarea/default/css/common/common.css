@@ -1,0 +1,778 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+
+/* 提示弹窗 */
+.el-message-box {
+  width: 5.2rem;
+}
+
+/* 取消number类型输入框的加减按钮 */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+
+.el-tooltip__popper {
+  max-width: 50%
+}
+
+/* 加载中 开始 */
+/* #account{
+    display: none;
+} */
+#mainLoading {
+  /* width: 100vw;
+    height: 100vh;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center; */
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 9999;
+  background: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.template {
+  display: none;
+}
+
+#mainLoading .ddr {
+  width: 8px;
+  height: 100px;
+  float: left;
+  margin: 2px;
+  background-color: #4890FF;
+  animation: loading 1s infinite ease-in-out;
+  /*animation：动画名称 持续时间 动画速度曲线 延迟 执行多少次 是否正反方向轮流播放*/
+}
+
+#mainLoading .ddr2 {
+  animation-delay: -0.9s;
+  /*定义开始执行的地方，负号表示直接从第900ms开始执行*/
+}
+
+#mainLoading .ddr3 {
+  animation-delay: -0.8s;
+}
+
+#mainLoading .ddr4 {
+  animation-delay: -0.7s;
+}
+
+#mainLoading .ddr5 {
+  animation-delay: -0.6s;
+}
+
+@keyframes loading {
+
+  0%,
+  40%,
+  100% {
+    /*定义每帧的动作*/
+    -webkit-transform: scaleY(0.5);
+  }
+
+  20% {
+    -webkit-transform: scaleY(1);
+  }
+}
+
+/* 加载中结束 */
+
+/* 表格 表头和每一行 的统一高度 */
+thead tr {
+  height: .56rem;
+  color: #757575;
+}
+
+tbody .el-table__row {
+  height: .6rem;
+}
+
+.el-table .el-table__cell {
+  padding: 0;
+}
+
+/* #template {
+    height: 100vh;
+    width: 100vw;
+} */
+
+.el-container:nth-child(2) {
+  flex-direction: column;
+}
+
+/* header部分开始 */
+.el-header {
+  /* position: sticky;
+    position: -webkit-sticky; */
+  position: fixed;
+  width: calc(100% - 160px);
+  top: 0;
+  height: 40px !important;
+  background: #FFFFFF;
+  box-shadow: 0px 1px 4px rgba(21, 34, 50, 0.0800);
+  opacity: 1;
+  border-radius: 0px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+.search-value {
+  font-size: .14rem;
+  color: rgba(4, 14, 52, 1);
+
+}
+
+.search-name {
+  font-size: .12rem;
+  color: rgba(150, 150, 163, 1);
+  margin-bottom: .1rem;
+}
+
+.header-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* margin-left: .46rem; */
+}
+
+.header-left .el-input input {
+  width: 4rem;
+}
+
+.menu-img {
+  display: none;
+}
+
+
+.header-left .el-input input {
+  border: none;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  margin-right: .4rem;
+}
+
+.right-item {
+  margin-left: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.item-bell {
+  position: relative;
+  z-index: 1;
+}
+
+.item-cur {
+  width: 22px;
+  height: 22px;
+  opacity: 0.81;
+
+}
+
+.el-dropdown {
+  display: flex;
+  align-items: center;
+}
+
+.item-cur img {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+
+.bell-num {
+  position: absolute;
+  right: -20%;
+  top: -10%;
+  z-index: 10;
+  width: 16px;
+  height: 16px;
+  background: #F0142F;
+  border-radius: 12px;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* header部分结束 */
+
+/* 主体部分开始 */
+.el-main {
+  padding-top: .83rem;
+  padding-left: 2.1rem;
+  padding-right: 1.02rem;
+
+}
+
+/* 图形验证码弹窗 开始*/
+.captcha-dialog .el-dialog__body {
+  padding-left: .8rem;
+  padding-right: .8rem;
+}
+
+.dialog-title {
+  font-size: 24px;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 24px;
+  color: #171725;
+}
+
+.dialog-form {
+  margin-top: 0.3rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.dialog-form .el-input__inner {
+  height: .46rem;
+}
+
+.dialog-form img {
+  height: .46rem;
+  width: 1.11rem;
+  margin-left: .1rem;
+  cursor: pointer;
+}
+
+.err-alert {
+  margin-top: .2rem;
+  padding-right: 1.21rem;
+}
+
+.dialog-footer {
+  margin-top: .4rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dialog-footer .btn-ok {
+  height: .46rem;
+  width: 1.12rem;
+  background: #0058FF;
+  border-radius: 3px;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-footer .btn-no {
+  height: .46rem;
+  width: 1.12rem;
+  background: #E7E7E7;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 图形验证码弹窗 结束*/
+
+/* 换页相关开始 */
+.main-card {
+  height: 100%;
+  font-size: .14rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 1.5715;
+  color: #171725;
+  word-break: break-all;
+  max-width: 1500px;
+  margin: auto;
+}
+
+.myPage {
+  margin-bottom: .26rem;
+}
+
+.myPage .el-pagination {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.el-pagination .page-total {
+  margin: 0 auto 0 22px;
+  font-size: 12px !important;
+  font-family: PingFang SC;
+  font-weight: 400;
+  color: #757575;
+}
+
+.el-pager .number {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #E6E7EB;
+  margin-right: 8px;
+  border-radius: 3px;
+}
+
+.el-pager .number:last-child {
+  margin-right: 0;
+}
+
+/* .el-input__inner {
+    height: 32px !important;
+} */
+
+.el-pager .active {
+  background: #F4F7FC;
+  border: 1px solid #0058FF;
+}
+
+.el-pager li.active+li {
+  border-left: 1px solid #E6E7EB;
+}
+
+/* 换页相关结束 */
+
+/* 主体部分结束 */
+
+/* 左侧菜单开始 */
+.el-menu {
+  border-right: none;
+}
+
+.menu-top {
+  margin-top: .86rem;
+}
+
+
+/* .menu-top .el-menu-item {
+    margin-left: .07rem;
+    height: auto;
+    line-height: normal;
+    margin-bottom: .24rem;
+} */
+
+
+.aside-menu-text {
+    margin-left: .2rem;
+}
+
+.menu-top .el-menu-item.is-active::after {
+  /* margin-left: .04rem; */
+  /* border-left: 3px solid #FFF; */
+  content: "";
+  height: 19px;
+  width: 3px;
+  background: #FFF;
+  position: absolute;
+  left: 4px;
+  top: calc(50% - 9.5px);
+}
+
+.menu-top .el-submenu__title {
+  height: 40px;
+  line-height: 40px;
+}
+
+/* .menu-top .el-submenu {
+    margin-left: .07rem;
+    height: 44px;
+    line-height: 44px;
+} */
+
+.menu-top .el-menu-item {
+  height: 40px;
+  line-height: 40px;
+}
+
+.menu-top .el-submenu .el-menu-item {
+    min-width: auto;
+    height: 30px;
+    line-height: 30px;
+    padding-left: 60px !important;
+    /* margin-bottom: .12rem;
+    margin-left: .03rem; */
+}
+
+.menu-top .el-submenu .el-menu-item.is-active {
+  margin-left: 0;
+}
+
+
+
+.el-aside {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  background: #1E41C9;
+  height: 100vh;
+  font-size: 14px;
+  z-index: 5;
+}
+
+.menu-list-top,
+.menu-list-bottom {
+  margin-top: .86rem;
+  color: #FFFFFF;
+}
+
+.father-item {
+  margin-bottom: .12rem !important;
+}
+
+.child-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.child-menu .child-item-text {
+  padding-left: .5rem;
+  margin-bottom: .12rem;
+  margin-left: 0.15rem;
+  opacity: .6;
+  cursor: pointer;
+  border-left: 3px solid #1E41C9;
+}
+
+.child-item-text:last-child {
+  margin-bottom: .24rem;
+}
+
+.child-active {
+  opacity: 1 !important;
+  border-left: 3px solid #FFFF !important;
+}
+
+.menu-list-top>.menu-active,
+.menu-list-bottom>.menu-active {
+  border-left: 3px solid #FFFF;
+  opacity: 1;
+  margin-left: 0.04rem;
+}
+
+.ali-logo {
+  /* height: .25rem; */
+  width: 115px;
+  /* margin-top: .12rem; */
+  margin: 12px auto 0;
+  display: block;
+}
+
+.line {
+  width: 1.23rem;
+  height: 0px;
+  border: 1px solid #FFFFFF;
+  opacity: 0.1;
+  margin: .9rem auto;
+}
+
+.menu-item {
+  padding-left: .18rem;
+  margin-left: 0.07rem;
+  margin-bottom: .24rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: #FFFFFF;
+  opacity: 0.6;
+
+}
+
+.item-img {
+  height: 16px;
+}
+
+.item-text {
+  line-height: 20px;
+  margin-left: .2rem;
+}
+
+/* 左侧菜单结束 */
+
+/* message */
+.el-message {
+  font-size: 20px;
+}
+
+.el-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* el弹窗自带底部按钮 */
+.el-message-box__btns>.el-button {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.el-message-box__btns {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+/* 表格 */
+tr>td {
+  padding-left: 20px !important;
+}
+
+th {
+  padding-left: 20px !important;
+}
+
+.com-search .el-input__suffix {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+/* 支付弹窗开始 */
+.zf-dialog .el-dialog__body {
+  padding: .3rem .8rem;
+  font-size: .16rem;
+}
+
+.zf-dialog .dialog-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.zf-dialog .el-row {
+  display: flex;
+  align-items: center;
+  margin-top: .3rem;
+}
+
+.zf-dialog .form-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.zf-dialog .form-footer>.btn-ok {
+  background: #0058FF;
+  border-radius: 3px;
+  color: rgba(255, 255, 255, 0.9000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zf-dialog .btn-no {
+  background: #E7E7E7;
+  border-radius: 3px;
+  color: #1E2736;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zf-dialog .true-money {
+  color: #FFA800;
+}
+
+.zf-dialog .pay-html {
+  display: flex;
+  justify-content: center;
+}
+
+.zf-dialog .pay-img-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.zf-dialog .blue{
+  color: #0058FF;
+}
+
+.zf-dialog .red{
+  color: #F0142F;
+}
+
+.zf-dialog .pay-html>img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.zf-dialog .el-select {
+  width: 100%;
+}
+
+
+
+
+.buy-product-btn {
+  width: 0.6rem;
+  height: 90%;
+  background: #0058FF;
+  opacity: 1;
+  border-radius: 3px;
+  color: #FFF;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 0.08rem;
+  font-size: .14rem;
+  font-weight: bold;
+  font-family: PingFang SC;
+  margin-left: .1rem;
+  align-self: center;
+}
+
+.product-select {}
+
+
+
+
+
+
+
+
+/* 支付弹窗结束 */
+
+@media screen and (max-width: 750px) {
+  .el-main {
+    padding-top: 1.66rem;
+    padding-left: .3rem;
+    padding-right: .3rem;
+  }
+
+  .el-header {
+    width: 100%;
+  }
+
+  /* 左侧菜单 */
+  .el-aside {
+    display: none;
+  }
+
+  /* 顶部展示 */
+  .el-header {
+    height: 1rem !important;
+  }
+
+  .menu-img {
+    display: inline-block;
+    cursor: pointer;
+    height: .56rem;
+  }
+
+  .header-right {
+    margin-right: 0px;
+  }
+
+  .right-item img {
+    width: .56rem;
+    height: .56rem;
+  }
+
+  /* 左侧弹窗菜单 */
+  .drawer-menu {
+    background: #1E41C9;
+    font-size: .32rem;
+  }
+
+  .drawer-menu-top {
+    width: 3.8rem;
+    height: 50px;
+    display: flex;
+    align-items: center;
+  }
+
+  .drawer-menu-logo {
+    width: 2rem;
+    margin: 0 auto;
+  }
+
+  .drawer-menu-list-top {
+    margin-top: .86rem;
+    color: #FFFFFF;
+  }
+
+  .drawer-menu-list-top>.drawer-menu-active {
+    border-left: 3px solid #FFFF;
+    opacity: 1;
+    margin-left: 0.04rem;
+  }
+
+  .drawer-menu-item {
+    padding-left: .41rem;
+    margin-left: 0.07rem;
+    margin-bottom: .5rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #FFFFFF;
+    opacity: 0.6;
+  }
+
+  .drawer-item-img {
+    height: .38rem;
+  }
+
+  .drawer-item-text {
+    line-height: 20px;
+    margin-left: .41rem;
+  }
+
+  .el-input__inner {
+    height: .8rem;
+    font-size: .3rem;
+  }
+
+  .dialog-title {
+    font-size: .32rem;
+  }
+
+  .el-tabs__item {
+    font-size: .34rem;
+    margin-bottom: .15rem;
+    margin-top: .51rem;
+  }
+
+  .el-icon-search {
+    font-size: .4rem;
+  }
+
+  .el-button {
+    font-size: .34rem;
+  }
+
+  .right-item {
+    margin-left: .3rem;
+  }
+
+  .el-divider__text {
+    font-size: .28rem;
+  }
+
+  /* .el-input .el-input__clear {
+        font-size: .4rem;
+    } */
+  .select-input .el-input--suffix {
+    width: 1.86rem;
+  }
+
+  .el-message-box__message {
+    font-size: .32rem;
+  }
+
+}
