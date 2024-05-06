@@ -1,0 +1,243 @@
+{include file="header"}
+
+  <link rel="stylesheet" href="/web/default/css/product.css">
+  <script src="/web/default/js/buy_domain.js"></script>
+
+</head>
+
+<body>
+  <header>{include file="public/header"}</header>
+
+  <section class="section domain-buy">
+    <div class="section-content">
+      <div>
+        <ol class="breadcrumb">
+          <li><a href="./news.html">域名注册</a></li>
+          <li>订购</li>
+        </ol>
+      </div>
+      <div class="buy-tip">
+        <div class="tip-icon"><img src="/web/default/assets/img/active/horn.svg" alt=""></div>
+        <div class="tip-text">
+          <p>域名交易成功后，域名所有者信息将使用以下模板信息直接替换，请您仔细核对域名模板信息。</p>
+          <p>域名交易成功后，根据 ICANN 规定，默认开启 60 天锁定期，锁定期内禁止转出XX云，以保护域名的安全。</p>
+        </div>
+      </div>
+      <div class="select-tem">
+        <div class="select-title">选择域名模板</div>
+        <div class="select-content">
+          <div class="select-type">
+            <span class="net-type">网络类型</span>
+            <!-- 单选框 个人/企业 -->
+            <input type="radio" id="personal" name="netType" value="personal">
+            <label for="personal" style="cursor: pointer;">个人</label>
+            <input type="radio" id="company" name="netType" value="company">
+            <label for="personal" style="cursor: pointer;">企业</label>
+          </div>
+          <div class="tem-box">
+            <div class="tem-title">
+              <span class="title-text">以下为您曾经使用过的域名信息模板，您可以直接使用：</span>
+              <span class="creat-text creat-btn">创建新的域名信息模板</span>
+            </div>
+            <div class="tem-list">
+              <div class="no-tem">没有查询到可用的信息模板，请先前往<span class="creat-text creat-btn">创建域名信息模版</span></div>
+            </div>
+          </div>
+          <div class="checkbox agree-box">
+            <input id="agree" class="styled" type="checkbox">
+            <label for="agree">
+              我已阅读并同意<a href="">《XX云服务协议》</a>、<a href="">《XX云隐私保护声明》</a>、<a href="">《XX云域名注册协议》</a>和<a href="">《XX云域名信息服务协议》</a>
+            </label>
+          </div>
+          <div class="btn-box">
+            <div class="ok-btn">下一步</div>
+            <div class="back-btn">返回</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="creat-template-box">
+      <div class="creat-form">
+        <div class="form-top">
+          <span>创建模板信息</span>
+          <img src="/web/default/assets/img/comment/close.svg" class="close-dia-btn" alt="">
+        </div>
+        <div class="form-content">
+          <div>
+            <div class="form-box">
+              <form id="buyForm" class="form-info">
+                <div class="form-title">中文模板信息</div>
+                <div class="form-item">
+                  <div class="form-label"></div>
+                  <div class="form-value">
+                    <div class="checkbox">
+                      <input id="useAccon" class="styled" type="checkbox">
+                      <label for="useAccon" class="use-label">
+                        使用账号信息填写<span class="use-tips">（请确认域名所有者和账号信息是否相符合）</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">用户类型</div>
+                  <div class="form-value" show-tip="用户类型">
+                    <div class="user-type">
+                      <div class="user-item active">个人</div>
+                      <div class="user-item">企业</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">域名所有者（中文）</div>
+                  <div class="form-value" show-tip="域名所有者（中文）">
+                    <input type="text" name="owner" placeholder="请完整输入与所有者证件一致的中文企业名称">
+                    <p class="value-tips">域名所有者代表域名使用权，请填写与所有者证件完全一致的企业名称。</p>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">联系人（中文）</div>
+                  <div class="form-value">
+                    <input type="text" name="name" placeholder="请填写联系人中文名称">
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">电子邮箱</div>
+                  <div class="form-value" show-tip="电子邮箱">
+                    <select id="selectbox" name="selectbox">
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                    <span class="origin-text" style="margin-left: 10px;">验证新的电子邮箱</span>
+                    <p class="value-tips">根据相关政策法规，必须使用已验证的邮箱 <span class="origin-text a-text">为什么？</span></p>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">地区</div>
+                  <div class="form-value" show-tip="地区">
+                    <select id="selectbox" name="selectbox">
+                      <option value="option1">选项 1选项 1选项 1选项 1选项 1选项 1选项 1选项 1选项 1</option>
+                      <option value="option2">选项 2</option>
+                      <option value="option3">选项 3</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">通信地址（中文）</div>
+                  <div class="form-value">
+                    <input type="text" name="address" placeholder="请输入中文地址">
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">邮编</div>
+                  <div class="form-value">
+                    <input type="text" name="maill" placeholder="请输入邮政编码">
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">手机</div>
+                  <div class="form-value">
+                    <input type="tel" name="phone" placeholder="请输入手机号">
+                    <span class="origin-text" style="margin-left: 10px;">验证新的手机号</span>
+                    <p class="value-tips">根据相关政策法规，必须使用已验证的手机 <span class="origin-text a-text">为什么？</span></p>
+                  </div>
+                </div>
+                <div class="form-title">英文模板信息</div>
+                <div class="form-item">
+                  <div class="form-label">域名所有者（英文）</div>
+                  <div class="form-value">
+                    <input type="tel" name="phone" placeholder="英文名或中文拼音，如：Zhang San">
+                    <p class="value-tips">如系统自动填充的拼音有误（注意多音字、生僻字的翻译），请直接进行修改。</p>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">联系人（英文）</div>
+                  <div class="form-value">
+                    <input type="tel" name="phone" placeholder="英文名或中文拼音，如：Zhang San">
+                    <p class="value-tips">如系统自动填充的拼音有误（注意多音字、生僻字的翻译），请直接进行修改。</p>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">通信地址（英文）</div>
+                  <div class="form-value">
+                    <input type="tel" name="phone" placeholder="请输入英文的通信地址">
+                  </div>
+                </div>
+                <div class="form-title">域名所有者身份认证</div>
+                <div class="form-item">
+                  <div class="form-label">证件类型</div>
+                  <div class="form-value">
+                    <select id="selectbox" name="selectbox">
+                      <option value="option1">身份证</option>
+                      <option value="option2">户口本</option>
+                      <option value="option3">驾驶证</option>
+                    </select>
+                    <p class="value-tips">请上传与域名所有者完全一致的身份证。</p>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">证件照正面</div>
+                  <div class="form-value">
+                    <div class="upload-box">
+                      <div class="upload-top">
+                        <div class="upload-content">
+                          <div><img class="up-img" src="/web/default/assets/img/domain/upload.png" alt=""></div>
+                          <div class="up-text"><span class="origin-text">点击上传</span> / 拖拽到此区域</div>
+                        </div>
+                        <div class="upload-view">
+                          <p>示例</p>
+                          <div class="view-box">
+                            <img src="" alt="">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="upload-bommtom">
+                        <p>1、必须为彩色证件扫描件，内容清晰可见</p>
+                        <p>2、必须包含完整证件边框，无遮挡、无水印</p>
+                        <p>3、图片格式支持JPG、PNG、BMP等，大小为55KB～5MB</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label">证件号码</div>
+                  <div class="form-value">
+                    <input type="tel" name="idCard" placeholder="请输入相应的证件号码">
+                  </div>
+                </div>
+                <div class="form-item">
+                  <div class="form-label"></div>
+                  <div class="form-value checkbox agree-label">
+                    <input id="agree5" class="styled" type="checkbox">
+                    <label for="agree5">
+                      我已阅读并同意<a href="" class="a-text">《XX云服务协议》</a>、<a href="" class="a-text">《XX云隐私保护声明》</a>、<a href="" class="a-text">《XX云域名注册协议》</a>和<a href="" class="a-text">《XX云域名信息服务协议》</a>
+                    </label>
+                  </div>
+                </div>
+              </form>
+              <div class="right-tip">
+                <div class="tip-text-box">
+                  <div class="no-tips">
+                    <div class="no-tips-img"><img src="/web/default/assets/img/domain/noTip.png" alt=""></div>
+                    鼠标悬停至配置项，展示详细的说明
+                  </div>
+                  <div class="input-tip">
+                    <h4>域名所有者</h4>
+                    <p>1、域名所有者代表域名使用权</p>
+                    <p>2、请填写与所有者证件完全一致的真实名称。</p>
+                    <p>3、企业/组织、个人类型模版对于域名本身实名认证并无不同。但若该域名需要备案，请确保腾讯云账号主体、域名所有者名称、备案主体名称三者完全一致，并完成域名实名认证。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-bottom">
+          <div class="creat-ok">创建</div>
+          <div class="creat-cancel close-dia-btn">取消</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {include file="footer"}

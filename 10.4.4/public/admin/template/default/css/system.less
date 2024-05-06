@@ -1,0 +1,185 @@
+.feedback {
+  .com-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 1;
+    margin-bottom: 10px;
+
+    .add-btn {
+      cursor: pointer;
+      line-height: 32px;
+      height: 32px;
+      background: var(--td-brand-color-8);
+      font-size: 14px;
+      color: #fff;
+      padding: 0 14px;
+      border-radius: 4px;
+    }
+
+    .tit {
+      margin: 0;
+    }
+  }
+
+  .limit-table {
+
+    .com-top {
+      margin-top: 30px;
+    }
+
+    thead {
+      tr th {
+        background: #f3f5f8;
+      }
+    }
+
+    th,
+    td {
+      padding: 12px 24px;
+    }
+  }
+
+  .com-opt {
+    .t-icon {
+      color: var(--td-brand-color-active);
+      margin-right: 10px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+  }
+
+  .type-table {
+    margin-top: 30px;
+
+    thead {
+      tr th {
+        background: #f3f5f8;
+      }
+    }
+
+    th,
+    td {
+      padding: 12px 24px;
+    }
+  }
+
+  .attachment {
+    display: flex;
+
+    .down {
+      flex: 1;
+
+      p {
+        margin: 0;
+      }
+
+      span {
+        color: rgba(0, 0, 0, 0.4);
+        cursor: pointer;
+
+        &:hover {
+          color: var(--td-brand-color-active);
+        }
+      }
+    }
+  }
+
+  .info-form {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+
+    .t-form__item {
+      width: 330px;
+
+    }
+
+    .qrcode {
+      width: 680px;
+    }
+
+    .info-btn {
+      margin-right: 330px;
+    }
+  }
+
+  .t-upload {
+    .t-dialog {
+      width: 800px !important;
+      min-height: 500px !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      position: relative;
+    }
+
+    .t-dialog__header {
+      display: none;
+    }
+
+    .t-dialog__close {
+      z-index: 10;
+    }
+
+    .t-dialog__body {
+      height: 100%;
+      top: 0;
+      left: 0;
+      padding: 40px;
+      position: absolute;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .t__dialog-body-img-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+
+      img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+
+  .web-logo {
+
+    .t-upload__card-content,
+    .t-upload__card-container {
+      width: 260px;
+      height: 68px;
+    }
+  }
+}
+
+#viewer {
+  width: 0;
+  height: 0;
+}
+
+.viewer-container {
+  z-index: 20000 !important;
+}
+
+.viewer-navbar {
+  display: none !important;
+}
+
+.class-dialog {
+  .t-input__wrap {
+    width: 360px;
+  }
+
+  .des {
+    padding: 10px;
+    background: #f3f5f8;
+    border-radius: 3px;
+    min-height: 200px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+}

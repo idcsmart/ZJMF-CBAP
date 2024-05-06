@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="113" height="30" viewBox="0 0 113 30">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="矩形_3009" data-name="矩形 3009" width="29" height="30" transform="translate(0.051 -0.496)" fill="#186994" opacity="0.59"/>
+    </clipPath>
+  </defs>
+  <g id="组_6996" data-name="组 6996" transform="translate(-691 -232)">
+    <text id="信用支付" transform="translate(728 254)" fill="#1e2736" font-size="19" font-family="PingFang SC Bold, PingFang SC"><tspan x="0" y="0">信用支付</tspan></text>
+    <g id="蒙版组_743" data-name="蒙版组 743" transform="translate(690.949 232.496)" clip-path="url(#clip-path)">
+      <g id="组_6994" data-name="组 6994" transform="translate(2.359 -0.285)">
+        <path id="路径_6012" data-name="路径 6012" d="M249.351,63.9a9.251,9.251,0,1,0,9.251,9.251A9.25,9.25,0,0,0,249.351,63.9Zm3.976,9.6-3.458,3.458a.491.491,0,0,1-.692,0L245.718,73.5a.491.491,0,0,1,0-.692l3.458-3.458a.491.491,0,0,1,.692,0l3.458,3.458A.491.491,0,0,1,253.327,73.5Z" transform="translate(-237.112 -63.9)" fill="#f2a238"/>
+        <path id="路径_6013" data-name="路径 6013" d="M149.058,611.149a1.381,1.381,0,0,1,.873.1c1.642.791,6.691,4.287,8.308,4.287,1.874,0,9.108-4.541,10.022-4.541s2.055.086,2.055,1.146c0,.9-8.59,7.428-11.156,9.543a1.659,1.659,0,0,1-1.658.267l-8.539-4.659a1.6,1.6,0,0,0-1.439-.006l-1.159.264a.239.239,0,0,1-.365-.2v-4.424a.87.87,0,0,1,.692-.851Z" transform="translate(-146 -593.626)" fill="#f2a238"/>
+      </g>
+    </g>
+  </g>
+</svg>

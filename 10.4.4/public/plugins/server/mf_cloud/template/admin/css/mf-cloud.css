@@ -1,0 +1,1137 @@
+.common_config {
+  padding: 24px;
+  /* cycle-form */
+  /* configModel */
+}
+.common_config .com-h-tit {
+  margin: 0;
+}
+.common_config .t-textarea__inner {
+  background-color: transparent;
+}
+.common_config .basic .t-form-item__order_page_description .t-form__label {
+  font-size: 14px;
+  color: #333;
+  height: 40px;
+}
+.common_config .basic .t-form__controls {
+  line-height: 1;
+  min-height: auto;
+}
+.common_config .basic .t-form__item {
+  margin-bottom: 15px;
+}
+.common_config .t-card {
+  border: 1px solid var(--td-component-border);
+}
+.common_config .t-tabs__nav-item:hover,
+.common_config .t-tabs__nav-item-wrapper:hover {
+  background: #fff !important;
+}
+.common_config .t-tabs__nav-item.t-is-active {
+  text-shadow: none;
+  font-weight: bold;
+}
+.common_config .t-tabs__nav-item.t-is-active .t-tabs__nav-item-text-wrapper {
+  color: var(--td-brand-color-8);
+}
+.common_config .s-tip {
+  color: rgba(0, 0, 0, 0.4);
+}
+.common_config .t-tabs__bar.t-is-top {
+  bottom: 1px;
+}
+.common_config .t-tabs__nav-item:not(.t-is-disabled):not(.t-is-active):hover .t-tabs__nav-item-wrapper {
+  background: #fff;
+}
+.common_config .t-tabs__nav-item-text-wrapper {
+  color: var(--td-text-color-primary);
+}
+.common_config .t-tabs__nav-container.t-is-bottom:after,
+.common_config .t-tabs__nav-container.t-is-top:after {
+  background-color: var(--td-component-border);
+}
+.common_config .box {
+  padding: 30px 40px;
+  font-size: 14px;
+  color: #333;
+}
+.common_config .line_flow .t-form__controls {
+  width: 100%;
+}
+.common_config .line_flow .t-form__controls .no-lable {
+  flex: 1;
+}
+.common_config .top-text {
+  width: 690px;
+  height: 120px;
+}
+.common_config .top-text textarea {
+  height: 100% !important;
+}
+.common_config td,
+.common_config th {
+  padding: 12px 24px;
+}
+.common_config .drag-icon {
+  min-width: auto;
+  padding: 12px;
+}
+.common_config .drag-icon .t-icon-move {
+  color: var(--td-text-color-primary);
+}
+.common_config .group-column {
+  padding-left: 0;
+}
+.common_config .t-input__prefix {
+  color: rgba(0, 0, 0, 0.4);
+}
+.common_config .cycle-box {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.common_config .cycle-box .item {
+  width: 48%;
+}
+.common_config .onetime {
+  width: 143px;
+}
+.common_config .com-opt .t-icon {
+  color: var(--td-brand-color);
+  margin-right: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+.common_config .com-opt .t-icon:last-child {
+  margin-right: 0;
+}
+.common_config .com-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.common_config .com-top .right {
+  display: flex;
+  align-items: center;
+}
+.common_config .com-top .add-btn {
+  cursor: pointer;
+  line-height: 32px;
+  height: 32px;
+  background: var(--td-brand-color-8);
+  font-size: 14px;
+  color: #fff;
+  padding: 0 14px;
+  border-radius: 4px;
+  margin-left: 20px;
+}
+.common_config .com-top .tit {
+  margin: 0;
+}
+.common_config .com-des {
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+.common_config .config-option .com-top {
+  align-items: flex-end;
+}
+.common_config .config-option .t-table,
+.common_config .custom-fields .t-table {
+  margin: 10px 0 40px;
+}
+.common_config .f-btn {
+  margin-top: 30px;
+}
+.common_config .f-btn .t-button {
+  margin-right: 20px;
+}
+.common_config .deleteDialog .t-dialog__body__icon {
+  padding: 10px 0 10px 4px;
+  color: #333;
+}
+.common_config .cycle_time {
+  margin-right: 10px;
+  width: 100%;
+}
+.common_config .interval {
+  margin: 0 10px;
+  color: #333;
+}
+.common_config .option_param .t-form__controls-content {
+  flex-wrap: wrap;
+}
+.common_config .option_param .t-form__controls-content .tip {
+  line-height: 1.2;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.6);
+}
+.common_config .cycle-form .t-input-number {
+  width: 100%;
+}
+.common_config .required > .t-form__label label::before {
+  color: var(--td-error-color);
+  content: "*";
+  display: inline-block;
+  line-height: 22px;
+  margin-right: 4px;
+}
+.common_config .cycle_time .t-form__label {
+  width: 0 !important;
+  padding-right: 0 !important;
+}
+.common_config .configModel .t-dialog {
+  width: 1495px;
+  max-width: 90%;
+}
+.common_config .configModel .config-form {
+  position: relative;
+  margin-bottom: 40px;
+}
+.common_config .configModel .config-form .t-col {
+  display: flex;
+  justify-content: space-between;
+}
+.common_config .configModel .config-form .t-col .t-form__item {
+  width: 48%;
+}
+.common_config .configModel .config-form .t-col .t-form__item:last-child {
+  margin-right: 0;
+}
+.common_config .configModel .config-form .t-col .t-form__item:last-child .t-form__controls-content {
+  flex-wrap: wrap;
+}
+.common_config .configModel .config-form .t-col .t-form__item:last-child .t-form__controls-content .tip {
+  line-height: 1.2;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.6);
+}
+.common_config .half {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #333;
+}
+.common_config .half .t-form__item {
+  margin-bottom: 0;
+}
+.common_config .half .t-form__item {
+  width: auto !important;
+}
+.common_config .half .t-form__item:last-child {
+  width: 165px;
+  margin-left: 20px;
+}
+.common_config .t-form-item__description {
+  width: 100% !important;
+}
+.common_config .frre-switch .t-form__label {
+  width: auto !important;
+  padding-right: 0;
+}
+.common_config .frre-switch .t-form__controls {
+  margin-left: 0 !important;
+}
+.common_config .frre-switch .t-switch {
+  margin-right: 10px;
+}
+.common_config svg {
+  color: var(--td-brand-color);
+  font-size: 16px;
+  cursor: pointer;
+}
+.common_config .t-table__header tr {
+  background: #F3F5F8;
+}
+.common_config .save-config {
+  margin-top: 32px;
+}
+.common_config .class-name {
+  display: flex;
+  align-items: center;
+}
+.common_config .ml_10 {
+  margin-left: 10px;
+}
+.common_config .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+.common_config .top-opt {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.common_config .top-opt .item {
+  display: flex;
+}
+.common_config .top-opt .select .t-input__wrap {
+  width: 100%;
+}
+.common_config .top-opt .t-select__wrap {
+  width: 160px;
+}
+.common_config .top-opt .t-input__wrap {
+  width: 320px;
+}
+.common_config .top-opt .add-system {
+  line-height: 32px;
+  background: #ECF2FE;
+  padding: 0 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--td-brand-color-active);
+}
+/* configSubModel */
+.empty-item {
+  margin-top: -20px;
+  margin-bottom: 10px;
+}
+.empty-item span {
+  color: #666;
+}
+.ratio-tip {
+  margin: 20px 0;
+}
+.ratio-tip p {
+  margin: 0;
+}
+.bot-tip {
+  margin-top: 20px;
+}
+.bot-tip p {
+  display: flex;
+  align-items: center;
+  margin: 0;
+}
+.bot-tip .t-switch {
+  margin: 0 10px 0 5px;
+}
+.configSubModel .t-dialog {
+  padding: 0;
+}
+.configSubModel .t-dialog__header {
+  padding: 28px 32px 0 !important;
+}
+.configSubModel .t-form {
+  padding: 0 32px 32px;
+}
+.configSubModel .free-tip {
+  background: #E7E7E7;
+  line-height: 30px;
+  margin: 20px -32px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.3);
+}
+/* config-sub */
+.config-sub .t-table__th-area {
+  padding: 0 !important;
+  width: auto;
+  white-space: nowrap;
+}
+.config-sub .t-table__th-cell-inner {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.config-sub .config-tit,
+.config-sub .config-body {
+  padding: 12px 24px;
+  flex: 1;
+  min-width: 40px;
+  word-break: break-all;
+  position: relative;
+  border-right: 1px solid #ccc;
+}
+.config-sub .config-tit:last-child,
+.config-sub .config-body:last-child {
+  border-right: 0;
+}
+.config-sub .t-table__body td:nth-child(2) {
+  padding: 0 !important;
+}
+.config-sub .t-table__body .config-box {
+  display: flex;
+}
+/* package-form */
+.package-dailog .t-dialog__body {
+  padding-top: 0;
+}
+.package-form {
+  display: flex;
+}
+.package-form .com-tit {
+  font-size: 16px;
+  margin-top: 30px;
+}
+.package-form .form-item {
+  width: 670px;
+}
+.package-form .form-item:first-child {
+  margin-right: 60px;
+}
+.package-form .short-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.package-form .short-item .t-form__item {
+  flex: 1;
+  margin-bottom: 0;
+}
+.package-form .short-item .t-form__item:first-child {
+  margin-right: 30px;
+}
+.package-form .data-item .t-form__controls-content .t-form__label {
+  display: none;
+}
+.package-form .data-item .t-form__controls-content .t-form__item {
+  width: 50% !important;
+}
+.package-form .data-item .t-form__controls-content .t-form__item:first-child {
+  margin-right: 10px;
+}
+.package-form .data-item.required .t-form__controls-content .t-form__item {
+  width: 320px !important;
+}
+.package-form .data-item.required .t-form__controls-content .t-form__item:first-child {
+  margin-right: 30px !important;
+}
+.package-form .three-item {
+  display: flex;
+}
+.package-form .three-item .t-form__item {
+  width: 203px;
+  margin-right: 35px;
+}
+.package-form .three-item .t-form__item:last-child {
+  margin-right: 0;
+}
+.package-form .bot-tip {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.4;
+  margin-top: 0;
+}
+.package-form .bot-tip p {
+  margin: 0;
+}
+.package-form .price-box .item {
+  width: 33.33% !important;
+  margin-top: 10px !important;
+}
+.package-form .t-input__extra {
+  overflow: inherit;
+}
+.package-form .store-config .short-item {
+  margin-bottom: 0;
+}
+.package-form .store-config .short-item:first-child {
+  margin-right: 30px !important;
+}
+.package-form .store-config .short-item .t-form__controls-content .t-form__item {
+  width: 155px !important;
+}
+.package-form .store-config .short-item .t-form__controls-content .t-form__item:first-child {
+  margin-right: 10px !important;
+}
+.package-form .store-config .short-item .data-item {
+  margin-right: 0 !important;
+}
+.configModel {
+  z-index: 1000 !important;
+}
+.deleteDialog {
+  z-index: 9999;
+}
+.limit-table,
+.limit-table1 {
+  max-width: 900px;
+}
+.limit-table .t-table__header tr,
+.limit-table1 .t-table__header tr {
+  background: #F3F5F8;
+}
+.limit-table1 {
+  max-width: 1174px;
+}
+.custom-select .t-select__list {
+  display: flex;
+  padding: 10px;
+  flex-wrap: wrap;
+}
+.custom-select li {
+  padding: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+.custom-select li .icon {
+  width: 20px;
+  height: 20px;
+}
+.custom-select .s-icon {
+  width: 20px;
+  height: 20px;
+}
+.custom-select .s-icon.noIcon {
+  display: none;
+}
+.custom-select input {
+  font-size: 0;
+}
+.class-dialog .t-input__wrap {
+  width: 360px;
+}
+.other-form .t-form__label {
+  width: auto !important;
+  padding-right: 10px !important;
+}
+.other-form .t-form__controls {
+  margin-left: auto !important;
+}
+/* other-box */
+.other-box {
+  padding: 40px !important;
+}
+.other-box .t-form__label {
+  width: auto !important;
+  padding-right: 10px;
+}
+.other-box .t-form__controls {
+  margin-left: auto !important;
+}
+.other-box .t-form__item {
+  margin-bottom: 17px;
+}
+.other-box .t-icon {
+  cursor: pointer;
+  color: var(--td-brand-color);
+  margin-left: 10px;
+  font-size: 16px;
+}
+.other-box .t-input__wrap {
+  width: 250px;
+}
+.other-box .buy-disk {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.other-box .buy-disk .t-form__item {
+  margin-bottom: 0;
+}
+.other-box .buy-disk .configs {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  margin-right: 40px;
+}
+.other-box .buy-disk .configs .t-form__item {
+  margin: 0;
+}
+.other-box .buy-disk .t-input__extra {
+  overflow: inherit;
+}
+.other-box .buy-disk .t-input {
+  width: 155px;
+}
+.other-box .buy-disk .disk-num {
+  width: 120px;
+}
+.other-box .buy-disk .disk-num .t-input {
+  width: 100%;
+}
+.other-box .back-table {
+  width: 668px;
+}
+.other-box .back-table svg {
+  margin-left: 0;
+}
+.other-box .back-table .t-input__wrap {
+  width: 100%;
+}
+.other-box .back-price {
+  display: flex;
+  align-items: center;
+  height: 58px;
+}
+.other-box .back-price .t-input-number,
+.other-box .back-price .t-input__wrap {
+  margin-right: 20px;
+}
+.other-box .back-price .com-icon {
+  margin-right: 10px;
+}
+.other-box .back-price .com-icon .t-icon {
+  color: #282828;
+}
+.other-box .net_type {
+  margin-top: 5px;
+}
+.other-box .check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.other-box .check .t-switch {
+  margin-right: 15px;
+}
+.other-box .public_ip {
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+}
+.other-box .top {
+  display: flex;
+}
+.other-box .top .item {
+  margin-right: 40px;
+}
+.other-box .top .prefix {
+  width: 140px;
+}
+.other-box .top .top-item .t-form__item {
+  margin-right: 0 !important;
+}
+.other-box .top .length {
+  width: 320px;
+}
+.other-box .top-tip {
+  margin-top: 15px;
+  color: rgba(0, 0, 0, 0.4);
+  margin-bottom: 17px !important;
+}
+.other-box .t-input-number .t-input {
+  padding-right: 20px;
+}
+.other-box .t-input-number .t-button {
+  width: 16px;
+}
+.other-box .resource-add {
+  width: 32px;
+  height: 32px;
+  color: #282828;
+  display: flex;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--td-border-level-2-color);
+}
+.other-box .resource-add .t-icon {
+  margin-left: 0;
+  color: #282828;
+}
+.other-box .s-tip {
+  margin-left: 10px;
+}
+/* natureModel */
+.natureModel .cycle_time .t-form__controls {
+  margin-left: 0 !important;
+}
+/* data-box */
+.data-box tbody .line-td {
+  padding: 0;
+}
+.data-box tbody .line-td .item {
+  padding: 12px 24px;
+  border-top: 1px solid var(--td-component-border);
+  height: 24px;
+}
+.data-box tbody .line-td .item:first-child {
+  border-top: 0;
+}
+.data-box tbody .line-td.gpu .item {
+  border-left: 1px solid var(--td-component-border);
+}
+.data-box tbody .country-td {
+  border-left: 1px solid var(--td-component-border);
+  border-right: 1px solid var(--td-component-border);
+}
+.data-box tbody .city-td {
+  border-right: 1px solid var(--td-component-border);
+}
+.data-box tbody .area-td {
+  border-right: 1px solid var(--td-component-border);
+}
+.data-box .r-btn {
+  display: flex;
+}
+.data-box .r-btn .line-btn {
+  background: #ECF2FE;
+  color: var(--td-brand-color-8);
+  margin-left: 7px;
+}
+.data-box .p12 {
+  padding: 12px 24px;
+}
+.data-form .configs {
+  width: 50%;
+}
+.data-form .configs .t-form__label {
+  width: 0 !important;
+  padding-right: 0 !important;
+  min-width: auto !important;
+}
+.data-form .t-input__extra {
+  color: var(--td-error-color) !important;
+}
+.data-form .s-icon {
+  width: 26px;
+  height: 18px;
+  margin-right: 8px;
+}
+.data-form .s-icon.noIcon {
+  display: none;
+}
+.data-form .t-input-number {
+  width: 100%;
+}
+.custom-data .icon {
+  width: 26px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+/* line-form */
+.line-form {
+  position: relative;
+}
+.line-form .t-dialog__header {
+  font-size: 18px;
+}
+.line-form .top .t-form__label {
+  padding-left: 15px;
+  padding-right: 20px !important;
+}
+.line-form .top .t-form__controls {
+  margin-left: auto !important;
+}
+.line-form .top .line-name .t-input__wrap {
+  width: 260px;
+}
+.line-form .bg {
+  width: 100%;
+  position: absolute;
+  height: 10px;
+  background: #F3F5F8;
+  left: 0;
+  z-index: 10;
+}
+.line-form .config {
+  margin-top: 60px;
+}
+.line-form .config .con {
+  display: flex;
+}
+.line-form .config .con .t-form__label {
+  width: auto !important;
+  padding-right: 20px !important;
+}
+.line-form .config .con .t-form__controls {
+  margin-left: auto !important;
+}
+.line-form .config .c-item {
+  width: 50%;
+  flex: 1;
+  height: 560px;
+  overflow-y: auto;
+}
+.line-form .config .c-item:first-child {
+  padding-right: 30px;
+  border-right: 1px solid #EEEEEE;
+}
+.line-form .config .c-item:last-child {
+  padding-left: 40px;
+  overflow: visible;
+}
+.line-form .config .c-item .opt {
+  height: 100%;
+  position: relative;
+}
+.line-form .config .c-item .opt .scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+.line-form .config .c-item .opt .com-btn {
+  position: absolute;
+  left: 0;
+  bottom: -50px;
+}
+.line-form .config .c-item .empty {
+  height: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #666;
+}
+.line-form .config .p-tit {
+  font-size: 16px;
+  font-family: 'PingFang SC';
+  font-weight: bold;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+.line-form .config .p-tit .t-checkbox {
+  margin-left: 10px;
+}
+.line-form .config .bill-type {
+  width: 260px;
+}
+.line-form .com-btn {
+  margin-top: 20px;
+}
+.line-form .com-btn .t-button {
+  margin-right: 20px;
+}
+.line-form .configs {
+  width: 200px !important;
+  margin-right: 10px;
+}
+.line-form .add-btn.gray {
+  background: #ECF2FE;
+  color: var(--td-brand-color-8);
+}
+.line-form .com-top {
+  margin-top: 20px;
+}
+.line-form .com-top:first-child {
+  margin-top: 0;
+}
+.line-form .bw-limit .t-form__controls {
+  width: auto !important;
+}
+.line-form .bw-limit .limit {
+  flex: 1;
+}
+.line-form .bw-limit .limit .t-form__label {
+  padding-right: 5px !important;
+}
+.line-form .bw-limit .t-form__controls-content {
+  display: flex;
+  justify-content: space-between;
+}
+.line-form .sort {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.line-form .sort .t-form__item {
+  margin-bottom: 0;
+}
+.line-form .sort .t-input-number {
+  width: 240px;
+}
+/* recommend-form */
+.recommend-form .data-item .t-form__item {
+  width: 210px !important;
+  margin-right: 15px;
+}
+/* sub-form */
+.sub-form {
+  height: 100%;
+}
+.sub-form .mul-select .t-form__label {
+  display: none;
+}
+.sub-form .mul-select .t-form__controls-content {
+  display: flex;
+  justify-content: space-between;
+}
+.sub-form .mul-select .t-form__controls-content .t-form__item {
+  width: 230px;
+  margin-right: 10px;
+}
+.sub-form .mul-select .t-form__controls-content .t-form__item:last-child {
+  margin-right: 0;
+}
+.sub-form .no-lable .t-form__label {
+  display: none;
+}
+.sub-form .price-box .num .t-form__label {
+  display: none;
+}
+.sub-form .price-box .t-input__extra {
+  display: none;
+}
+.sub-form .l-tit {
+  line-height: 32px;
+  margin: 0;
+}
+.sub-form .advance_config,
+.sub-form .advance_box {
+  padding-left: 0 !important;
+}
+.sub-form .limit {
+  display: flex;
+  justify-content: space-between;
+}
+.sub-form .limit .no-lable {
+  width: 48%;
+}
+.advance_config {
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1;
+  color: var(--td-brand-color-active);
+  display: flex;
+  align-items: center;
+}
+.advance_config .t-icon {
+  color: var(--td-brand-color-active);
+}
+/* limit-box */
+.limit-box .limit-item {
+  margin-top: 30px;
+}
+.limit-box .limit-item:first-child {
+  margin-top: 0;
+}
+.limit-box .limit-tip {
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
+  margin: 0;
+}
+.limit-box .limit-tip img {
+  margin-right: 3px;
+}
+/* limit-form */
+.limit-form .required .t-form__item {
+  width: 145px;
+  margin-right: 10px;
+}
+.limit-form .limit-bw .t-form__item {
+  width: auto;
+  flex: 1;
+}
+.limit-form .limit-bw .mul-select {
+  width: 100%;
+}
+/* cpuDialog */
+.cpuDialog .advance_config,
+.sub-form .advance_config {
+  padding-left: 100px;
+  margin-top: -10px;
+  margin-bottom: 5px;
+}
+.cpuDialog .advance_box,
+.sub-form .advance_box {
+  padding-left: 100px;
+  margin-bottom: 20px;
+}
+.cpuDialog .advance_box .t-form__item,
+.sub-form .advance_box .t-form__item {
+  margin-bottom: 10px;
+}
+.cpuDialog .price-box,
+.sub-form .price-box {
+  background: #F3F5F8;
+  border: 1px solid #EEEEEE;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 4px 10px 8px 10px;
+  width: 100%;
+}
+.cpuDialog .price-box .item,
+.sub-form .price-box .item {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  margin-top: 4px;
+}
+.cpuDialog .price-box .txt,
+.sub-form .price-box .txt {
+  width: 60px;
+  text-align: center;
+  white-space: nowrap;
+}
+.cpuDialog .price-box .num,
+.sub-form .price-box .num {
+  width: 140px;
+}
+.cpuDialog .price-box p,
+.sub-form .price-box p {
+  margin: 0;
+}
+.cpuDialog .price-box .t-input__extra,
+.sub-form .price-box .t-input__extra {
+  display: none;
+}
+.cpuDialog .mem-congfig .t-form__item,
+.sub-form .mem-congfig .t-form__item {
+  width: 100%;
+  margin-right: 0;
+}
+.cpuDialog .mem-congfig .t-form__controls-content,
+.sub-form .mem-congfig .t-form__controls-content {
+  display: flex;
+  flex-direction: column;
+}
+.cpuDialog .mul-select .t-form__controls,
+.sub-form .mul-select .t-form__controls {
+  margin-left: 0 !important;
+}
+.cpuDialog .mul-select .t-form__item,
+.sub-form .mul-select .t-form__item {
+  width: 212px;
+  margin-right: 10px;
+}
+.config-tip {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+  letter-spacing: -0.05em;
+  margin: 10px 0 0;
+  line-height: 1.2;
+  display: flex;
+}
+.config-tip .notes {
+  margin-right: 5px;
+  white-space: nowrap;
+}
+.config-tip .notes-txt {
+  margin: 0;
+}
+.com-icon {
+  width: 32px;
+  height: 32px;
+  color: #282828;
+  display: flex;
+  margin-right: 10px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid var(--td-border-level-2-color);
+}
+.com-icon:last-child {
+  margin-right: 0;
+}
+/* store-box */
+.store-box .t-top {
+  margin: 0;
+  margin-bottom: 20px;
+  color: rgba(0, 0, 0, 0.6);
+}
+.store-box .limit {
+  margin: 10px 0 20px;
+  display: flex;
+  align-items: center;
+}
+.store-box .limit .t-switch {
+  margin: 0 10px;
+}
+@media screen and (max-width: 1660px) {
+  .other-box .buy-disk {
+    margin-top: -20px;
+  }
+  .other-box .buy-disk .configs {
+    margin-top: 20px !important;
+  }
+}
+@media screen and (max-width: 1500px) {
+  .cloud-config .model-group .com-inp {
+    width: 260px;
+  }
+}
+@media screen and (max-width: 1300px) {
+  .cloud-config .model-group .com-inp {
+    width: 160px;
+  }
+}
+.hide-opt {
+  visibility: hidden;
+}
+.t-tooltip {
+  white-space: pre-wrap;
+}
+.data-form .configs {
+  margin-right: 10px;
+}
+.isEn .t-form.cycle-form .t-form__label {
+  width: 170px !important;
+}
+.isEn .t-form.cycle-form .cycle_time .t-form__label,
+.isEn .t-form.data-form .configs .t-form__label {
+  width: auto !important;
+}
+.isEn .t-form.data-form .t-form__label {
+  min-width: 150px !important;
+  width: auto;
+}
+.isEn .recommend-form .data-item .t-form__item {
+  width: 159px !important;
+}
+.isEn .class-dialog .t-input__wrap {
+  width: 327px;
+}
+.isEn .t-form.limit-form .t-form__label {
+  width: 130px !important;
+}
+.isEn .system-form .t-form__label {
+  width: 170px !important;
+}
+.isEn .limit-form .short .t-form__item {
+  flex: 1;
+}
+.isEn .cpuDialog .mul-select .t-form__item,
+.isEn .sub-form .mul-select .t-form__item {
+  width: 177px;
+}
+.isEn .cpuDialog .price-box .num,
+.isEn .sub-form .price-box .num {
+  width: 105px;
+}
+.isEn .line-form .configs {
+  width: 160px !important;
+}
+.isEn .common_config .cycle_time {
+  width: 150px !important;
+}
+.isEn .empty-item .t-form__controls {
+  margin-left: 170px !important;
+}
+.isEn .sub-form.t-form .t-form__label {
+  min-width: auto !important;
+}
+.t-popconfirm__content .t-popconfirm__buttons {
+  overflow: hidden;
+}
+.t-popconfirm__content .t-popconfirm__buttons .t-button {
+  float: right;
+}
+.disk-limit-box .item {
+  display: flex;
+  align-items: center;
+}
+.disk-limit-box .t-switch {
+  margin: 0 10px;
+}
+.disk-limit-box .t-input-number {
+  width: 200px;
+}
+.freeSuffix {
+  position: relative;
+}
+.freeSuffix::after {
+  content: 'G';
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  z-index: 2;
+  transform: translateY(-50%);
+}
+.freeSuffix .t-input__inner {
+  padding-right: 20px;
+}

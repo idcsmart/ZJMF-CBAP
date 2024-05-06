@@ -1,0 +1,1875 @@
+<!-- 统计图表 -->
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/css/cloudTop.css">
+<link rel="stylesheet" href="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/css/cloudDetail.css">
+
+<div class="template" id="product_detail_cloud">
+  <div class="loading-box pro-des" ref="pageLoading" v-if="initLoading">
+    <div class="loading">
+      <div class="shape shape-4">
+        <div class="shape-4-top"></div>
+        <div class="shape-4-bottom"></div>
+        <div class="shape-4-eye"></div>
+      </div>
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+  </div>
+  <!-- 自己的东西 -->
+  <div class="main-card">
+    <div class="card-top">
+      <div class="detail-top-box">
+        <div class="os-icon" v-if="cloudData.image.icon">
+          <img
+            :src="`/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/${cloudData.image.icon}.svg`"
+            alt="">
+        </div>
+        <div class="top-operation">
+          <div class="operation-row1">
+            <span class="top-product-name">{{hostData.product_name}}</span>
+            <!-- <div class="host-status" @click="goPay" :class="hostData.status">{{hostData.status_name}}</div> -->
+            <div class="power-status" v-if="status">
+              <img :src="powerStatusArr[status]?.icon" alt="" :title="powerStatusArr[status]?.text">
+            </div>
+          </div>
+          <div class="operation-row2">
+            <div class="row2-left">
+              <div class="top">
+                <span class="name">{{hostData.name}}</span>
+                <span class="ip">{{cloudData.ip}}</span>
+              </div>
+              <div class="operation-row3">
+                <!-- 有备注 -->
+                <span class="yes-notes" v-if="hostData.notes" @click="doEditNotes">
+                  <i class="el-icon-edit notes-icon"></i>
+                  <span class="notes-text">{{hostData.notes}}</span>
+                </span>
+                <!-- 无备注 -->
+                <span class="no-notes" v-else @click="doEditNotes">
+                  {{lang.cloud_add_notes + ' +'}}
+                </span>
+              </div>
+            </div>
+            <div class="row2-right" v-show="hostData.status == 'Active' && !initLoading">
+              <!-- 停用-->
+              {foreach $addons as $addon}
+              {if ($addon.name=='IdcsmartRefund')}
+              <span class="refund">
+                <span class="refund-status"
+                  v-if="refundData && refundData.status != 'Cancelled' && refundData.status != 'Reject'">{{refundStatus[refundData.status]}}</span>
+                <span class="refund-stop-btn"
+                  v-if="refundData && (refundData.status=='Pending' || refundData.status=='Suspend' || refundData.status=='Suspending')"
+                  @click="quitRefund">{{lang.common_cloud_btn8}}</span>
+                <span class="refund-btn" @click="showRefund"
+                  v-if="!refundData || (refundData && (refundData.status=='Reject')) || (refundData && (refundData.status=='Cancelled'))">{{lang.common_cloud_btn9}}</span>
+              </span>
+              {/if}
+              {/foreach}
+
+              <!-- 控制台 -->
+              <img class="console-img"
+                src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/console.png"
+                :title="lang.common_cloud_text8" @click="doGetVncUrl" v-show="status != 'operating'">
+              <!-- 开关机 -->
+              <span class="on-off">
+                <el-popover placement="bottom" v-model="onOffvisible" trigger="click">
+                  <div class="sure-remind">
+                    <el-button type="primary" class="opt-item" v-for="item in powerList" :key="item.id"
+                      @click="showPowerDialog(item.value)">
+                      {{item.label}}
+                    </el-button>
+                  </div>
+                  <img :src="'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/'+status+'.png'"
+                    :title="statusText" v-show="(status != 'operating') && (status != 'fault')" slot="reference">
+                </el-popover>
+                <i class="el-icon-loading" :title="lang.common_cloud_text12" v-show="status == 'operating'"></i>
+                <img :src="'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/'+status+'.png'"
+                  :title="statusText" v-show="status == 'fault'">
+              </span>
+
+              <div class="info-box">
+                <div class="cpu-box">
+                  <span style="min-width: 50px; display: inline-block;">{{cpu_realData.cpu_usage}}%</span>
+                  <span class="green-div"><span class="percentage-div"
+                      :style="{width: cpu_realData.cpu_usage +'%'}"></span></span>
+                  <span>CPU</span>
+                </div>
+                <div class="memory-box">
+                  <span style="min-width: 50px; display: inline-block;"
+                    v-if="cpu_realData.memory_usage != -1">{{cpu_realData.memory_usage}}%</span>
+                  <span style="min-width: 50px; display: inline-block;" v-else> -- </span>
+                  <span class="green-div" v-if="cpu_realData.memory_usage != -1"><span class="percentage-div"
+                      :style="{width: cpu_realData.memory_usage + '%'}"></span></span>
+                  <span class="green-div" v-else><span class="percentage-div" :style="{width:'0%'}"></span></span>
+                  <span>{{lang.cloud_memery}}</span>
+                </div>
+              </div>
+              <!-- 重启 -->
+              <!-- <span class="restart">
+                <el-popover placement="bottom" v-model="rebotVisibel" trigger="click">
+                  <div class="sure-remind">
+                    <span class="text">{{lang.common_cloud_text9}}</span>
+                    <span class="status">{{lang.common_cloud_text13}}</span>
+                    <span>?</span>
+                    <span class="sure-btn" @click="doReboot">{{lang.common_cloud_btn10}}</span>
+                  </div>
+                  <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/restart.png" :title="lang.common_cloud_text13" v-show="status != 'operating'" slot="reference">
+                </el-popover>
+              </span> -->
+
+              <!-- 救援模式 -->
+              <img class="fault"
+                src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/fault.png"
+                v-show="isRescue && status != 'operating'" :title="lang.common_cloud_text14">
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {foreach $addons as $addon}
+      {if ($addon.name=='IdcsmartRefund')}
+      <div class="refund-msg">
+        <!-- 停用成功 -->
+        <div class="refund-success" v-if="refundData && refundData.status == 'Suspending'">
+          ({{lang.common_cloud_tip6}}{{refundData.create_time | formateTime}}{{lang.common_cloud_tip7}}
+          {{refundData.type=='Expire'?lang.common_cloud_tip8:lang.common_cloud_tip9}}，{{lang.common_cloud_tip13}}<span
+            v-if="refundData.type=='Expire'">{{hostData.due_time | formateTime}}</span>{{refundData.type=='Expire'?
+          lang.common_cloud_tip10:lang.common_cloud_tip11}} {{lang.common_cloud_tip12}})
+        </div>
+        <!-- 停用失败 -->
+        <div class="refund-fail" v-if="refundData && refundData.status == 'Reject'">
+          ({{lang.common_cloud_tip6}}{{refundData.create_time | formateTime}}{{lang.common_cloud_tip7}}
+          {{refundData.type=='Expire'?lang.common_cloud_tip8:lang.common_cloud_tip9}} {{lang.common_cloud_tip14}}，
+          <el-popover placement="top-start" trigger="hover">
+            <span>{{refundData.reject_reason}}</span>
+            <span class="reason-text" slot="reference">{{lang.common_cloud_text15}}</span>
+          </el-popover>
+
+          )
+        </div>
+      </div>
+      {/if}
+      {/foreach}
+      <el-tabs class="tabs" v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane :label="lang.summarize" name="summarize" class="summarize" v-if="!initLoading">
+          <div class="top-info">
+            <div class="item">
+              <div class="label">CPU</div>
+              <div class="value">{{cloudData.cpu}}{{lang.common_cloud_text30}}</div>
+            </div>
+            <div class="item">
+              <div class="label">{{lang.cloud_memery}}</div>
+              <div class="value">{{cloudData.memory}}{{configData?.config?.memory_unit}}</div>
+            </div>
+            <div class="item">
+              <div class="label">GPU</div>
+              <div class="value">{{cloudData.gpu || "--"}}</div>
+            </div>
+            <div class="item">
+              <template v-if="cloudData.line?.bill_type === 'flow'">
+                <div class="label">{{lang.mf_flow}}</div>
+                <div class="value" v-if="cloudData.flow !==0">{{cloudData.flow}}G</div>
+                <div class="value" v-else>{{lang.mf_tip28}}</div>
+              </template>
+              <template v-else>
+                <div class="label">{{lang.mf_bw}}</div>
+                <div class="value">{{cloudData.bw}}Mbps</div>
+              </template>
+            </div>
+            <div class="item">
+              <div class="label">{{lang.mf_system}}</div>
+              <div class="value">{{cloudData.system_disk.size}}GB</div>
+            </div>
+          </div>
+          <div class="bot-info" v-if="hostData">
+            <div class="info-item left">
+              <div class="item">
+                <p class="label">{{lang.cloud_table_head_1}}:</p>
+                <p class="value">
+                  <img class="country-img" :src="'/upload/common/country/' + cloudData.data_center.iso +'.png'">
+                  <span class="country">{{cloudData.data_center.country_name}}</span>
+                  <span class="city">{{cloudData.data_center.city}}-{{cloudData.data_center.area}}</span>
+                </p>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.cloud_menu_5}}:</p>
+                <p class="value" :title="cloudData.image?.name">{{ cloudData.image?.name}}</p>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.common_cloud_label14}}:</p>
+                <p class="value">{{ rescueStatusData.username }}</p>
+              </div>
+              <div class="item">
+                <p class="label">
+                  <template v-if="cloudData.ssh_key?.id > 0">{{lang.security_tab1}}:</template>
+                  <template v-else>{{lang.common_cloud_label7}}:</template>
+                </p>
+                <p class="value" v-if="cloudData.ssh_key?.id === 0">
+                  <span v-show="isShowPass"> {{rescueStatusData.password}} </span>
+                  <span v-show="!isShowPass"> {{passHidenCode}} </span>
+                  <img class="eyes"
+                    :src="isShowPass?'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloud/pass-show.png':'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloud/pass-hide.png'"
+                    @click="isShowPass=!isShowPass" />
+                  <i class="el-icon-document-copy copy-btn" v-copy="rescueStatusData.password"></i>
+                </p>
+                <p class="value" v-else>
+                  <a class="com-link" href="/security.htm" target="_blank">{{cloudData.ssh_key?.name}}</a>
+                </p>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.cloud_table_head_3}}:</p>
+                <p class="value host-status" @click="goPay" :class="hostData.status">{{hostData.status_name}}</p>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.mf_defense}}:</p>
+                <p class="value">{{cloudData.peak_defence ? cloudData.peak_defence + 'G' : '--' }}</p>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.common_cloud_label13}}:</p>
+                <p class="value">{{rescueStatusData.port}}</p>
+              </div>
+              <div class="item" v-for="(item,index) in self_defined_field" :key="item.id + 'hhh'">
+                <p class="label">{{item.field_name}}:</p>
+                <p class="value">
+                  <span v-if="item.field_type === 'password'">
+                    <span v-if="!item.hidenPass && item.value">{{item.value.replace(/./g, '*')}}</span>
+                    <span v-else>{{item.value || '--'}}</span>
+                  </span>
+                  <span v-else-if="item.field_type === 'textarea'" class="word-pre">{{item.value || '--'}}</span>
+                  <span v-else>{{item.value || '--'}}</span>
+                  <img class="eyes" v-if="item.field_type === 'password' && item.value"
+                    :src="item.hidenPass?'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloud/pass-show.png':'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloud/pass-hide.png'"
+                    @click="item.hidenPass =!item.hidenPass" />
+                  <i v-if="(item.field_type === 'password' || item.field_type === 'link') && item.value"
+                    class="el-icon-document-copy copy-btn" v-copy="item.value"></i>
+                </p>
+              </div>
+            </div>
+            <div class="info-item right">
+              <div class="item" v-if="hostData.active_time">
+                <p class="label">{{lang.cloud_creat_time}}:</p>
+                <p class="value" v-time="hostData.active_time"></p>
+              </div>
+              <div class="item" v-if="hostData.due_time">
+                <p class="label">{{lang.cloud_due_time}}:</p>
+                <p class="value" :class="isRead?'red':''" v-time="hostData.due_time"></p>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.cloud_first_pay}}:</p>
+                <div class="value">
+                  {{commonData.currency_prefix + hostData.first_payment_amount +
+                  commonData.currency_suffix}}
+                  <span @click="applyCashback" class="common-cashback renew-btn"
+                    v-if="isShowCashBtn">{{lang.apply_cashback}}</span>
+                </div>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.cloud_re_text}}:</p>
+                <div class="value">
+                  {{commonData.currency_prefix + hostData.renew_amount + commonData.currency_suffix}}
+                  {foreach $addons as $addon}
+                  {if ($addon.name=='IdcsmartRenew')}
+                  <!--  || 'Suspended' -->
+                  <span v-show="hostData.status == 'Active' || hostData.status == 'Suspended'"
+                    v-loading="renewBtnLoading" class="renew-btn" @click="showRenew"
+                    v-if="!refundData || refundData || (refundData && refundData.status=='Cancelled') || (refundData && refundData.status=='Reject')">{{lang.cloud_re_btn}}</span>
+                  <span v-show="hostData.status == 'Active'" class="renew-btn-disable"
+                    v-else>{{lang.cloud_re_btn}}</span>
+                  {/if}
+                  {/foreach}
+                </div>
+              </div>
+              <div class="item">
+                <p class="label">{{lang.common_cloud_label8}}:</p>
+                <p class="value">{{hostData.billing_cycle_name }}</p>
+              </div>
+              {foreach $addons as $addon}
+              {if ($addon.name=='IdcsmartRenew')}
+              <div class="item" v-show="hostData.status == 'Active'">
+                <p class="label">{{lang.common_cloud_text16}}:</p>
+                <div class="value">
+                  <el-switch v-model="isShowPayMsg" @change="autoRenewChange">
+                  </el-switch>
+                  <el-popover placement="top" trigger="hover" style="width: 3rem;">
+                    <div class="sure-remind">
+                      {{lang.common_cloud_tip15}}
+                    </div>
+                    <i class="el-icon-question help-icon" slot="reference"></i>
+                  </el-popover>
+                </div>
+              </div>
+              {/if}
+              {/foreach}
+              <div class="item">
+                <p class="label">{{lang.cloud_code}}:</p>
+                <p class="value" :title="codeString">{{codeString?codeString:'--'}}</p>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane :label="lang.common_cloud_tab1" name="1" v-if="hostData.status == 'Active' && !initLoading">
+          <el-select class="time-select" v-model="chartSelectValue" @change="chartSelectChange">
+            <el-option value='1' :label="lang.common_cloud_label15"></el-option>
+            <el-option value='2' :label="lang.common_cloud_label16"></el-option>
+            <el-option value='3' :label="lang.common_cloud_label17"></el-option>
+          </el-select>
+
+          <div class="echart-main">
+            <!-- cpu用量图 -->
+            <div id="cpu-echart" class="my-echart" v-loading="echartLoading1"></div>
+            <!-- 网络带宽 -->
+            <div id="bw-echart" class="my-echart" v-loading="echartLoading2"></div>
+            <!-- 磁盘IO -->
+            <div id="disk-io-echart" class="my-echart" v-loading="echartLoading3"></div>
+            <!-- 内存用量 -->
+            <div id="memory-echart" class="my-echart" v-loading="echartLoading4"></div>
+          </div>
+        </el-tab-pane>
+        <!-- 管理 -->
+        <el-tab-pane :label="lang.common_cloud_tab2" name="2" v-if="hostData.status == 'Active' && !initLoading">
+          <div class="manage-content">
+            <el-tabs tab-position="left" v-model="manageActive" @tab-click="changeManageTab" class="left-tab">
+              <!-- 重置密码 -->
+              <el-tab-pane name="reset" class="repass-dialog">
+                <span slot="label" class="left-nav">{{lang.common_cloud_btn12}}</span>
+                <div class="dialog-title">
+                  {{lang.common_cloud_title13}}
+                  <span class="second-title">{{lang.common_cloud_text23}}</span>
+                </div>
+                <div class="dialog-main">
+                  <div class="label">
+                    {{lang.common_cloud_label7}}
+                    <el-popover placement="top-start" width="200" trigger="hover" :content="lang.common_cloud_tip33">
+                      <i class="el-icon-question" slot="reference"></i>
+                    </el-popover>
+                  </div>
+                  <el-input class="pass-input" v-model="rePassData.password" :placeholder="lang.ticket_label12">
+                    <div class="pass-btn" slot="suffix" @click="autoPass">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/random.svg"
+                        alt="">
+                    </div>
+                  </el-input>
+                  <el-input style="margin-top: 0.2rem;" class="pass-input" v-model="rePassData.code"
+                    :placeholder="lang.account_tips33" v-if="cloudConfig.reset_password_sms_verify === 1">
+                    <div class="pass-btn" slot="suffix" v-if="isSendCodeing">{{sendTime}}{{lang.account_tips54}}</div>
+                    <div class="pass-btn" slot="suffix" v-loading="sendFlag" @click="sendCode" v-else>
+                      {{lang.account_tips55}}
+                    </div>
+                  </el-input>
+                  <!-- 警告框 -->
+                  <div class="com-danger-btn" v-show="powerStatus=='off'">
+                    <div class="alert">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/warning.svg"
+                        alt="">
+                      <div>{{lang.common_cloud_tip42}}</div>
+                      <div class="title">{{lang.common_cloud_tip30}}</div>
+                      <div class="row"><span class="dot"></span> {{lang.common_cloud_tip31}}</div>
+                      <div class="row"><span class="dot"></span> {{lang.common_cloud_tip32}}</div>
+                    </div>
+                    <el-checkbox v-model="rePassData.checked">{{lang.common_cloud_text24}}
+                    </el-checkbox>
+                  </div>
+                  <div class="alert-err-text">
+                    <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+                    </el-alert>
+                  </div>
+                </div>
+                <div class="dialog-footer">
+                  <!-- <el-button class="btn-no" @click="rePassDgClose">{{lang.common_cloud_btn29}}</el-button> -->
+                  <el-button type="primary" class="btn-ok" @click="rePassSub"
+                    v-loading="loading5">{{lang.common_cloud_btn28}}</el-button>
+                </div>
+              </el-tab-pane>
+              <!-- 救援系统 -->
+              <el-tab-pane name="rescue" class="rescue-dialog">
+                <span slot="label" class="left-nav">{{lang.common_cloud_tab7}}</span>
+                <div class="dialog-title">
+                  {{lang.common_cloud_tab7}}
+                  <span class="second-title">{{lang.common_cloud_tip34}}</span>
+                </div>
+                <div class="dialog-main">
+                  <div class="label">{{lang.common_cloud_tab8}}</div>
+                  <el-select class="os-select" v-model="rescueData.type" :disabled="isRescue">
+                    <img class="os-img"
+                      :src="'/plugins/reserver/mf_cloud/view/img/' + (rescueData.type==1?'Windows':'Linux') + '.png'"
+                      slot="prefix" alt="">
+                    <el-option value="1" label="Windows">
+                      <div class="os-item">
+                        <img class="item-os-img" src="/plugins/reserver/mf_cloud/view/img/Windows.png" alt="">
+                        <span class="item-os-text">Windows</span>
+                      </div>
+                    </el-option>
+                    <el-option value="2" label="Linux">
+                      <div class="os-item">
+                        <img class="item-os-img" src="/plugins/reserver/mf_cloud/view/img/Linux.png" alt="">
+                        <span class="item-os-text">Linux</span>
+                      </div>
+                    </el-option>
+                  </el-select>
+                  <div class="label">{{lang.common_cloud_tab9}}</div>
+                  <el-input class="pass-input" v-model="rescueData.password" :placeholder="lang.ticket_label12"
+                    :disabled="isRescue">
+                    <div class="pass-btn" slot="suffix" @click="autoPass" v-if="!isRescue">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/random.svg"
+                        alt="">
+                    </div>
+                  </el-input>
+                  <div class="alert com-reset-password" v-if="!isRescue">
+                    <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+                    </el-alert>
+                    <div class="remind" v-show="!errText && isShowRescueClose">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/tip.svg" alt=""
+                        class="tip">
+                      <i class="el-icon-close close" @click="isShowRescueClose = false"></i>
+                      <span class="tip-text">{{lang.common_cloud_tip43}}</span>
+                      <span>{{lang.common_cloud_tip29}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="dialog-footer">
+                  <!-- <el-button class="btn-no" @click="rescueDgClose">{{lang.withdraw_btn2}}</el-button> -->
+                  <el-button type="primary" class="btn-ok" @click="rescueSub" v-if="!isRescue"
+                    v-loading="loading3">{{lang.withdraw_btn1}}
+                  </el-button>
+                  <el-button type="primary" class="btn-ok" @click="showQuitRescueDialog" v-if="isRescue"
+                    v-loading="loading3">{{lang.common_cloud_btn14}}
+                  </el-button>
+                </div>
+              </el-tab-pane>
+              <!-- 重装系统 -->
+              <el-tab-pane name="reinstall" class="reinstall-dialog">
+                <span slot="label" class="left-nav">{{lang.common_cloud_title9}}</span>
+                <div class="dialog-title">
+                  {{lang.common_cloud_title9}}
+                </div>
+                <div class="dialog-main">
+                  <div class="label">{{lang.cloud_menu_5}}</div>
+                  <div class="os-content">
+                    <!-- 镜像组选择框 -->
+                    <el-select class="os-select os-group-select" v-model="reinstallData.osGroupId"
+                      @change="osSelectGroupChange">
+                      <img class="os-group-img" :src="osIcon" slot="prefix" alt="" v-if="osIcon">
+                      <el-option v-for="item in osData" :key='item.id' :value="item.id" :label="item.name">
+                        <div class="option-label">
+                          <img class="option-img"
+                            :src="'/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/' + item.name + '.svg'"
+                            alt="">
+                          <span class="option-text">{{item.name}}</span>
+                        </div>
+                      </el-option>
+                    </el-select>
+                    <!-- 镜像实际选择框 -->
+                    <el-select class="os-select" v-model="reinstallData.osId" @change="osSelectChange">
+                      <el-option v-for="item in osSelectData" :key="item.id" :value="item.id"
+                        :label="item.name +'-' + commonData.currency_prefix + item.price"></el-option>
+                    </el-select>
+                  </div>
+                  <div class="label">
+                    {{lang.common_cloud_label7}}
+                    <el-popover placement="top-start" width="200" trigger="hover" :content="lang.common_cloud_tip33">
+                      <i class="el-icon-question help-icon" slot="reference"></i>
+                    </el-popover>
+                  </div>
+                  <div class="pass-content">
+                    <el-select class="pass-select" style="margin-right: .2rem;" v-model="reinstallData.type">
+                      <el-option value="pass" :label="lang.common_cloud_label7"></el-option>
+                      <el-option value="key" v-if="configObj.support_ssh_key === 1" label="ssh"></el-option>
+                    </el-select>
+                    <el-input class="pass-input" v-model="reinstallData.password" :placeholder="lang.ticket_label12"
+                      v-show="reinstallData.type=='pass'">
+                      <div class="pass-btn" slot="suffix" @click="autoPass">
+                        <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/random.svg"
+                          alt="">
+                      </div>
+                    </el-input>
+                    <div class="key-select" v-show="reinstallData.type=='key'">
+                      <el-select v-model="reinstallData.ssh_key_id" class="pass-input">
+                        <el-option v-for="item in sshKeyData" :key="item.id" :value="item.id"
+                          :label="item.name"></el-option>
+                      </el-select>
+                    </div>
+                  </div>
+                  <div class="label">{{lang.common_cloud_label13}}</div>
+                  <el-input class="pass-input" v-model="reinstallData.port" :placeholder="lang.ticket_label12">
+                    <div class="pass-btn" slot="suffix" @click="autoPort">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/random.svg"
+                        alt="">
+                    </div>
+                  </el-input>
+
+                  <template v-if="cloudConfig.reinstall_sms_verify === 1">
+                    <div class="label">{{lang.ticket_label19}}</div>
+                    <el-input class="pass-input" v-model="reinstallData.code" :placeholder="lang.account_tips33">
+                      <div class="pass-btn" slot="suffix" v-if="isSendCodeing">{{sendTime}}{{lang.account_tips54}}</div>
+                      <div class="pass-btn" slot="suffix" v-loading="sendFlag" @click="sendCode" v-else>
+                        {{lang.account_tips55}}
+                      </div>
+                    </el-input>
+                  </template>
+
+                  <div class="pay-img" v-show="isPayImg">
+                    <div class="left">
+                      <span>
+                        {{lang.common_cloud_tip28}},{{commonData.currency_prefix + payMoney + lang.common_cloud_text26}}
+                      </span>
+                      <el-popover placement="top-start" width="300" trigger="hover">
+                        <div class="show-config-list">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}}{{
+                          payDiscount }}</div>
+                        <div class="show-config-list">{{lang.common_cloud_text28}}：{{commonData.currency_prefix}}{{
+                          payCodePrice }}</div>
+                        <i class="el-icon-warning-outline total-icon" slot="reference"
+                          v-show="isShowLevel || isShowPromo"></i>
+                      </el-popover>
+
+                    </div>
+                    <span class="img-buy-btn" @click="payImg">{{lang.common_cloud_btn5}}</span>
+                  </div>
+
+                  <div class="alert com-reset-password">
+                    <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+                    </el-alert>
+                    <div class="remind" v-show="!errText && isShowRescueClose">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/tip.svg" alt=""
+                        class="tip">
+                      <i class="el-icon-close close" @click="isShowRescueClose = false"></i>
+                      <span class="tip-text">{{lang.common_cloud_tip43}}</span>
+                      <span>{{lang.common_cloud_tip29}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="dialog-footer">
+                  <!-- <div class="btn-no" @click="reinstallDgClose">{{lang.common_cloud_btn29}}</div> -->
+                  <el-button type="primary" class="btn-ok" @click="doReinstall">{{lang.common_cloud_btn28}}</el-button>
+                </div>
+              </el-tab-pane>
+              <!-- 挂载ISO -->
+              <el-tab-pane name="iso" class="reinstall-dialog" disabled>
+                <span slot="label" class="left-nav">{{lang.common_cloud_btn18}}</span>
+              </el-tab-pane>
+              <!-- 设置启动项 -->
+              <el-tab-pane name="startup" class="reinstall-dialog" disabled>
+                <span slot="label" class="left-nav">{{lang.common_cloud_btn17}}</span>
+              </el-tab-pane>
+              <!-- 升降级 -->
+              <el-tab-pane name="relegation" class="reinstall-dialog upgrade-dialog">
+                <span slot="label" class="left-nav">{{lang.common_cloud_btn16}}</span>
+                <div class="dialog-title">
+                  {{lang.common_cloud_btn16}}
+                </div>
+                <div class="dialog-main">
+                  <!-- 自定义配置升降级 -->
+                  <el-form ref="orderForm" label-position="left" label-width="100px" hide-required-asterisk
+                    v-if="!isPackage">
+                    <!-- cpu -->
+                    <el-form-item label="CPU">
+                      <el-radio-group v-model="cpuName" @input="changeCpu">
+                        <el-radio-button :label="c.value + lang.mf_cores" v-for="(c,cInd) in calcCpuList" :key="cInd">
+                        </el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <!-- 内存 -->
+                    <el-form-item :label="lang.cloud_memery" v-if="memoryList.length > 0" class="move">
+                      <!-- 单选 -->
+                      <el-radio-group v-model="memoryName" v-if="memoryType" @input="changeMemory">
+                        <el-radio-button :label="c.value + memory_unit" v-for="(c,cInd) in calaMemoryList" :key="cInd"
+                          :class="{'com-dis': c.disabled}">
+                        </el-radio-button>
+                      </el-radio-group>
+                      <!-- 拖动框 -->
+                      <template v-else>
+                        <el-tooltip effect="light" :content="lang.mf_range+ memoryTip" placement="top">
+                          <el-slider v-model="params.memory" show-input :show-tooltip="false"
+                            :min="calaMemoryList[0] * 1" :max="calaMemoryList[calaMemoryList.length -1] * 1"
+                            :show-stops="false" @change="changeMem">
+                          </el-slider>
+                        </el-tooltip>
+                      </template>
+                      <span class="unit" v-if="!memoryType">{{memory_unit}}</span>
+                    </el-form-item>
+                    <!-- 带宽 -->
+                    <el-form-item :label="lang.mf_bw" v-if="lineDetail.bill_type === 'bw' && lineDetail.bw.length > 0">
+                      <!-- 单选 -->
+                      <el-radio-group v-model="bwName" v-if="lineDetail.bw[0].type === 'radio'" @input="changeBw">
+                        <el-radio-button :label="c.value + 'M'" v-for="(c,cInd) in lineDetail.bw" :key="cInd">
+                        </el-radio-button>
+                      </el-radio-group>
+                      <!-- 拖动框 -->
+                      <el-tooltip effect="light" v-else :content="lang.mf_range + bwTip" placement="top">
+                        <el-slider v-model="params.bw" show-input :step="1" :min="lineDetail.bw[0].min_value"
+                          :max="lineDetail.bw[lineDetail.bw.length - 1].max_value" @change="changeBwNum">
+                        </el-slider>
+                      </el-tooltip>
+                    </el-form-item>
+                    <el-form-item label=" " v-if="lineDetail.bw && lineDetail.bw[0].type !== 'radio'">
+                      <div class="marks">
+                        <span class="item" v-for="(item,index) in Object.keys(bwMarks)">{{bwMarks[item]}}MB</span>
+                      </div>
+                    </el-form-item>
+                    <!-- 流量 -->
+                    <el-form-item :label="lang.mf_flow"
+                      v-if="lineDetail.bill_type === 'flow' && lineDetail.flow.length > 0">
+                      <el-radio-group v-model="flowName" @input="changeFlow">
+                        <el-radio-button :label="c.value > 0 ? (c.value + 'G') : lang.mf_tip28"
+                          v-for="(c,cInd) in lineDetail.flow" :key="cInd">
+                        </el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                    <!-- 防御 -->
+                    <el-form-item :label="lang.mf_defense" v-if="lineDetail.defence && lineDetail.defence.length >0">
+                      <el-radio-group v-model="defenseName" @input="changeDefence">
+                        <el-radio-button :label="c.value == 0 ? lang.no_defense : (c.value + 'G')"
+                          v-for="(c,cInd) in lineDetail.defence" :key="cInd">
+                        </el-radio-button>
+                      </el-radio-group>
+                    </el-form-item>
+                  </el-form>
+                  <!-- 套餐升降级 -->
+                  <div class="package-box" v-else>
+                    <div class="package-list">
+                      <div class="cloud-item cur">
+                        <div class="top">
+                          {{recommend_config.name}}<span class="des">（{{recommend_config.description}}）</span>
+                        </div>
+                        <div class="info">
+                          <p><span
+                              class="name">{{lang.mf_specs}}：</span>{{recommend_config.cpu}}{{lang.mf_cores}}{{recommend_config.memory}}G
+                          </p>
+                          <p>
+                            <span class="name">{{lang.mf_system}}：</span>{{recommend_config.system_disk_size}}GB<span
+                              v-if="recommend_config.system_disk_type">，{{recommend_config.system_disk_type}}</span>
+                          </p>
+                          <p v-if="recommend_config.data_disk_size * 1">
+                            <span
+                              class="name">{{lang.common_cloud_text1}}：</span>{{recommend_config.data_disk_size}}GB<span
+                              v-if="recommend_config.data_disk_type">，{{recommend_config.data_disk_type}}</span>
+                          </p>
+                          <p v-if="recommend_config.bw"><span
+                              class="name">{{lang.mf_bw}}：</span>{{recommend_config.bw}}M</p>
+                          <template v-else>
+                            <p v-if="recommend_config.flow"><span
+                                class="name">{{lang.mf_flow}}：</span>{{recommend_config.flow}}GB</p>
+                            <p v-if="recommend_config.flow===0"><span
+                                class="name">{{lang.mf_flow}}：</span>{{lang.mf_tip28}}</p>
+                          </template>
+                          <p v-if="configData.free_disk_switch">
+                            <span class="name">{{lang.mf_tip37}}：</span>
+                            {{configData.free_disk_size}}GB
+                          </p>
+                          <p v-if="recommend_config.peak_defence">
+                            <span class="name">{{lang.peak_defence}}：</span>{{ recommend_config.peak_defence + 'G'}}
+                          </p>
+                          <p><span class="name">IP
+                              {{lang.shoppingCar_goodsNums}}：</span>{{recommend_config.ip_num}}{{lang.common_cloud_title43}}
+                          </p>
+                          <p v-if="recommend_config.gpu_num"><span
+                              class="name">GPU{{lang.shoppingCar_goodsNums}}：</span>
+                            <span :title="cloudData.gpu || '--'">{{cloudData.gpu ||
+                              '--'}}</span>
+                          </p>
+                        </div>
+                        <div class="bot-btn">{{lang.cur_package}}</div>
+                      </div>
+                      <div class="cloud-item" :class="{active: recommend_config_id=== item.id}"
+                        v-for="(item,index) in recommendList" :key="index">
+                        <div class="top">
+                          {{item.name}}<span class="des">（{{item.description}}）</span>
+                        </div>
+                        <div class="info">
+                          <p><span class="name">{{lang.mf_specs}}：</span>{{item.cpu}}{{lang.mf_cores}}{{item.memory}}G
+                          </p>
+                          <p>
+                            <span class="name">{{lang.mf_system}}：</span>{{item.system_disk_size}}GB<span
+                              v-if="item.system_disk_type">，{{item.system_disk_type}}</span>
+                          </p>
+                          <p v-if="item.data_disk_size * 1">
+                            <span class="name">{{lang.common_cloud_text1}}：</span>{{item.data_disk_size}}GB<span
+                              v-if="item.data_disk_type">，{{item.data_disk_type}}</span>
+                          </p>
+                          <p v-if="item.bw"><span class="name">{{lang.mf_bw}}：</span>{{item.bw}}M</p>
+                          <template v-else>
+                            <p v-if="item.flow"><span class="name">{{lang.mf_flow}}：</span>{{item.flow}}GB</p>
+                            <p v-if="item.flow===0"><span class="name">{{lang.mf_flow}}：</span>{{lang.mf_tip28}}</p>
+                          </template>
+                          <p v-if="configData.free_disk_switch">
+                            <span class="name">{{lang.mf_tip37}}：</span>
+                            {{configData.free_disk_size}}GB
+                          </p>
+                          <p v-if="item.peak_defence">
+                            <span class="name">{{lang.peak_defence}}：</span>{{ item.peak_defence + 'G'}}
+                          </p>
+                          <p><span
+                              class="name">IP{{lang.shoppingCar_goodsNums}}：</span>{{item.ip_num}}{{lang.common_cloud_title43}}
+                          </p>
+                          <p v-show="item.gpu_num"><span class="name">GPU{{lang.shoppingCar_goodsNums}}：</span>
+                            <span :title="`${item.gpu_num}*${item.gpu_name}`">{{item.gpu_num}}*{{item.gpu_name}}</span>
+                          </p>
+                        </div>
+                        <div class="bot-btn" @click="changeRecommend(item)">{{lang.change_package}}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <div class="footer-top">
+                  <div class="money-text">{{lang.common_cloud_btn37}}：</div>
+                  <div class="money" v-loading="upgradePriceLoading">
+                    <span class="money-num">{{commonData.currency_prefix }} {{ upParams.totalPrice |
+                      filterMoney}}</span>
+                    <el-popover placement="top-start" width="350" trigger="hover"
+                      v-if="isShowLevel || (isShowPromo && upParams.isUseDiscountCode) || isShowCash">
+                      <div class="show-config-list">
+                        <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{
+                          upParams.clDiscount | filterMoney }}</p>
+                        <p v-if="isShowPromo && upParams.isUseDiscountCode">
+                          {{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ upParams.code_discount |
+                          filterMoney}}
+                        </p>
+                        <p v-if="isShowCash && upParams.customfield.voucher_get_id">
+                          {{lang.shoppingCar_tip_text5}}：{{commonData.currency_prefix}}
+                          {{ upParams.cash_discount | filterMoney}}
+                        </p>
+                      </div>
+                      <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                    </el-popover>
+                    <p class="original-price" v-if="upParams.totalPrice != upParams.original_price">
+                      {{commonData.currency_prefix}} {{ upParams.original_price | filterMoney}}
+                    </p>
+                    <div class="code-box">
+                      <!-- 代金券 -->
+                      <cash-coupon ref="cashRef" v-show="isShowCash && !cashObj.code"
+                        :currency_prefix="commonData.currency_prefix" @use-cash="upUseCash" scene='upgrade'
+                        :product_id="[product_id]" :price="upParams.original_price"></cash-coupon>
+                      <!-- 优惠码 -->
+                      <discount-code v-show="isShowPromo && !upParams.customfield.promo_code  "
+                        @get-discount="getUpDiscount(arguments)" scene='upgrade' :product_id="product_id"
+                        :amount="upParams.original_price"
+                        :billing_cycle_time="hostData.billing_cycle_time"></discount-code>
+                    </div>
+                    <div class="code-number-text">
+                      <div class="discount-codeNumber" v-show="upParams.customfield.promo_code">{{
+                        upParams.customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode"
+                          @click="removeUpDiscountCode()"></i></div>
+                      <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i
+                          class="el-icon-circle-close remove-discountCode" @click="upRemoveCashCode()"></i></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="dialog-footer">
+                  <!-- <div class="btn-no" @click="upgradeDgClose">{{lang.security_btn6}}</div> -->
+                  <el-button type="primary" class="btn-ok" @click="upgradeSub"
+                    v-loading="loading4">{{lang.security_btn5}}</el-button>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+
+          </div>
+        </el-tab-pane>
+        <!-- 磁盘 -->
+        <el-tab-pane :label="lang.common_cloud_tab3" name="3" v-if="hostData.status == 'Active' && !initLoading">
+          <div class="disk-top-operation">
+            <p class="com-tit">{{lang.disk_list}}</p>
+            <!-- 扩容 -->
+            <div class="r-btn" v-if="!isPackage">
+              <el-button v-if="trueDiskLength != 0" type="primary" class="btn1"
+                @click="showExpansion">{{lang.common_cloud_btn20}}
+              </el-button>
+              <div class="add-disk com-add-btn" v-show="dataDiskList.length > 0 " @click="showDg">
+                <span class="add">+</span>
+                <span class="buy-btn">{{lang.common_cloud_btn22}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="no-disk" v-if="diskList.length == 0">
+            <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/disk.png" alt="">
+            <span class="text">{{lang.common_cloud_text18}}</span>
+            <span class="text2">{{lang.common_cloud_text19}}</span>
+          </div>
+          <div class="yes-disk" v-else>
+            <div class="main-table">
+              <el-table v-loading="diskLoading" :data="diskList" style="width: 100%" :key="new Date().getTime()">
+                <el-table-column prop="name" :label="lang.common_cloud_label18" min-width="200" align="left">
+                </el-table-column>
+                <el-table-column prop="create_time" min-width="200" :label="lang.common_cloud_label19" align="left">
+                  <template slot-scope="scope">
+                    <span v-time="scope.row.create_time"></span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="size" :label="lang.common_cloud_label20" min-width="200" align="left"
+                  :show-overflow-tooltip="true">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.size + 'G'}}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="op" :label="lang.common_cloud_label30" width="135" align="left"
+                  :show-overflow-tooltip="true">
+                  <template slot-scope="scope">
+                    <span class="text-btn" v-if="scope.row.type2 === 'data' && scope.row.status === 0"
+                      @click="handelMount(scope.row.id)">{{lang.common_cloud_title16}}</span>
+
+                    <span class="text-btn" v-if="scope.row.type2 === 'data' && scope.row.status === 1"
+                      @click="handelUnload(scope.row)">{{lang.common_cloud_title17}}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <!-- 弹性磁盘 -->
+          <div class="yes-disk net" v-if="elasticDisk.length > 0">
+            <div class="disk-top-operation">
+              <p class="com-tit">{{lang.elastic_disk}}</p>
+              <div></div>
+            </div>
+            <div class="main-table">
+              <el-table v-loading="elasticDiskLoading" :data="elasticDisk" style="width: 100%">
+                <el-table-column prop="name" :label="lang.common_cloud_label18" min-width="300" align="left">
+                </el-table-column>
+                <el-table-column prop="due_time" min-width="200" :label="lang.common_cloud_text144" align="left">
+                  <template slot-scope="scope">
+                    {{scope.row.due_time | formateTime}}
+                  </template>
+                </el-table-column>
+                <el-table-column prop="size" :label="lang.common_cloud_label20" min-width="200" align="left"
+                  :show-overflow-tooltip="true">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.size + 'G'}}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="op" :label="lang.common_cloud_label30" width="200" align="left"
+                  :show-overflow-tooltip="true">
+                  <template slot-scope="{row}">
+                    <a href="javascript:;" class="ip-btn" v-if="!row.rel_host_id"
+                      @click="handlerConnect('mf_cloud_disk','add',row)">{{lang.common_cloud_title16}}</a>
+                    <a href="javascript:;" class="ip-btn" v-if="row.rel_host_id === id"
+                      @click="handlerConnect('mf_cloud_disk','cancle',row)">{{lang.common_cloud_title17}}</a>
+                    <a :href="`productdetail.htm?id=${row.id}`" class="ip-btn"
+                      target="_blank">{{lang.cloud_table_head_5}}</a>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+        </el-tab-pane>
+        <!-- 网络 -->
+        <el-tab-pane :label="lang.common_cloud_tab4" name="4" v-if="hostData.status == 'Active' && !initLoading">
+          <div class="net">
+            <el-tabs tab-position="left" v-model="netActive" @tab-click="changeNetTab" class="left-tab">
+              <!-- ip -->
+              <el-tab-pane :label="lang.common_cloud_title3" name="ip">
+                <span slot="label" class="left-nav">{{lang.common_cloud_title3}}</span>
+                <div class="top-opt">
+                  <span>{{lang.common_cloud_title3}}</span>
+                  <div class="com-add-btn" @click="showIpDia" v-if="!isPackage">
+                    <span class="add">+</span>
+                    <span class="buy-btn">{{lang.common_cloud_title18}}</span>
+                  </div>
+                </div>
+                <div class="main_table">
+                  <el-table v-loading="netLoading" :data="netDataList" style="width: 100%;margin-bottom: .2rem;">
+                    <el-table-column prop="ip" :label="lang.common_cloud_label21" min-width="150" align="left">
+                    </el-table-column>
+                    <el-table-column prop="gateway" min-width="200" :label="lang.common_cloud_label22" align="left">
+                    </el-table-column>
+                    <el-table-column prop="subnet_mask" min-width="200" :label="lang.common_cloud_label23" align="left">
+                    </el-table-column>
+                  </el-table>
+                  <pagination :page-data="netParams" @sizechange="netSizeChange" @currentchange="netCurrentChange">
+                  </pagination>
+                </div>
+                <!-- 弹性IP -->
+                <div class="top-opt" style="margin-top: .3rem;" v-if="elasticList.length > 0">
+                  <span>{{lang.public_elastic_ip}}</span>
+                  <div></div>
+                </div>
+                <div class="main_table" v-if="elasticList.length > 0">
+                  <el-table v-loading="elasticLoading" :data="elasticList" style="width: 100%;margin-bottom: .2rem;">
+                    <el-table-column prop="ip" :label="lang.common_cloud_label21" min-width="200" align="left">
+                    </el-table-column>
+                    <el-table-column prop="gateway" min-width="200" :label="lang.common_cloud_label22" align="left">
+                    </el-table-column>
+                    <el-table-column prop="subnet_mask" min-width="200" :label="lang.common_cloud_label23" align="left">
+                    </el-table-column>
+                    <el-table-column prop="due_time" :label="lang.cloud_table_head_4" width="200">
+                      <template slot-scope="scope">
+                        {{scope.row.due_time | formateTime}}
+                      </template>
+                    </el-table-column>
+                    <el-table-column prop="op" :label="lang.finance_label6" width="200">
+                      <template slot-scope="{row}">
+                        <a href="javascript:;" class="ip-btn" v-if="!row.rel_host_id"
+                          @click="handlerConnect('mf_cloud_ip','add',row)">{{lang.allocation}}</a>
+                        <a href="javascript:;" class="ip-btn" v-if="row.rel_host_id === id"
+                          @click="handlerConnect('mf_cloud_ip','cancle',row)">{{lang.idle}}</a>
+                        <a :href="`productdetail.htm?id=${row.id}`" class="ip-btn"
+                          target="_blank">{{lang.cloud_table_head_5}}</a>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <pagination :page-data="elasticParams" @sizechange="elasticSizeChange"
+                    @currentchange="elasticCurrentChange">
+                  </pagination>
+                </div>
+              </el-tab-pane>
+              <!-- vpc -->
+              <el-tab-pane :label="lang.common_cloud_title19" name="vpc" v-if="cloudData.network_type === 'vpc'">
+                <span slot="label" class="left-nav">{{lang.common_cloud_title19}}</span>
+                <div class="top-opt">
+                  <div class="com-add-btn" @click="handelAddVpc">
+                    <span class="add">+</span>
+                    <span class="buy-btn">{{lang.common_cloud_title20}}</span>
+                  </div>
+                </div>
+                <div class="main_table">
+                  <el-table v-loading="vpcLoading" :data="vpcDataList" style="width: 100%;margin-bottom: .2rem;">
+                    <el-table-column prop="name" min-width="300" :label="lang.common_cloud_title21" align="left">
+                    </el-table-column>
+                    <el-table-column prop="ips" width="300" :label="lang.common_cloud_title22" align="left">
+                    </el-table-column>
+                    <el-table-column min-width="300" :label="lang.common_cloud_title23" align="left">
+                      <template slot-scope="scope">
+                        <el-tooltip placement="top" v-if="scope.row.host.length > 1">
+                          <div slot="content">
+                            <template v-for="items in scope.row.host">
+                              {{items.name}}<br />
+                            </template>
+                          </div>
+                          <span v-if="scope.row.host.length > 1">{{scope.row.host[0].name}}...</span>
+                        </el-tooltip>
+                        <span v-else-if="scope.row.host.length === 1">{{scope.row.host[0].name }}</span>
+                        <span v-else>--</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column width="200" :label="lang.common_cloud_label30" align="left">
+                      <template slot-scope="scope">
+                        <span class="text-btn" @click="handelEngine(scope.row)">{{lang.common_cloud_title24}}</span>
+                        <span class="text-btn" @click="handDelVpc(scope.row.id)">{{lang.common_cloud_title25}}</span>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                  <pagination :page-data="vpcParams" @sizechange="vpcSizeChange" @currentchange="vpcCurrentChange">
+                  </pagination>
+                </div>
+              </el-tab-pane>
+              <!-- 安全组 -->
+              <el-tab-pane :label="lang.common_cloud_title26" name="safe">
+                <span slot="label" class="left-nav">{{lang.common_cloud_title26}}</span>
+                <div class="safe-conten">
+                  <div class="safe-box" v-if="cloudData.security_group && cloudData.security_group.id !==0">
+                    <span>{{lang.common_cloud_title27}} <span
+                        style=" color: var(--shopping-car-btn-bg-color);">{{cloudData.security_group.name}}</span></span>
+                    <div class="flow-btn">
+                      <a :href="`/security.htm?active=2`" target="_blank"
+                        class="com-link">{{lang.common_cloud_title28}}</a>
+                    </div>
+                  </div>
+                  <div class="safe-box empty" v-else>
+                    <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/empty_security.svg"
+                      alt="">
+                    <span class="not-in">{{lang.common_cloud_title47}}</span>
+                    <span class="tip">{{lang.common_cloud_title29}}</span>
+                    <div class="flow-btn" type="primary" @click="handelSafeOpen">{{lang.common_cloud_title30}}</div>
+                  </div>
+                </div>
+              </el-tab-pane>
+              <!-- 流量图 -->
+              <el-tab-pane :label="lang.common_cloud_title4" name="flow">
+                <span slot="label" class="left-nav">{{lang.common_cloud_title4}}</span>
+                <div class="title flow-box">
+                  <el-button type="primary" @click="buyPackage" v-plugin="'FlowPacket'"
+                    v-if="flowData.total?.includes('GB')" class="flow-btn">
+                    {{lang.buy_package}}
+                  </el-button>
+                </div>
+                <div class="flow-content" v-if="flowData.total">
+                  <div class="flow-item">
+                    <div class="flow-label">{{lang.common_cloud_label24}}:</div>
+                    <div class="flow-value">
+                      {{flowData.total}}
+                      <span v-if="flowData.total.indexOf('GB')!== -1 && calcTraffic(flowData.total)">
+                        ({{lang.contain}}&nbsp;{{calcTraffic(flowData.total)}}GB&nbsp;{{lang.traffic_packet}})
+                      </span>
+                    </div>
+                  </div>
+                  <div class="flow-item">
+                    <div class="flow-label">{{lang.common_cloud_label25}}:</div>
+                    <div class="flow-value">{{flowData.leave}}</div>
+                  </div>
+                  <div class="flow-item">
+                    <div class="flow-label">{{lang.common_cloud_label26}}:</div>
+                    <div class="flow-value">{{flowData.reset_flow_date}}</div>
+                  </div>
+                </div>
+                <el-select class="time-select" v-model="chartSelectValue" @change="chartSelectChange">
+                  <el-option value='1' :label="lang.common_cloud_label15"></el-option>
+                  <el-option value='2' :label="lang.common_cloud_label16"></el-option>
+                  <el-option value='3' :label="lang.common_cloud_label17"></el-option>
+                </el-select>
+                <div class="echart-main">
+                  <!-- 网络带宽 -->
+                  <div id="bw2-echart" class="my-echart" v-loading="echartLoading2"></div>
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+          </div>
+        </el-tab-pane>
+
+        <el-tab-pane :label="lang.common_cloud_tab5" name="5" v-if="hostData.status == 'Active' && !initLoading">
+          <!-- 备份 -->
+          <!-- 启用备份 -->
+          <div class="main-content" v-if="cloudData.backup_num > 0">
+            <div class="content-top">
+              <div class="top-title">{{lang.common_cloud_title5}} （{{dataList1.length}}/{{cloudData.backup_num}}）</div>
+              <div class="top-btn com-add-btn" @click="showCreateBs('back')">
+                <span class="add">+</span>
+                <span class="buy-btn">{{lang.common_cloud_btn23}}</span>
+              </div>
+            </div>
+            <div class="main-table">
+              <el-table v-loading="backLoading" :data="dataList1" style="width: 100%;">
+                <el-table-column prop="name" :label="lang.common_cloud_label27" min-width="180" align="left"
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+                <el-table-column prop="create_time" min-width="180" :label="lang.common_cloud_label28" align="left">
+                  <template slot-scope="scope">
+                    <span v-time="scope.row.create_time"></span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="notes" :label="lang.common_cloud_label29" min-width="180" align="left"
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+                <el-table-column prop="type" :label="lang.common_cloud_label30" width="120" align="left">
+                  <template slot-scope="scope">
+                    <el-popover placement="top-start" trigger="hover" v-if="scope.row.status === 1">
+                      <div class="operation">
+                        <div class="operation-item" @click="showhyBs('back',scope.row)">{{lang.common_cloud_btn24}}
+                        </div>
+                        <div class="operation-item" @click="showDelBs('back',scope.row)">{{lang.common_cloud_btn25}}
+                        </div>
+                      </div>
+                      <span class="more-operation" slot="reference">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                      </span>
+                    </el-popover>
+                    <div v-else><i class="el-icon-loading"></i>{{lang.common_cloud_title31}}</div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <!-- 没有启用备份 -->
+          <div class="no-bs no-back" v-else>
+            <span class="no-bs-title">{{lang.common_cloud_title5}}</span>
+            <div class="no-bs-content">
+              <img class="empty-img"
+                src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/backup.svg" alt="">
+              <span class="text">{{lang.common_cloud_text20}}</span>
+              <div class="btn" v-if="configObj.backup_enable == 1" @click="openBs('back')">{{lang.common_cloud_btn26}}
+              </div>
+            </div>
+          </div>
+          <!-- 快照 -->
+          <div class="main-content" v-if="cloudData.snap_num > 0">
+            <div class="content-top">
+              <div class="top-title">{{lang.common_cloud_title6}} （{{dataList2.length}}/{{cloudData.snap_num}}）</div>
+              <div class="top-btn com-add-btn" @click="showCreateBs('snap')">
+                <span class="add">+</span>
+                <span class="buy-btn">{{lang.common_cloud_btn27}}</span>
+              </div>
+            </div>
+            <div class="main-table">
+              <el-table v-loading="snapLoading" :data="dataList2" style="width: 100%;">
+                <el-table-column prop="name" :label="lang.common_cloud_label31" min-width="180" align="left">
+                </el-table-column>
+                <el-table-column prop="create_time" min-width="180" :label="lang.common_cloud_label28" align="left">
+                  <template slot-scope="scope">
+                    <span v-time="scope.row.create_time"></span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="notes" :label="lang.common_cloud_label29" min-width="180" align="left"
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+                <el-table-column prop="type" :label="lang.common_cloud_label30" width="120" align="left">
+                  <template slot-scope="scope">
+                    <el-popover placement="top-start" trigger="hover" v-if="scope.row.status === 1">
+                      <div class="operation">
+                        <div class="operation-item" @click="showhyBs('snap',scope.row)">{{lang.common_cloud_btn24}}
+                        </div>
+                        <div class="operation-item" @click="showDelBs('snap',scope.row)">{{lang.common_cloud_btn25}}
+                        </div>
+                      </div>
+                      <span class="more-operation" slot="reference">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                      </span>
+                    </el-popover>
+                    <div v-else><i class="el-icon-loading"></i>{{lang.common_cloud_title31}}</div>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <div class="no-bs no-snap" v-else>
+            <span class="no-bs-title">{{lang.common_cloud_title6}}</span>
+            <div class="no-bs-content">
+              <img class="empty-img"
+                src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/snapshot.svg" alt="">
+              <span class="text">{{lang.common_cloud_text21}}</span>
+              <div class="btn" v-if="configObj.snap_enable == 1" @click="openBs('snap')">{{lang.common_cloud_btn26}}
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane :label="lang.common_cloud_tab6" name="6" v-if="hostData.status == 'Active' && !initLoading">
+          <div class="log">
+            <div class="main_table">
+              <el-table v-loading="logLoading" :data="logDataList" style="width: 100%;margin-bottom: .2rem;">
+                <el-table-column prop="id" label="Id" width="150" align="left">
+                </el-table-column>
+                <el-table-column prop="create_time" width="200" :label="lang.common_cloud_label33" align="left">
+                  <template slot-scope="scope">
+                    <span v-time="scope.row.create_time"></span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="description" :label="lang.common_cloud_label34" min-width="400" align="left"
+                  :show-overflow-tooltip="true">
+                </el-table-column>
+              </el-table>
+              <pagination :page-data="logParams" @sizechange="logSizeChange" @currentchange="logCurrentChange">
+              </pagination>
+            </div>
+          </div>
+        </el-tab-pane>
+      </el-tabs>
+
+      <!-- 修改备注弹窗 -->
+      <div class="notes-dialog">
+        <el-dialog width="5.28rem" :visible.sync="isShowNotesDialog" @close="notesDgClose">
+          <div class="dialog-title">
+            {{hostData.notes?lang.common_cloud_title7:lang.common_cloud_title8}}
+          </div>
+          <div class="dialog-main">
+            <div class="label">{{lang.common_cloud_label29}}</div>
+            <el-input class="notes-input" v-model="notesValue"></el-input>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="notesDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subNotes">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 加入安全组 -->
+      <el-dialog width="5.28rem" :visible.sync="safeDialogShow" @close="safeClose" class="safe-dialog">
+        <div class="dialog-title">{{lang.add_to_group}}</div>
+        <div class="dialog-main">
+          <div class="safe-main-card">
+            <div class="safe-box">
+              <span>{{lang.choose_group}}：</span>
+              <el-select v-model="safeID">
+                <el-option v-for="item in safeOptions" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <el-button class="btn-no" @click="safeClose">{{lang.finance_text71}}</el-button>
+          <el-button type="primary" class="btn-ok" @click="subAddSafe">{{lang.finance_text70}}</el-button>
+        </div>
+      </el-dialog>
+      <!-- 续费弹窗 -->
+      <div class="renew-dialog">
+        <el-dialog width="6.9rem" :visible.sync="isShowRenew" @close="renewDgClose">
+          <div class="dialog-title">
+            {{lang.common_cloud_title10}}
+          </div>
+          <div class="dialog-main">
+            <div class="renew-content">
+              <div class="renew-item" :class="renewActiveId==item.id?'renew-active':''" v-for="item in renewPageData"
+                :key="item.id" @click="renewItemChange(item)">
+                <div class="item-top">{{item.name_show || item.billing_cycle}}</div>
+                <div class="item-bottom" v-if="isShowPromo && renewParams.isUseDiscountCode">
+                  {{commonData.currency_prefix + item.base_price}}
+                </div>
+                <div class="item-bottom" v-else>{{commonData.currency_prefix + item.price}}</div>
+                <div class="item-origin-price"
+                  v-if="item.price*1 < item.base_price*1 && !renewParams.isUseDiscountCode">
+                  {{commonData.currency_prefix + item.base_price}}
+                </div>
+                <i class="el-icon-check check" v-show="renewActiveId==item.id"></i>
+              </div>
+            </div>
+            <div class="pay-content">
+              <div class="pay-price">
+                <div class="money" v-loading="renewLoading">
+                  <span class="text">{{lang.common_cloud_label11}}:</span>
+                  <span>{{commonData.currency_prefix}}{{renewParams.totalPrice | filterMoney}}</span>
+                  <el-popover placement="top-start" width="300" trigger="hover"
+                    v-if="(isShowLevel && renewParams.clDiscount*1 > 0) || (isShowPromo && renewParams.isUseDiscountCode) || ( isShowCash && renewParams.customfield.voucher_get_id)">
+                    <div class="show-config-list">
+                      <p v-if="isShowLevel && renewParams.clDiscount*1 > 0">
+                        {{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}} {{ renewParams.clDiscount |
+                        filterMoney}}
+                      </p>
+                      <p v-if="isShowPromo && renewParams.isUseDiscountCode">
+                        {{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}} {{ renewParams.code_discount |
+                        filterMoney }}
+                      </p>
+                      <p v-if="isShowCash && renewParams.customfield.voucher_get_id">
+                        {{lang.common_cloud_text29}}：{{commonData.currency_prefix}} {{ renewParams.cash_discount |
+                        filterMoney}}
+                      </p>
+                    </div>
+                    <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                  </el-popover>
+                  <p class="original-price"
+                    v-if="renewParams.customfield.promo_code && renewParams.totalPrice != renewParams.base_price">
+                    {{commonData.currency_prefix}} {{ renewParams.base_price | filterMoney}}
+                  </p>
+                  <p class="original-price"
+                    v-if="!renewParams.customfield.promo_code && renewParams.totalPrice != renewParams.original_price">
+                    {{commonData.currency_prefix}} {{ renewParams.original_price | filterMoney}}
+                  </p>
+                  <div class="code-box">
+                    <!-- 代金券 -->
+                    <cash-coupon ref="cashRef" v-show="isShowCash && !cashObj.code"
+                      :currency_prefix="commonData.currency_prefix" @use-cash="reUseCash" scene='renew'
+                      :product_id="[product_id]" :price="renewParams.original_price"></cash-coupon>
+                    <!-- 优惠码 -->
+                    <discount-code v-show="isShowPromo && !renewParams.customfield.promo_code"
+                      @get-discount="getRenewDiscount(arguments)" scene='renew' :product_id="product_id"
+                      :amount="renewParams.base_price" :billing_cycle_time="renewParams.duration"></discount-code>
+                  </div>
+                  <div class="code-number-text">
+                    <div class="discount-codeNumber" v-show="renewParams.customfield.promo_code">
+                      {{renewParams.customfield.promo_code }}<i class="el-icon-circle-close remove-discountCode"
+                        @click="removeRenewDiscountCode()"></i>
+                    </div>
+                    <div class="cash-codeNumber" v-show="cashObj.code">{{ cashObj.code }}<i
+                        class="el-icon-circle-close remove-discountCode" @click="reRemoveCashCode()"></i></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="renewDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subRenew">{{lang.common_cloud_btn30}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 新增VPC网络 -->
+      <el-dialog width="6.7rem" :visible.sync="isShowAddVpc" @close="addVpcClose" class="addVpc-dialog">
+        <div class="dialog-title">{{lang.common_cloud_title20}}</div>
+        <div class="dialog-main">
+          <div class="vpc-main-card">
+            <div class="vpc-item">
+              <span class="vpc-leabel">{{lang.common_cloud_title32}}：</span>
+              <span class="vpc-value">{{vpcName}}</span>
+            </div>
+            <div class="vpc-item">
+              <span class="vpc-leabel">{{lang.common_cloud_title33}}：</span>
+              <el-select v-model="plan_way" class="w-select">
+                <el-option :value="0" :label="lang.auto_plan"></el-option>
+                <el-option :value="1" :label="lang.custom"></el-option>
+              </el-select>
+            </div>
+            <div class="vpc-item" v-if="plan_way === 1">
+              <span class="vpc-leabel">{{lang.common_cloud_title34}}：</span>
+              <div class="vpc">
+                <!-- 自定义vpc -->
+                <div class="custom">
+                  <el-select v-model="vpc_ips.vpc1.value" @change="changeVpcIp">
+                    <el-option v-for="item in vpc_ips.vpc1.select" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                  <span>·</span>
+                  <el-tooltip :content="vpc_ips.vpc1.tips" placement="top" effect="light">
+                    <el-input-number :disabled="vpc_ips.vpc1.value === 192" v-model="vpc_ips.vpc2" :step="1"
+                      :controls="false" :min="vpc_ips.min" :max="vpc_ips.max"></el-input-number>
+                  </el-tooltip>
+                  <span class="mr-5 ml-5">·</span>
+                  <el-tooltip :content="vpc_ips.vpc3Tips" placement="top" effect="light" :disabled="!vpc_ips.vpc3Tips">
+                    <el-input-number :disabled="vpc_ips.vpc6.value === 16" @blur="changeVpc3" v-model="vpc_ips.vpc3"
+                      :step="1" :controls="false" :min="0" :max="255">
+                    </el-input-number>
+                  </el-tooltip>
+                  <span class="mr-5 ml-5">·</span>
+                  <el-tooltip :content="vpc_ips.vpc4Tips" placement="top" effect="light" :disabled="!vpc_ips.vpc4Tips">
+                    <el-input-number :disabled="vpc_ips.vpc6.value < 25" @blur="changeVpc4" v-model="vpc_ips.vpc4"
+                      :step="1" :controls="false" :min="0" :max="255">
+                    </el-input-number>
+                  </el-tooltip>
+                  <span class="mr-5 ml-5">/</span>
+                  <el-select v-model="vpc_ips.vpc6.value" style="width: 70px" @change="changeVpcMask">
+                    <el-option v-for="item in vpc_ips.vpc6.select" :key="item" :label="item" :value="item">
+                    </el-option>
+                  </el-select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <el-button class="btn-no" @click="addVpcClose">{{lang.subaccount_text32}}</el-button>
+          <el-button type="primary" class="btn-ok" @click="subAddVpc">{{lang.subaccount_text31}}</el-button>
+        </div>
+      </el-dialog>
+
+      <!-- 分配主机 -->
+      <el-dialog width="5.28rem" :visible.sync="isShowengine" @close="engineClose" class="engine-dialog">
+        <div class="dialog-title">{{lang.common_cloud_title35}}</div>
+        <div v-loading="isSubmitEngine">
+          <div class="dialog-main">
+            <div class="label">{{lang.common_cloud_title36}}</div>
+            <div class="engine-main-card">
+              <div class="engine-box">
+                <span>{{lang.common_cloud_title37}}：</span>
+                <el-select v-model="engineID" clearable filterable remote reserve-keyword
+                  :placeholder="lang.common_cloud_title38" :remote-method="remoteMethod" :loading="engineSearchLoading">
+                  <el-option v-for="item in productOptions" :key="item.id" :label="item.name" :value="item.id">
+                  </el-option>
+                </el-select>
+              </div>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="engineClose">{{lang.subaccount_text32}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subAddEngine">{{lang.subaccount_text31}}</el-button>
+          </div>
+        </div>
+      </el-dialog>
+      <!-- 新增附加IP -->
+      <el-dialog width="5.28rem" :visible.sync="isShowIp" @close="ipClose" class="ip-dialog">
+        <div class="dialog-title">{{lang.common_cloud_title39}}</div>
+        <div class="dialog-main">
+          <div class="label">{{lang.common_cloud_title40}} {{netDataList.length}} {{lang.common_cloud_title43 + ',' +
+            lang.common_cloud_title41}}：{{cloudData.ip_num}}{{lang.common_cloud_title43 + ','
+            +lang.common_cloud_title42}}</div>
+          <div class="ip-main-card">
+            <div class="ip-item" :class="ipValue === item.value ? 'active' : ''" v-for="item in ipValueData"
+              :key="item.value" @click="selectIpValue(item.value)">
+              {{item.value}} {{lang.common_cloud_title43}}
+            </div>
+          </div>
+        </div>
+        <div class="dialog-footer">
+          <span class="text">{{lang.common_cloud_title44}}:</span>
+          <span class="num" v-loading="ipPriceLoading">
+            {{commonData.currency_prefix}}{{ipMoney >=0 ? ipMoney : 0}}
+            <el-popover placement="top-start" width="300" trigger="hover">
+              <div class="show-config-list">{{lang.common_cloud_text27}}：{{commonData.currency_prefix}}{{
+                ipDiscountkDisPrice }}</div>
+              <div class="show-config-list">{{lang.common_cloud_text28}}：{{commonData.currency_prefix}}{{ ipCodePrice }}
+              </div>
+              <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
+            </el-popover>
+          </span>
+          <el-button class="btn-no" @click="ipClose">{{lang.finance_text75}}</el-button>
+          <el-button class="btn-ok" type="primary" @click="subAddIp">{{lang.finance_text74}}</el-button>
+        </div>
+      </el-dialog>
+      <!-- 停用弹窗（删除实例） -->
+      <div class="refund-dialog">
+        <el-dialog width="5.28rem" :visible.sync="isShowRefund" @close="refundDgClose">
+          <div class="dialog-title">
+            {{refundPageData.allow_refund == 1?lang.common_cloud_title11:lang.common_cloud_title12}}
+          </div>
+          <div class="dialog-main">
+            <div class="label">{{lang.common_cloud_label35}}</div>
+            <div class="host-content">
+              <div class="host-item">
+                <div class="left">{{lang.common_cloud_label36}}:</div>
+                <div class="right">
+                  <div class="right-row">
+                    <div class="right-row-item">{{cloudData.cpu}} {{lang.common_cloud_text285}} CPU</div>
+                    <div class="right-row-item">{{(cloudData.memory) + 'GB'}} {{lang.common_cloud_text286}}</div>
+                    <div class="right-row-item">{{cloudData.system_disk.size}} GB {{lang.common_cloud_text287}}</div>
+                    <div class="right-row-item">{{cloudData.bw}} M {{lang.common_cloud_text288}}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="host-item">
+                <div class="left">{{lang.common_cloud_label37}}:</div>
+                <div class="right">{{refundPageData.host.create_time | formateTime}}</div>
+              </div>
+              <div class="host-item" v-if="refundPageData.allow_refund == 1">
+                <div class="left">{{lang.common_cloud_label38}}:</div>
+                <div class="right">{{commonData.currency_prefix + refundPageData.host.first_payment_amount}}</div>
+              </div>
+            </div>
+            <div class="label">{{lang.common_cloud_label39}}</div>
+            <el-select v-if="refundPageData.reason_custom == 0" v-model="refundParams.suspend_reason" multiple>
+              <el-option v-for="item in refundPageData.reasons" :key="item.id" :value="item.id"
+                :label="item.content"></el-option>
+            </el-select>
+            <el-input v-else v-model="refundParams.suspend_reason"></el-input>
+            <div class="label">{{lang.common_cloud_label40}}</div>
+            <el-select v-model="refundParams.type">
+              <el-option value="Expire" :label="lang.common_cloud_label41"></el-option>
+              <el-option value="Immediate" :label="lang.common_cloud_label42"></el-option>
+            </el-select>
+            <div class="label" v-if="refundPageData.allow_refund == 1">{{lang.common_cloud_label43}}</div>
+            <div class="amount-content" v-if="refundPageData.allow_refund == 1">
+              {{commonData.currency_prefix}}{{refundParams.type=='Immediate'?refundPageData.host.amount:'0.00'}}
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="refundDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subRefund">{{refundPageData.allow_refund == 1?
+              lang.common_cloud_btn31:
+              lang.common_cloud_btn32}}
+            </el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 确认退出救援模式弹窗 -->
+      <div class="quitRescu">
+        <el-dialog width="5.3rem" :visible.sync="isShowQuit" @close="quitDgClose">
+          <div class="dialog-title">
+            {{lang.common_cloud_btn14}}
+          </div>
+          <div class="dialog-main">
+            {{lang.common_cloud_btn33}}
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="quitDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button class="btn-ok" type="primary" @click="reQuitSub">{{lang.common_cloud_btn34}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 订购磁盘弹窗 -->
+      <div class="dg-dialog">
+        <el-dialog width="9.08rem" :visible.sync="isShowDg" @close="dgClose">
+          <div class="dialog-title">
+            {{lang.common_cloud_btn22}}
+          </div>
+          <!-- 当前配置磁盘 -->
+          <!-- <div class="disk-card disk-old" v-if="oldDiskList2.length > 0">
+            <div class="disk-label">{{lang.common_cloud_btn38}}</div>
+            <div class="disk-main-card">
+              <div class="old-disk-item" v-for="item in oldDiskList2" :key="item.id">
+                <span class="disk-item-text">{{item.name}}</span>
+                <span class="disk-item-size">{{item.size + 'G'}}</span>
+                <img class="del" src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/delete.png" alt=""
+                  v-if="item.type2 !== 'system'" @click="delOldSize2(item.id)">
+              </div>
+            </div>
+          </div> -->
+          <!-- 新增磁盘 -->
+          <div class=" disk-card disk-new">
+            <!-- <div class="disk-label">{{lang.common_cloud_btn39}}</div> -->
+            <div class="disk-main-card" v-if="moreDiskData.length > 0">
+
+              <el-table :data="moreDiskData" style="width: 100%" :row-class-name="tableRowClassName">
+                <el-table-column prop="name" :label="lang.mf_purpose" width="160">
+                  <template slot-scope="{row}">{{lang.common_cloud_btn40}}{{row.index + 1}}</template>
+                </el-table-column>
+                <!-- 磁盘类型 -->
+                <el-table-column prop="disk_type" :label="lang.disk_type" width="250">
+                  <template slot-scope="{row}">
+                    <el-select v-model="row.type" :placeholder="lang.placeholder_pre2"
+                      @change="(val)=>changeType(val,row)">
+                      <el-option v-for="(items,index) in row.selectList[0].disk_typeList" :key="index"
+                        :value="items.value" :label="items.label"></el-option>
+                    </el-select>
+                  </template>
+                </el-table-column>
+                <!-- 磁盘容量 -->
+                <el-table-column prop="size" :label="lang.disk_size" min-width="250" label-class-name="disk-capacity">
+                  <template slot-scope="{row}">
+                    <template v-if="row.selectList[0].type === 'radio'">
+                      <el-select v-model="row.size">
+                        <el-option v-for="(itemss,index) in row.selectList[0][row.type]" :key="index"
+                          :value="itemss.value" :label="itemss.value + 'G'"></el-option>
+                      </el-select>
+                    </template>
+                    <template v-else>
+                      <el-tooltip effect="light" :content="lang.mf_range + row.selectList[0][row.type].tips"
+                        placement="top">
+                        <el-input-number v-model="row.size" :min="row.selectList[0][row.type].min_value"
+                          :max="row.selectList[0][row.type].max_value" @change="(n,o)=>changeDataNum(n,row,o)">
+                        </el-input-number>
+                      </el-tooltip>
+                    </template>
+                    <span style="margin-left: .12rem;">GB</span>
+                  </template>
+                </el-table-column>
+                <!-- 数量 -->
+                <!-- <el-table-column :label="lang.shoppingCar_goodsNums" min-width="150">
+                  <template slot-scope="{row}">
+                    <el-input-number v-model="row.num" :min="1" :max="calcMax(row.index)">
+                    </el-input-number>
+                  </template>
+                </el-table-column> -->
+                <el-table-column :label="lang.file_opt" width="120">
+                  <template slot-scope="{row}">
+                    <div class="data-opt">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/delete.png"
+                        alt="" @click="delMoreDisk(row.index)">
+                      <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/add.png"
+                        alt="" v-show="row.index + 1 === moreDiskData.length && isShowAddDisk" @click="addMoreDisk">
+                    </div>
+                  </template>
+                </el-table-column>
+              </el-table>
+
+            </div>
+            <div class="disk-main-card" v-if="moreDiskData.length === 0">
+              <div class="no-disk-btn" @click="addMoreDisk">
+                <i class="el-icon-circle-plus-outline add"></i>
+                <span>{{lang.mf_add_disk}}</span>
+              </div>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <span class="text">{{lang.common_cloud_btn41}}({{commonData.currency_code}}):</span>
+            <span class="num" v-loading="diskPriceLoading">
+              {{commonData.currency_prefix}}{{moreDiskPrice.toFixed(2)}}
+              <el-popover placement="top-start" width="300" trigger="hover">
+                <div class="show-config-list">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}}{{
+                  moreDiscountkDisPrice }}</div>
+                <div class="show-config-list">{{lang.common_cloud_text28}}：{{commonData.currency_prefix}}{{
+                  moreCodePrice }}</div>
+                <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
+              </el-popover>
+            </span>
+            <el-button class="btn-no" @click="dgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="toCreateDisk">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 扩容磁盘弹窗 -->
+      <div class="kr-dialog">
+        <el-dialog width="7.08rem" :visible.sync="isShowExpansion" @close="krClose">
+          <div class="dialog-title">
+            {{lang.common_cloud_btn42}}
+          </div>
+          <div class="dialog-main">
+            <!-- <div class="label">{{lang.common_cloud_btn43}}</div> -->
+            <div class="disk-main-card">
+              <el-table :data="oldDiskList" style="width: 100%" :show-overflow-tooltip="true">
+                <el-table-column prop="name" :label="lang.common_cloud_tab3" min-width="200">
+                  <template slot-scope="{row}">{{row.name}}</template>
+                </el-table-column>
+                <el-table-column prop="name" :label="lang.common_cloud_label20" min-width="150">
+                  <template slot-scope="{row}">
+                    <template
+                      v-if="row.type2 ==='data' && row.selectList.length > 0 && (row.selectList[0].type === 'total' || row.selectList[0].type === 'step')">
+                      <!-- <span class="disk-item-text" :title="row.name">{{row.name}}</span> -->
+                      <!-- <el-tooltip effect="light" :content="lang.mf_range + row.tips" placement="top">
+
+                      </el-tooltip> -->
+                      <el-input-number v-model="row.size" :min="row.min_value" :max="row.max_value"
+                      @change="(val,old)=>sliderChange(val,row,old)">
+                      </el-input-number>
+                      <span class="item-max-size">GB</span>
+                    </template>
+                    <template
+                      v-if="row.type2 ==='data' && row.selectList.length > 0 && row.selectList[0].type === 'radio'">
+                      <!-- <span class="disk-item-size">{{row.min_value + 'GB'}}</span> -->
+                      <el-select v-model="row.size">
+                        <el-option v-for="items in row.selectList" :key="items.id" :value="items.value"
+                          :label="items.value + 'G'"></el-option>
+                      </el-select>
+                      <span class="item-max-size">GB</span>
+                    </template>
+                    <template v-if="row.selectList.length === 0">
+                      <!-- <span class="disk-item-text" :title="item.name">{{item.name}}</span> -->
+                      {{lang.common_cloud_btn68}}
+                    </template>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="tip" :label="lang.range" width="156">
+                  <template slot-scope="{row}">
+                    <span class="tips" v-if="row.tips && row.selectList.length !== 0">({{row.tips}})</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <span class="text">{{lang.common_cloud_btn44}}({{commonData.currency_code}}):</span>
+            <span class="num" v-loading="diskPriceLoading">
+              {{commonData.currency_prefix}}{{(expansionDiskPrice * 1).toFixed(2)}}
+              <el-popover placement="top-start" width="300" trigger="hover">
+                <div class="show-config-list">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}}{{
+                  expansionDiscount }}</div>
+                <div class="show-config-list">{{lang.common_cloud_text28}}：{{commonData.currency_prefix}}{{
+                  expansionCodePrice }}</div>
+                <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
+              </el-popover>
+            </span>
+            <el-button class="btn-no" @click="krClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subExpansion">{{lang.common_cloud_btn28}}</el-button>
+
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 创建备份/快照弹窗 -->
+      <div class="create-bs-dialog">
+        <el-dialog width="5.28rem" :visible.sync="isShwoCreateBs" @close="bsCgClose">
+          <div class="dialog-title">
+            {{isBs? lang.common_cloud_btn45 :lang.common_cloud_btn46}}
+          </div>
+          <div class="title-second-text">
+            {{lang.common_cloud_btn47}}{{isBs? lang.common_cloud_btn45
+            :lang.common_cloud_btn46}}{{lang.common_cloud_btn48}}
+          </div>
+          <div class="dialog-main">
+            <div class="label">{{lang.common_cloud_tab3}}</div>
+            <el-select v-model="createBsData.disk_id">
+              <el-option v-for="item in allDiskList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+            <div class="label">{{lang.invoice_text139}}</div>
+            <el-input v-model="createBsData.name"></el-input>
+            <div class="alert">
+              <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+              </el-alert>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="bsCgClose">{{lang.common_cloud_text181}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subCgBs"
+              v-loading="cgbsLoading">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 还原备份、快照弹窗 -->
+      <div class="restore-dialog">
+        <el-dialog width="5.28rem" :visible.sync="isShowhyBs" @close="bshyClose">
+          <div class="dialog-title">
+            {{lang.common_cloud_btn49}}
+          </div>
+          <div class="dialog-main">
+            <span>{{lang.common_cloud_btn50}} <span class="name">{{restoreData.cloud_name}}</span>
+              {{lang.common_cloud_btn51}}</span>
+            <span>{{restoreData.time |
+              formateTime}}{{lang.common_cloud_btn52}}{{isBs?lang.common_cloud_btn53:lang.common_cloud_btn54}}</span>
+            <span>{{lang.common_cloud_btn55}}{{isBs?lang.common_cloud_btn53:lang.common_cloud_btn54}}</span>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="bshyClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button class="btn-ok" type="primary" @click="subhyBs"
+              v-loading="loading3">{{lang.common_cloud_btn56}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 删除备份、快照弹窗 -->
+      <div class="del-dialog">
+        <el-dialog width="3.68rem" :visible.sync="isShowDelBs" @close="delBsClose">
+          <div class="dialog-title">
+            <i class="el-icon-warning-outline"></i>
+            {{isBs?lang.common_cloud_btn57:lang.common_cloud_btn58}}
+          </div>
+          <div class="dialog-main">
+            <span class="row-1">{{isBs?lang.common_cloud_btn57:lang.common_cloud_btn58}}: <span
+                class="name">{{delData.name}}</span></span>
+            <span
+              class="row-2">{{lang.common_cloud_btn59}}{{delData.cloud_name}}{{lang.common_cloud_btn51}}{{delData.time |
+              formateTime}}{{lang.common_cloud_btn52}}{{isBs?lang.common_cloud_btn53:lang.common_cloud_btn54}}{{lang.common_cloud_btn60}}
+            </span>
+            <el-checkbox v-model="del_checked" class="del-check">
+              {{isBs?lang.sure_del_backup:lang.sure_del_snap}}</el-checkbox>
+            <div class="alert">
+              <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+              </el-alert>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <div class="btn-ok" @click="subDelBs" v-loading="loading4">{{lang.common_cloud_btn61}}</div>
+            <div class="btn-no" @click="delBsClose">{{lang.common_cloud_btn29}}</div>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 开启备份/快照弹窗 -->
+      <div class="bs-dialog">
+        <el-dialog width="6.2rem" :visible.sync="isShowOpenBs" @close="bsopenDgClose">
+          <div class="dialog-title">
+            {{isBs?lang.common_cloud_btn62:lang.common_cloud_btn63}}
+          </div>
+          <div class="dialog-main">
+            <!-- 备份下拉框 -->
+            <el-select v-model="bsData.backNum" v-show="isBs" @change="bsSelectChange">
+              <el-option v-for="item in backup_config" :key="item.id" :value="item.num"
+                :label="item.num + lang.common_cloud_text3 + commonData.currency_prefix + item.price + '/' + bsData.duration"></el-option>
+            </el-select>
+            <!-- 快照下拉框 -->
+            <el-select v-model="bsData.snapNum" v-show="!isBs" @change="bsSelectChange">
+              <el-option v-for="item in snap_config" :key="item.id" :value="item.num"
+                :label="item.num + lang.common_cloud_text4 + commonData.currency_prefix + item.price  + '/' + bsData.duration"></el-option>
+            </el-select>
+            <span
+              class="num">{{lang.common_cloud_text2}}{{isBs?bsData.backNum:bsData.snapNum}}{{lang.mf_one}}{{isBs?lang.common_cloud_title5:lang.common_cloud_btn54}}</span>
+            <span class="price" v-loading="bsDataLoading">
+              {{commonData.currency_prefix + (bsData.money * 1).toFixed(2)}}
+              <el-popover placement="top-start" width="300" trigger="hover">
+                <div class="show-config-list">{{lang.common_cloud_text27}}：{{commonData.currency_prefix}}{{
+                  bsData.moneyDiscount }}</div>
+                <div class="show-config-list">{{lang.common_cloud_text28}}：{{commonData.currency_prefix}}{{
+                  bsData.codePrice }}</div>
+                <i class="el-icon-warning-outline total-icon" slot="reference" v-if="isShowLevel || isShowPromo"></i>
+              </el-popover>
+
+            </span>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="bsopenDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="bsopenSub">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 电源操作确认弹窗 -->
+      <div class="power-dialog">
+        <el-dialog width="4.8rem" :visible.sync="isShowPowerChange" @close="powerDgClose">
+          <div class="dialog-title">
+            {{powerTitle}}{{lang.cloud_menu_1}}
+          </div>
+          <div class="s-tip">{{lang.common_cloud_text34}}&nbsp;{{powerTitle}}&nbsp;{{lang.common_cloud_text35}}</div>
+          <div class="content">
+            <div class="l-icon">
+              <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/cloudDetail/host.png" alt="">
+            </div>
+            <div class="info">
+              <p class="text">
+                {{hostData.name}}
+                <el-button :type="calcPower(cloudData.power_status)"
+                  class="tag-button">{{cloudData.power_status}}</el-button>
+              </p>
+              <p class="ip">{{cloudData.ip}}</p>
+            </div>
+          </div>
+          <!-- <div class="com-danger-btn" v-show="powerStatus=='off'">
+            <div class="alert">
+              <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/warning.svg" alt="">
+              <div>{{lang.common_cloud_tip42}}</div>
+              <div class="title">{{lang.common_cloud_tip30}}</div>
+              <div class="row"><span class="dot"></span> {{lang.common_cloud_tip31}}</div>
+              <div class="row"><span class="dot"></span> {{lang.common_cloud_tip32}}</div>
+            </div>
+            <el-checkbox v-model="rePassData.checked">{{lang.common_cloud_text24}}
+            </el-checkbox>
+          </div> -->
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="powerDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="toChangePower()">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 自动续费确认弹窗 -->
+      <div class="power-dialog">
+        <el-dialog width="5.28rem" :visible.sync="isShowAutoRenew" :close-on-click-modal=false>
+          <div class="dialog-title">
+            {{lang.common_cloud_text37}}{{isShowPayMsg? lang.common_cloud_text38 :
+            lang.common_cloud_text39}}{{lang.auto_renew}}
+          </div>
+          <div class="dialog-main">
+            <div class="label">{{lang.fin_host}}</div>
+            <div class="value">{{hostData.name}}</div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="autoRenewDgClose">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="doAutoRenew">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 挂载磁盘 -->
+      <div class="mount-dialog">
+        <el-dialog width="5.28rem" :visible.sync="isShwoMountDisk">
+          <div class="dialog-title">
+            {{lang.mount_disk}}
+          </div>
+          <div class="dialog-main">
+            <div class="label">{{lang.select_instance}}</div>
+            <el-select v-model="cloudId" disabled>
+              <el-option v-for="item in cloudList" :key="item.id" :value="item.id" :label="item.name"></el-option>
+            </el-select>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="isShwoMountDisk = false">{{lang.common_cloud_text181}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="subMount"
+              :loading="mountLoading">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+      <!-- 卸载磁盘 -->
+      <div class="del-dialog">
+        <el-dialog width="3.68rem" :visible.sync="isShwoUnmountDisk">
+          <div class="dialog-title">
+            <i class="el-icon-warning-outline"></i>
+            {{lang.unmount_disk}}
+          </div>
+          <div class="dialog-main">
+            <span class="row-1">{{lang.unmount_disk}}: <span class="name">{{curDisk.name}}</span></span>
+            <span class="row-2">{{lang.unmount_tip}}
+            </span>
+            <el-checkbox v-model="del_checked" class="del-check">
+              {{lang.sure_unmount_disk}}</el-checkbox>
+            <div class="alert">
+              <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+              </el-alert>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-ok" @click="subUnmount"
+              :loading="mountLoading">{{lang.common_cloud_btn28}}</el-button>
+            <el-button class="btn-no" @click="isShwoUnmountDisk = false">{{lang.common_cloud_text181}}</el-button>
+
+          </div>
+        </el-dialog>
+      </div>
+
+      <!-- 关联/取消关联 IP,磁盘 -->
+      <div class="repass-dialog connect">
+        <el-dialog width="6rem" :visible.sync="isShowConnect" @close="isShowConnect = false">
+          <div class="dialog-title">
+            {{calcDes}}
+          </div>
+          <div class="dialog-main">
+            <div class="label">{{lang.common_cloud_text36}}</div>
+            <p>{{curIp}}</p>
+            <div class="com-danger-btn" v-show="powerStatus=='off' && connectType === 'mf_cloud_ip'">
+              <div class="alert">
+                <img src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/img/mf_cloud/warning.svg" alt="">
+                <div>{{lang.common_cloud_tip42}}</div>
+                <div class="title">{{lang.common_cloud_tip30}}</div>
+                <div class="row"><span class="dot"></span> {{lang.common_cloud_tip31}}</div>
+                <div class="row"><span class="dot"></span> {{lang.common_cloud_tip32}}</div>
+              </div>
+              <el-checkbox v-model="connectCheck">{{lang.common_cloud_text24}}
+              </el-checkbox>
+            </div>
+            <div class="alert-err-text">
+              <el-alert :title="errText" type="error" show-icon :closable="false" v-show="errText">
+              </el-alert>
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <el-button class="btn-no" @click="isShowConnect = false">{{lang.common_cloud_btn29}}</el-button>
+            <el-button type="primary" class="btn-ok" @click="submitConnect"
+              :loading="loading5">{{lang.common_cloud_btn28}}</el-button>
+          </div>
+        </el-dialog>
+      </div>
+
+      <pay-dialog ref="topPayDialog" @payok="paySuccess" @paycancel="payCancel"></pay-dialog>
+      <!-- 申请返现 -->
+      <cash-back :id="id" :show-cash="isShowCashDialog" @cancledialog="cancleDialog" @showbtn="showBtn"></cash-back>
+    </div>
+  </div>
+</div>
+<!-- =======页面独有======= -->
+<script src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/api/cloud.js"></script>
+<script src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/lang/index.js"></script>
+<script src="/plugins/reserver/mf_cloud/template/clientarea/pc/overseas/js/cloudDetail.js"></script>

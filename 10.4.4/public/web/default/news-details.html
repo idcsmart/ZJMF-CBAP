@@ -1,0 +1,76 @@
+{include file="header"}
+
+<link rel="stylesheet" href="/web/default/css/announce.css">
+<script src="/web/default/js/news-details.js"></script>
+
+</head>
+
+<body>
+  <header>{include file="public/header"}</header>
+
+  <!-- 文档列表 -->
+  <section class="section document-announce document-news">
+    <div class="section-content">
+      <div>
+        <ol class="breadcrumb">
+          <li><a href="news.html">新闻主页</a></li>
+          <li><a href="javascript:;" id="announce-type"></a></li>
+          <li><a href="javascript:;" id="announce-name"></a></li>
+        </ol>
+      </div>
+      <div class="fboxRow">
+        <div class="announce-details announce-new-left">
+          <h3 class="announce-title"></h3>
+          <p class="announce-details-time"></p>
+          <div class="announce-details-cont">
+          </div>
+          <div class="page-box" id="page-box">
+          </div>
+          <!-- <div class="news-advert">
+            <img src="" alt="">
+          </div> -->
+          <!-- <div class="news-box news-box-tag mt-40 ">
+            <div class="news-box-head">
+              <div class="news-title">相关标签</div>
+            </div>
+            <div class="news-box-cont fboxWrap">
+              <div class="news-tag"><a href="">弹性云服务器 ECS</a></div>
+              <div class="news-tag"><a href="">弹性云服务器 ECS</a></div>
+            </div>
+          </div> -->
+        </div>
+        <div class="announce-new-right">
+          <div class="news-box">
+            <div class="news-box-head">
+              <div class="news-title">最近更新</div>
+            </div>
+            <div class="news-list" id="newsBox">
+
+            </div>
+          </div>
+          <!-- <div class="news-box">
+            <div class="news-box-head">
+              <div class="news-title">最近更新</div>
+            </div>
+            <div class="news-list">
+              <div class="news-item">
+                <div class="news-number">1</div>
+                <a class="font-ell1">全国打击治理电信网络新型违法犯罪工作电视</a>
+              </div>
+            </div>
+          </div> -->
+          <!-- <div class="news-box">
+            <div class="news-box-head">
+              <div class="news-title">相关标签</div>
+            </div>
+            <div class="news-box-cont fboxWrap">
+              <div class="news-tag"><a href="">弹性云服务器 ECS</a></div>
+              <div class="news-tag"><a href="">弹性云服务器 ECS</a></div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {include file="footer"}

@@ -1,0 +1,440 @@
+/* banner */
+.banner-cont {
+  width: 100%;
+}
+
+.banner-cont .swiper-slide {
+  height: 500px;
+  width: 100%;
+  background: linear-gradient(0, #f7f9fa, #f9fafb);
+}
+
+.banner-cont .swiper-slide .img {
+  /* position: absolute; */
+  z-index: -1;
+  max-height: 100%;
+  max-width: 100%;
+  /* object-fit: fill; */
+}
+
+
+.banner-cont .banner-desc {
+  font-size: 16px;
+  margin-top: 30px;
+  margin-bottom: 80px;
+  max-width: 550px;
+
+}
+
+.banner-cont .swiper-pagination-bullet {
+  width: 36px;
+  height: 4px;
+  background: #D7DCE4;
+  opacity: 1;
+  border-radius: 3px;
+}
+
+.banner-cont .swiper-pagination-bullet-active {
+  background: rgba(255, 103, 57, 1);
+}
+
+.banner .banner-s {
+  box-shadow: 0px 0px 16px rgba(52, 52, 52, 0.16);
+  border-radius: 3px;
+}
+
+.banner .banner-s .banner-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
+.banner-s .banner-list .banner-item {
+  flex: 1;
+  cursor: pointer;
+  width: 335px;
+  padding: 30px 60px;
+}
+
+.banner-s .banner-list .banner-item:hover {
+  background: rgba(247, 248, 249, 1);
+}
+
+.banner-s .banner-list .banner-item:hover h5 {
+  color: #FF6739;
+}
+
+.banner-list .banner-item .banner-tag {
+  font-size: 12px;
+  color: #FF6739;
+  border: 1px solid #FF6739;
+  padding: 5px 8px;
+  border-radius: 3px;
+}
+
+/* 服务内容 */
+.service-content {
+  display: flex;
+  margin-top: 60px;
+  margin: -10px;
+  margin-top: 50px;
+}
+
+.service .service-box {
+  min-height: 191px;
+  margin: 10px;
+  position: relative;
+  padding: 30px;
+  border: 1px solid #E6EAED;
+  border-radius: 3px;
+}
+
+.service .service-box:hover {
+  box-shadow: 0px 0px 16px rgba(52, 52, 52, 0.16);
+}
+
+.service .service-box .service-title {
+  color: #333;
+
+}
+
+.service .service-box:hover h4 {
+  color: #FF6739;
+}
+
+.service .service-hot::before {
+  content: '';
+  height: 60px;
+  width: 60px;
+  position: absolute;
+  right: -4px;
+  top: -4px;
+  background: url('../assets/img/index/hot.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+
+}
+
+.service-box .title-desc {
+  margin: 16px 0;
+  height: 42px;
+}
+
+.service .service-tag-group {
+  display: flex;
+}
+
+.service .service-tag-group .service-tag {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  margin-right: 8px;
+  font-size: 12px;
+  padding: 0 12px;
+  color: rgba(0, 0, 0, 0.6);
+  height: 24px;
+  background: #F7F8F9;
+  border: 1px solid #EDEDED;
+  border-radius: 1px;
+}
+
+
+/* 解决方案 */
+.resolve{
+  background: #13182C url(../assets/img/index/home-bg.png) no-repeat center center;
+  background-size: cover;
+}
+
+.resolve-content {
+  margin: -10px;
+  margin-top: 60px;
+}
+
+.resolve-content .resolve-box {
+  position: relative;
+  top: 0;
+  max-width: 335px;
+  padding: 30px;
+  margin: 10px;
+  background: #F7F8F9;
+  box-shadow: 0px 0px 16px rgba(52, 52, 52, 0.16);
+  opacity: 1;
+  border-radius: 3px;
+  transition: .5s all;
+  cursor: pointer;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.resolve-content .resolve-box:nth-child(1) {
+  background-image: url('../assets/img/index/solution-1.png');
+
+}
+
+.resolve-content .resolve-box:nth-child(2) {
+  background-image: url('../assets/img/index/solution-2.png');
+}
+
+.resolve-content .resolve-box:nth-child(3) {
+  background-image: url('../assets/img/index/solution-3.png');
+}
+
+.resolve-content .resolve-box:nth-child(4) {
+  background-image: url('../assets/img/index/solution-7.png');
+}
+
+.resolve-content .fboxRow:nth-child(2) .resolve-box:nth-child(1) {
+  background-image: url('../assets/img/index/solution-4.png');
+}
+
+.resolve-content .fboxRow:nth-child(2) .resolve-box:nth-child(2) {
+  background-image: url('../assets/img/index/solution-5.png');
+}
+
+.resolve-content .fboxRow:nth-child(2) .resolve-box:nth-child(3) {
+  background-image: url('../assets/img/index/solution-6.png');
+}
+
+.resolve-content .fboxRow:nth-child(2) .resolve-box:nth-child(4) {
+  background-image: url('../assets/img/index/solution-8.png');
+}
+
+
+.resolve-content .resolve-box:hover {
+  top: -10px;
+}
+
+.resolve-content .resolve-box:hover h4,
+.resolve-content .resolve-box:hover .resolve-link {
+  color: rgba(255, 103, 57, 1);
+}
+
+.resolve-content .resolve-box h4 {
+  color: rgba(0, 0, 0, 0.9);
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+.resolve-content .resolve-box .resolve-link {
+  color: rgba(0, 0, 0, 0.60);
+  margin-top: 60px;
+  font-size: 14px;
+}
+
+
+
+/* 服务实践 */
+.practice {}
+
+.practice .practice-content {
+  margin: -10px;
+  margin-top: 40px;
+}
+
+.practice .practice-box {
+  margin: 10px;
+  padding: 30px;
+  width: 453px;
+  border: 1px solid #E6EAED;
+  border-radius: 3px;
+}
+
+.practice .practice-box img {
+  width: 99px;
+  height: 37px;
+}
+
+.practice-box:hover {
+  box-shadow: 0px 0px 16px rgba(52, 52, 52, 0.16);
+}
+
+.brand-group {
+  margin: -10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.practice .brand-box {
+  margin: 10px;
+  width: 216px;
+  height: 124px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  border: 1px solid #E6EAED;
+}
+
+.practice .brand-box img {
+  width: 86px;
+  height: 75px;
+}
+
+.practice .brand-box:hover {
+  box-shadow: 0px 0px 16px rgba(52, 52, 52, 0.16);
+}
+
+/* 基础措施 */
+.section-base {
+  background: rgba(247, 248, 250, 1);
+}
+
+.section-base .base {
+  margin-top: 42px;
+}
+.section-base>.section-content {
+  padding: 62px 20px 0;
+}
+.section-base .base img {
+  width: calc(100% - 140px);
+  margin-left: 35px;
+  height: 520px;
+  padding-right: 80px;
+}
+
+.base .base-content {
+  margin-bottom: 100px;
+}
+
+.base .base-content .title-desc {
+  white-space: nowrap;
+}
+
+.cert {
+  border: 2px solid #FFFFFF;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #F4F6F8 0%, #FDFEFE 100%);
+  box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cert-list {
+  padding: 0 20px;
+}
+
+.cert-list .cert-item {
+  padding: 13px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+}
+
+.cert-list .cert-item img {
+  height: 56px;
+  width: 56px;
+}
+
+.cert-list .cert-item .title-desc {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+/* 新闻 */
+.news-content {
+  margin-top: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 130px;
+}
+
+.news-content .news-cont {
+  flex: 1;
+
+}
+
+
+.news-content .news-head .news-title {
+  padding-left: 5px;
+  font-size: 22px;
+}
+
+.news-content .news-head .news-title {
+  position: relative;
+  padding-left: 10px;
+  font-size: 18px;
+  line-height: 20px;
+  height: 20px;
+}
+
+.news-content .news-head .news-title::before {
+  content: '';
+  width: 2px;
+  height: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: #FF6739;
+}
+
+
+.news-content .news-head .news-more {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.news-content .news-list {
+  margin-top: 15px;
+}
+
+.news-content .news-list .news-item {
+  line-height: 50px;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #E6EAED;
+}
+
+.news-content .news-cont .news-item:nth-child(1) .number {
+  background: rgba(255, 103, 57, 1);
+}
+
+.news-content .news-cont .news-item:nth-child(2) .number {
+  background: rgba(255, 103, 57, 1);
+}
+
+.news-content .news-cont .news-item:nth-child(3) .number {
+  background: rgba(255, 103, 57, 1);
+}
+
+.news-content .news-item .number {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  width: 14px;
+  height: 14px;
+  background: rgba(222, 222, 222, 1);
+  border-radius: 3px;
+}
+
+.news-content .news-item .title {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.90);
+}
+
+.news-content .news-item .title:hover {
+  color: rgba(255, 103, 57, 1);
+}
+
+.news-content .news-item .time {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: 13px;
+  min-width: 100px;
+  text-align: right;
+}
+
+
+.index .footer-link {
+  display: block;
+}
+.over-hide{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 24px;
+}
+.over-hide + p{
+  display: flex;
+  flex-wrap: wrap;
+  word-break: break-all;
+}

@@ -1,0 +1,57 @@
+.addon{
+  .common-look{
+    margin-right: 16px;
+    &:last-child{
+      margin-right: 0;
+    }
+  }
+  .version{
+    div{
+      display: flex;
+      align-items: center;
+    }
+    .upgrade{
+      img{
+        width: 16px;
+        cursor: pointer;
+        display: block;
+        margin-left: 10px;
+      }
+    }
+  }
+  .common-header{
+    flex-direction: column;
+  }
+  .top-btn{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .left{
+      display: flex;
+      align-items: center;
+    }
+  }
+  .bot-search{
+    display: flex;
+    margin-top: 20px;
+    .t-input__wrap,
+    .t-select__wrap{
+      width: auto;
+      margin-right: 10px;
+    }
+    .t-input{
+      width: 240px;
+      justify-content: flex-start;
+    }
+  }
+  .s-tip{
+    margin-top: 0;
+  }
+}
+
+.not-allowed{
+  .common-look{
+    filter: grayscale(1);
+    cursor: not-allowed;
+  }
+}

@@ -1,0 +1,215 @@
+<!-- 页面独有样式 -->
+<link rel="stylesheet" href="/plugins/reserver/whmcs_cloud/template/clientarea/pc/default/css/rewhmcs_cloud.css">
+<div class="template common-config">
+  <!-- 自己的东西 -->
+  <div class="main-card">
+    <div class="pro-tit">{{tit}}</div>
+    <div class="common-box">
+      <div class="l-config">
+        <!-- <div class="description" v-html="calStr" v-if="calStr"></div> -->
+        <!-- 自定义配置项 -->
+        <div class="config-item" v-for="item in configoptions" :key="item.id">
+          <p class="config-tit">{{item.lastname}}</p>
+          <!-- 配置项 -->
+          <div class="config-way">
+            <!-- 下拉单选 -->
+            <el-select v-model="configForm[item.id]" :placeholder="lang.please_select" v-if="item.optiontype === '1'"
+              collapse-tags @change="changeItem(item)">
+              <el-option v-for="item in item.options" :key="item.id" :label="item.lastname" :value="item.id">
+              </el-option>
+            </el-select>
+            <!-- 是否 -->
+            <el-switch v-model="configForm[item.id]" v-if="item.optiontype ==='3'" active-color="#0052D9"
+              :active-value="1" :inactive-value="0" @change="changeConfig(false)">
+            </el-switch>
+            <!-- 数量拖动 -->
+            <div class="slider" v-if="item.optiontype ==='4'">
+              <span class="min">{{item.qtyminimum}}</span>
+              <el-slider v-model="configForm[item.id]" @change="changeConfig(false)" :min="item.qtyminimum"
+                :max="item.qtymaximum">
+              </el-slider>
+              <span class="max">{{item.qtymaximum}}</span>
+              <el-input-number v-model="configForm[item.id]" :min="item.qtyminimum" :max="item.qtymaximum"
+                @change="changeConfig(false)"></el-input-number>
+            </div>
+
+            <!-- 点击单选 -->
+            <div class="click-select" v-if="item.optiontype ==='2'">
+              <div class="item" v-for="el in item.options" :key="el.id"
+                :class="{'com-active': el.id === configForm[item.id]}" @click="changeClick(item.id, el)">
+                {{el.lastname}}
+                <i class="el-icon-check"></i>
+              </div>
+            </div>
+            <!-- 后缀单位 -->
+            <span class="unit">{{item.unit}}</span>
+          </div>
+          <!-- 描述 -->
+          <!-- <p class="des" v-if="item.option_type !== 'area' && item.description"
+                    v-html="calcDes(item.description)">
+                  </p> -->
+        </div>
+        <!-- 自定义字段 -->
+        <div class="config-item" v-for="item in custom_fields" :key="item.id + 'hhhhh'">
+          <p class="config-tit"><span class="required" v-show="item.is_required === 1">*</span>{{item.field_name}}</p>
+          <!-- field_type: text, textarea, tickbox , link ,dropdown , password  -->
+          <div class="custom-filed-box">
+            <el-input v-if="item.field_type === 'text' || item.field_type === 'link'" v-model="customObj[item.id]"
+              :placeholder="item.description"></el-input>
+            <el-input v-if="item.field_type === 'textarea'" type="textarea" v-model="customObj[item.id]"
+              :placeholder="item.description"></el-input>
+            <el-input v-if="item.field_type === 'password'" type="password" v-model="customObj[item.id]"
+              :placeholder="item.description" show-password></el-input>
+            <el-checkbox :disabled="item.is_required === 1" v-if="item.field_type === 'tickbox'" true-label="1"
+              false-label="0" v-model="customObj[item.id]">
+              {{item.description}}
+            </el-checkbox>
+            <el-select v-if="item.field_type === 'dropdown'" v-model="customObj[item.id]"
+              :placeholder="item.description">
+              <el-option v-for="item in calcOption(item.field_option)" :key="item" :label="item" :value="item">
+              </el-option>
+            </el-select>
+          </div>
+        </div>
+        <!-- 自定义字段 end -->
+
+        <!-- 周期 -->
+        <div class="config-item">
+          <p class="config-tit">{{lang.com_config.cycle}}</p>
+          <!-- <div class="onetime cycle" v-if="basicInfo.pay_type === 'onetime'">
+            <p>{{lang.product_onetime_free}}：{{commonData.currency_prefix}}{{onetime}}</p>
+            <div class="item com-active">
+              <p class="name">{{lang.common_cloud_text6}}</p>
+              <p class="price">{{commonData.currency_prefix}}{{onetime}}</p>
+              <i class="el-icon-check"></i>
+            </div>
+          </div>
+          <div class="onetime cycle" v-if="basicInfo.pay_type === 'free'">
+            <p>{{lang.product_free}}</p>
+            <div class="item com-active">
+              <p class="name">{{lang.product_free}}</p>
+              <p class="price">{{commonData.currency_prefix}}0.00</p>
+              <i class="el-icon-check"></i>
+            </div>
+          </div> -->
+          <div class="cycle">
+            <div class="item" v-for="(item,index) in custom_cycles" :key="item.id" @click="changeCycle(item,index)"
+              :class="{'com-active': index === curCycle }">
+              <p class="name">{{lang[item.name]}}</p>
+              <p class="price">{{commonData.currency_prefix}}{{( item.price * 1).toFixed(2) | filterMoney}}</p>
+              <i class="el-icon-check"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 配置预览 -->
+      <div class="order-right">
+        <div class="right-main">
+          <div class="right-title">
+            {{lang.product_preview}}
+          </div>
+          <div class="info">
+            <p class="des">
+              <span>{{basicInfo.name}}</span>
+              <span v-if="base_price*1">{{commonData.currency_prefix}}{{ Number(base_price).toFixed(2) |
+                filterMoney}}</span>
+            </p>
+            <p class="des" v-for="(item,index) in showInfo" :key="index">
+              <span class="name">{{item.name}}</span>
+              <span class="value">{{item.value}}</span>
+              <span class="price">{{commonData.currency_prefix}}{{item.price | filterMoney}}</span>
+            </p>
+          </div>
+          <div class="subtotal">
+            <span class="name">{{lang.shoppingCar_goodsTotalPrice}}：</span>
+            <span v-loading="dataLoading">{{commonData.currency_prefix }}{{((onePrice * 1).toFixed(2)) |
+              filterMoney
+              }}</span>
+          </div>
+        </div>
+
+        <div class="f-box" v-if="isShowBtn">
+          <!-- 合计 优惠码 购买按钮 -->
+          <div class="order-right-footer">
+            <div class="order-right-item" v-if="basicInfo.allow_qty">
+              <div class="row">
+                <div class="label">{{lang.shoppingCar_goodsNums}}</div>
+                <div class="value del-add">
+                  <span class="del" @click="delQty" :class="{disabled: basicInfo.allow_qty === 0 }">-</span>
+                  <el-input-number class="num" :controls="false" v-model="orderData.qty" :min="1"
+                    :disabled="basicInfo.allow_qty === 0">
+                  </el-input-number>
+                  <span class="add" @click="addQty" :class="{disabled: basicInfo.allow_qty === 0 }">+</span>
+                </div>
+              </div>
+            </div>
+            <div class="footer-total">
+              <div class="left">{{lang.shoppingCar_tip_text3}}</div>
+              <div class="right" v-loading="dataLoading">
+                <span>{{commonData.currency_prefix}} {{totalPrice | filterMoney}}</span>
+                <el-popover placement="top-start" width="200" trigger="hover" v-if="original_price !=totalPrice">
+                  <div class="show-config-list">
+                    <p v-if="isShowLevel">{{lang.shoppingCar_tip_text2}}：{{commonData.currency_prefix}}
+                      {{ clDiscount | filterMoney }}
+                    </p>
+                    <p v-if="isShowPromo && isUseDiscountCode">
+                      {{lang.shoppingCar_tip_text4}}：{{commonData.currency_prefix}}
+                      {{ code_discount | filterMoney }}
+                    </p>
+                    <p v-if="customfield.event_promotion">{{lang.goods_text4}}：{{commonData.currency_prefix}} {{
+                      eventData.discount | filterMoney }}
+                    </p>
+                  </div>
+                  <i class="el-icon-warning-outline total-icon" slot="reference"></i>
+                </el-popover>
+                <p class="original-price" v-if="original_price !=totalPrice">{{commonData.currency_prefix}}
+                  {{original_price | filterMoney}}
+                </p>
+                <!-- 优惠码 -->
+                <div class="discount-box">
+                  <discount-code v-if="isShowPromo && !customfield.promo_code " @get-discount="getDiscount(arguments)"
+                    scene='new' :product_id='id' :qty="orderData.qty" :amount="onePrice"
+                    :billing_cycle_time="orderData.duration">
+                  </discount-code>
+                  <div v-if="customfield.promo_code" class="discount-codeNumber">
+                    {{ customfield.promo_code }}
+                    <i class="el-icon-circle-close remove-discountCode" @click="removeDiscountCode()"></i>
+                  </div>
+                  <!-- 活动插件 -->
+                  <event-code v-if="isShowFull" :product_id='id' :qty="orderData.qty" :amount="onePrice"
+                    :billing_cycle_time="orderData.duration" @change="eventChange">
+                  </event-code>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 需读 -->
+          <!-- 购买按钮 -->
+          <div class="f-btn ifram-hiden">
+            <template v-if="this.backfill.cycle">
+              <el-button class="buy-btn" type="primary" @click="changeCart" :loading="submitLoading"
+                style="width:100%">{{lang.product_sure_check}}</el-button>
+            </template>
+            <template v-else>
+              <el-button class="cart" type="primary" plain @click="addCart" :loading="submitLoading"
+                style="width:100%">{{lang.product_add_cart}}</el-button>
+              <el-button class="buy-btn" type="primary" @click="buyNow" :loading="submitLoading"
+                style="width:100%">{{lang.product_buy_now}}</el-button>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <el-dialog title="" :visible.sync="cartDialog" custom-class="cartDialog" :show-close="false">
+    <span class="tit">{{lang.product_tip}}</span>
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="cartDialog = false">{{lang.product_continue}}</el-button>
+      <el-button @click="goToCart">{{lang.product_settlement}}</el-button>
+    </span>
+  </el-dialog>
+</div>
+<!-- =======页面独有======= -->
+<script src="/plugins/reserver/whmcs_cloud/template/clientarea/pc/default/api/rewhmcs_cloud.js"></script>
+<script src="/plugins/reserver/whmcs_cloud/template/clientarea/pc/default/lang/index.js"></script>
+<script src="/plugins/reserver/whmcs_cloud/template/clientarea/pc/default/js/rewhmcs_cloud.js"></script>

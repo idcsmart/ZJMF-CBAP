@@ -1,0 +1,48 @@
+.main-card header {
+  height: 0.6rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.01rem solid #e6e7eb;
+  margin-bottom: 0.4rem;
+}
+.main-card header img {
+  display: block;
+  width: 0.24rem;
+  height: 0.26rem;
+  margin-right: 0.24rem;
+  cursor: pointer;
+}
+.main-card header h2 {
+  font-size: 0.28rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.25rem;
+  color: #171725;
+}
+.main-card .withdrawal-content {
+  border-radius: 0.03rem;
+  border: 0.01rem solid #e6e7eb;
+}
+.main-card .withdrawal-content .myPage {
+  margin: 0.3rem;
+}
+.main-card .withdrawal-content .el-tag {
+  border: none;
+}
+.main-card .el-table {
+  opacity: 1;
+}
+.main-card .el-table .el-table__header-wrapper .cell {
+  font-size: 0.14rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.22rem;
+  color: #757575;
+}
+.main-card .el-table .el-table__body-wrapper .cell {
+  font-size: 0.14rem;
+  font-family: PingFang SC;
+  font-weight: 400;
+  line-height: 0.22rem;
+  color: #171725;
+}

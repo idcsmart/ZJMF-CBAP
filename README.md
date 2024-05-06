@@ -15,38 +15,40 @@ ZJMF-CBAP v10是开源的业务管理系统，基于PHP+MYSQL开发的一套小�
 内置短信扩展接口，邮件扩展接口，主题扩展能力，开发者可快速开发短信邮件与主题，主题使用前后端分离模式，您只需要调用API即可，无论您使用jq或VUE，哪怕是react也不在话下。
 ### SaaS服务提供
 系统内置了常用接口，如短信，邮件，并且智简魔方提供了SaaS服务，您无需额外购买或者配置短信邮件，实名接口，即可使用。让您的业务上线更加便捷高效。
-### HookK能力
+### Hook能力
 系统具有丰富的hook模块，类似whmcs的hook，您可在系统任何动作时增加您的操作，方便您进行二次开发
 
 
 
 ***
 
-## 如何安装（开发者预览版）
-### 注意：
-当前版本为开发者预览版，不支持普通用户安装，目前没有会员中心界面，普通用户安装后无法使用！！！<br>
-开发者可使用当前版本，进行主题，插件开发。<br>
-### 安装步骤
+## 如何安装
+### 页面安装
+#### 安装步骤
 运行环境要求：PHP7.2或以上  Mysql5.6或5.7<br>
 所有代码传到网站根目录<br>
-导入根目录的rc.sql文件<br>
-### 伪静态设置
+#### 伪静态设置
 apache无需设置，public下已经存在.htaccess伪静态文件<br>
 nginx用户，请将public/nginx.conf设置到您的nginx配置中<br>
-### 配置数据库
+#### 配置数据库
 修改数据库配置文件config.php<br>
 访问后台 http://ip/admin<br>
 用户名admin<br>
 密码123456<br>
+#### 参考安装文档
+https://www.idcsmart.com/wiki_list/933.html
 
-
-### 安装后API文档访问路径
+#### 安装后API文档访问路径
 http://ip/doc
 
+### 一键安装脚本
+#### 参考文档
+https://wiki.idcsmart.com/web/#/p/9cd2411c3bcd3fdff18b20a8e1586044
+
 ### Demo地址
-https://v10demo.idcsmart.com/ytorfbze/login.htm
-admin123
-admin123
+https://v10demo.idcsmart.com/ytorfbze/login.htm<br>
+admin123<br>
+admin123<br>
 
 ***
 
@@ -77,6 +79,7 @@ https://www.idcsmart.com/wiki_list/1262.html
 https://www.idcsmart.com/wiki_list/1260.html
 ### 三方登录开发文档
 https://www.idcsmart.com/wiki_list/1263.html
+
 ***
 
 ## License

@@ -1,0 +1,262 @@
+#cloudList {
+  font-family: PingFang SC;
+  font-weight: 400;
+  font-size: 14px;
+  color: #171725;
+}
+
+.main-card-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+  margin-bottom: 16px;
+}
+
+.title-text {
+  font-size: .16rem;
+  line-height: .24rem;
+  white-space: nowrap;
+  margin-right: .16rem;
+}
+
+.add-btn {
+  height: .36rem;
+  opacity: 1;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: .08rem;
+  font-size: .14rem;
+  font-weight: bold;
+  font-family: PingFang SC;
+  border-radius:3px;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  -ms-border-radius:3px;
+  -o-border-radius:3px;
+  overflow: hidden;
+  font-size: .13rem;
+  color: #fff;
+  background: #3577F1;
+}
+.add-btn .cart {
+  padding: .1rem;
+  position: relative;
+  z-index: 2;
+  background: #4985f2;
+}
+.add-btn .el-button, .add-btn .el-button:hover{
+  background: #3577F1;
+  color: #fff;
+  border: none;
+}
+.main-card-menu {
+  width: 100%;
+  border-bottom: 1px solid #E6E7EB;
+  display: flex;
+  flex-direction: row;
+  margin-top: .4rem;
+
+
+}
+
+.main-card-menu .active {
+  border-bottom: 1px solid #0058FF;
+}
+
+.card-menu-item {
+  font-size: 15;
+  color: #1E2736;
+  padding-bottom: 13px;
+  cursor: pointer;
+}
+
+.card-menu-item:not(:first-child) {
+  margin-left: .4rem;
+}
+.el-table th.el-table__cell{
+  background-color: #F6F8FB;
+}
+
+.main-card-search {
+  display: flex;
+  align-items: center;
+  padding: .16rem .24rem;
+  border-top: 1px dashed #E9EBEC;
+  border-bottom: 1px dashed #E9EBEC;
+  justify-content: space-between;
+  margin: 0 -20px;
+  margin-bottom: 16px;
+  margin-top: -20px;
+  flex-wrap: wrap;
+}
+.main-card-search .right{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: -.24rem;
+}
+.main-card-search .right .el-input{
+  width: 3.16rem;
+  margin-right: .16rem;
+  margin-top: .24rem;
+}
+.main-card-search .right .el-button{
+  margin-top: .24rem;
+  height: .36rem;
+}
+.center-option-label {
+  display: flex;
+  align-items: center;
+}
+
+.center-option-label img {
+  margin-right: .1rem;
+}
+
+.search-btn {
+  padding: 0 .26rem;
+  height: .36rem;
+  background: #0058FF;
+  opacity: 1;
+  border-radius: 3px;
+  font-size: .16rem;
+  color: #FFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+tbody tr:hover {
+  cursor: pointer;
+}
+
+.column-id {
+  cursor: pointer;
+  color: #364574;
+}
+
+.column-id:hover {
+  border-bottom: 1px solid #364574;
+}
+
+.area {
+  height: .2rem;
+  display: flex;
+  align-items: center;
+}
+
+.area-img {
+  height: .18rem;
+}
+
+.area-country {
+  margin-left: .08rem;
+}
+
+.area-city {
+  margin-left: .08rem;
+}
+
+.cloud-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.cloud-name .packge-name,
+table tbody {
+  color: #212529;
+}
+
+.cloud-name .name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8692B0;
+}
+
+.power-status {
+  display: flex;
+  align-items: center;
+}
+
+.power-status img {
+  width: 18px;
+}
+
+.power-status .status-text {
+  color: #1E2736;
+  margin-left: 7px;
+}
+
+.os {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.os-img {
+  max-width: .22rem;
+}
+
+.os-text {
+  margin-left: .08rem;
+}
+
+.status {
+  padding: 0 .06rem;
+  line-height: .16rem;
+  border-radius: 4px;
+  background: pink;
+  display: inline-block;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.operation .dot {
+  color: #0058FF;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.main-card-table .page {
+  margin-bottom: .28rem;
+}
+.main-card-table .page .myPage{
+  padding: 0;
+}
+
+.el-input__suffix {
+  display: flex;
+  align-items: center;
+}
+
+.input-search {
+  padding-right: .1rem;
+  cursor: pointer;
+}
+
+
+
+/* mobile */
+@media screen and (max-width: 750px) {
+  .main-card-search{
+    padding: .24rem;
+  }
+  .title-text {
+    font-size: .24rem;
+    margin-bottom: .24rem;
+    display: block;
+  }
+  .main-card-search .right .el-input, .main-card-search .right .el-select{
+    width: 100%;
+    margin-right: 0;
+  }
+
+}
