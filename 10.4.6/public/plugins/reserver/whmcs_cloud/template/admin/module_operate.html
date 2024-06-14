@@ -1,0 +1,161 @@
+<link rel="stylesheet" href="/plugins/reserver/whmcs_cloud/template/admin/css/mf-cloud.css">
+
+<!-- =======内容区域======= -->
+<div class="operate-div">
+    <com-config>
+        <p>{{lang.setting_text40}}</p>
+        <div class="operate-btn-box" style="display: flex; flex-wrap: wrap; column-gap: 20px; row-gap: 20px;">
+            <template v-for="(item,index) in btnList">
+                <t-button v-if="item.isShow" @click="handelClick(item)" :key="item.op"
+                    :loading="item.loading">{{item.name}}</t-button>
+            </template>
+        </div>
+        <safe-confirm ref="safeRef" :password.sync="admin_operate_password" @confirm="hadelSafeConfirm"></safe-confirm>
+
+        <!-- 开关机操作弹窗 -->
+        <t-dialog theme="warning" :header="optTilte" :close-btn="false" :visible.sync="moduleVisible"
+            :close-on-overlay-click="false">
+            <template slot="footer">
+                <div class="common-dialog">
+                    <t-button @click="confirmModule" :loading="moduleLoading">{{lang.sure}}</t-button>
+                    <t-button theme="default" @click="moduleVisible=false">{{lang.cancel}}</t-button>
+                </div>
+            </template>
+        </t-dialog>
+        <!-- 重装系统弹窗 -->
+        <t-dialog :header="lang.setting_text47" :visible.sync="reinstallModel" :footer="false" width="600"
+            :close-on-overlay-click="false">
+            <div class="reinstall-box">
+                <t-form :data="reinstallData" :required-mark="false" ref="reinstallForm" @submit="saveReinstall"
+                    :rules="rules" reset-type='initial'>
+                    <t-form-item :label="lang.setting_text52" name="image_id">
+                        <t-select v-model="reinstallData.image_id" style="width: 100%;">
+                            <t-option :key="item.id" :value="item.id" :label="item.name" v-for="item in osList">
+                            </t-option>
+                        </t-select>
+                    </t-form-item>
+                    <t-form-item name="password">
+                        <div slot="label" class="custom-label">
+                            <span class="label">{{lang.setting_text53}}</span>
+                            <t-tooltip placement="top-right" :content="lang.setting_text55" :show-arrow="false"
+                                theme="light">
+                                <t-icon name="help-circle" size="18px" />
+                            </t-tooltip>
+                        </div>
+                        <t-select v-model="reinstallType" style="width: 50%;" @change="sshChange">
+                            <t-option value="passworld" :label="lang.setting_text53"></t-option>
+                        </t-select>
+                        <t-select style="width: 50%;" v-model="reinstallData.ssh_key_id" v-if="reinstallType === 'ssh'">
+                            <t-option :key="item.id" :value="item.id" :label="item.name" v-for="item in sshList">
+                            </t-option>
+                        </t-select>
+                        <t-input style="width: 50%;" v-if="reinstallType === 'passworld'"
+                            :placeholder="lang.setting_text53" v-model="reinstallData.password">
+                            <template #suffix-icon>
+                                <t-icon name="refresh" :style="{ cursor: 'pointer'}" @click="autoPass"></t-icon>
+                            </template>
+                        </t-input>
+
+                    </t-form-item>
+                    <div class="com-f-btn">
+                        <t-button theme="primary" type="submit" :loading="moduleLoading">{{lang.hold}}</t-button>
+                        <t-button theme="default" variant="base" @click="reinstallModel = false">{{lang.cancel}}
+                        </t-button>
+                    </div>
+                </t-form>
+            </div>
+
+        </t-dialog>
+        <!-- 救援模式 -->
+        <t-dialog :header="lang.setting_text49" :visible.sync="rescueModel" :footer="false" width="600"
+            :close-on-overlay-click="false">
+            <div class="reinstall-box">
+                <t-form :data="rescueData" ref="rescueForm" :required-mark="false" @submit="saveReinstall"
+                    reset-type='initial'>
+                    <t-form-item :label="lang.setting_text57">
+                        <t-select v-model="rescueData.type">
+                            <img class="os-option-img" slot="prefixIcon" style="margin-right: 5px"
+                                :src="`/plugins/reserver/whmcs_cloud/template/admin/img/${rescueData.type === 'windows' ? 'Windows' : 'Linux'}.svg`"
+                                alt="">
+                            <t-option :value="1" label="Windows">
+                                <div class="os-option">
+                                    <img class="os-option-img"
+                                        :src="`/plugins/reserver/whmcs_cloud/template/admin/img/Windows.svg`" alt="">
+                                    Windows
+                                </div>
+                            </t-option>
+                            <t-option :value="2" label="Linux">
+                                <div class="os-option">
+                                    <img class="os-option-img"
+                                        :src="`/plugins/reserver/whmcs_cloud/template/admin/img/Linux.svg`" alt="">
+                                    Linux
+                                </div>
+                            </t-option>
+                        </t-select>
+                    </t-form-item>
+                    <t-form-item name="password"
+                        :rules="[{ required: true, message: lang.input + lang.setting_text53 }]">
+                        <div slot="label" class="custom-label">
+                            <span class="label">{{lang.setting_text58}}</span>
+                            <t-tooltip placement="top-right" :content="lang.setting_text55" :show-arrow="false"
+                                theme="light">
+                                <t-icon name="help-circle" size="18px" />
+                            </t-tooltip>
+                        </div>
+                        <t-input :placeholder="lang.setting_text53" v-model="rescueData.password">
+                            <template #suffix-icon>
+                                <t-icon name="refresh" :style="{ cursor: 'pointer'}" @click="autoPass"></t-icon>
+                            </template>
+                        </t-input>
+                    </t-form-item>
+                    <div class="com-f-btn">
+                        <t-button theme="primary" type="submit" :loading="moduleLoading">{{lang.hold}}</t-button>
+                        <t-button theme="default" variant="base" @click="rescueModel = false">{{lang.cancel}}
+                        </t-button>
+                    </div>
+                </t-form>
+            </div>
+
+        </t-dialog>
+        <!-- 重置密码 -->
+        <t-dialog :header="lang.setting_text48" :visible.sync="resetPasswordModel" :footer="false" width="600"
+            :close-on-overlay-click="false">
+            <div class="reinstall-box">
+                <t-form :data="rescueData" ref="resetForm" :required-mark="false" @submit="saveReinstall"
+                    reset-type='initial'>
+                    <t-form-item name="password"
+                        :rules="[{ required: true, message: lang.input + lang.setting_text48 }]">
+                        <div slot="label" class="custom-label">
+                            <span class="label">{{lang.setting_text48}}</span>
+                            <t-tooltip placement="top-right" :content="lang.setting_text55" :show-arrow="false"
+                                theme="light">
+                                <t-icon name="help-circle" size="18px" />
+                            </t-tooltip>
+                        </div>
+                        <t-input :placeholder="lang.setting_text48" v-model="resetPasswordData.password">
+                            <template #suffix-icon>
+                                <t-icon name="refresh" :style="{ cursor: 'pointer'}" @click="autoPass"></t-icon>
+                            </template>
+                        </t-input>
+                    </t-form-item>
+                    <div class="alert-box">
+                        <div class="alert-title">{{lang.setting_text59}}</div>
+                        <div class="alert-row"><span class="dot"></span>{{lang.setting_text60}}
+                        </div>
+                        <div class="alert-row"><span class="dot"></span>{{lang.setting_text61}}
+                        </div>
+                    </div>
+                    <t-checkbox v-model="resetPasswordData.checked">{{lang.setting_text62}}</t-checkbox>
+                    <div class="com-f-btn">
+                        <t-button theme="primary" type="submit" :loading="moduleLoading">{{lang.hold}}</t-button>
+                        <t-button theme="default" variant="base" @click="resetPasswordModel = false">{{lang.cancel}}
+                        </t-button>
+                    </div>
+                </t-form>
+            </div>
+
+        </t-dialog>
+    </com-config>
+</div>
+<script src="/plugins/reserver/whmcs_cloud/template/admin/api/mf_cloud.js"></script>
+<script src="/plugins/reserver/whmcs_cloud/template/admin/js/module_operate.js"></script>

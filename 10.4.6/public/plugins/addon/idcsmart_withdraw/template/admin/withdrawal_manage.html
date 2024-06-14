@@ -1,0 +1,117 @@
+<link rel="stylesheet" href="/plugins/addon/idcsmart_withdraw/template/admin/css/withdrawal.css" />
+<!-- =======内容区域======= -->
+
+<div id="content" class="withdrawal table" v-cloak>
+  <t-card class="list-card-container">
+    <ul class="common-tab">
+      <li>
+        <a href="index.htm">{{lang.applicat_list}}</a>
+      </li>
+      <li class="active">
+        <a href="javascript:;">{{lang.withdrawal_manage}}</a>
+      </li>
+    </ul>
+    <div class="common-header">
+      <div class="l-box">
+        <t-button @click="jump" class="add">
+          {{lang.order_new}}
+        </t-button>
+        <t-button @click="sourceHandel" class="add" theme="default" variant="base">
+          {{lang.withdrawal_source_manage}}
+        </t-button>
+      </div>
+      <div class="r-box">
+        <!-- <div class="com-search">
+                  <t-input v-model="params.keywords" class="search-input"
+                    :placeholder="`${lang.please_search}ID、${lang.nickname}、${lang.username}、${lang.email}`"
+                    @keypress.enter.native="seacrh" :on-clear="clearKey" clearable>
+                  </t-input>
+                  <t-icon size="20px" name="search" @click="seacrh" class="com-search-btn" />
+                </div> -->
+      </div>
+    </div>
+
+    <t-table row-key="1" :data="data" size="medium" :columns="columns" :hover="hover" :loading="loading" :table-layout="tableLayout ? 'auto' : 'fixed'" @sort-change="sortChange" :hide-sort-tips="hideSortTips" :max-height="maxHeight">
+      <template slot="sortIcon">
+        <t-icon name="caret-down-small"></t-icon>
+      </template>
+      <template #phone="{row}">
+        <span v-if="row.phone">+{{row.phone_code}}&nbsp;-&nbsp;{{row.phone}}</span>
+      </template>
+      <template #status="{row}">
+        <t-tag theme="warning" class="status" v-if="row.status===0" variant="light">{{lang.to_audit}}</t-tag>
+        <t-tag theme="success" class="status" v-if="row.status===1" variant="light">{{lang.approved}}</t-tag>
+        <t-tag theme="danger" class="status" v-if="row.status===2" variant="light">{{lang.approved_reject}}
+        </t-tag>
+      </template>
+      <template #create_time="{row}">
+        {{row.create_time ? moment(row.create_time * 1000).format('YYYY-MM-DD HH:mm') : ''}}
+      </template>
+      <template #status="{row}">
+        <t-switch v-model="row.status" @change="changeStatus(row)" :custom-value="[1,0]"></t-switch>
+      </template>
+      <template #op="{row}">
+        <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
+          <t-icon name="edit-1" size="18px" @click="editHandler(row)" class="common-look"></t-icon>
+        </t-tooltip>
+        <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
+          <t-icon name="delete" size="18px" @click="deleteHandler(row)" class="common-look"></t-icon>
+        </t-tooltip>
+      </template>
+    </t-table>
+    <t-pagination show-jumper :total="total" :page-size="params.limit" :page-size-options="pageSizeOptions" :on-change="changePage" :current="params.page" v-if="total" />
+  </t-card>
+
+  <!-- 驳回原因 -->
+  <t-dialog :visible.sync="visible" :header="addTip" :on-close="close" :footer="false" width="600">
+    <t-form :rules="rules" :data="formData" ref="userDialog" @submit="onSubmit">
+      <t-form-item :label="lang.dismiss_the_reason" name="reason">
+        <t-textarea :placeholder="lang.dismiss_the_reason" v-model="formData.reason" />
+      </t-form-item>
+      <div class="f-btn">
+        <t-button theme="primary" type="submit">{{lang.hold}}</t-button>
+        <t-button theme="default" variant="base" @click="close">{{lang.cancel}}</t-button>
+      </div>
+    </t-form>
+  </t-dialog>
+  <!-- 删除流水提示框 -->
+  <t-dialog theme="warning" :header="lang.sureDelete" :close-btn="false" :visible.sync="delVisible">
+    <template slot="footer">
+      <t-button theme="primary" @click="sureDelUser">{{lang.sure}}</t-button>
+      <t-button theme="default" @click="delVisible=false">{{lang.cancel}}</t-button>
+    </template>
+  </t-dialog>
+  <!-- 提现来源管理 -->
+  <t-dialog :close-btn="false" :visible.sync="sourceModal" class="sourceModal" :footer="false">
+    <div class="box">
+      <div class="item">
+        <p class="tit">{{lang.plugin_list}}</p>
+        <div class="com-search">
+          <t-input v-model="pluginKey" class="search-input" :placeholder="`${lang.input}`" @keypress.enter.native="seacrhPlugin" :on-clear="clearPluginKey" clearable>
+          </t-input>
+          <t-icon size="20px" name="search" @click="seacrhPlugin" class="com-search-btn" />
+        </div>
+        <t-table row-key="id" :columns="originColumns" :data="originList" @select-change="rehandleSelectChange" :selected-row-keys="checkId" :max-height="520">
+        </t-table>
+      </div>
+      <p class="arrow" @click="transferData">
+        <t-icon name="chevron-right"></t-icon>
+      </p>
+      <div class="item">
+        <p class="tit">{{lang.selected}}</p>
+        <t-table row-key="id" :columns="checkColumns" :data="checkList" :max-height="520">
+          <template #op="{row}">
+            <t-icon name="minus-rectangle" class="del-icon" @click="delItem(row.id)"></t-icon>
+          </template>
+        </t-table>
+        <div class="com-f-btn">
+          <t-button theme="primary" @click="sureSubmit">{{lang.sure}}</t-button>
+          <t-button theme="default" @click="sourceModal=false">{{lang.close}}</t-button>
+        </div>
+      </div>
+    </div>
+  </t-dialog>
+</div>
+
+<script src="/plugins/addon/idcsmart_withdraw/template/admin/api/withdrawal.js"></script>
+<script src="/plugins/addon/idcsmart_withdraw/template/admin/js/withdrawal_manage.js"></script>

@@ -1,0 +1,396 @@
+.t-table td,
+.t-table th {
+  padding: 12px 24px;
+}
+.top-back {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.top-back .template-back {
+  font-size: 14px;
+  margin-left: 10px;
+  color: var(--td-brand-color-8);
+}
+.com-h-box .common-tab {
+  margin: 0 0 10px;
+}
+.controller-tab .t-tabs__nav-item-wrapper {
+  color: var(--td-text-color-primary);
+}
+.controller-tab .t-tabs__nav-item:hover .t-tabs__nav-item-wrapper {
+  background: transparent !important;
+}
+.controller-tab .t-is-active .t-tabs__nav-item-wrapper {
+  color: var(--td-text-color-8);
+}
+.controller-tab .t-tabs__bar {
+  transition: all 0s cubic-bezier(0.38, 0, 0.24, 1) !important;
+}
+/* template_nav_config */
+.template_nav_config .no-move {
+  display: none;
+}
+.template_nav_config .no-move > td.t-table__handle-draggable {
+  display: none;
+  user-select: none;
+  -moz-user-select: none;
+}
+.template_nav_config .t-table__body tr:first-child .t-table__handle-draggable {
+  text-indent: -9999;
+  cursor: inherit;
+}
+.template_nav_config .file_address .t-form__controls-content {
+  flex-wrap: wrap;
+}
+.template_nav_config .file_address .t-form__controls-content .s-tip {
+  color: #999;
+}
+.template_nav_config .upload_box .upload {
+  width: 100px;
+  height: 100px;
+  background-color: var(--td-bg-color-secondarycontainer);
+  border: 1px dashed var(--td-component-border);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+.template_nav_config .upload_box .up-tip {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.4);
+  display: inline-block;
+  margin-left: 5px;
+}
+.template_nav_config .upload_box .up-tip p {
+  margin: 0;
+}
+.template_nav_config .upload_box .t-form__controls-content {
+  display: flex;
+  align-items: flex-start;
+}
+.template_nav_config .form-box {
+  position: relative;
+}
+.template_nav_config .form-box .show {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.template_nav_config .form-box .show .t-form__label {
+  width: auto !important;
+  padding-right: 10px !important;
+}
+.template_nav_config .form-box .show .t-form__controls {
+  margin-left: 0 !important;
+}
+.template_nav_config .t-upload__card-name {
+  display: none;
+}
+.template_nav_config .first_name {
+  font-weight: bold;
+}
+/* template_bottom_nav */
+.client-search .t-button {
+  margin-left: 10px;
+}
+.group_dialog .t-input__wrap {
+  width: 455px;
+}
+.group_dialog .t-button {
+  margin-left: 20px;
+}
+.group_dialog .t-table {
+  margin-top: 20px;
+}
+/* template_host_config */
+.template_host_config .s-tip {
+  color: #999;
+}
+.template_host_config .t-card__body {
+  height: 100%;
+}
+.template_host_config .box {
+  min-height: calc(100% - 200px);
+  display: flex;
+  flex-direction: column;
+  max-width: 100% !important;
+}
+.template_host_config .box .content {
+  display: flex;
+  flex: 1;
+}
+.template_host_config .box .con {
+  width: calc(100% - 150px);
+}
+.template_host_config .box .slider {
+  min-width: 120px;
+  background: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #eee;
+  margin-right: 20px;
+}
+.template_host_config .box .slider .item {
+  margin: 0;
+  line-height: 44px;
+  cursor: pointer;
+  padding: 0 10px;
+  border-bottom: 1px solid #eee;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.template_host_config .box .slider .item.active {
+  background: #fff;
+  color: #333;
+}
+.template_host_config .banner-table {
+  max-width: 100%;
+}
+.template_host_config .banner-table .b-img,
+.template_host_config .t-upload__card-container,
+.template_host_config .t-upload__card-content {
+  height: 80px;
+}
+.template_host_config .common-header {
+  margin-top: 0;
+  margin-bottom: 10px;
+  align-items: center;
+}
+.template_host_config .icp .host-id {
+  margin-bottom: 20px;
+  display: flex;
+}
+.template_host_config .icp .host-id .t-input__wrap {
+  margin-right: 10px;
+  width: 240px;
+}
+.template_host_config .limit_table {
+  max-width: 1235px;
+}
+.template_host_config .t-input-number {
+  width: 100%;
+}
+.template_host_config .more {
+  margin-top: 30px;
+}
+.template_host_config .t-upload__card-name {
+  display: none !important;
+}
+.price_item {
+  position: relative;
+}
+.price_item .unit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  width: 60px;
+}
+.price_item .unit .t-select-input--borderless .t-input--focused,
+.price_item .unit .t-select-input--borderless .t-input:hover:not(.t-input--focused) {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+.price_item .unit .t-input {
+  border-color: transparent !important;
+}
+.price_item .unit.bw {
+  width: 80px;
+}
+/* template_seo_manage */
+.template .box {
+  max-width: 1235px;
+  padding: 0;
+}
+.template_seo_manage .form-box {
+  display: flex;
+}
+.template_seo_manage .form-box .t-form__item {
+  flex: 1;
+}
+.template_seo_manage .form-box .t-form__item:first-child {
+  margin-right: 20px;
+}
+.t-table__header tr {
+  background: #F3F5F8;
+}
+/* banner-table */
+.banner-table {
+  margin-bottom: 24px;
+}
+.banner-table .top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.banner-table .b-img {
+  max-width: 100%;
+  height: 110px;
+}
+.banner-table .t-upload {
+  width: 100%;
+}
+.banner-table .t-input {
+  width: 100%;
+}
+.banner-table .t-upload__card-item {
+  margin-right: 0;
+}
+.banner-table .t-upload__card-content,
+.banner-table .t-upload__card-item,
+.banner-table .t-upload__card-container {
+  width: 100%;
+}
+/* template_side_manage */
+.template_side_manage .upload {
+  width: 130px;
+  height: 32px;
+  background: #eee;
+  border: 1px solid #DCDCDC;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+}
+.template_side_manage .logo {
+  margin-left: 35px;
+  cursor: pointer;
+}
+.template_side_manage .logo .box {
+  width: 32px;
+  height: 32px;
+  border-radius: 3px;
+  border: 1px solid #DCDCDC;
+  box-sizing: border-box;
+  position: relative;
+  background: #EEEEEE;
+  padding: 0;
+}
+.template_side_manage .logo img {
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 0;
+}
+.template_side_manage .logo:hover .hover {
+  opacity: 1;
+}
+.template_side_manage .logo .hover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  background: #656565;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transition: all 0.3s;
+}
+.template_side_manage .logo .name {
+  font-size: 12px;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.9);
+  display: inline-block;
+}
+.template_side_manage .up-tip {
+  font-size: 12px;
+  margin-top: 10px;
+  color: rgba(0, 0, 0, 0.4);
+  display: inline-block;
+}
+.template_side_manage .up-tip p {
+  line-height: 1;
+  margin: 0;
+  margin-bottom: 5px;
+}
+.template_side_manage .t-form-item__icon .t-form__controls-content {
+  display: flex;
+  align-items: flex-start;
+}
+.template_side_manage .icon {
+  width: 32px;
+  height: 32px;
+  font-size: 0;
+}
+/* template_web_config */
+.template_web_config .box {
+  max-width: 900px;
+}
+.template_web_config .info-form {
+  column-gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.template_web_config .info-form .t-form__item {
+  width: 330px;
+}
+.template_web_config .info-form .qrcode {
+  width: 680px;
+}
+.template_web_config .info-btn {
+  margin-right: 300px;
+}
+.template_web_config .web-logo .t-upload__card-content,
+.template_web_config .web-logo .t-upload__card-container {
+  width: 260px;
+  height: 68px;
+}
+.template_web_config .com-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  line-height: 1;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+.template_web_config .com-top .tit {
+  margin: 0;
+}
+.template_web_config .com-top .add-btn {
+  cursor: pointer;
+  line-height: 32px;
+  height: 32px;
+  background: var(--td-brand-color-8);
+  font-size: 14px;
+  color: #fff;
+  padding: 0 14px;
+  border-radius: 4px;
+}
+/* host_dialog */
+.host_dialog .t-form {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 34px;
+}
+.host_dialog .t-form .t-form__item {
+  width: 350px;
+}
+.host_dialog .com-f-btn {
+  width: 100%;
+}
+.isEn .price_item .unit {
+  width: 90px;
+}
+.isEn .price_item .unit.bw {
+  width: 110px;
+}
+.top-box {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+}

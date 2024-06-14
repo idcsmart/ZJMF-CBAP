@@ -1,0 +1,2314 @@
+@base: rgb(0, 88, 255);
+
+.main-card {
+  .time-select {
+    margin-top: 0.3rem;
+  }
+
+  .echart-main {
+    margin-top: 0.3rem;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .my-echart {
+      width: 570px;
+      height: 352px;
+      margin-right: 1.2rem;
+      margin-bottom: 0.3rem;
+      box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.04);
+
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .up-authorization {
+    margin-left: 0.1rem;
+    display: inline-block;
+    text-align: center;
+    line-height: 0.32rem;
+    padding: 0 0.16rem;
+    border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+    background: #00B9FF;
+    color: #FFFFFF;
+    cursor: pointer;
+    font-size: 0.14rem;
+    height: 0.32rem;
+  }
+
+  // 管理
+  .manage-content {
+    margin-top: .2rem;
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: .4rem;
+    column-gap: .24rem;
+
+    .manage-item {
+      box-sizing: border-box;
+      width: calc((100% - .48rem) / 3);
+      min-height: 1.55rem;
+      border: 1px solid #E6E7EB;
+      opacity: 1;
+      border-radius: 3px;
+      padding-top: 0.3rem;
+      padding-left: 0.24rem;
+      display: flex;
+      flex-direction: column;
+
+      .item-top {
+        display: flex;
+        flex-direction: row;
+        // align-items: center;
+
+        .item-top-btn {
+          margin-left: .2rem;
+        }
+      }
+
+      .item-top-btn {
+        width: .88rem;
+        min-width: 140px;
+        height: .32rem;
+        background: #0058FF;
+        opacity: 1;
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.9);
+        cursor: pointer;
+      }
+
+      .item-bottom {
+        color: #1E2736;
+        margin-top: .16rem;
+
+        .bottom-row {}
+      }
+    }
+  }
+
+  // 磁盘
+  .disk-top-operation {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-top: 0.3rem;
+
+    .btn1,
+    .btn2 {
+      background: 0058FF;
+    }
+  }
+
+  .buy-btn {
+    width: 1.12rem;
+    height: 0.46rem;
+    background: #eef4ff;
+    border-radius: 3px;
+    font-size: 0.16rem;
+    color: #0058ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0.6rem auto;
+  }
+
+  .no-disk {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .text {
+      font-size: 0.24rem;
+      color: #1e2736;
+      margin-top: 1.4rem;
+    }
+
+    .text2 {
+      font-size: 0.16rem;
+      color: #4e5259;
+      margin-top: 0.16rem;
+    }
+
+    .buy-btn {
+      width: 1.12rem;
+      height: 0.46rem;
+      background: #eef4ff;
+      border-radius: 3px;
+      font-size: 0.16rem;
+      color: #0058ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      margin-top: 0.6rem;
+    }
+  }
+
+  .yes-disk {
+    .main-table {
+      margin-top: 0.4rem;
+      border-radius: 3px;
+      border: 1px solid #e6e7eb;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .more-operation {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 0.3rem;
+        cursor: pointer;
+
+        .dot {
+          width: 3px;
+          height: 3px;
+          border: 3px solid rgba(0, 88, 255, 1);
+          border-radius: 50%;
+          margin-right: 0.05rem;
+        }
+      }
+    }
+  }
+
+  // 网络
+  // 网络
+  .net {
+    .title {
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+      font-size: 0.18rem;
+      color: #1e2736;
+    }
+
+    .top-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .main_table {
+      border: 1px solid #e6e7eb;
+    }
+
+    .flow-content {
+      display: flex;
+      flex-direction: column;
+
+      .flow-item {
+        color: #1e2736;
+        margin-top: 0.1rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        .flow-label {
+          width: 100px;
+          margin-right: 0.3rem;
+        }
+
+        .flow-value {}
+      }
+    }
+
+    .safe-conten {
+      .safe-box {
+        display: flex;
+        align-items: center;
+
+        >span {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .log {
+    .main_table {
+      border: 1px solid #e6e7eb;
+      border-radius: 3px;
+      margin-top: 0.25rem;
+    }
+  }
+
+  // 备份与快照
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.4rem;
+
+    &:nth-last-child(1) {
+      margin-top: 0.6rem;
+    }
+
+    .content-top {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.1rem;
+
+      .top-title {
+        font-size: 0.18rem;
+        color: #1e2736;
+      }
+
+      .top-btn {
+        width: 0.82rem;
+        height: 0.32rem;
+        background: #eef4ff;
+        border-radius: 3px;
+        font-size: 0.14rem;
+        color: #0058ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+
+    .main-table {
+      border: 1px solid #e6e7eb;
+      border-radius: 3px;
+
+      .more-operation {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 0.3rem;
+        cursor: pointer;
+
+        .dot {
+          width: 3px;
+          height: 3px;
+          border: 3px solid rgba(0, 88, 255, 1);
+          border-radius: 50%;
+          margin-right: 0.05rem;
+        }
+      }
+    }
+  }
+
+  .no-bs {
+    display: flex;
+    flex-direction: column;
+
+    .no-bs-title {
+      font-size: 0.18rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .no-bs-content {
+      // width: 100%;
+      height: 3.01rem;
+      border: 1px solid #e6e7eb;
+      border-radius: 3px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .text {
+        font-size: 0.24rem;
+        color: #1e2736;
+        margin-top: 0.91rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .btn {
+        width: 1.12rem;
+        height: 0.46rem;
+        background: #eef4ff;
+        border-radius: 3px;
+        color: #0058ff;
+        font-size: 0.16rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .no-back {
+    margin-top: 0.2rem;
+  }
+
+  .no-snap {
+    margin-top: 0.6rem;
+  }
+}
+
+// 重置密码弹窗
+.repass-dialog {
+  .dialog-title {
+    display: flex;
+    flex-direction: column;
+
+    .second-title {
+      font-size: 0.14rem;
+      color: #8692b0;
+    }
+  }
+
+  .dialog-main {
+    .label {
+      i {
+        color: #dbdbdd;
+        cursor: help;
+        margin-left: 0.04rem;
+      }
+    }
+
+    .pass-input {
+      .el-input__suffix {
+        right: 0;
+      }
+
+      .pass-btn {
+        width: 1.12rem;
+        height: calc(100% - 0.02rem);
+        background: #eef4ff;
+        border-radius: 0px 3px 3px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.16rem;
+        color: #4e5259;
+        border-top: 1px solid #e6e7eb;
+        border-right: 1px solid #e6e7eb;
+        border-bottom: 1px solid #e6e7eb;
+        cursor: pointer;
+      }
+    }
+
+    .alert {
+      background: #fde6e9;
+      border: 1px solid rgba(240, 20, 47, 0.2);
+      opacity: 1;
+      border-radius: 3px;
+      color: #f64e60;
+      padding: 0.13rem 0.16rem;
+      display: flex;
+      flex-direction: column;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+
+      .title {
+        margin-bottom: 0.25rem;
+      }
+
+      .row {
+        display: flex;
+        flex-direction: row;
+
+        .dot {
+          width: 4px;
+          height: 4px;
+          background: #f64e60;
+          border-radius: 50%;
+          opacity: 1;
+          margin-top: 0.1rem;
+          margin-right: 0.1rem;
+        }
+      }
+    }
+
+    .alert-err-text {
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+// 救援模式 弹窗
+.rescue-dialog {
+  .dialog-title {
+    display: flex;
+    flex-direction: column;
+
+    .second-title {
+      font-size: 0.14rem;
+      color: #8692b0;
+    }
+  }
+
+  .dialog-main {
+    .os-select {
+      width: 100%;
+
+      .el-input__inner {
+        height: 0.52rem;
+        width: 100%;
+        padding-left: 0.65rem;
+      }
+
+      .os-img {
+        width: 0.48rem;
+        height: 0.48rem;
+      }
+    }
+
+    .pass-input {
+      .el-input__suffix {
+        right: 0;
+      }
+
+      .pass-btn {
+        width: 1.12rem;
+        height: calc(100% - 0.02rem);
+        background: #eef4ff;
+        border-radius: 0px 3px 3px 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.16rem;
+        color: #4e5259;
+        border-top: 1px solid #e6e7eb;
+        border-right: 1px solid #e6e7eb;
+        border-bottom: 1px solid #e6e7eb;
+        cursor: pointer;
+      }
+    }
+
+    .alert {
+      margin-top: 0.2rem;
+
+      .remind {
+        height: 0.46rem;
+        background: #fde6e9;
+        border: 1px solid rgba(240, 20, 47, 0.2);
+        opacity: 1;
+        border-radius: 3px;
+        color: #f64e60;
+        line-height: 0.46rem;
+        padding-left: 0.16rem;
+      }
+    }
+  }
+}
+
+// 升降级弹窗
+.upgrade-dialog {
+  .dialog-main {
+    .el-input__inner {
+      height: auto !important;
+    }
+
+    width: 100%;
+  }
+
+  .dialog-footer {
+    display: block;
+
+    .money-text {
+      margin-top: 0.1rem;
+      margin-right: 0.59rem;
+      color: rgba(30, 39, 54, 1);
+    }
+
+    .money {
+      text-align: right;
+    }
+
+    .money-num {
+      font-size: 0.28rem;
+      font-family: Helvetica;
+      font-weight: bold;
+      color: #f0142f;
+    }
+
+    .discount-codeNumber {
+      cursor: pointer;
+    }
+
+    .total-icon {
+      font-size: 0.16rem;
+      color: #1e2736;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      font-size: 0.2rem;
+      font-weight: 500;
+      color: #999999;
+    }
+
+    .footer-top {
+      text-align: right;
+      display: flex;
+      justify-content: right;
+    }
+
+    .footer-bottom {
+      display: flex;
+      margin-top: 0.41rem;
+      justify-content: right;
+    }
+  }
+}
+
+.os-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .item-os-img {
+    width: 0.24rem;
+    height: 0.24rem;
+  }
+}
+
+// 订购弹窗页面开始
+.dg-dialog {
+  .el-dialog__body {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .disk-card {
+    margin-top: 0.4rem;
+
+    .disk-label {
+      font-size: 0.16rem;
+      color: #1e2736;
+    }
+
+    .disk-main-card {
+      margin-top: 0.1rem;
+      width: 100%;
+      border: 1px solid #e6e7eb;
+      border-radius: 3px;
+
+      .no-disk-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+        color: #0058ff;
+        cursor: pointer;
+
+        .add {
+          margin-right: 5px;
+        }
+      }
+
+      .old-disk-item {
+        margin-left: 0.42rem;
+        margin-bottom: 0.2rem;
+
+        &:first-child {
+          margin-top: 0.3rem;
+        }
+
+        &:last-child {
+          margin-bottom: 0.3rem;
+        }
+
+        .disk-item-text {
+          display: inline-block;
+          width: 2.2rem;
+          font-size: 0.14rem;
+          color: #1e2736;
+        }
+
+        .disk-item-size {
+          color: #0058ff;
+          font-size: 0.14rem;
+          margin-left: 0.6rem;
+          margin-right: 0.72rem;
+        }
+
+        .del {
+          font-size: 0.1543rem;
+          color: #f0142f;
+          cursor: pointer;
+        }
+      }
+
+      .new-disk-item {
+        margin-left: 0.42rem;
+        margin-bottom: 0.2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:first-child {
+          margin-top: 0.3rem;
+        }
+
+        &:last-child {
+          margin-bottom: 0.3rem;
+        }
+
+        .item-name {
+          color: #1e2736;
+          margin-right: 0.3rem;
+        }
+
+        .item-min-size {
+          color: #999999;
+        }
+
+        .el-slider {
+          width: 4.34rem;
+          margin-left: 0.12rem;
+          margin-right: 0.12rem;
+        }
+
+        .item-max-size {
+          color: #999999;
+          margin-right: 0.19rem;
+        }
+
+        .del,
+        .add {
+          font-size: 0.18rem;
+          cursor: pointer;
+        }
+
+        .del {
+          color: #f0142f;
+          margin-right: 0.15rem;
+        }
+
+        .add {
+          color: #0058ff;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: 0.2rem;
+    }
+
+    .btn-ok {
+      margin-right: 0.12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 扩容弹窗页面开始
+.kr-dialog {
+  .el-dialog__body {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .dialog-main {
+    margin-top: 0.4rem;
+
+    .label {
+      font-size: 0.16rem;
+      color: #1e2736;
+      margin-bottom: 0.1rem;
+    }
+
+    .disk-main-card {
+      margin-top: 0.1rem;
+      width: 100%;
+      border: 1px solid #e6e7eb;
+      border-radius: 3px;
+
+      .old-disk-item {
+        margin-bottom: 0.2rem;
+        margin-left: 0.4rem;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:first-child {
+          margin-top: 0.3rem;
+        }
+
+        &:last-child {
+          margin-bottom: 0.3rem;
+        }
+
+        .disk-item-text {
+          min-width: 1rem;
+          max-width: 2rem;
+          margin-right: 0.3rem;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .el-slider {
+          width: 3rem;
+          margin-left: 0.12rem;
+          margin-right: 0.12rem;
+        }
+      }
+
+      .no-disk-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 0;
+        color: #0058ff;
+        cursor: pointer;
+
+        .add {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: 0.2rem;
+    }
+
+    .btn-ok {
+      margin-right: 0.12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 分配主机弹窗
+.engine-dialog {
+  .el-dialog__body {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .dialog-main {
+    margin-top: 0.4rem;
+
+    .label {
+      font-size: 0.16rem;
+      color: #1e2736;
+      margin-bottom: 0.1rem;
+    }
+
+    .engine-main-card {
+      margin-top: 0.1rem;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .engine-box {
+        display: flex;
+        align-items: center;
+        margin-top: 0.2rem;
+
+        .el-select {
+          .el-input__inner {
+            height: auto !important;
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: 0.2rem;
+    }
+
+    .btn-ok {
+      margin-right: 0.12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+.addVpc-dialog {
+  .el-dialog__body {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .dialog-main {
+    margin-top: 0.4rem;
+
+    .vpc-main-card {
+      margin-top: 0.1rem;
+      width: 100%;
+
+      .vpc-item {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+
+        .el-input__inner {
+          height: auto !important;
+        }
+
+        .vpc-leabel {
+          width: 80px;
+          flex-shrink: 0;
+        }
+      }
+
+      .vpc {
+        display: flex;
+
+        .custom {
+
+          .el-select,
+          .el-input-number {
+            width: 0.75rem;
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: 0.2rem;
+    }
+
+    .btn-ok {
+      margin-right: 0.12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+.safe-dialog {
+  .el-dialog__body {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .dialog-main {
+    margin-top: 0.4rem;
+
+    .safe-main-card {
+      margin-top: 0.1rem;
+      width: 100%;
+
+      .safe-box {
+        display: flex;
+        align-items: center;
+
+        .el-input__inner {
+          height: auto !important;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: 0.2rem;
+    }
+
+    .btn-ok {
+      margin-right: 0.12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 新增IP弹窗
+.ip-dialog {
+  .el-dialog__body {
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
+  }
+
+  .dialog-main {
+    margin-top: 0.4rem;
+
+    .label {
+      font-size: 0.16rem;
+      color: #1e2736;
+      margin-bottom: 0.1rem;
+    }
+
+    .ip-main-card {
+      margin-top: 0.1rem;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .ip-item {
+        margin-top: 0.2rem;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.15rem;
+        color: #1e2736;
+        width: 1.6rem;
+        height: 0.62rem;
+        border: 1px solid #e6e7eb;
+        border-radius: 0.03rem;
+      }
+
+      .active {
+        border: 1px solid #0058ff;
+      }
+
+      &::after {
+        content: "";
+        width: 1.6rem;
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+
+    .text {
+      color: rgba(30, 39, 54, 1);
+      align-self: flex-end;
+    }
+
+    .num {
+      color: rgba(249, 150, 0, 1);
+      align-self: flex-end;
+      margin-right: 0.2rem;
+    }
+
+    .btn-ok {
+      margin-right: 0.12rem;
+      cursor: pointer;
+    }
+
+    .btn-no {
+      cursor: pointer;
+    }
+  }
+}
+
+// 创建备份、快照弹窗
+.create-bs-dialog {
+  .dialog-main {
+    .title-second-text {
+      color: #8692b0;
+    }
+
+    .label {
+      font-size: 0.16rem;
+      color: #1e2736;
+      margin-top: 0.3rem;
+      margin-bottom: 0.1rem;
+    }
+
+    .el-select,
+    .el-input,
+    input {
+      height: 0.46rem;
+      width: 100%;
+    }
+
+    .alert {
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+// 还原弹窗
+.restore-dialog {
+  .dialog-main {
+    margin-top: 0.4rem;
+    border: 1px solid #e6e7eb;
+    display: flex;
+    flex-direction: column;
+
+    span {
+      color: #171725;
+      margin-left: 0.39rem;
+
+      &:first-child {
+        margin-top: 0.3rem;
+      }
+
+      &:last-child {
+        margin-bottom: 0.3rem;
+      }
+    }
+  }
+}
+
+// 删除弹窗
+.del-dialog {
+  .dialog-title {
+    color: #f0142f;
+  }
+
+  .dialog-main {
+    margin-top: 0.3rem;
+    display: flex;
+    flex-direction: column;
+
+    .row-1 {
+      font-size: 0.16rem;
+      color: #1e2736;
+    }
+
+    .row-2 {
+      margin-top: 0.23rem;
+      color: #f0142f;
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    flex-direction: column;
+
+    .btn-ok {
+      width: 100%;
+      margin-right: 0;
+      background: #f0142f;
+    }
+
+    .btn-no {
+      width: 100%;
+      margin-top: 0.16rem;
+      margin-left: 0 !important;
+    }
+  }
+}
+
+// 开启弹窗
+.bs-dialog {
+  .dialog-main {
+    margin-top: 0.3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .num {
+      margin-left: 0.4rem;
+      color: #1e2736;
+    }
+
+    .price {
+      margin-left: 0.06rem;
+      color: #0058ff;
+    }
+  }
+}
+
+.el-popover {
+  min-width: 0.5rem !important;
+
+  .operation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .operation-item {
+      margin-top: 0.05rem;
+      margin-bottom: 0.05rem;
+      cursor: pointer;
+    }
+  }
+}
+
+.renew-dialog {
+  .pay-content {
+    border: 1px solid #e6e7eb;
+    border-radius: 3px;
+    padding: 0.2rem 0;
+    padding-right: 0.3rem;
+
+    .pay-price {
+      display: flex;
+      flex-direction: row;
+      text-align: right;
+
+      .text {
+        margin-top: 0.1rem;
+        color: #1e2736;
+        margin-right: 1.43rem;
+      }
+
+      .money {
+        width: 100%;
+        font-size: 0.28rem;
+        font-family: Helvetica;
+        font-weight: bold;
+        color: #f0142f;
+        text-align: right;
+      }
+
+      .total-icon {
+        font-size: 0.16rem;
+        color: #1e2736;
+      }
+
+      .original-price {
+        text-decoration: line-through;
+        font-size: 0.2rem;
+        font-weight: 500;
+        color: #999999;
+      }
+    }
+  }
+}
+
+.code-box {
+  margin-top: 0.08rem;
+  display: flex;
+  justify-content: flex-end;
+
+  >div:nth-of-type(2) {
+    margin-left: 0.1rem;
+  }
+}
+
+.code-number-text {
+  display: flex;
+  margin-top: 0.04rem;
+  justify-content: flex-end;
+
+  .discount-codeNumber {
+    cursor: pointer;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    background: rgba(249, 149, 0, 0.2);
+    padding: 0 0.14rem;
+    color: #f99600;
+    font-weight: bold;
+    font-size: 0.14rem;
+  }
+
+  .cash-codeNumber {
+    margin-left: 0.08rem;
+    cursor: pointer;
+    height: 0.32rem;
+    line-height: 0.32rem;
+    background: rgba(240, 20, 46, 0.12);
+    padding: 0 0.14rem;
+    color: #f0142f;
+    font-weight: bold;
+    font-size: 0.14rem;
+  }
+}
+
+/* top-msg */
+.top-msg {
+  .l-b {
+    display: flex;
+    flex-wrap: wrap;
+
+    .row {
+      width: 33.333333%;
+      padding: 0 0.15rem;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+
+      &:nth-child(3n + 1) {
+        padding-left: 0;
+      }
+
+      .label {
+        width: 1rem;
+        font-size: 0.14rem;
+        text-align: left;
+        color: #888;
+        white-space: nowrap;
+      }
+
+      .value {
+        width: calc(100% - 1rem);
+        font-size: 0.14rem;
+        color: #1e2736;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .over-text {
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+.up-License {
+  .dialog-footer {
+    display: block;
+  }
+
+  .el-tabs__nav-wrap::after {
+    height: 2px !important;
+  }
+
+  .el-dialog {
+    margin-top: 4vh !important;
+    margin-bottom: 0;
+  }
+
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    padding: 0.3rem 0.46rem 0 0.5rem;
+  }
+
+  .el-dialog__footer {
+    padding: 0 0.46rem 0.4rem 0.5rem;
+  }
+
+  .dialog-footer {
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    padding: 0;
+    text-align: left;
+
+    .upLincense-tips {
+      width: 4.88rem;
+      margin-bottom: 0.1rem;
+
+      .tips-text {
+        margin-top: 0.1rem;
+        font-size: 0.14rem;
+        font-weight: 400;
+        color: #1e2736;
+      }
+    }
+
+    .footer-price {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      .lincense-price {
+        font-size: 0.16rem;
+        color: #1e2736;
+        margin-right: 0.5rem;
+
+        .blue-text {
+          font-weight: bold;
+          color: #0058ff;
+        }
+      }
+
+      .footer-btnbox {
+        display: flex;
+
+        .el-button {
+          height: 0.46rem;
+          width: 1.12rem;
+
+          &:first-child {
+            background: #0058ff;
+          }
+
+          &:last-child {
+            background: #e7e7e7;
+            color: #1e2736;
+          }
+        }
+      }
+    }
+  }
+
+  .license-title {
+    font-size: 0.24rem;
+    color: #171725;
+    margin-bottom: 0.06rem;
+  }
+
+  .lincense-text {
+    font-size: 0.14rem;
+    font-weight: bold;
+    color: #1e2736;
+  }
+
+  .lincense-div {
+    .now-lincense {
+      margin-top: 0.4rem;
+      display: flex;
+      justify-content: space-between;
+
+      .lincense-content {
+        width: 10.14rem;
+        min-height: 0.9rem;
+        padding: 0.16rem 0.24rem;
+        box-sizing: border-box;
+        border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+        border: 0.01rem solid #e6e7eb;
+
+        .content-title {
+          font-size: 0.16rem;
+          font-weight: 400;
+          color: #1e2736;
+        }
+
+        .content-box {
+          margin-top: 0.16rem;
+          display: flex;
+          flex-wrap: wrap;
+        }
+
+        .content-item {
+          // flex: 1;
+          // flex-shrink: 0;
+          font-size: 0.14rem;
+          color: #8692b0;
+          width: 20%;
+
+          .l-name {
+            display: inline-block;
+            width: 0.6rem;
+            white-space: nowrap;
+          }
+
+          .r-value {
+            margin-left: 0.2rem;
+            color: #1e2736;
+          }
+        }
+      }
+    }
+  }
+
+  .can-upLincense {
+    margin-top: 0.4rem;
+    display: flex;
+    justify-content: space-between;
+
+    .canUp-box {
+      width: 10.14rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .canUp-content {
+      display: flex;
+      box-sizing: border-box;
+      border-radius: 0.03rem 0.03rem 0rem 0rem;
+      overflow: hidden;
+
+      .canUp-name {
+        cursor: pointer;
+        box-sizing: border-box;
+        width: 2.55rem;
+        height: 0.46rem;
+        line-height: 0.46rem;
+        text-align: center;
+        font-size: 0.15rem;
+        background: #e7e7e7;
+        font-weight: 400;
+        color: #1e2736;
+      }
+
+      .select-content {
+        transition: 0.5s;
+        background: #0058ff;
+        color: #ffffff;
+      }
+    }
+
+    .config-box {
+      width: 100%;
+      height: 3.6rem;
+      padding: 0.2rem;
+      overflow: auto;
+      border: 0.01rem solid #0058ff;
+
+      &::-webkit-scrollbar {
+        /*滚动条整体样式*/
+        width: 4px;
+      }
+
+      &::-webkit-scrollbar-track {
+        /*滚动条里面轨道*/
+        box-shadow: inset 0 0 5px rgba(87, 175, 187, 0.1);
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        /*滚动条里面小方块*/
+        box-shadow: inset 0 0 5px rgba(97, 184, 179, 0.1);
+        background: #e6e9f4;
+      }
+
+      .config-item {
+        padding-left: 0.3rem;
+        position: relative;
+
+        .config-tit {
+          display: flex;
+          align-items: center;
+          margin-top: 0.2rem;
+          margin-bottom: 0.2rem;
+
+          .column-line {
+            width: 3px;
+            height: 0.18rem;
+            position: absolute;
+            background: #0058ff;
+            left: 0.3rem;
+          }
+
+          .tit-text {
+            font-size: 0.18rem;
+            color: #1e2736;
+            margin-left: 0.1rem;
+          }
+        }
+
+        .config-way {
+          .slider {
+            display: flex;
+            align-items: center;
+
+            .min,
+            .max {
+              font-size: 0.14rem;
+              color: #999999;
+              white-space: nowrap;
+            }
+
+            .el-slider {
+              width: 4.34rem;
+            }
+
+            .slider-input {
+              width: 0.7rem;
+              margin-left: 0.13rem;
+              margin-right: 0.08rem;
+
+              .el-input__inner {
+                height: 0.46rem;
+              }
+            }
+          }
+
+          .click-select {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+
+            .item {
+              position: relative;
+              margin-left: 0.2rem;
+              border: 1px solid #e6e7eb;
+              border-radius: 3px 3px 3px 3px;
+              cursor: pointer;
+
+              .el-icon-check {
+                display: none;
+              }
+
+              &.com-active {
+                box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.12);
+                border: 1px solid #0058ff;
+
+                &::after {
+                  content: "";
+                  position: absolute;
+                  bottom: 0;
+                  right: 0;
+                  z-index: 2;
+                  width: 0;
+                  height: 0;
+                  border-bottom: 0.24rem solid #0058ff;
+                  border-left: 0.24rem solid transparent;
+                }
+
+                .el-icon-check {
+                  display: block;
+                  position: absolute;
+                  bottom: 0;
+                  right: 0;
+                  color: #fff;
+                  z-index: 10;
+                }
+              }
+            }
+          }
+        }
+
+        .des {
+          margin-top: 0.06rem;
+        }
+      }
+    }
+  }
+}
+
+.up-License,
+.buy-serve {
+
+  ul,
+  li {
+    list-style: none;
+  }
+
+  .l-config {
+    width: 100%;
+    position: relative;
+    z-index: 10;
+  }
+
+  .cycle {
+    display: flex;
+    flex-wrap: wrap;
+
+    .item {
+      min-width: 1.4rem;
+      margin-right: 0.2rem;
+      border: 1px solid #e6e7eb;
+      border-radius: 0.03rem;
+      text-align: center;
+      padding: 0.11rem 0;
+      font-size: 0.15rem;
+      margin-bottom: 0.2rem;
+      cursor: pointer;
+      position: relative;
+
+      .name {
+        color: #1e2736;
+        margin-bottom: 0.1rem;
+      }
+
+      .price {
+        color: #0058ff;
+      }
+    }
+  }
+
+  .el-icon-check {
+    display: none;
+  }
+
+  .com-active {
+    .el-icon-check {
+      display: block;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      color: #fff;
+      z-index: 10;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      z-index: 2;
+      width: 0;
+      height: 0;
+      border-bottom: 0.24rem solid #0058ff;
+      border-left: 0.24rem solid transparent;
+    }
+  }
+
+  .el-slider__bar {
+    background: #0058ff;
+  }
+
+  .el-slider__button {
+    width: 12px;
+    height: 24px;
+    border: 0;
+    border-radius: 0;
+    background: #0058ff;
+    position: relative;
+
+    &:hover,
+    &.hover,
+    &.dragging {
+      transform: scale(1) !important;
+      transition: all 0s !important;
+    }
+
+    &::after {
+      content: "";
+      width: 1px;
+      height: 10px;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+    }
+  }
+
+  .config-tit {
+    position: relative;
+    padding-left: 0.15rem;
+    font-size: 0.18rem;
+    color: #1e2736;
+    line-height: 1;
+    margin-bottom: 0.2rem;
+
+    &::before {
+      content: "";
+      width: 3px;
+      height: 18px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      margin-top: -9px;
+      background: #0058ff;
+    }
+  }
+
+  .description {
+    padding: 0.2rem;
+    border: 1px solid #e6e7eb;
+    border-radius: 3px;
+    margin-top: 0.4rem;
+    line-height: 1.5;
+    color: #8692b0;
+    min-height: 2.4rem;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+  }
+
+  .config-way {
+    display: flex;
+    align-items: center;
+  }
+
+  .config-item {
+    margin-top: 0.6rem;
+
+    &:nth-of-type(1) {
+      margin-top: 0;
+    }
+
+    .des {
+      font-size: 0.14rem;
+      color: #8692b0;
+      margin-top: 0.1rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .unit {
+      font-size: 0.15rem;
+      color: #1e2736;
+      margin-left: 0.05rem;
+    }
+
+    .slider {
+      display: flex;
+      align-items: center;
+
+      .el-slider {
+        width: 4.34rem;
+        margin: 0 0.3rem;
+      }
+
+      .el-input {
+        // width: 1.5rem;
+        margin-left: 0.2rem;
+      }
+    }
+  }
+
+  .el-select {
+    input {
+      line-height: 0.46rem;
+      height: 0.46rem;
+      width: 3.2rem;
+    }
+  }
+
+  .area-box {
+    .tit {
+      font-size: 0.16rem;
+      color: #1e2736;
+      margin-bottom: 0.1rem;
+    }
+
+    .country,
+    .city {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 0.2rem;
+
+      .item {
+        width: 2.05rem;
+        height: 0.52rem;
+        line-height: 0.52rem;
+        padding: 0 0.16rem;
+        margin-bottom: 0.2rem;
+        border: 1px solid #e6e7eb;
+        border-radius: 0.03rem;
+        margin-right: 0.2rem;
+        position: relative;
+        cursor: pointer;
+        box-sizing: border-box;
+        white-space: nowrap;
+
+        img {
+          width: 0.3rem;
+          height: 0.2rem;
+          margin-right: 0.2rem;
+        }
+
+        img,
+        span {
+          display: inline-block;
+          vertical-align: middle;
+          font-size: 0.15rem;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        span {
+          max-width: 70%;
+        }
+      }
+    }
+  }
+
+  .click-select {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: -0.2rem;
+    width: 100%;
+    margin-left: -0.2rem;
+
+    .item {
+      width: 2.1rem;
+      line-height: 0.46rem;
+      height: 0.46rem;
+      border: 1px solid #e6e7eb;
+      border-radius: 0.03rem;
+      margin-top: 0.2rem;
+      text-align: center;
+      margin-left: 0.2rem;
+      cursor: pointer;
+      position: relative;
+    }
+  }
+
+  .order-right {
+    width: 3.6rem;
+    height: 100%;
+    box-shadow: 0px 3px 12px rgb(52 52 90 / 10%);
+    border-radius: 3px;
+    padding: 0.7rem 0.3rem 0.3rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    background: #fff;
+    right: 0.2rem;
+    top: 0;
+    overflow: hidden;
+
+    .subtotal {
+      display: flex;
+      justify-content: space-between;
+      line-height: 0.2rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #e6e7eb;
+    }
+
+    .f-box {
+      // width: 100%;
+      // overflow: hidden;
+      // position: relative;
+    }
+
+    .right-title {
+      width: 100%;
+      font-size: 0.16rem;
+      font-weight: bold;
+      color: #1e2736;
+      border-bottom: 1px solid #dcdcdc;
+      padding-bottom: 0.05rem;
+    }
+
+    .right-country-os {
+      padding-top: 0.3rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #dcdcdc;
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 0.14rem;
+        color: #757575;
+
+        &:not(:first-child) {
+          margin-top: 0.12rem;
+        }
+      }
+    }
+
+    .order-right-item {
+      padding-top: 0.3rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #dcdcdc;
+
+      .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        font-size: 0.14rem;
+        color: #757575;
+
+        &:not(:first-child) {
+          margin-top: 0.12rem;
+        }
+
+        .del-add {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          .del,
+          .add {
+            width: 0.3rem;
+            height: 0.3rem;
+            border: 1px solid #e6e7eb;
+            opacity: 1;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.16rem;
+            cursor: pointer;
+
+            &.disabled {
+              cursor: not-allowed;
+            }
+          }
+
+          .el-input__inner {
+            padding: 0;
+          }
+
+          .del {
+            margin-right: 0.04rem;
+          }
+
+          .num {
+            width: 0.48rem;
+            height: 0.32rem;
+
+            .el-input {
+              height: 0.32rem;
+              width: 0.48rem;
+              display: flex;
+            }
+
+            .el-input__inner {
+              height: 0.32rem;
+              width: 0.48rem;
+            }
+          }
+
+          .add {
+            margin-left: 0.04rem;
+          }
+        }
+      }
+    }
+
+    .order-right-footer {
+      padding-bottom: 0.16rem;
+
+      .footer-total {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 0.2rem;
+
+        .left {
+          color: #1e2736;
+        }
+
+        .right {
+          font-size: 0.28rem;
+          font-family: Helvetica;
+          font-weight: bold;
+          color: #f0142f;
+          text-align: right;
+        }
+
+        .total-icon {
+          font-size: 20px !important;
+          color: #999 !important;
+          cursor: pointer;
+        }
+
+        .discount-box {
+          margin-top: 0.08rem;
+          font-size: 0.14rem;
+        }
+
+        .discount-codeNumber {
+          cursor: pointer;
+          height: 0.32rem;
+          line-height: 0.32rem;
+          background: rgba(249, 149, 0, 0.2);
+          padding: 0 0.14rem;
+          color: #f99600;
+          font-weight: bold;
+          font-size: 0.14rem;
+        }
+      }
+
+      .footer-code {
+        display: flex;
+        flex-direction: column;
+
+        .code-main {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 0.08rem;
+
+          .left {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            color: #f99600;
+            cursor: pointer;
+
+            .btn-add {
+              width: 0.12rem;
+              height: 0.12rem;
+              border: 1px solid #f99600;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-left: 0.06rem;
+              border-radius: 50%;
+            }
+          }
+
+          .right {
+            color: #f99600;
+          }
+        }
+
+        .code-detail {
+          display: flex;
+          flex-direction: column;
+          margin-top: 0.08rem;
+
+          .code-detail-item {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            align-items: center;
+            color: #4e5259;
+
+            .code {
+              font-weight: bold;
+              margin-right: 0.09rem;
+            }
+
+            .num {
+              margin-right: 0.05rem;
+            }
+
+            .btn {
+              font-size: 0.12rem;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+
+      .show-config-list {}
+
+      .read {
+        margin-top: 0.1rem;
+
+        a {
+          text-decoration: none;
+          color: #0058ff;
+        }
+      }
+
+      .buy-btn {
+        width: 100%;
+        margin-top: 0.16rem;
+      }
+    }
+
+    .info {
+      padding: 0.3rem 0 0.2rem;
+      border-bottom: 1px solid #e6e7eb;
+
+      .des {
+        display: flex;
+        justify-content: space-between;
+        line-height: 1;
+        font-size: 0.14rem;
+        color: #1e2736;
+        margin-bottom: 0.15rem;
+
+        span {
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .name {
+        width: 30%;
+      }
+
+      .value {
+        width: 30%;
+        text-align: left;
+      }
+
+      .price {
+        width: 35%;
+        text-align: right;
+      }
+    }
+  }
+
+  .f-btn {
+    display: flex;
+    justify-content: space-between;
+
+    .el-button {
+      line-height: 1;
+      padding: 0;
+      height: 0.44rem;
+      border-radius: 0.04rem;
+      width: 45%;
+    }
+
+    .cart {
+      color: #0058ff;
+      border: 1px solid #0058ff;
+      background: transparent;
+    }
+
+    .buy-btn {
+      background: #0058ff;
+      border: 1px solid #0058ff;
+    }
+  }
+
+  /* 子项相关 */
+  .sub-box {
+    margin-top: 0.4rem;
+
+    .sub-item {
+      margin-bottom: 0.4rem;
+    }
+
+    .sub-switch {
+      margin-top: 0.2rem;
+    }
+
+    // .description{
+    //   margin-top: .2rem;
+    // }
+  }
+}
+
+.buy-dia {
+  .el-dialog__header {
+    display: none;
+  }
+
+  .el-dialog__body {
+    padding: 0.6rem 0.8rem 0 0.8rem;
+  }
+
+  .el-dialog__footer {
+    padding: 0 0.8rem 0.6rem 0.8rem;
+  }
+
+  .dialog-footer {
+    .el-button {
+      height: 0.46rem;
+      width: 1.12rem;
+
+      &:first-child {
+        background: #0058ff;
+        color: #ffffff;
+      }
+
+      &:last-child {
+        background: #e7e7e7;
+        color: #1e2736;
+      }
+    }
+  }
+
+  .buy-title {
+    font-size: 0.24rem;
+    color: #171725;
+  }
+
+  .price-box {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 0.4rem;
+    width: 100%;
+    padding: 0.2rem;
+    border: 0.01rem solid #e6e7eb;
+    border-radius: 0.03rem 0.03rem 0.03rem 0.03rem;
+
+    .price-item {
+      cursor: pointer;
+      margin-bottom: 16px;
+      width: 2.5rem;
+      height: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      border: 1px solid #e6e7eb;
+      font-size: 0.16rem;
+      color: #090a3a;
+    }
+
+    .actice-pay {
+      background: #ffffff;
+      border: 1px solid #161ede;
+    }
+
+    .red-text {
+      color: #e50012;
+    }
+
+    .text-decoration {
+      text-decoration: line-through;
+    }
+  }
+}
+
+.Unpaid {
+  cursor: pointer;
+}
+
+.up-License .el-dialog__body {
+  padding: 0.3rem 0.46rem 0 0.5rem !important;
+}
+
+.el-dialog__body {
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.is-without-controls {
+  width: auto;
+
+  .el-input {
+    width: 1rem;
+  }
+}

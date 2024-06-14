@@ -79,6 +79,8 @@ https://www.idcsmart.com/wiki_list/1262.html
 https://www.idcsmart.com/wiki_list/1260.html
 ### 三方登录开发文档
 https://www.idcsmart.com/wiki_list/1263.html
+### 对象存储开发文档
+https://www.idcsmart.com/wiki_list/1276.html
 
 ***
 
