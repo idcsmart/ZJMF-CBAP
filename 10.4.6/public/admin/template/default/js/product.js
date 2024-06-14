@@ -206,7 +206,7 @@
           submitLoading: false,
           expandedRowKeys: [],
           tempExpandRowKeys: [],
-          expandNum: 0
+          expandNum: 0,
         };
       },
       watch: {
@@ -297,29 +297,53 @@
           }
         },
         // 展开/折叠
+        expandAllAgent() {
+          this.expandArr = [];
+          const { tree } = this.$refs;
+          tree.getItems().forEach((item) => {
+            this.checkExpand ? this.expandArr.push(item.value) : [];
+          });
+        },
+         // 节点点击的时候
+         clickNode(e) {
+          if (!e.node.expanded) {
+            this.expandArr.push(e.node.value);
+          } else {
+            this.expandArr.splice(this.expandArr.indexOf(e.node.value), 1);
+          }
+        },
+        // 全选/全不选
+        chooseAllAgent() {
+          if (this.checkAll) {
+            this.authList = this.arr;
+          } else {
+            this.authList = [];
+          }
+        },
+        // 展开/折叠
         expandAll() {
           // this.expandArr = [];
           // const { tree } = this.$refs;
           // tree.getItems().forEach((item) => {
           //   this.checkExpand ? this.expandArr.push(item.value) : [];
           // });
-          const arr = this.data.reduce((all,cur) => {
+          const arr = this.data.reduce((all, cur) => {
             all.push(cur.key);
             if (cur.children.length > 0) {
-              cur.children.forEach(item => {
-                all.push(item.key)
-              })
+              cur.children.forEach((item) => {
+                all.push(item.key);
+              });
             }
             return all;
-          },[])
+          }, []);
           this.expandedRowKeys = arr;
           this.tempExpandRowKeys = JSON.parse(JSON.stringify(arr));
         },
-        foldAll () {
+        foldAll() {
           this.expandedRowKeys = [];
         },
-        changeExpand (node) {
-          this.expandNum ++ ;
+        changeExpand(node) {
+          this.expandNum++;
           this.expandedRowKeys = node;
           this.tempExpandRowKeys = JSON.parse(JSON.stringify(node));
         },
@@ -332,13 +356,13 @@
           }
         },
         // 节点点击的时候
-        // clickNode(e) {
-        //   if (!e.node.expanded) {
-        //     this.expandArr.push(e.node.value);
-        //   } else {
-        //     this.expandArr.splice(this.expandArr.indexOf(e.node.value), 1);
-        //   }
-        // },
+        clickNode(e) {
+          if (!e.node.expanded) {
+            this.expandArr.push(e.node.value);
+          } else {
+            this.expandArr.splice(this.expandArr.indexOf(e.node.value), 1);
+          }
+        },
         async getPlugin() {
           try {
             const res = await getAddon();
@@ -632,7 +656,7 @@
             } else {
               await groupListShow(row.id, row.hidden);
             }
-           // this.getProductList();
+            // this.getProductList();
           } catch (error) {}
         },
         // 拖动一级商品分组
@@ -875,7 +899,7 @@
                     this.expandedRowKeys = [];
                     this.$nextTick(() => {
                       this.expandedRowKeys = this.tempExpandRowKeys;
-                    })
+                    });
                   }
                 }
               }, 0);

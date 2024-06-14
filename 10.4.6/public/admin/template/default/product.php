@@ -6,14 +6,20 @@
     <t-card class="list-card-container" :class="{stop: data.status===0}">
       <div class="common-header">
         <div class="left">
-          <t-button @click="addGroup" class="add" v-permission="'auth_product_management_create_group'">{{lang.create_group}}</t-button>
-          <t-button theme="default" @click="addProduct" class="add" v-permission="'auth_product_management_create_product'">{{lang.create_product}}</t-button>
-          <t-button theme="default" v-if="hasBaidu" @click="addBaiduProduct" class="add">{{lang.baidu_create}}</t-button>
-          <t-button theme="default" @click="addAgency" class="add" v-permission="'auth_product_management_agent_product'">{{lang.immediate_agency}}</t-button>
-          <t-button theme="default" class="add anget-btn" @click="handelAngenBtn" v-permission="'auth_product_management_agentable_product'">{{lang.manage_agency}}</t-button>
+          <t-button @click="addGroup" class="add"
+            v-permission="'auth_product_management_create_group'">{{lang.create_group}}</t-button>
+          <t-button theme="default" @click="addProduct" class="add"
+            v-permission="'auth_product_management_create_product'">{{lang.create_product}}</t-button>
+          <t-button theme="default" v-if="hasBaidu" @click="addBaiduProduct"
+            class="add">{{lang.baidu_create}}</t-button>
+          <t-button theme="default" @click="addAgency" class="add"
+            v-permission="'auth_product_management_agent_product'">{{lang.immediate_agency}}</t-button>
+          <t-button theme="default" class="add anget-btn" @click="handelAngenBtn"
+            v-permission="'auth_product_management_agentable_product'">{{lang.manage_agency}}</t-button>
         </div>
         <div class="com-search">
-          <t-input v-model="params.keywords" class="search-input" :placeholder="`${lang.product}`" @keypress.enter.native="search" :on-clear="clearKey" clearable>
+          <t-input v-model="params.keywords" class="search-input" :placeholder="`${lang.product}`"
+            @keypress.enter.native="search" :on-clear="clearKey" clearable>
           </t-input>
           <t-icon size="20px" name="search" @click="search" class="com-search-btn" />
         </div>
@@ -33,8 +39,11 @@
           <span v-else-if="row.parent_id" class="second-name">{{row.name}}</span>
         </template>
         <template #name="{row}">
-          <a :href="calcHref(row)" v-if="row.qty !== undefined && $checkPermission('auth_product_detail_basic_info_view')" class="product-name" style="cursor: pointer;" @click="editHandler(row)">{{row.name}}</a>
-          <span v-if="row.qty !== undefined && !$checkPermission('auth_product_detail_basic_info_view')">{{row.name}}</span>
+          <a :href="calcHref(row)"
+            v-if="row.qty !== undefined && $checkPermission('auth_product_detail_basic_info_view')" class="product-name"
+            style="cursor: pointer;" @click="editHandler(row)">{{row.name}}</a>
+          <span
+            v-if="row.qty !== undefined && !$checkPermission('auth_product_detail_basic_info_view')">{{row.name}}</span>
           <!-- <template v-else>
           <t-icon :name="row.isExpand ? 'caret-up-small' : 'caret-down-small'"></t-icon>
         </template> -->
@@ -46,18 +55,22 @@
           {{row.stock_control === 0 ? '-' : row.qty}}
         </template>
         <template #hidden="{row}">
-          <t-switch size="large" :custom-value="[0,1]" v-model="row.hidden" @change="onChange(row)" :disabled="!$checkPermission('auth_product_management_product_show_hide')"></t-switch>
+          <t-switch size="large" :custom-value="[0,1]" v-model="row.hidden" @change="onChange(row)"
+            :disabled="!$checkPermission('auth_product_management_product_show_hide')"></t-switch>
         </template>
         <template #op="{row}">
-          <t-tooltip :content="lang.copy" :show-arrow="false" theme="light" v-if="row.key.indexOf('t') !== -1 && $checkPermission('auth_product_management_product_copy')">
+          <t-tooltip :content="lang.copy" :show-arrow="false" theme="light"
+            v-if="row.key.indexOf('t') !== -1 && $checkPermission('auth_product_management_product_copy')">
             <t-icon name="file-copy" size="18px" @click="copyHandler(row)" class="common-look"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.edit" :show-arrow="false" theme="light">
-            <t-icon name="edit-1" size="18px" @click="editHandler(row)" class="common-look" v-if="row.key.indexOf('t') !== -1 ?
+            <t-icon name="edit-1" size="18px" @click="editHandler(row)" class="common-look"
+              v-if="row.key.indexOf('t') !== -1 ?
              $checkPermission('auth_product_management_update_product') : $checkPermission('auth_product_management_update_group')"></t-icon>
           </t-tooltip>
           <t-tooltip :content="lang.delete" :show-arrow="false" theme="light">
-            <t-icon name="delete" size="18px" @click="deleteHandler(row)" class="common-look" v-if="row.key.indexOf('t') !== -1 ?
+            <t-icon name="delete" size="18px" @click="deleteHandler(row)" class="common-look"
+              v-if="row.key.indexOf('t') !== -1 ?
              $checkPermission('auth_product_management_delete_product') : $checkPermission('auth_product_management_delete_group')"></t-icon>
           </t-tooltip>
         </template>
@@ -66,15 +79,19 @@
 
 
     <!-- 可代理商品弹窗 -->
-    <t-dialog :visible.sync="agentVisble" :header="lang.can_be_agency" :on-close="closeAgentDia" :footer="false" width="600" class="auth-dialog" placement="center">
+    <t-dialog :visible.sync="agentVisble" :header="lang.can_be_agency" :on-close="closeAgentDia" :footer="false"
+      width="600" class="auth-dialog" placement="center">
       <div class="opt">
         <span>
-          <t-checkbox v-model="checkExpand" @change="expandAll">{{lang.isExpand}}</t-checkbox>
-          <t-checkbox v-model="checkAll" @change="chooseAll" :disabled="formData.id===1">{{lang.isCheckAll}}</t-checkbox>
+          <t-checkbox v-model="checkExpand" @change="expandAllAgent">{{lang.isExpand}}</t-checkbox>
+          <t-checkbox v-model="checkAll" @change="chooseAllAgent" :disabled="formData.id===1">{{lang.isCheckAll}}</t-checkbox>
         </span>
       </div>
       <div class="auth">
-        <t-tree :data="authArr" checkable activable :line="true" :expand-on-click-node="false" :active-multiple="false" v-model="authList" value-mode="all" :expanded="expandArr" :keys="{value: 'key', label:'name', children:'children'}" ref="tree" :expand-all="checkExpand" :expand-on-click-node="false" :indeterminate="true"></t-tree>
+        <t-tree :data="authArr" checkable activable :line="true" :expand-on-click-node="false" :active-multiple="false"
+         v-model="authList" value-mode="all" :expanded="expandArr" :keys="{value: 'key', label:'name', children:'children'}" ref="tree"
+         :expand-all="checkExpand" :expand-on-click-node="false" @click="clickNode"
+         :indeterminate="true"></t-tree>
       </div>
       <div class="com-f-btn">
         <t-button theme="primary" @click="handelAgentable" :loading="submitLoading">{{lang.hold}}</t-button>
@@ -112,8 +129,8 @@
       </t-form>
     </t-dialog>
     <!-- 新建商品 -->
-    <t-dialog :header="lang.create_product" :visible.sync="productModel" :footer="false"
-    class="product-dialog" @close="closeProduct">
+    <t-dialog :header="lang.create_product" :visible.sync="productModel" :footer="false" class="product-dialog"
+      @close="closeProduct">
       <t-form :data="productData" ref="productForm" @submit="submitProduct" :rules="productRules">
         <t-form-item :label="lang.product_name" name="name">
           <t-input v-model="productData.name" :placeholder="lang.product_name"></t-input>
@@ -149,8 +166,10 @@
             <t-input disabled v-model="concat_shop"></t-input>
           </t-form-item>
           <t-form-item :label="lang.choose_group" name="target_product_group_id">
-            <t-select v-model="moveProductForm.target_product_group_id" :placeholder="lang.select +lang.product_group" :popup-props="popupProps">
-              <t-option-group v-for="(list, index) in tempGroup" :key="list.key" :label="typeof list.name === 'object' ? list.group.label : list.name" divider>
+            <t-select v-model="moveProductForm.target_product_group_id" :placeholder="lang.select +lang.product_group"
+              :popup-props="popupProps">
+              <t-option-group v-for="(list, index) in tempGroup" :key="list.key"
+                :label="typeof list.name === 'object' ? list.group.label : list.name" divider>
                 <t-option v-for="item in list.children" :value="item.id" :label="item.name" :key="item.id">
                   {{ item.name }}
                 </t-option>

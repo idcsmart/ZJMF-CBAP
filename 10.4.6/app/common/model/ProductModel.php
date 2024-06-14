@@ -1924,11 +1924,11 @@ class ProductModel extends Model
     public function saveAgentableProduct($param)
     {
         $param['id'] = $param['id'] ?? [];
-        if(!is_array($param['id']) || empty($param['id'])){
+        if(!is_array($param['id'])){
             return ['status'=>400,'msg'=>lang('param_error')];
         }
-        $product = $this->whereIn('id', $param['id'])->select()->toArray();
-        if (empty($product)){
+        $count = $this->whereIn('id', $param['id'])->count();
+        if (count($param['id'])!=$count){
             return ['status'=>400,'msg'=>lang('param_error')];
         }
 
