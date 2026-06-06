@@ -45,7 +45,7 @@
             logo: [],
           },
           // 图片上传相关
-          uploadUrl: str + "/v1/upload",
+          uploadUrl: str + "v1/upload",
           // uploadUrl: 'https://kfc.idcsmart.com/admin/v1/upload',
           uploadHeaders: {
             Authorization: "Bearer" + " " + localStorage.getItem("backJwt"),
